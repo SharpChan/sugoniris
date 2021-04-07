@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="sugondata" />
+        <module name="sugondomain" />
+        <module name="sugonannotation" />
+        <module name="sugonweb" />
+        <module name="sugonservice" />
+        <module name="sugonrest" />
+        <module name="sugoncommon" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="sugonannotation" target="1.8" />
+      <module name="sugoncommon" target="1.8" />
+      <module name="sugondao" target="1.8" />
+      <module name="sugondata" target="1.8" />
+      <module name="sugondomain" target="1.8" />
+      <module name="sugoniris" target="1.8" />
+      <module name="sugonrest" target="1.8" />
+      <module name="sugonservice" target="1.8" />
+      <module name="sugonweb" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="sugonannotation" options="-parameters" />
+      <module name="sugoncommon" options="-parameters" />
+      <module name="sugondao" options="-parameters" />
+      <module name="sugondata" options="-parameters" />
+      <module name="sugondomain" options="-parameters" />
+      <module name="sugoniris" options="-parameters" />
+      <module name="sugonrest" options="-parameters" />
+      <module name="sugonservice" options="-parameters" />
+      <module name="sugonweb" options="-parameters" />
+    </option>
+  </component>
+</project>

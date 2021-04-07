@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="sugonweb:war">
+    <output-path>$PROJECT_DIR$/sugonweb/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>sugonweb</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="sugonweb-0.0.1.war">
+      <element id="artifact" artifact-name="sugonweb:war exploded" />
+    </root>
+  </artifact>
+</component>

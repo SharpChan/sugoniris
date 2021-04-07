@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.RoleMapper" >
+
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.db2.Role" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, name
+    </sql>
+
+    <select id="selectRoleList" resultMap="BaseResultMap"  >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        role
+    </select>
+
+
+    <insert id="saveRole" parameterType="com.sugon.iris.sugondomain.entities.db2.Role">
+        INSERT INTO `role`
+           (id, `name`)
+        VALUES
+           ( #{id}, #{name} )
+    </insert>
+
+</mapper>

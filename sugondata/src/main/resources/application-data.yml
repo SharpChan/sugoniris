@@ -1,0 +1,76 @@
+spring:
+  #jpa
+  datasource:
+    #driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://192.168.217.140:3306/iris?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
+    username: root
+    password: root
+    hikari:
+      poolName: Hikari
+      auto-commit: false
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate.jdbc.time_zone: UTC
+      hibernate.id.new_generator_mappings: true
+      hibernate.connection.provider_disables_autocommit: true
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_query_cache: false
+      hibernate.generate_statistics: false
+      # modify batch size as necessary
+      hibernate.jdbc.batch_size: 25
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
+      hibernate.query.fail_on_pagination_over_collection_fetch: true
+      hibernate.query.in_clause_parameter_padding: true
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    devtools:
+      livereload:
+        enabled: true
+      restart:
+        enabled: false
+
+#mybatis
+datasource:
+  druid:
+    db1:
+      driverClassName: com.mysql.jdbc.Driver
+      username: root
+      password: root
+      jdbc-url: jdbc:mysql://192.168.217.140:3306/iris?useUnicode=true&characterEncoding=utf8
+      type: com.alibaba.druid.pool.DruidDataSource
+      initialSize: 2
+      minIdle: 2
+      maxActive: 5
+      validationQuery: SELECT 1 from dual
+      testWhileIdle: true
+      testOnBorrow: true
+      testOnReturn: false
+      maxWait: 6000
+      filters: stat,slf4j #wall,
+    db2:
+      driverClassName: com.mysql.jdbc.Driver
+      username: root
+      password: root
+      jdbc-url: jdbc:mysql://192.168.217.140:3306/iris?useUnicode=true&characterEncoding=utf8
+      type: com.alibaba.druid.pool.DruidDataSource
+      initialSize: 2
+      minIdle: 2
+      maxActive: 5
+      validationQuery: SELECT 1 from dual
+      testWhileIdle: true
+      testOnBorrow: true
+      testOnReturn: false
+      maxWait: 6000
+      filters: stat,slf4j #wall,

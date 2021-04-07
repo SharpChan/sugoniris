@@ -1,0 +1,293 @@
+Request URL: http://218.94.120.221:11041/sdm-web/rolemanager/getRoleMenu.do
+Request Method: POST
+Status Code: 200 OK
+Remote Address: 218.94.120.221:11041
+Referrer Policy: no-referrer-when-downgrade
+Content-Length: 3856
+Content-Type: text/html;charset=utf-8
+Date: Tue, 09 Jun 2020 19:44:03 GMT
+Server: Apache-Coyote/1.1
+Accept: application/json, text/javascript, */*; q=0.01
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9
+Connection: keep-alive
+Content-Length: 0
+Cookie: JSESSIONID=B80EEC7938207568438019A11AD91349
+Host: 218.94.120.221:11041
+Origin: http://218.94.120.221:11041
+Referer: http://218.94.120.221:11041/sdm-web/page/manage/index_hadoop.jsp
+User-Agent: Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Mobile Safari/537.36
+X-Requested-With: XMLHttpRequest
+
+
+
+[
+	{
+		"chkDisabled": false,
+		"isParent": false,
+		"children": [
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "导入数据库",
+				"checked": false,
+				"pId": 9901,
+				"id": 990101,
+				"gbkName": "e5afbce585a5e695b0e68daee5ba93",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "导入文件",
+				"checked": false,
+				"pId": 9901,
+				"id": 990102,
+				"gbkName": "e5afbce585a5e69687e4bbb6",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "对接MPP",
+				"checked": false,
+				"pId": 9901,
+				"id": 990103,
+				"gbkName": "e5afb9e68ea54d5050",
+				"open": true
+			}
+		],
+		"name": "数据速录",
+		"checked": false,
+		"pId": 0,
+		"id": 9901,
+		"gbkName": "e695b0e68daee9809fe5bd95",
+		"open": true
+	},
+	{
+		"chkDisabled": false,
+		"isParent": false,
+		"name": "快速建模",
+		"checked": false,
+		"pId": 0,
+		"id": 9902,
+		"gbkName": "e5bfabe9809fe5bbbae6a8a1",
+		"open": true
+	},
+	{
+		"chkDisabled": false,
+		"isParent": false,
+		"children": [
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "公开模型",
+				"checked": false,
+				"pId": 9903,
+				"id": 990301,
+				"gbkName": "e585ace5bc80e6a8a1e59e8b",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "私有模型",
+				"checked": false,
+				"pId": 9903,
+				"id": 990302,
+				"gbkName": "e7a781e69c89e6a8a1e59e8b",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "我的分享",
+				"checked": false,
+				"pId": 9903,
+				"id": 990303,
+				"gbkName": "e68891e79a84e58886e4baab",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "我的接收",
+				"checked": false,
+				"pId": 9903,
+				"id": 990304,
+				"gbkName": "e68891e79a84e68ea5e694b6",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "所有模型",
+				"checked": false,
+				"pId": 9903,
+				"id": 990305,
+				"gbkName": "e68980e69c89e6a8a1e59e8b",
+				"open": true
+			}
+		],
+		"name": "模型中心",
+		"checked": false,
+		"pId": 0,
+		"id": 9903,
+		"gbkName": "e6a8a1e59e8be4b8ade5bf83",
+		"open": true
+	},
+	{
+		"chkDisabled": false,
+		"isParent": false,
+		"children": [
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "建模结果",
+				"checked": false,
+				"pId": 9904,
+				"id": 990401,
+				"gbkName": "e5bbbae6a8a1e7bb93e69e9c",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "可视化",
+				"checked": false,
+				"pId": 9904,
+				"id": 990402,
+				"gbkName": "e58fafe8a786e58c96",
+				"open": true
+			}
+		],
+		"name": "结果展示",
+		"checked": false,
+		"pId": 0,
+		"id": 9904,
+		"gbkName": "e7bb93e69e9ce5b195e7a4ba",
+		"open": true
+	},
+	{
+		"chkDisabled": false,
+		"isParent": false,
+		"children": [
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "数据表",
+				"checked": false,
+				"pId": 9905,
+				"id": 990501,
+				"gbkName": "e695b0e68daee8a1a8",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "本地文件",
+				"checked": false,
+				"pId": 9905,
+				"id": 990502,
+				"gbkName": "e69cace59cb0e69687e4bbb6",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "数据库",
+				"checked": false,
+				"pId": 9905,
+				"id": 990503,
+				"gbkName": "e695b0e68daee5ba93",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "申请数据",
+				"checked": false,
+				"pId": 9905,
+				"id": 990504,
+				"gbkName": "e794b3e8afb7e695b0e68dae",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "待审批",
+				"checked": false,
+				"pId": 9905,
+				"id": 990505,
+				"gbkName": "e5be85e5aea1e689b9",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "已审批",
+				"checked": false,
+				"pId": 9905,
+				"id": 990506,
+				"gbkName": "e5b7b2e5aea1e689b9",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "自定义组件",
+				"checked": false,
+				"pId": 9905,
+				"id": 990507,
+				"gbkName": "e887aae5ae9ae4b989e7bb84e4bbb6",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "中间表设置",
+				"checked": false,
+				"pId": 9905,
+				"id": 990508,
+				"gbkName": "e4b8ade997b4e8a1a8e8aebee7bdae",
+				"open": true
+			},
+			{
+				"chkDisabled": false,
+				"isParent": false,
+				"name": "样例库设置",
+				"checked": false,
+				"pId": 9905,
+				"id": 990509,
+				"gbkName": "e6a0b7e4be8be5ba93e8aebee7bdae",
+				"open": true
+			}
+		],
+		"name": "个人中心",
+		"checked": false,
+		"pId": 0,
+		"id": 9905,
+		"gbkName": "e4b8aae4babae4b8ade5bf83",
+		"open": true
+	},
+	{
+		"chkDisabled": false,
+		"isParent": false,
+		"name": "互动",
+		"checked": false,
+		"pId": 0,
+		"id": 9906,
+		"gbkName": "e4ba92e58aa8",
+		"open": true
+	},
+	{
+		"chkDisabled": false,
+		"isParent": false,
+		"name": "平台管理",
+		"checked": false,
+		"pId": 0,
+		"id": 9907,
+		"gbkName": "e5b9b3e58fb0e7aea1e79086",
+		"open": true
+	}
+]

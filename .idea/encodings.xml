@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sugonannotation" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sugoncommon" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sugondao" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sugondata" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sugondomain" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sugonrest" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sugonservice" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sugonweb" charset="UTF-8" />
+  </component>
+</project>

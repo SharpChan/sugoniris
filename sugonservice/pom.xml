@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.sugon.iris.sugoniris</groupId>
+        <artifactId>sugoniris</artifactId>
+        <version>0.0.1</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <groupId>com.sugon.iris.sugonservice</groupId>
+    <artifactId>sugonservice</artifactId>
+    <version>0.0.1</version>
+    <name>sugonservice</name>
+    <packaging>jar</packaging>
+    <description>sugonservice</description>
+    <properties>
+        <java.version>1.8</java.version>
+        <httpclient.version>4.3.4</httpclient.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.sugon.iris.sugondomain</groupId>
+            <artifactId>sugondomain</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sugon.iris.sugoncommon</groupId>
+            <artifactId>sugoncommon</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sugon.iris.sugondata</groupId>
+            <artifactId>sugondata</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sugon.iris.sugonannotation</groupId>
+            <artifactId>sugonannotation</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>fluent-hc</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.3.2</version>
+        </dependency>
+
+        <!--邮箱-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+
+        <plugins>
+            <!--在这里修改版本-->
+            <!--<plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-resources-plugin</artifactId>
+               <version>3.0.0</version>
+           </plugin>-->
+       </plugins>
+   </build>
+
+</project>
