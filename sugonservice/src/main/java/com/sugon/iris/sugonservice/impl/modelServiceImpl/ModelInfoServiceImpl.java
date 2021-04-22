@@ -20,14 +20,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.sugon.iris.sugondomain.dtos.moChuangGongchangDtos.*;
 import org.springframework.util.CollectionUtils;
-
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import static com.sugon.iris.sugoncommon.publicUtils.PublicUtils.trans;
 
 @Service
@@ -249,8 +247,4 @@ public class ModelInfoServiceImpl implements ModelInfoService {
         usersBeanDTO.setPublicUserList(publicUserList);
         modelBeanDTO.setUsersBeanDTO(usersBeanDTO);
     }
-
-
-
-
 }
