@@ -18,43 +18,24 @@
         <java.version>1.8</java.version>
     </properties>
     <dependencies>
-
         <dependency>
-            <groupId>com.sugon.iris.sugondomain</groupId>
-            <artifactId>sugondomain</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sugon.iris.sugonservice</groupId>
-            <artifactId>sugonservice</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sugon.iris.sugoncommon</groupId>
-            <artifactId>sugoncommon</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sugon.iris.sugonannotation</groupId>
-            <artifactId>sugonannotation</artifactId>
+            <groupId>com.sugon.iris.sugonrest</groupId>
+            <artifactId>sugonrest</artifactId>
             <version>0.0.1</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <version>2.4.4</version>
         </dependency>
-
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <!--<exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-tomcat</artifactId>
-                </exclusion>
-            </exclusions>-->
-        </dependency>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>2.4.4</version>
+            <scope>test</scope>
+        </dependency>-->
+
         <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
@@ -70,11 +51,13 @@
         <dependency>
             <groupId>org.springframework.session</groupId>
             <artifactId>spring-session-data-redis</artifactId>
+            <version>2.4.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <version>2.4.4</version>
         </dependency>
     </dependencies>
 

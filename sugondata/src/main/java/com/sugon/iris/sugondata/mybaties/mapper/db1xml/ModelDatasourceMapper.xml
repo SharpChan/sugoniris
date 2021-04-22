@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db1.ModelDatasourceMapper" >
+
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db1.ModelDatasourceEntity" >
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="table_name" property="tableName" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="modelSql" property="modelSql" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="VARCHAR" />
+        <result column="resultId" property="resultId" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="tableName">
+        t_model_datasource
+    </sql>
+
+    <sql id="Base_Column_List" >
+        `id`,`table_name`,`name`,`sql_string` modelSql, `status`,`result_id` resultId
+    </sql>
+
+
+    <select id="getModelDatasourceByModelId" resultMap="BaseResultMap"  >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        <include refid="tableName" />
+        WHERE
+        1=1
+        <if test="modelId!=null and modelId!=''">
+            and model_id = #{modelId}
+        </if >
+    </select>
+</mapper>

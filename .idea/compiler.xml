@@ -2,13 +2,14 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="sugondata" />
-        <module name="sugondomain" />
         <module name="sugonannotation" />
+        <module name="sugondomain" />
+        <module name="sugondata" />
         <module name="sugonweb" />
         <module name="sugonservice" />
         <module name="sugonrest" />
@@ -25,6 +26,7 @@
       <module name="sugonrest" target="1.8" />
       <module name="sugonservice" target="1.8" />
       <module name="sugonweb" target="1.8" />
+      <module name="test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -38,6 +40,7 @@
       <module name="sugonrest" options="-parameters" />
       <module name="sugonservice" options="-parameters" />
       <module name="sugonweb" options="-parameters" />
+      <module name="test" options="-parameters" />
     </option>
   </component>
 </project>

@@ -1,6 +1,6 @@
 package com.sugon.iris.sugondomain.beans.menuBeans;
 
-import com.sugon.iris.sugondomain.entities.menuEntities.MenuEntity;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.menuEntities.MenuEntity;
 import lombok.Data;
 
 

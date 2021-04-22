@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db1.ModelMapper" >
+
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db1.ModelEntity" >
+        <result column="modelId" property="modelId" jdbcType="INTEGER" />
+        <result column="modelName" property="modelName" jdbcType="VARCHAR" />
+        <result column="creator" property="creator" jdbcType="VARCHAR" />
+        <result column="modelType" property="modelType" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <select id="selectModelList" resultMap="BaseResultMap"  >
+        SELECT
+        a.ID modelId ,
+        a.MODEL_NAME modelName,
+       (select b.username creator from t_system_user b where a.CREATE_USER = b.ID),
+       (select max(c.SHARE_TYPE) modelType from t_model_manager_share c where c.MODEL_ID= a.id)
+        FROM  t_model_manager a
+        WHERE
+        1=1
+        <if test="id!=null and id!=''">
+            and a.id = #{id}
+        </if >
+    </select>
+
+    <select id="findOneByUserNameAndModelId" resultMap="BaseResultMap"  >
+        SELECT
+        a.ID modelId ,
+        a.MODEL_NAME modelName,
+        (select b.username creator from t_system_user b where a.CREATE_USER = b.ID),
+        (select IFNULL(max(c.SHARE_TYPE),0) modelType from t_model_manager_share c where c.MODEL_ID= a.id)
+        FROM  t_model_manager a,t_system_user c
+        WHERE
+        1=1
+        AND a.CREATE_USER = c.id
+        <if test="policeNo!=null and policeNo!=''">
+            AND c.USERNAME = #{policeNo}
+        </if>
+        <if test="ModelId!=null and ModelId!=''">
+            AND a.id = #{ModelId}
+        </if >
+    </select>
+
+    <select id="findPrivateByUserNameAndModelId" resultMap="BaseResultMap"  >
+        SELECT
+        a.ID modelId ,
+        a.MODEL_NAME modelName,
+        (select b.username creator from t_system_user b where a.CREATE_USER = b.ID),
+        (select IFNULL(max(c.SHARE_TYPE),0) modelType from t_model_manager_share c where c.MODEL_ID= a.id)
+        FROM  t_model_manager a,t_system_user c
+        WHERE
+        1=1
+        AND a.CREATE_USER = c.id
+        <if test="policeNo!=null and policeNo!=''">
+            AND c.USERNAME = #{policeNo}
+        </if>
+    </select>
+
+
+    <select id="findBublicByUserNameAndModelId" resultMap="BaseResultMap"  >
+        select
+        (select c.ID  from t_model_manager c where c.ID= a.MODEL_ID) modelId,
+        (select c.MODEL_NAME  from t_model_manager c where c.ID= a.MODEL_ID) modelName ,
+        b.USERNAME creator,
+        a.SHARE_TYPE modelType
+        from t_model_manager_share a , t_system_user b
+        where
+        (a.SHARE_TYPE = 0 or a.SHARE_TO = b.ID)
+        <if test="policeNo!=null and policeNo!=''">
+            AND b.USERNAME = #{policeNo}
+        </if>
+    </select>
+
+
+</mapper>

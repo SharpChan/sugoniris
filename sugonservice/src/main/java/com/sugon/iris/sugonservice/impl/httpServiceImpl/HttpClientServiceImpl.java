@@ -50,8 +50,8 @@ public class HttpClientServiceImpl implements HttpClientService {
      * 日期：2020.06.03
      * 描述：进行模拟登录，并获取登录后的cookie
      */
-    public List<Cookie> login(String jmHost) throws IOException {
-        String url = jmHost+bashUrl+LOGINBEFORE_URL;
+    public List<Cookie> login() throws IOException {
+        String url = jmhost+bashUrl+LOGINBEFORE_URL;
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("accountno",userName);
         paramMap.put("identity","1");
@@ -59,7 +59,7 @@ public class HttpClientServiceImpl implements HttpClientService {
         List<Cookie> cookie01 =new ArrayList<Cookie>();
         String  str = post(url,paramMap,cookie01);
 
-        String url2 = jmHost+bashUrl+LOGINFORJM_URL;
+        String url2 = jmhost+bashUrl+LOGINFORJM_URL;
         Map<String, Object> paramMap2 = new HashMap<>();
         paramMap2.put("accountno",userName);
         paramMap2.put("password",password);

@@ -13,7 +13,7 @@
     <version>0.0.1</version>
     <name>sugonannotation</name>
     <packaging>jar</packaging>
-    <description>Demo project for Spring Boot</description>
+    <description>自定义注解</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>

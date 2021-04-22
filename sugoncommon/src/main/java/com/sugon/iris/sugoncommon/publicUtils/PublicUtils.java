@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * dto和entity的属性定义一样的名称，用反射进行互转
  */
-public class PublicUtils {
-    public static <T,K> void trans(T tin,K tout) throws IllegalAccessException {
+public  class PublicUtils {
+    public static <T,K> K trans(T tin,K tout) throws IllegalAccessException {
         Field[] userFieldsOut = getAllFields(tout);
         Field[] userFieldsIn = getAllFields(tin);
         for(Field fieldOut : userFieldsOut){
@@ -30,6 +30,7 @@ public class PublicUtils {
               }
            }
         }
+        return tout;
     }
 
     private static Field[] getAllFields(Object object){

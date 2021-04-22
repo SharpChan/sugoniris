@@ -1,0 +1,22 @@
+spring:
+  mail:
+    host: smtp.qq.com
+    port: 465
+    default-encoding: utf-8
+    username: 869294021@qq.com
+    password: kbmgophjdqnmbeae
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+            required: true
+          timeout: 10000
+          connectiontimeout: 10000
+          writetimeout: 10000
+
+sdm:
+  jmhost: http://50.73.68.60:8668
+  bashUrl: /sdm-web
+  username: Sysadmin
+  password: 1bbd886460827015e5d605ed44252251

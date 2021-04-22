@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface HttpClientService {
 
-    List<Cookie> login(String jmHost) throws IOException;
+    List<Cookie> login() throws IOException;
 
     String post(String url, Map<String, Object> paramMap,List<Cookie> cookies) throws ClientProtocolException, IOException;
 

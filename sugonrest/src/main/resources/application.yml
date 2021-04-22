@@ -1,1 +1,4 @@
-
+spring:
+  profiles:
+    #active: restprd,anno,common,dataprd,domain,serviceprd
+     active: rest,anno,common,data,domain,service

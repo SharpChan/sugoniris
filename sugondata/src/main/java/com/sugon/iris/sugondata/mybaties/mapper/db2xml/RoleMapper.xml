@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.RoleMapper" >
 
-    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.db2.Role" >
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RoleEntity" >
         <id column="id" property="id" jdbcType="BIGINT" />
         <result column="name" property="name" jdbcType="VARCHAR" />
     </resultMap>
@@ -19,7 +19,7 @@
     </select>
 
 
-    <insert id="saveRole" parameterType="com.sugon.iris.sugondomain.entities.db2.Role">
+    <insert id="saveRole" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RoleEntity">
         INSERT INTO `role`
            (id, `name`)
         VALUES

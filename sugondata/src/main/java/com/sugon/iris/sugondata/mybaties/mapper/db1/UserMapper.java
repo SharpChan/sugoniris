@@ -2,14 +2,14 @@ package com.sugon.iris.sugondata.mybaties.mapper.db1;
 
 
 
-import com.sugon.iris.sugondomain.entities.db1.User;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db1.UserEntity;
 
 import java.util.List;
 
 public interface UserMapper {
 
-    List<User> selectUserList();
+    List<UserEntity> selectUserList();
 
-    void saveUser(User user);
+    void saveUser(UserEntity user);
 
 }

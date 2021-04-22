@@ -13,7 +13,7 @@
     <version>0.0.1</version>
     <name>sugondata</name>
     <packaging>jar</packaging>
-    <description>Demo project for Spring Boot</description>
+    <description>集成了jpa和mybaties作为dao层</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -31,16 +31,12 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
-            <version>1.1.23</version>
+            <version>1.2.6</version>
         </dependency>
         <dependency>
             <groupId>com.github.pagehelper</groupId>
@@ -66,5 +62,19 @@
                 <version>2.4.3</version>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resource</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 </project>
