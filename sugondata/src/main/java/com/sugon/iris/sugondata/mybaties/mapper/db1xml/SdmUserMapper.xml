@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db1.SdmUserMapper" >
+
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db1.JmUserEntity" >
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="policeNo" property="policeNo" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <select id="selectAllUserList" resultMap="BaseResultMap"  >
+        SELECT
+        b.id,b.USERNAME policeNo
+        FROM
+            t_system_user b
+    </select>
+</mapper>

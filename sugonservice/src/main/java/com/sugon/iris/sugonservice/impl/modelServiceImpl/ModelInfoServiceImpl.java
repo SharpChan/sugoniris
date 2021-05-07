@@ -1,16 +1,19 @@
+/**
+ * 作者：SharpChan
+ * 创建日期2021.04.02
+ * 修改日志：
+ */
 package com.sugon.iris.sugonservice.impl.modelServiceImpl;
 
 import com.alibaba.fastjson.JSON;
-import com.sugon.iris.sugondata.mybaties.mapper.db1.ModelDatasourceFieldMapper;
-import com.sugon.iris.sugondata.mybaties.mapper.db1.ModelDatasourceMapper;
-import com.sugon.iris.sugondata.mybaties.mapper.db1.ModelManagerShareMapper;
-import com.sugon.iris.sugondata.mybaties.mapper.db1.ModelMapper;
+import com.sugon.iris.sugondata.mybaties.mapper.db1.*;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.dtos.sdmModelInfosDtos.ModelBeanDTO;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db1.JmUserEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db1.ModelDatasourceEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db1.ModelEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db1.ResultColumnEntity;
+import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.httpClientService.HttpClientService;
 import com.sugon.iris.sugonservice.service.modelService.ModelInfoService;
 import com.sugon.iris.sugondomain.dtos.sdmModelInfosDtos.*;
@@ -34,6 +37,9 @@ public class ModelInfoServiceImpl implements ModelInfoService {
     private ModelMapper modelMapper;
 
     @Resource
+    private SdmUserMapper sdmUserMapper;
+
+    @Resource
     private ModelDatasourceMapper modelDatasourceMapper;
 
     @Resource
@@ -51,6 +57,40 @@ public class ModelInfoServiceImpl implements ModelInfoService {
     @Value("${sdm.bashUrl}")
     private String bashUrl;
 
+    private static final String ZERO="0";
+
+    private static final String ONE="1";
+
+    private static final String  EXECUTEBYMODELID = "/vmp/model/executeByModelId.do";
+
+    private static final String MESSAGE_01 = "[t_model_manager]";
+
+    private static final String MESSAGE_02 = "[通过警号和模型Id查询模型信息失败]";
+
+    private static final String MESSAGE_03 = "[通过警号查询私有模型信息失败]";
+
+    private static final String MESSAGE_04 ="[通过警号查询公有模型信息失败]";
+
+    private static final String MESSAGE_05 = "[查询表字段出错]";
+
+    private static final String MESSAGE_06 = "[模型正在执行，请稍后]";
+
+    private static final String MESSAGE_07 =  "[模型执行失败]";
+
+    private static final String MESSAGE_08 = "[查询表t_model_datasource出错]";
+
+    private static final String MESSAGE_09 = "[查询创建者出错]";
+
+    private static final String MESSAGE_10 = "[查询私有所有者出错]";
+
+    private static final String MESSAGE_11 = "[查询共享者出错]";
+
+    /**
+     * 描述：获取所有的模型信息
+     * @param errorList：错误列表
+     * @return
+     * @throws IllegalAccessException
+     */
     @Override
     public List<ModelBeanDTO> getAllModelInfos(List<Error> errorList) throws IllegalAccessException{
         List<ModelBeanDTO> ModelBeanDTOList = new ArrayList<>();
@@ -58,7 +98,7 @@ public class ModelInfoServiceImpl implements ModelInfoService {
         try {
             modelEntityList = modelMapper.selectModelList();
         }catch (Exception e){
-            Error error = new Error("sys-db-001","查询表t_model_manager出错",e.toString());
+            Error error = new Error(ErrorCode_Enum.SYS_DB_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage()+MESSAGE_01,e.toString());
             errorList.add(error);
         }
         for(ModelEntity modelEntity : modelEntityList){
@@ -72,6 +112,14 @@ public class ModelInfoServiceImpl implements ModelInfoService {
         return ModelBeanDTOList;
     }
 
+    /**
+     * 描述：通过警号和模型id获取模型信息
+     * @param policeNo：警号
+     * @param ModelId：模型id
+     * @param errorList：错误列表
+     * @return
+     * @throws IllegalAccessException
+     */
     @Override
     public ModelBeanDTO getModelInfosByUserNameAndModelId(String policeNo, String ModelId, List<Error> errorList) throws IllegalAccessException {
         ModelBeanDTO modelBeanDTO = new ModelBeanDTO();
@@ -80,12 +128,19 @@ public class ModelInfoServiceImpl implements ModelInfoService {
             modelEntity = modelMapper.findOneByUserNameAndModelId(policeNo, ModelId);
         }catch (Exception e){
             e.printStackTrace();
-            errorList.add(new Error("sys-db-001","通过警号和模型Id查询模型信息失败",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage()+MESSAGE_02,e.toString()));
         }
         setModelDetailInfo(errorList, modelEntity, modelBeanDTO);
         return modelBeanDTO;
     }
 
+    /**
+     * 描述：通过警号获取私有的模型信息
+     * @param policeNo：警号
+     * @param errorList：错误列表
+     * @return
+     * @throws IllegalAccessException
+     */
     @Override
     public List<ModelBeanDTO> getPrivateModelInfosByUserName(String policeNo, List<Error> errorList) throws IllegalAccessException {
         List<ModelBeanDTO> modelBeanDTOList = new ArrayList<>();
@@ -94,7 +149,7 @@ public class ModelInfoServiceImpl implements ModelInfoService {
             modelEntityList = modelMapper.findPrivateByUserNameAndModelId(policeNo);
         }catch (Exception e){
             e.printStackTrace();
-            errorList.add(new Error("sys-db-001","通过警号查询模型信息失败",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage()+MESSAGE_03,e.toString()));
         }
 
        for(ModelEntity modelEntity : modelEntityList){
@@ -105,6 +160,13 @@ public class ModelInfoServiceImpl implements ModelInfoService {
         return modelBeanDTOList;
     }
 
+    /**
+     * 描述：通过警号获取公共的模型信息
+     * @param policeNo：警号
+     * @param errorList：错误列表
+     * @return
+     * @throws IllegalAccessException
+     */
     @Override
     public List<ModelBeanDTO> getPublicModelInfosByUserName(String policeNo, List<Error> errorList) throws IllegalAccessException {
         List<ModelBeanDTO> modelBeanDTOList = new ArrayList<>();
@@ -113,7 +175,7 @@ public class ModelInfoServiceImpl implements ModelInfoService {
             modelEntityList = modelMapper.findBublicByUserNameAndModelId(policeNo);
         }catch (Exception e){
             e.printStackTrace();
-            errorList.add(new Error("sys-db-001","通过警号查询模型信息失败",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage()+MESSAGE_04,e.toString()));
         }
 
         for(ModelEntity modelEntity : modelEntityList){
@@ -127,13 +189,20 @@ public class ModelInfoServiceImpl implements ModelInfoService {
         return modelBeanDTOList;
     }
 
+    /**
+     * 描述：通过表编号获取表字段
+     * @param tableId：表编号
+     * @param errorList：错误列表
+     * @return
+     * @throws IllegalAccessException
+     */
     @Override
     public List<ResultColumnBeanDTO> getTableColumnByTableId(String tableId,List<Error> errorList) throws IllegalAccessException{
         List<ResultColumnEntity> resultColumnEntityList = null;
         try {
             resultColumnEntityList = modelDatasourceFieldMapper.getTableAliasByTableId(tableId);
         }catch (Exception e){
-            errorList.add(new Error("sys-db-001","查询表字段出错",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage()+MESSAGE_05,e.toString()));
         }
         List<ResultColumnBeanDTO> resultColumnBeanDTOList = new ArrayList<>();
         for(ResultColumnEntity resultColumnEntity : resultColumnEntityList) {
@@ -142,8 +211,16 @@ public class ModelInfoServiceImpl implements ModelInfoService {
         return resultColumnBeanDTOList;
     }
 
+    /**
+     * 描述：通过模型ID执行模型
+     * @param modelId：模型编号
+     * @param errorList：错误列表
+     * @return
+     * @throws IOException
+     * @throws IllegalAccessException
+     */
     @Override
-    public Integer modelRun(String modelId,List<Error> errorList) throws IOException,IllegalAccessException {
+    public String modelRun(String modelId,List<Error> errorList) throws IOException,IllegalAccessException {
         //进行模拟登陆
         List<Cookie>  cookies = httpClientServiceImpl.login();
 
@@ -151,30 +228,37 @@ public class ModelInfoServiceImpl implements ModelInfoService {
         ModelBeanDTO modelBeanDTO = getModelInfosByUserNameAndModelId(null,modelId,errorList);
         if(!CollectionUtils.isEmpty(modelBeanDTO.getModelDatasourceBeanDTOList())) {
             for (ModelDatasourceBeanDTO modelDatasourceBeanDTO : modelBeanDTO.getModelDatasourceBeanDTOList()) {
-                  if("1".equals(modelDatasourceBeanDTO.getStatus())){
-                      errorList.add(new Error("sugon-00-001","模型正在执行，请稍后",String.valueOf(modelDatasourceBeanDTO.getId()) ));
+                  if(ONE.equals(modelDatasourceBeanDTO.getStatus())){
+                      errorList.add(new Error(ErrorCode_Enum.SYS_SUGON_001.getCode(),ErrorCode_Enum.SUGON_00_001.getMessage()+MESSAGE_06,String.valueOf(modelDatasourceBeanDTO.getId()) ));
                   }
             }
             if(!CollectionUtils.isEmpty(errorList)){
-                return 0;
+                return ZERO;
             }
         }
 
-        String url = jmhost+bashUrl+"/vmp/model/executeByModelId.do";
+        String url = jmhost+bashUrl+EXECUTEBYMODELID;
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("modelId",modelId);
 
         String response =  httpClientServiceImpl.post(url,paramMap,cookies);
         Map maps = (Map) JSON.parse(response);
         if((boolean)maps.get("result")){
-            return 1;
+            return ONE;
         }
         else{
-            errorList.add(new Error("sugon-00-001","模型执行失败",""));
-            return 0;
+            errorList.add(new Error(ErrorCode_Enum.SYS_SUGON_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage()+MESSAGE_07,""));
+            return ZERO;
         }
     }
 
+    /**
+     * 描述：把modelEntity转换为ModelBeanDTO，并且查询出表字段信息、创建者信息、私有者信息、公共所有者信息
+     * @param errorList：错误列表
+     * @param modelEntity：实体对象
+     * @param modelBeanDTO：DTO对象
+     * @throws IllegalAccessException
+     */
     private void setModelDetailInfo(List<Error> errorList, ModelEntity modelEntity, ModelBeanDTO modelBeanDTO) throws IllegalAccessException {
         trans(modelEntity,modelBeanDTO);
         List<ModelDatasourceBeanDTO> modelDatasourceBeanDTOList = new ArrayList<>();
@@ -182,7 +266,7 @@ public class ModelInfoServiceImpl implements ModelInfoService {
         try {
             modelDatasourceEntityList = modelDatasourceMapper.getModelDatasourceByModelId(modelEntity.getModelId());
         }catch (Exception e){
-            Error error = new Error("sys-db-001","查询表t_model_datasource出错",e.toString());
+            Error error = new Error(ErrorCode_Enum.SYS_DB_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage()+MESSAGE_08,e.toString());
             errorList.add(error);
         }
         for(ModelDatasourceEntity modelDatasourceEntity : modelDatasourceEntityList){
@@ -194,7 +278,7 @@ public class ModelInfoServiceImpl implements ModelInfoService {
             try {
                 ResultColumnEntityList = modelDatasourceFieldMapper.getTableAliasByTableId(String.valueOf(modelDatasourceBeanDTO.getId()) );
             }catch (Exception e){
-                errorList.add(new Error("sys-db-001","查询表字段出错",e.toString()));
+                errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage()+MESSAGE_05,e.toString()));
             }
             List<ResultColumnBeanDTO>  resultColumnBeanDTOList = new ArrayList<>();
             for(ResultColumnEntity resultColumnEntity : ResultColumnEntityList){
@@ -216,20 +300,25 @@ public class ModelInfoServiceImpl implements ModelInfoService {
         try {
             createUser = modelManagerShareMapper.findCreateUser(modelBeanDTO.getModelId());
         }catch (Exception e){
-            errorList.add(new Error("sys-db-001","查询创建者出错",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage()+MESSAGE_09,e.toString()));
         }
         JmUserEntity privateUser = null;
         try {
              privateUser = modelManagerShareMapper.findPrivateUser(modelBeanDTO.getModelId());
         }catch (Exception e){
-            errorList.add(new Error("sys-db-001","查询私有所有者出错",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage()+MESSAGE_10,e.toString()));
         }
         List<JmUserEntity> publicUserEntityList = null;
-        //如果
+        //如果modelType是0则全部共享 是1指定共享
         try {
-            publicUserEntityList = modelManagerShareMapper.findPublicUserList(modelBeanDTO.getModelId());
-        }catch (Exception e){
-            errorList.add(new Error("sys-db-001","查询共享者出错",e.toString()));
+        if(ZERO.equals(modelBeanDTO.getModelType())){
+            publicUserEntityList =sdmUserMapper.selectAllUserList();
+        }else if(ONE.equals(modelBeanDTO.getModelType())) {
+
+                publicUserEntityList = modelManagerShareMapper.findPublicUserList(modelBeanDTO.getModelId());
+            }
+        }catch (Exception e) {
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(), ErrorCode_Enum.SYS_DB_001.getMessage()+MESSAGE_11, e.toString()));
         }
         if(null != createUser) {
            usersBeanDTO.setCreateUser(trans(createUser, new JmUserBeanDTO()));

@@ -23,5 +23,5 @@ public interface ModelInfoService {
 
     List<ResultColumnBeanDTO> getTableColumnByTableId(String tableId,List<Error> errorList) throws IllegalAccessException;
 
-    Integer modelRun(String modelId,List<Error> errorList) throws IOException, IllegalAccessException;
+    String modelRun(String modelId,List<Error> errorList) throws IOException, IllegalAccessException;
 }

@@ -1,5 +1,5 @@
 spring:
-  #jpa
+
   datasource:
     ds1: #数据源1 jdbcTemplate
       driver-class-name: com.mysql.cj.jdbc.Driver # mysql的驱动你可以配置别的关系型数据库
@@ -10,6 +10,8 @@ spring:
   jackson:
      date-format: yyyy-MM-dd HH:mm:ss
      time-zone: GMT+8
+
+
 
 #mybatis
 datasource:
