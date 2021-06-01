@@ -1,4 +1,6 @@
 spring:
   profiles:
+    #生产环境
     #active: restprd,anno,common,dataprd,domain,serviceprd
-     active: rest,anno,common,data,domain,service
+    #测试环境
+    active: rest,anno,common,data,domain,service
