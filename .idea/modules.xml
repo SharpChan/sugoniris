@@ -6,7 +6,9 @@
       <module fileurl="file://$PROJECT_DIR$/sugoncommon/sugoncommon.iml" filepath="$PROJECT_DIR$/sugoncommon/sugoncommon.iml" />
       <module fileurl="file://$PROJECT_DIR$/sugondata/sugondata.iml" filepath="$PROJECT_DIR$/sugondata/sugondata.iml" />
       <module fileurl="file://$PROJECT_DIR$/sugondomain/sugondomain.iml" filepath="$PROJECT_DIR$/sugondomain/sugondomain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sugonfilerest/sugonfilerest.iml" filepath="$PROJECT_DIR$/sugonfilerest/sugonfilerest.iml" />
       <module fileurl="file://$PROJECT_DIR$/sugoniris.iml" filepath="$PROJECT_DIR$/sugoniris.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sugonlistener/sugonlistener.iml" filepath="$PROJECT_DIR$/sugonlistener/sugonlistener.iml" />
       <module fileurl="file://$PROJECT_DIR$/sugonrest/sugonrest.iml" filepath="$PROJECT_DIR$/sugonrest/sugonrest.iml" />
       <module fileurl="file://$PROJECT_DIR$/sugonservice/sugonservice.iml" filepath="$PROJECT_DIR$/sugonservice/sugonservice.iml" />
       <module fileurl="file://$PROJECT_DIR$/sugonweb/sugonweb.iml" filepath="$PROJECT_DIR$/sugonweb/sugonweb.iml" />

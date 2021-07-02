@@ -1,0 +1,9 @@
+spring:
+  redis:
+    database: 0
+    host: 192.168.217.142
+    password: root
+    port: 6379
+
+server:
+  port: 8092

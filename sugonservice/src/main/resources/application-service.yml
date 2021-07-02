@@ -20,3 +20,8 @@ sdm:
   bashUrl: /sdm-web
   username: Sysadmin
   password: 1bbd886460827015e5d605ed44252251
+
+linux_nginx:
+  userName: root
+  password: Huawei12
+  ipAddress: 192.168.217.135

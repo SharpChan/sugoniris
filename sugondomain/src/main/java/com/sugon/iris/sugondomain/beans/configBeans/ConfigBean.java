@@ -17,7 +17,7 @@ public class ConfigBean {
     //对应的值
     private String cfg_value;
 
-    //创建时间呢
+    //创建时间
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date createTime = new Date();
 

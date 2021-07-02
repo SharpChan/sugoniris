@@ -2,12 +2,14 @@ package com.sugon.iris.sugonweb.system;
 
 
 import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
+import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugoncommon.redisUtils.RedisUtil;
 import com.sugon.iris.sugoncommon.session.MySessionContext;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.userBeans.User;
 import com.sugon.iris.sugondomain.dtos.userDtos.UserDto;
+import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.emailService.EmailService;
 import com.sugon.iris.sugonservice.service.userInfoService.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,6 @@ import org.springframework.session.Session;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -95,7 +96,9 @@ public class AccountResource {
         request.getSession().invalidate();
     }
 
+    /*
     @PostMapping("/account/restPassword")
+    @LogInCheck(doLock = true,doProcess = true)
     public void restPassword(@RequestParam(value = "email") String email, HttpServletResponse response) throws IOException, IllegalAccessException {
 
         Random rd = new Random();
@@ -145,9 +148,10 @@ public class AccountResource {
         emailServiceImpl.sendMail(email,"密码",password);
         String[] strs = email.split("@");
         response.sendRedirect("http://"+strs[1]);
-    }
+    }*/
 
     @PostMapping("/account/lock")
+    @LogInCheck(doLock = true,doProcess = true)
     @ResponseStatus(HttpStatus.CREATED)
     public RestResult<Void> lock(@CurrentUser User user, HttpSession session){
         RestResult<Void> restResult = new RestResult<Void>();
@@ -157,23 +161,88 @@ public class AccountResource {
     }
 
     @PostMapping("/account/unlock")
+    @LogInCheck(doLock = false,doProcess = true)
     @ResponseStatus(HttpStatus.CREATED)
-    public RestResult<Void> unlock(@RequestParam(value = "password") String password, @CurrentUser User user, HttpSession session) throws IllegalAccessException {
-        RestResult<Void> restResult = new RestResult<Void>();
+    public RestResult<Integer> unlock(@RequestParam(value = "password") String password, @CurrentUser User user, HttpSession session) throws IllegalAccessException {
+        RestResult<Integer> restResult = new RestResult<Integer>();
         List<Error> errorList = new ArrayList<>();
         UserDto userDto = new UserDto();
         PublicUtils.trans(user,userDto);
         User userentity  = accountServiceImpl.getUserInfo(userDto, errorList);
-        if(null != userentity){
+        if(null != userentity && userentity.getPassword().equals(password)){
             user.setLocked(false);
             session.setAttribute("user",user);
+        }else{
+            errorList.add(new Error(ErrorCode_Enum.IRIS_00_003.getCode(),ErrorCode_Enum.IRIS_00_003.getMessage()));
         }
         if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setObj(1);
             restResult.setFlag(FAILED);
             restResult.setMessage("解锁失败！");
             restResult.setErrorList(errorList);
         }else{
+            restResult.setObj(0);
             restResult.setMessage("解锁成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/account/userCheck")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> userCheck(@RequestParam(value = "id") long  id,@RequestParam(value = "flag") int flag){
+        RestResult<Integer> restResult = new RestResult<Integer>();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(accountServiceImpl.alterUserStatus(id,flag,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("审核失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("审核成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/account/getUsers")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<List<User>> getUsers(@CurrentUser User user,@RequestParam(value = "flag") int flag,@RequestParam(value = "keyWord") String keyWord){
+        RestResult<List<User>> restResult = new RestResult<List<User>>();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(accountServiceImpl.getUserInfoCheck(keyWord,flag,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("获取用户列表失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("获取用户列表成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/account/deleteUser")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> getUsers(@RequestParam(value = "id") long id){
+        RestResult<Integer> restResult = new RestResult<Integer>();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(accountServiceImpl.deleteUser(id,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("删除用户失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("删除用户成功");
         }
         return restResult;
     }

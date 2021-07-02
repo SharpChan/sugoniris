@@ -1,0 +1,80 @@
+
+<div ng-controller="userGroupUsersController"  class="form-inline">
+    <div style="margin-left:5px;" class="input-group panel">
+         <div class="panel-heading  topnavbar">
+            <strong style="color: #FFF">未加入该用户组用户列表</strong>
+            <div id="button1"  style="float:right;padding-right:4px;z-index: 99999">
+               <input type="button" value="批量添加" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="addToUserGroupBatch();" >
+            </div>
+         </div>
+
+
+         <div class="panel-body">
+            <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+               <thead>
+               <tr>
+                  <th><input type="checkbox" ng-model="checked_01" ng-change="selectAll_01(checked_01)" />选择</th>
+                  <th>序号</th>
+                  <th>姓名</th>
+                  <th>身份证</th>
+                  <th>加入</th>
+               </tr>
+               </thead>
+               <tbody>
+               <tr ng-repeat="item_01 in users_01">
+                  <td align="left">
+                     <input type="checkbox" ng-model="item_01.checked" ng-change="selectOne_01(item_01)" />
+                  </td>
+                  <td align="left">{{item_01.no}}</td>
+                  <td align="left" style="width: 60px">{{item_01.userName}}</td>
+                  <td align="left" style="width: 60px">{{item_01.idCard}}</td>
+                  <td align="left">
+                     <button type="button" ng-click="addUserToUserGroup(item_01.id)" class="btn btn-sm btn-danger">
+                        <em class="fa fa-plus"></em>
+                     </button>
+                  </td>
+               </tr>
+               </tbody>
+            </table>
+         </div>
+     </div>
+
+   <div style="margin-left:5px;" class="input-group panel">
+      <div class="panel-heading  topnavbar">
+         <strong style="color: #FFF">该用户组用户列表</strong>
+         <div id="button2"  style="float:right;padding-right:4px;z-index: 99999">
+            <input type="button" value="批量删除" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="deleteUserFromUserGroupBatch();" >
+         </div>
+      </div>
+
+
+      <div class="panel-body">
+         <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+            <thead>
+            <tr>
+               <th><input type="checkbox" ng-model="checked_02" ng-change="selectAll_02(checked_02)" />选择</th>
+               <th>序号</th>
+               <th>姓名</th>
+               <th>身份证</th>
+               <th>删除</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item_02 in users_02">
+               <td align="left">
+                  <input type="checkbox" ng-model="item_02.checked" ng-change="selectOne_02(item_02)" />
+               </td>
+               <td align="left">{{item_02.no}}</td>
+               <td align="left" style="width: 60px">{{item_02.userName}}</td>
+               <td align="left" style="width: 60px">{{item_02.idCard}}</td>
+               <td align="left">
+                  <button type="button" ng-click="deleteUserGroup(item_02.id)" class="btn btn-sm btn-danger">
+                     <em class="fa fa-minus"></em>
+                  </button>
+               </td>
+            </tr>
+            </tbody>
+         </table>
+      </div>
+   </div>
+</div>

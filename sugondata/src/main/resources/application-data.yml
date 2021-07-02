@@ -11,10 +11,10 @@ spring:
      date-format: yyyy-MM-dd HH:mm:ss
      time-zone: GMT+8
 
-
 #mybatis
 datasource:
   druid:
+    #连接建模平台
     db1:
       driverClassName: com.mysql.cj.jdbc.Driver
       username: root
@@ -30,6 +30,7 @@ datasource:
       testOnReturn: false
       maxWait: 6000
       filters: stat,slf4j #wall,
+    #连接本地数据库
     db2:
       driverClassName: com.mysql.jdbc.Driver
       username: root
@@ -40,6 +41,39 @@ datasource:
       minIdle: 2
       maxActive: 5
       validationQuery: SELECT 1 from dual
+      testWhileIdle: true
+      testOnBorrow: true
+      testOnReturn: false
+      maxWait: 6000
+      filters: stat,slf4j #wall,
+
+    #备用
+    db3:
+      driverClassName: com.mysql.jdbc.Driver
+      username: root
+      password: root
+      jdbc-url: jdbc:mysql://192.168.217.140:3306/dzzoffice?useUnicode=true&characterEncoding=utf8
+      type: com.alibaba.druid.pool.DruidDataSource
+      initialSize: 2
+      minIdle: 2
+      maxActive: 5
+      validationQuery: SELECT 1 from dual
+      testWhileIdle: true
+      testOnBorrow: true
+      testOnReturn: false
+      maxWait: 6000
+      filters: stat,slf4j #wall,
+    #连接华为mpp
+    db4:
+      driverClassName: org.postgresql.Driver
+      username: postgres
+      password: 123456
+      jdbc-url: jdbc:postgresql://192.168.217.140:5432/iris?useUnicode=true&characterEncoding=utf-8
+      type: com.alibaba.druid.pool.DruidDataSource
+      initialSize: 2
+      minIdle: 2
+      maxActive: 5
+      validationQuery: SELECT 1 as a
       testWhileIdle: true
       testOnBorrow: true
       testOnReturn: false

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.FileDetailMapper" >
+
+    <!--结果集-->
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="file_attachment_id" property="fileAttachmentId" jdbcType="BIGINT" />
+        <result column="file_type" property="fileType" jdbcType="VARCHAR" />
+        <result column="file_name" property="fileName" jdbcType="BIGINT" />
+        <result column="file_path" property="filePath" jdbcType="VARCHAR" />
+        <result column="file_template_id" property="fileTemplateId" jdbcType="VARCHAR" />
+        <result column="row_count" property="rowCount" jdbcType="BIGINT" />
+        <result column="import_row_count" property="importRowCount" jdbcType="BIGINT" />
+        <result column="case_id" property="caseId" jdbcType="VARCHAR" />
+        <result column="table_name" property="tableName" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="has_import" property="hasImport" jdbcType="TINYINT" />
+    </resultMap>
+
+    <!--基础字段-->
+    <sql id="Base_Column_List" >
+        id,file_attachment_id,file_type,file_name,file_path,file_template_id,row_count,import_row_count,case_id,table_name,user_id,create_time,update_time,has_import
+    </sql>
+
+    <!--表查询-->
+    <select id="selectFileDetailList" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity" resultMap="BaseResultMap"  >
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+        file_detail
+        where
+        1=1
+        <if test="id!=null">
+            and id = #{id}
+        </if >
+        <if test="fileAttachmentId!=null">
+            and file_attachment_id = #{fileAttachmentId}
+        </if >
+        <if test="fileType!=null and fileType != ''">
+            and file_type =  #{fileType}
+        </if >
+        <if test="fileName!=null and fileName != ''">
+            and file_name =  #{fileName}
+        </if >
+        <if test="fileTemplateId!=null and fileTemplateId != ''">
+            and file_template_id =  #{fileTemplateId}
+        </if >
+        <if test="caseId!=null and caseId != ''">
+            and case_id =  #{caseId}
+        </if >
+        <if test="tableName!=null and tableName != ''">
+            and table_name =  #{tableName}
+        </if >
+        <if test="userId!=null">
+            and user_id = #{userId}
+        </if >
+        <if test="hasImport!=null">
+            and has_import = #{hasImport}
+        </if >
+    </select>
+
+    <!--查询mpp表名-->
+    <select id="selectTableName" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity" resultType="java.lang.String"  >
+        SELECT
+        DISTINCT   table_name
+        FROM
+        file_detail
+        where
+        1=1
+        <if test="fileTemplateId!=null and fileTemplateId != ''">
+            and file_template_id =  #{fileTemplateId}
+        </if >
+        <if test="caseId!=null and caseId != ''">
+            and case_id =  #{caseId}
+        </if >
+        <if test="userId!=null">
+            and user_id = #{userId}
+        </if >
+    </select>
+
+
+
+    <!--批量插入-->
+    <insert id="fileDetailInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into file_detail
+        (<include refid="Base_Column_List" />)
+        values
+          <foreach collection="fileDetailEntityList" item="item" index="i" separator=",">
+             (
+             #{item.id,jdbcType=INTEGER},
+             #{item.fileAttachmentId,jdbcType=INTEGER},
+             #{item.fileType,jdbcType=VARCHAR},
+             #{item.fileName,jdbcType=VARCHAR},
+             #{item.filePath,jdbcType=VARCHAR},
+             #{item.fileTemplateId,jdbcType=INTEGER},
+             #{item.rowCount,jdbcType=INTEGER},
+             #{item.importRowCount,jdbcType=INTEGER},
+             #{item.caseId,jdbcType=VARCHAR},
+             #{item.tableName,jdbcType=VARCHAR},
+             #{item.userId,jdbcType=INTEGER},
+             #{item.createTime,jdbcType=TIMESTAMP},
+             #{item.updateTime,jdbcType=TIMESTAMP},
+             #{item.hasImport,jdbcType=TINYINT}
+             )
+          </foreach>
+    </insert>
+
+    <!--删除-->
+    <delete id="deleteFileDetailById">
+            DELETE
+            FROM
+               file_detail
+            <where>
+                id in (
+                <foreach collection="idArr" item="item" index="i" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </where>
+    </delete>
+
+    <delete id="deleteFileDetailByFileAttachmentId">
+        DELETE
+        FROM
+        file_detail
+        <where>
+            file_attachment_id = #{fileAttachmentId}
+        </where>
+    </delete>
+</mapper>

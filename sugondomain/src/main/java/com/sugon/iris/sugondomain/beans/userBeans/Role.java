@@ -1,8 +1,11 @@
 package com.sugon.iris.sugondomain.beans.userBeans;
 
 import lombok.Data;
+
+import java.io.Serializable;
+
 @Data
-public class Role {
+public class Role implements Serializable {
 
     private Long id;
 

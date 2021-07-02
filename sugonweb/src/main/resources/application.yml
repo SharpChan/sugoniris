@@ -1,3 +1,6 @@
 spring:
   profiles:
+    #dev
     active: anno,common,data,domain,service,rest4web,web
+    #prd
+    #active: annoWebPrd,commonWebPrd,dataWebPrd,domainWebPrd,serviceWebPrd,restWebPrd,webPrd

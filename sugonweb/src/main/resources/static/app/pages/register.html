@@ -10,18 +10,31 @@
          <p class="text-center pv">注册账号</p>
          <form role="form" name="registerForm" novalidate="" ng-submit="register()" class="form-validate mb-lg">
             <div class="form-group has-feedback">
-               <label class="text-muted">邮箱地址</label>
-               <input type="email" name="account_email" placeholder="Enter email" autocomplete="off" ng-model="account.email" required="" class="form-control" />
+               <label class="text-muted">用户名</label>
+               <!--<input type="email" name="account_email" placeholder="Enter email" autocomplete="off" ng-model="account.email" required="" class="form-control" />-->
+               <input type="text"  placeholder="用户名" autocomplete="off" ng-model="account.userName" required="" class="form-control" />
+               <span class="icon-user form-control-feedback text-muted"></span>
+               <!--
                <span class="fa fa-envelope form-control-feedback text-muted"></span>
                <span ng-show="registerForm.account_email.$dirty &amp;&amp; registerForm.account_email.$error.required" class="text-danger">This field is required</span>
                <span ng-show="registerForm.account_email.$dirty &amp;&amp; registerForm.account_email.$error.email" class="text-danger">This field must be a valid email address</span>
+               -->
+            </div>
+            <div class="form-group has-feedback">
+               <label class="text-muted">身份证号</label>
+               <!--<input type="email" name="account_email" placeholder="Enter email" autocomplete="off" ng-model="account.email" required="" class="form-control" />-->
+               <input type="text" name="account_email" placeholder="身份证号" autocomplete="off" ng-model="account.idCard" required="" class="form-control" />
+               <span class="fa fa-envelope form-control-feedback text-muted"></span>
             </div>
             <div class="form-group has-feedback">
                <label class="text-muted">密码</label>
-               <input id="id-password" type="password" name="account_password" ng-model="register.password" ng-pattern="/^[a-zA-Z0-9]{6,10}$/" required="" class="form-control" />
+               <input id="id-password" type="password" name="account_password" ng-model="register.password" required="" class="form-control" ng-change="chkvalue()"  />
                <span class="fa fa-lock form-control-feedback text-muted"></span>
+               <span ng-show="check_password" class="text-danger">8位以上数字，大写,小写字母，符号含有2种及以上</span>
+               <!--
                <span ng-show="registerForm.account_password.$dirty &amp;&amp; registerForm.account_password.$error.required" class="text-danger">This field is required</span>
                <span ng-show="registerForm.account_password.$dirty &amp;&amp; registerForm.account_password.$error.pattern" class="text-danger">Input should match 'a-zA-Z0-9' and 6-10 length</span>
+               -->
             </div>
             <div class="form-group has-feedback">
                <label class="text-muted">再一次输入密码</label>

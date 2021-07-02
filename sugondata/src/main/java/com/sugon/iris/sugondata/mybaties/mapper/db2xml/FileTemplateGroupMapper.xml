@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateGroupMapper" >
+
+    <!--结果集-->
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateGroupEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="group_id" property="groupId" jdbcType="BIGINT" />
+        <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+        <result column="template_id" property="templateId" jdbcType="BIGINT" />
+        <result column="comment" property="comment" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="user_id" property="userId" jdbcType="BIGINT" />
+        <result column="template_name" property="templateName" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--基础字段-->
+    <sql id="Base_Column_List" >
+        id,group_id,group_name,template_id,create_time,update_time,comment,user_id
+    </sql>
+
+    <!--表查询-->
+    <select id="selectFileTemplateGroupList" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateGroupEntity" resultMap="BaseResultMap"  >
+        SELECT
+            (select template_name from file_template a where (a.id=b.template_id))  template_name,
+            <include refid="Base_Column_List" />
+        FROM
+        file_template_group b
+        where
+        1=1
+        <if test="id!=null">
+            and id = #{id}
+        </if >
+        <if test="groupId!=null">
+            and group_id = #{groupId}
+        </if >
+        <if test="groupName!=null and groupName != ''">
+            and group_name =  #{groupName}
+        </if >
+        <if test="userId!=null">
+            and user_id = #{userId}
+        </if >
+    </select>
+
+
+
+    <!--批量插入-->
+    <insert id="fileTemplateGrouplInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into file_template_group
+        (<include refid="Base_Column_List" />)
+        values
+          <foreach collection="fileTemplateGroupEntityList" item="item" index="i" separator=",">
+             (
+             #{item.id,jdbcType=INTEGER},
+             #{item.groupId,jdbcType=INTEGER},
+             #{item.groupName,jdbcType=VARCHAR},
+             #{item.templateId,jdbcType=INTEGER},
+             #{item.createTime,jdbcType=TIMESTAMP},
+             #{item.updateTime,jdbcType=TIMESTAMP},
+             #{item.comment,jdbcType=VARCHAR},
+             #{item.userId,jdbcType=INTEGER}
+             )
+          </foreach>
+    </insert>
+
+    <!--删除-->
+    <delete id="deleteFileTemplateGroupById">
+            DELETE
+            FROM
+              file_template_group
+            <where>
+                group_id in (
+                <foreach collection="idArr" item="item" index="i" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </where>
+    </delete>
+</mapper>

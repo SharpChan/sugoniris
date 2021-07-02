@@ -98,6 +98,93 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         controller: 'AppController',
         resolve: helper.resolveFor('fastclick', 'modernizr', 'icons', 'screenfull', 'animo', 'sparklines', 'slimscroll', 'classyloader', 'toaster', 'whirl')
     })
+      .state('app.pageRegister', {
+          url: '/pageRegister',
+          title: 'PageRegister',
+          templateUrl: helper.basepath('system/pageRegister.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select','textAngular')
+      })
+      .state('app.userGroup', {
+          url: '/userGroup',
+          title: 'UserGroup',
+          templateUrl: helper.basepath('system/userGroup.html'),
+          controller:'userGroupController',
+          cache: false,
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+
+      })
+      .state('app.userGroup.AddOrModify', {
+          url: '/userGroupAddOrModify/:active/:id',
+          title: 'UserGroupAddOrModify',
+          templateUrl: helper.basepath('system/userGroupAddOrModify.html'),
+          resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
+      .state('app.userGroup.users', {
+          url: '/userGroupUsers/:userGroupid',
+          title: 'UserGroupUsers',
+          templateUrl: helper.basepath('system/userGroupUsers.html'),
+          resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
+      .state('app.userGroup.edit', {
+          url: '/userGroupEdit',
+          title: 'UserGroupEdit',
+          templateUrl: helper.basepath('system/userGroupEdit.html'),
+          resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
+      .state('app.caseManager', {
+          url: '/caseManager',
+          title: 'CaseManager',
+          templateUrl: helper.basepath('file/caseManager.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
+      .state('app.fileTemplateGroup', {
+          url: '/fileTemplateGroup',
+          title: 'FileTemplateGroup',
+          templateUrl: helper.basepath('file/fileTemplateGroup.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
+      .state('app.fileTemplate', {
+          url: '/fileTemplate',
+          title: 'FileTemplate',
+          templateUrl: helper.basepath('file/fileTemplate.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
+      .state('app.fileUpload', {
+      url: '/fileUpload',
+      title: 'FileUpload',
+      templateUrl: helper.basepath('file/fileUpload.html'),
+      resolve: helper.resolveFor('flot-chart','flot-chart-plugins','angularFileUpload', 'filestyle')
+      })
+      .state('app.fileManager', {
+          url: '/fileManager',
+          title: 'FileManager',
+          templateUrl: helper.basepath('file/fileManager.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
+      .state('app.checkUser', {
+      url: '/checkUser',
+      title: 'CheckUser',
+      templateUrl: helper.basepath('system/checkUser.html'),
+      resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'taginput','inputmask','localytics.directives','codemirror', 'moment', 'ui.bootstrap-slider', 'ngWig')
+  })
+      .state('app.config', {
+          url: '/config',
+          title: 'Config',
+          templateUrl: helper.basepath('system/config.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins')
+      })
+      .state('app.dictionary', {
+          url: '/dictionary',
+          title: 'Dictionary',
+          templateUrl: helper.basepath('system/dictionary.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'taginput','inputmask','localytics.directives','codemirror', 'moment', 'ui.bootstrap-slider', 'ngWig')
+      })
+      .state('app.whiteList', {
+          url: '/whiteList',
+          title: 'whiteList',
+          templateUrl: helper.basepath('system/whiteList.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'taginput','inputmask','localytics.directives','codemirror', 'moment', 'ui.bootstrap-slider', 'ngWig')
+      })
     .state('app.dashboard', {
         url: '/dashboard',
         title: 'Dashboard',
@@ -947,68 +1034,2012 @@ App.service('drawCodaService', function() {
     }
 
 });
+
+App.service('myservice', function($window,$state,$http) {
+//**************************************************************************//
+    /*
+      说明：通用方法对对象进行非空校验，包括null，undefined和空字符串。
+    */
+    this.isEmpty = function(object){
+        if (object == null || object == undefined ||object.length == 0 || (object+'').trim()=='' ){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    this.errors = function(restResult){
+        if(restResult.flag == "FAILED"){
+            var message = "";
+            var isExpired = false;
+            var isLocked = false;
+            var unRegister = false;
+            angular.forEach(restResult.errorList,function(e){
+                if(e.errorCode.indexOf("SYS-00-000") != -1){
+                    isExpired = true;
+                }
+                if(e.errorCode.indexOf("SYS-01-000") != -1){
+                    isLocked = true;
+                }
+                if(e.errorCode.indexOf("SYS-02-000") != -1){
+                    unRegister = true;
+                }
+                message += e.errorMessage + "\r\n";
+            })
+            alert(message);
+            if(isExpired){
+                // $window.location.href ='/';
+                $state.go('page.login');
+            }
+            if(isLocked){
+                $state.go('page.lock');
+            }
+            if(unRegister){
+                $state.go('page.register');
+            }
+            return message+restResult.message;
+        }
+    }
+//**************************************************************************//
+
+    this.setCookie = function(name,value)//两个参数，一个是cookie的名子，一个是值
+    {
+        var Days = 1; //此 cookie 将被保存 1 天
+        var exp  = new Date();    //new Date("December 31, 9998");
+        exp.setTime(exp.getTime() + Days*24*60*60*1000);
+        document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+    }
+
+    this.getCookie = function(name)//取cookies函数
+    {
+        var arr = document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$)"));
+        if(arr != null) return unescape(arr[2]); return null;
+
+    }
+
+    this.deleteCookie=function(name){
+        var exp = new Date();
+        exp.setTime(exp.getTime() - 1);
+        var cval=getCookie(name);
+        if(cval!=null) document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+
+    }
+
+    this.loginLockCheck =function(){
+        var url = "/checkLoginLok";
+        var that = this;
+        $http.post(url).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            that.errors(temp);
+        }).error(function(data)
+        {
+            alert("登录和锁校验出错！");
+        });
+    }
+
+    this.setSerialNumber = function(obj){
+        var i = 1;
+        angular.forEach(obj,function(item){
+            item.no = i++;
+        });
+        return obj;
+    }
+
+    this.dragFunc = function(id) {
+        var Drag = document.getElementById(id);
+        Drag.onmousedown = function(event) {
+            var ev = event || window.event;
+            event.stopPropagation();
+            var disX = ev.clientX - Drag.offsetLeft;
+            var disY = ev.clientY - Drag.offsetTop;
+            document.onmousemove = function(event) {
+                var ev = event || window.event;
+                Drag.style.left = ev.clientX - disX + "px";
+                Drag.style.top = ev.clientY - disY + "px";
+                Drag.style.cursor = "move";
+            };
+        };
+        Drag.onmouseup = function() {
+            document.onmousemove = null;
+            this.style.cursor = "default";
+        };
+    }
+
+});
+
+App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
+                                                   myservice) {
+
+    loadDictionary = function(){
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"isOrNot";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.sites1 = temp.obj;
+            console.log($scope.sites1);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $(function () {
+        loadDictionary();
+    })
+
+});
+
+App.controller("userGroupController", function ($http,$timeout,$scope,$state,
+                                                  myservice) {
+    $("#pleaseWait").hide();
+    //登录和锁定校验
+    myservice.loginLockCheck();
+
+    $scope.active = {
+        save:"0",
+        update:"1"
+    }
+
+    $scope.userGroupOnClick=function(item){
+        $scope.id=item.id;
+        $scope.hasClick = true;
+    }
+
+    //获取用户组列表
+    $scope.getUsergroup = function () {
+        var url="/userGroup/getAllUserGroup";
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj=temp.obj;
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+    $scope.getUsergroup();
+
+
+    $scope.removeUserGroup = function () {
+
+        if(myservice.isEmpty($scope.id)){
+            return;
+        }
+        var url="/userGroup/removeUserGroup?id="+$scope.id;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            //$scope.getUsergroup();
+            //$scope.hasClick = false;
+            $state.go('app.userGroup',{},{reload: true});
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+        
+    }
+
+});
+
+App.controller('userGroupAddOrModifyController', ['$http','$timeout','$state','$scope', '$stateParams','myservice', function($http,$timeout,$state,$scope, $stateParams,myservice) {
+    $scope.active = $stateParams.active === 'inbox' ? '' : $stateParams.active;
+    $scope.id = $stateParams.id === 'inbox' ? '' : $stateParams.id;
+    if($scope.active == "0"){
+        $scope.showSave = true;
+        $scope.showUpdate = false;
+    }else if($scope.active == "1"){
+        $scope.showSave = false;
+        $scope.showUpdate = true;
+        var url="/userGroup/getUserGroupById?id=" + $scope.id;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.groupName = temp.obj.groupName;
+            $scope.description = temp.obj.description;
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.save = function () {
+        if(myservice.isEmpty($scope.groupName)){
+            alert("请填写用户组名称！")
+            return;
+        }
+        var url="/userGroup/saveUserGroup";
+        var params = {
+            groupName: $scope.groupName,
+            description: $scope.description
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $state.go('app.userGroup',{},{reload: true});
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.update = function () {
+        if(myservice.isEmpty($scope.groupName)){
+            alert("请填写用户组名称！")
+            return;
+        }
+        var url="/userGroup/modifyUserGroup";
+        var params = {
+            id: $scope.id,
+            groupName: $scope.groupName,
+            description: $scope.description
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $state.go('app.userGroup',{},{reload: true});
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+}]);
+
+App.controller('userGroupUsersController', ['$http','$timeout','$state','$scope', '$stateParams','myservice', function($http,$timeout,$state,$scope, $stateParams,myservice) {
+    $scope.userGroupid = $stateParams.userGroupid === 'inbox' ? '' : $stateParams.userGroupid;
+    $scope.selected_01 = [];
+    $scope.selected_02 = [];
+    var getUsers_1 = function(){
+        var url = "/userGroup/getUsers?userGroupId="+$scope.userGroupid;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.users_01 = myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+    var getUsers_2 = function(){
+        var url = "/userGroup/getGroupUsers?userGroupId="+$scope.userGroupid;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.users_02 = myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $(function () {
+        getUsers_1();
+        getUsers_2();
+    })
+
+    //单个勾选去勾选
+    $scope.selectOne_01 = function (item) {
+        if (item.checked) {
+            $scope.selected_01.push(item.id);
+        } else {
+            $scope.selected_01.splice($scope.selected_01.indexOf(item.id), 1);
+        }
+    }
+
+    //单个勾选去勾选
+    $scope.selectOne_02 = function (item) {
+        if (item.checked) {
+            $scope.selected_02.push(item.id);
+        } else {
+            $scope.selected_02.splice($scope.selected_02.indexOf(item.id), 1);
+        }
+    }
+    //全选全去勾选
+    $scope.selectAll_01 = function (checked_01) {
+        $scope.selected_01 = [];
+        if (checked_01) {
+            angular.forEach($scope.users_01, function (e) {
+                e.checked = true;
+                $scope.selected_01.push(e.id);
+            })
+        } else {
+            angular.forEach($scope.users_01, function (e) {
+                e.checked = false;
+                $scope.selected_01.splice($scope.selected_01.indexOf(e.id), 1);
+            })
+        }
+    }
+
+    //全选全去勾选
+    $scope.selectAll_02 = function (checked_02) {
+        $scope.selected_02 = [];
+        if (checked_02) {
+            angular.forEach($scope.users_02, function (e) {
+                e.checked = true;
+                $scope.selected_02.push(e.id);
+            })
+        } else {
+            angular.forEach($scope.users_02, function (e) {
+                e.checked = false;
+                $scope.selected_02.splice($scope.selected_02.indexOf(e.id), 1);
+            })
+        }
+    }
+
+
+
+    $scope.addUserToUserGroup = function (userId) {
+
+        var url="/userGroup/addUserToUserGroup";
+        var params = {
+            userId: userId,
+            userGroupId: $scope.userGroupid
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            getUsers_1();
+            getUsers_2();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    function UserGroupDetailDto(userId,userGroupId){
+        var o = new Object();
+        o.userId = userId;
+        o.userGroupId = userGroupId;
+        return o;
+    }
+
+    $scope.addToUserGroupBatch = function () {
+            if(myservice.isEmpty($scope.selected_01)){
+                return;
+            }
+            userGroupDetailDtoArr = [];
+            angular.forEach($scope.selected_01, function (e){
+                userGroupDetailDtoArr.push(UserGroupDetailDto(e,$scope.userGroupid));
+            })
+            var url="/userGroup/addUserToUserGroupBatch";
+            $http.post(url, JSON.stringify(userGroupDetailDtoArr)).success(function (data) {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+                $scope.selected_01 = [];
+                getUsers_1();
+                getUsers_2();
+            }).error(function (data) {
+                alert("请检查必填项是否填写！");
+            });
+
+    }
+
+    $scope.deleteUserGroup = function (userId) {
+        var url="/userGroup/removeUserFromUserGroup";
+        var params = {
+            userId: userId,
+            userGroupId: $scope.userGroupid
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            getUsers_1();
+            getUsers_2();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+
+    $scope.deleteUserFromUserGroupBatch = function () {
+            if(myservice.isEmpty($scope.selected_02)){
+                return;
+            }
+            userGroupDetailDtoArr = [];
+            angular.forEach($scope.selected_02, function (e){
+                userGroupDetailDtoArr.push(UserGroupDetailDto(e,$scope.userGroupid));
+            })
+
+            var url="/userGroup/removeUserFromUserGroupBatch";
+            $http.post(url, JSON.stringify(userGroupDetailDtoArr)).success(function (data) {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+                $scope.selected_02 = [];
+                getUsers_1();
+                getUsers_2();
+            }).error(function (data) {
+                alert("请检查必填项是否填写！");
+            });
+    }
+}]);
+
+App.controller("caseManagerController", function ($http,$timeout,$scope,
+                                                        myservice) {
+    $("#pleaseWait").hide();
+    //登录和锁定校验
+    myservice.loginLockCheck();
+    //已选择的文件
+    $scope.selected = [];
+
+    myservice.dragFunc("cnDiv");
+
+    $("#cnDiv").hide();
+
+    //单个勾选去勾选
+    $scope.selectOne = function (item) {
+        if (item.checked) {
+            $scope.selected.push(item.groupId);
+        } else {
+            $scope.selected.splice($scope.selected.indexOf(item.groupId), 1);
+        }
+    }
+    //全选全去勾选
+    $scope.selectAll = function (checked) {
+        $scope.selected = [];
+        if (checked) {
+            angular.forEach($scope.obj, function (e) {
+                e.checked = true;
+                $scope.selected.push(e.groupId);
+            })
+        } else {
+            angular.forEach($scope.obj, function (e) {
+                e.checked = false;
+                $scope.selected.splice($scope.selected.indexOf(e.groupId), 1);
+            })
+        }
+    }
+
+    $scope.close = function () {
+        $("#cnDiv").hide();
+    }
+
+    $scope.add = function () {
+        $("#cnDiv").show();
+        $scope.flag = 0;
+        $scope.id = "";
+        $scope.caseNo_1 = "";
+        $scope.caseName_1 = "";
+        $scope.caseInfo_1 = "";
+    }
+
+    $scope.saveOrUpdate = function () {
+        var url = "";
+        if ($scope.flag == 0) {
+            url = "/fileCase/saveCase";
+        } else if ($scope.flag == 1) {
+            url = "/fileCase/updateCase";
+        }
+        var params = {
+            id: $scope.id,
+            caseNo: $scope.caseNo_1,
+            caseName: $scope.caseName_1,
+            caseInfo: $scope.caseInfo_1
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $("#cnDiv").hide();
+            $scope.query();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.query = function () {
+        $("#pleaseWait").show();
+        var url = "/fileCase/getCases";
+        var params = {
+            caseName: $scope.caseName
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj = myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.updateDetail = function (item) {
+        $("#cnDiv").show();
+        $scope.id = item.id;
+        $scope.flag = 1;
+        $scope.caseNo_1 = item.caseNo;
+        $scope.caseName_1 = item.caseName;
+        $scope.caseInfo_1 = item.caseInfo;
+    }
+
+    $scope.deleteOne = function (id) {
+        var url = "/fileCase/deleteCase?selected=" + id + ",";
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if (temp.flag == "FAILED") {
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function (data) {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.deleteSelected = function () {
+        if ($scope.selected.length == 0) {
+            alert("请先勾选");
+            return;
+        }
+        var msg = "您真的确定要删除吗？\n\n请确认！";
+        if (confirm(msg) == false) {
+            return;
+        }
+        var url = "/fileCase/deleteCase?selected=" + $scope.selected;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if (temp.flag == "FAILED") {
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function (data) {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+});
+
+App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
+                                                   myservice){
+    $("#pleaseWait").hide();
+    //登录和锁定校验
+    myservice.loginLockCheck();
+    //已选择的文件
+    $scope.selected = [];
+
+    myservice.dragFunc("cnDiv");
+
+    $("#cnDiv").hide();
+
+
+
+    //单个勾选去勾选
+    $scope.selectOne = function (item) {
+        if (item.checked) {
+            $scope.selected.push(item.groupId);
+        }else{
+            $scope.selected.splice($scope.selected.indexOf(item.groupId),1);
+        }
+    }
+    //全选全去勾选
+    $scope.selectAll = function(checked){
+        $scope.selected = [];
+        if(checked){
+            angular.forEach($scope.obj,function(e){
+                e.checked = true;
+                $scope.selected.push(e.groupId);
+            })
+        }else{
+            angular.forEach($scope.obj,function(e){
+                e.checked = false;
+                $scope.selected.splice($scope.selected.indexOf(e.groupId),1);
+            })
+        }
+    }
+
+
+
+    $scope.add = function(){
+        $("#cnDiv").show();
+        $scope.groupName = "";
+        $scope.template.categories = [];
+        $scope.comment = "";
+    }
+
+
+    $scope.template = {};
+    var availableCategories = [];
+    //获取模板
+    $scope.queryTemplates = function () {
+        var url = "/fileTemplate/getFileTemplates";
+        var params = {
+        }
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            angular.forEach(temp.obj,function(e){
+                  var cell = e.templateName+"::"+e.id;
+                  availableCategories.push(cell);
+            })
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.availableCategories = availableCategories;
+    $scope.queryTemplates();
+
+
+    //查询所有的模板组信息
+    $scope.query = function(){
+        var url = "/fileTemplateGroup/getFileTemplateGroups";
+        var params = {
+        }
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj = myservice.setSerialNumber (temp.obj);
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.close = function(){
+        $("#cnDiv").hide();
+    }
+
+
+    function FileTemplateBean(id,templateName){
+        var o = new Object();
+        o.id = id;
+        o.templateName = templateName;
+        return o;
+    }
+
+    $scope.save = function () {
+
+       if(myservice.isEmpty($scope.template.categories)){
+           alert("请选择模板！");
+       }
+       if(myservice.isEmpty($scope.groupName)){
+            alert("请填写择模板名称！");
+       }
+       //查询模板组名称有没有使用
+        var url = "/fileTemplateGroup/getFileTemplateGroups";
+        var params = {
+            groupName: $scope.groupName
+        }
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            if(!myservice.isEmpty(temp.obj)){
+                alert("模板组名称已经存在！");
+            }
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+
+
+        //进行保存
+        fileTemplateDtoArr = [];
+
+        angular.forEach($scope.template.categories,function(e){
+             var arr =e.split("::");
+             fileTemplateDtoArr.push(FileTemplateBean(arr[1],arr[0]));
+        })
+
+         url = "/fileTemplateGroup/fileTemplateGroupInsert";
+         params = {
+             groupName: $scope.groupName,
+             fileTemplateDtoList: fileTemplateDtoArr
+         }
+
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $("#cnDiv").hide();
+            $scope.query();
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.deleteOne = function (id) {
+        var url = "/fileTemplateGroup/deleteFileTemplateGroup?selected="+id+",";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.deleteSelected = function () {
+        if($scope.selected.length == 0){
+            alert("请先勾选");
+            return;
+        }
+        var msg = "您真的确定要删除吗？\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+        var url = "/fileTemplateGroup/deleteFileTemplateGroup?selected="+$scope.selected;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+});
+
+App.controller("fileTemplateController", function ($http,$timeout,$scope,
+                                                  myservice,$modal){
+    $("#pleaseWait").hide();
+    myservice.loginLockCheck();
+    //已选择的文件
+    $scope.selected = [];
+
+    //获取勾选数组
+    $scope.selectOne = function (item) {
+        if (item.checked) {
+            $scope.selected.push(item.id);
+        }else{
+            $scope.selected.splice($scope.selected.indexOf(item.id),1);
+        }
+    }
+
+    $scope.selectAll = function(checked){
+        $scope.selected = [];
+        if(checked){
+            angular.forEach($scope.obj,function(e){
+                e.checked = true;
+                $scope.selected.push(e.id);
+            })
+        }else{
+            angular.forEach($scope.obj,function(e){
+                e.checked = false;
+                $scope.selected.splice($scope.selected.indexOf(e.id),1);
+            })
+        }
+    }
+    myservice.dragFunc("cnDiv");
+    myservice.dragFunc("cnDivUpdate");
+    myservice.dragFunc("cnDivDetail");
+    myservice.dragFunc("cnDivDetailAddOrUpdate");
+    $("#cnDiv").hide();
+    $("#cnDivUpdate").hide();
+    $("#cnDivDetail").hide();
+    $("#cnDivDetailAddOrUpdate").hide();
+
+
+    $scope.add = function(){
+        $("#cnDiv").show();
+        $scope.templateName_1="";
+        $scope.tablePrefix_1="";
+        $scope.templateKey_1="";
+        $scope.exclude_1 = "";
+        $scope.comment_1="";
+    }
+
+    $scope.update = function(item){
+        $("#cnDivUpdate").show();
+        $scope.id_2 = item.id;
+        $scope.templateName_2 = item.templateName;
+        $scope.tablePrefix_2 = item.tablePrefix;
+        $scope.templateKey_2 = item.templateKey;
+        $scope.exclude_2 = item.exclude;
+        $scope.comment_2 = item.comment;
+
+    }
+
+    $scope.updateSave = function(){
+        var url = "/fileTemplate/updateFileTemplate";
+        var params = {
+            id: $scope.id_2,
+            templateName: $scope.templateName_2,
+            tablePrefix: $scope.tablePrefix_2,
+            templateKey: $scope.templateKey_2,
+            exclude: $scope.exclude_2,
+            comment: $scope.comment_2
+        }
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.query();
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+        $("#cnDivUpdate").hide();
+    }
+
+    $scope.query = function () {
+        $("#pleaseWait").show();
+        var url = "/fileTemplate/getFileTemplates";
+        var params = {
+            templateName: $scope.templateName,
+            tablePrefix: $scope.tablePrefix,
+            templateKey: $scope.templateKey
+        }
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj = myservice.setSerialNumber (temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+        $("#cnDiv").hide();
+    }
+
+    $scope.save = function () {
+        var url = "/fileTemplate/fileTemplateInsert";
+        var params = {
+            templateName: $scope.templateName_1,
+            tablePrefix: $scope.tablePrefix_1,
+            templateKey: $scope.templateKey_1,
+            exclude: $scope.exclude_1,
+            comment: $scope.comment_1
+        }
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $("#cnDiv").hide();
+            $scope.query();
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.close = function(){
+        $("#cnDiv").hide();
+    }
+
+    $scope.closeUpdate = function(){
+        $("#cnDivUpdate").hide();
+    }
+
+    $scope.selectAll = function(checked){
+        $scope.selected = [];
+        if(checked){
+            angular.forEach($scope.obj,function(e){
+                e.checked = true;
+                $scope.selected.push(e.id);
+            })
+        }else{
+            angular.forEach($scope.obj,function(e){
+                e.checked = false;
+                $scope.selected.splice($scope.selected.indexOf(e.id),1);
+            })
+        }
+    }
+
+    //获取勾选数组
+    $scope.selectOne = function (item) {
+        if (item.checked) {
+            $scope.selected.push(item.id);
+        }else{
+            $scope.selected.splice($scope.selected.indexOf(item.id),1);
+        }
+    }
+
+    $scope.deleteOne = function (id) {
+        var url = "/fileTemplate/deleteFileTemplate?selected="+id+",";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.deleteSelected = function () {
+        if($scope.selected.length == 0){
+            alert("请先勾选");
+            return;
+        }
+        var msg = "您真的确定要删除吗？\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+        var url = "/fileTemplate/deleteFileTemplate?selected="+$scope.selected;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+   
+    $scope.detail = function (item) {
+        $("#cnDivDetail").show();
+        $scope.item = item;
+        $scope.templateName_3 = item.templateName;
+        $scope.templateId = item.id;
+        var url = "/fileTemplate/getFileTemplateDetails";
+        var params = {
+            id: item.id
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.details = myservice.setSerialNumber (temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.updateDetail = function(item){
+        $scope.flag = 1;
+        $scope.fieldName = item.fieldName;
+        $scope.fieldKey = item.fieldKey;
+        $scope.regular = item.regular;
+        $scope.exclude = item.exclude;
+        $scope.sortNo = item.sortNo;
+        $scope.comment = item.comment;
+
+    }
+
+    $scope.closeUpdateDetail = function () {
+        $("#cnDivDetail").hide();
+    }
+
+    $scope.addDetail = function(){
+
+        $("#cnDivDetailAddOrUpdate").show();
+        $scope.flag = 0;
+        $scope.fieldName = "";
+        $scope.fieldKey = "";
+        $scope.regular = "";
+        $scope.exclude = "";
+        $scope.sortNo = "";
+        $scope.comment = "";
+    }
+
+    $scope.updateDetail = function(item){
+        $("#cnDivDetailAddOrUpdate").show();
+        $scope.flag = 1;
+        $scope.id = item.id;
+        $scope.fieldName = item.fieldName;
+        $scope.fieldKey = item.fieldKey;
+        $scope.regular = item.regular;
+        $scope.exclude = item.exclude;
+        $scope.sortNo = item.sortNo;
+        $scope.comment = item.comment;
+    }
+
+    $scope.closeUpdateDetailAddOrUpdate= function(){
+
+        $("#cnDivDetailAddOrUpdate").hide();
+    }
+
+    $scope.detailAddOrUpdate = function () {
+
+        if(myservice.isEmpty($scope.fieldName)){
+            alert("请填写字段名称！");
+        }
+        if(myservice.isEmpty($scope.fieldKey)){
+            alert("请填写字段关键字以&&分隔！");
+        }
+        if(myservice.isEmpty($scope.sortNo)){
+            alert("请填写字段排序编号为0-999数字！");
+        }
+
+        var url = "";
+        if($scope.flag == 0){
+            url = "/fileTemplate/saveFileTemplateDetails";
+        }else if($scope.flag == 1){   //修改
+            url = "/fileTemplate/updateFileTemplateDetails";
+        }
+        var params = {
+            id: $scope.flag == 1?$scope.id : "",
+            templateId: $scope.templateId,
+            fieldName: $scope.fieldName,
+            fieldKey: $scope.fieldKey,
+            regular: $scope.regular,
+            exclude: $scope.exclude,
+            sortNo: $scope.sortNo,
+            comment:$scope.comment
+        }
+
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.details = myservice.setSerialNumber (temp.obj);
+            $("#cnDivDetailAddOrUpdate").hide();
+            $scope.detail($scope.item);
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+        
+    }
+    $scope.sortNoChange = function () {
+        var reg=/^[0-9]{1,3}$/;
+       if(!reg.test($scope.sortNo)){
+           $scope.sortNo = "";
+           alert("请填写0-999数字！");
+       }
+    }
+
+    $scope.deleteOneDetail = function (id) {
+        var url = "/fileTemplate/removeFileTemplateDetails?selected="+id+",";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.detail($scope.item);
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+});
+
+
+//导入文件管理
+App.controller("fileManagerController", function ($http,$timeout,$scope,
+                                                myservice){
+    $("#pleaseWait").hide();
+    myservice.loginLockCheck();
+
+    //已选择的文件
+     $scope.selected = [];
+
+    //label:要赋值的标签，dic_group：字典组名称
+    loadDictionary1 = function(){
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"hasDecompress";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.sites1 = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    loadDictionary2 = function(){
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"hasImport";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.sites2 = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    loadDictionary1();
+    loadDictionary2();
+    $scope.query = function () {
+        $scope.selected = [];
+        $scope.checked = false;
+        $("#pleaseWait").show();
+        var url = "/file/findFileList";
+        var hasDecompress;
+        var hasImport;
+        if($scope.selectedOptions1 == "0"){
+            hasDecompress =false;
+        }else if($scope.selectedOptions1 == "1"){
+            hasDecompress =true;
+        }
+        if($scope.selectedOptions2 == "0"){
+            hasImport =false;
+        }else if($scope.selectedOptions2 == "1"){
+            hasImport =true;
+        }
+        var params = {
+            caseId: $scope.caseId,
+            fileType: $scope.fileType,
+            fileName: $scope.fileName,
+            hasDecompress: hasDecompress,
+            hasImport: hasImport
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.obj = myservice.setSerialNumber (temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    //获取勾选数组
+    $scope.selectOne = function (item) {
+        if (item.checked) {
+            $scope.selected.push(item.id);
+        }else{
+            $scope.selected.splice($scope.selected.indexOf(item.id),1);
+        }
+    }
+
+    //数据同步
+    $scope.dataSyncOne = function (id) {
+        var url = "/file/dataSync?selected="+id+",";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.deleteOne = function (id) {
+        var url = "/file/deleteFile?selected="+id+",";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.deleteSelected = function () {
+        if($scope.selected.length == 0){
+           alert("请先勾选");
+           return;
+        }
+        var msg = "您真的确定要删除吗？\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+        var url = "/file/deleteFile?selected="+$scope.selected;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.selectAll = function(checked){
+        $scope.selected = [];
+       if(checked){
+           angular.forEach($scope.obj,function(e){
+               e.checked = true;
+               $scope.selected.push(e.id);
+           })
+       }else{
+           angular.forEach($scope.obj,function(e){
+               e.checked = false;
+               $scope.selected.splice($scope.selected.indexOf(e.id),1);
+           })
+       }
+    }
+
+    //获取所有的模板组
+    $scope.templateGroups = [];
+    $scope.getTemplateGroup = function(){
+        var url = "/fileTemplateGroup/getFileTemplateGroups";
+        var params = {
+        }
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            angular.forEach(temp.obj,function (e) {
+                $scope.templateGroups.push(e.groupName+"::"+e.groupId);
+            })
+            
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+    }
+    $scope.getTemplateGroup();
+
+    //保存和修改配置的目模板组
+    $scope.changeFlag = function(item,selectName){
+
+        var arr = selectName.split("::");
+        console.log(arr[0]);
+        console.log(arr[1]);
+        var url = "/file/updateFileAttachmentTemplateGroup";
+        var params = {
+            id: item.id,
+            templateGroupId: arr[1],
+            templateGroupName: arr[0]
+        }
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.dataSync = function(){
+        if($scope.selected.length == 0){
+            alert("请先勾选");
+            return;
+        }
+        var msg = "您真的确定要删除吗？\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+
+        var url = "/file/dataSync?selected="+$scope.selected;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+});
+
+App.controller("myFileUploadController", ['$scope', 'FileUploader','$http','myservice', function($scope, FileUploader,$http,myservice) {
+    myservice.loginLockCheck();
+    $("#fileUpload").hide();
+    loadDictionary1 = function(){
+        var url = "/fileCase/getCases";
+        var params = {
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.sites1 = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    loadDictionary1();
+
+    $scope.caseIdChanged =function(){
+        if(myservice.isEmpty($scope.selectedOptions1)){
+            $("#fileUpload").hide();
+            return;
+        }
+        var url = "/file/setCaseId?caseId="+$scope.selectedOptions1;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }else{
+                $("#fileUpload").show();
+            }
+
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    var uploader = $scope.uploader = new FileUploader({
+        url: '/file/uploadFile'
+    });
+
+    // FILTERS
+
+    uploader.filters.push({
+        name: 'customFilter',
+        fn: function(item /*{File|FileLikeObject}*/, options) {
+            return this.queue.length < 40;
+        }
+    });
+
+    // CALLBACKS
+
+    uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
+        console.info('onWhenAddingFileFailed', item, filter, options);
+    };
+    uploader.onAfterAddingFile = function(fileItem) {
+        console.info('onAfterAddingFile', fileItem);
+    };
+    uploader.onAfterAddingAll = function(addedFileItems) {
+        console.info('onAfterAddingAll', addedFileItems);
+    };
+    uploader.onBeforeUploadItem = function(item) {
+        console.info('onBeforeUploadItem', item);
+    };
+    uploader.onProgressItem = function(fileItem, progress) {
+        console.info('onProgressItem', fileItem, progress);
+    };
+    uploader.onProgressAll = function(progress) {
+        console.info('onProgressAll', progress);
+    };
+    uploader.onSuccessItem = function(fileItem, response, status, headers) {
+        console.info('onSuccessItem', fileItem, response, status, headers);
+    };
+    uploader.onErrorItem = function(fileItem, response, status, headers) {
+        console.info('onErrorItem', fileItem, response, status, headers);
+    };
+    uploader.onCancelItem = function(fileItem, response, status, headers) {
+        console.info('onCancelItem', fileItem, response, status, headers);
+    };
+    uploader.onCompleteItem = function(fileItem, response, status, headers) {
+        console.info('onCompleteItem', fileItem, response, status, headers);
+    };
+    uploader.onCompleteAll = function() {
+        console.info('onCompleteAll');
+    };
+
+    //console.info('uploader', uploader);
+}]);
+
+//系统配置
+App.controller("configController", function ($http,$timeout,$scope,
+                                             myservice) {
+    myservice.loginLockCheck();
+    $scope.names = ["无效", "有效"];
+    $("#pleaseWait").hide();
+    myservice.dragFunc("cnDiv");
+
+    $("#cnDiv").hide();
+
+    $scope.add = function(){
+        $("#cnDiv").show();
+        $scope.description="";
+        $scope.cfg_key="";
+        $scope.cfg_value="";
+        $scope.selectedName="无效";
+    }
+
+    $scope.close = function(){
+        $("#cnDiv").hide();
+    }
+
+    $scope.save = function(){
+
+        var params = {
+            description:$scope.description,
+            cfg_key:$scope.cfg_key,
+            cfg_value:$scope.cfg_value,
+            flag:$scope.selectedName == "无效" ? 0:1
+        }
+        var url = "/config/saveConfig";
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.getAllConfig();
+
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+        $("#cnDiv").hide();
+    }
+
+    $scope.getAllConfig = function(){
+        $("#pleaseWait").show();
+        var url = "/config/getAllConfigs";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }else{
+                var i = 1;
+                angular.forEach(temp.obj,function(item){
+                    item.no = i++;
+                });
+                $scope.obj=temp.obj;
+            }
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            $("#pleaseWait").hide();
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.getAllConfig();
+
+    $scope.update = function(item){
+        var msg = "您真的确定要修改吗？\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+        var url = "/config/updateConfig";
+        var params = {
+            id: item.id,
+            description: item.description,
+            cfg_key: item.cfg_key,
+            cfg_value: item.cfg_value,
+            flag: item.flag
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.getAllConfig();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.delete = function(id){
+        var msg = "您真的确定要删除吗？\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+        var url = "/config/deleteConfig?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.getAllConfig();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.changeFlag = function(item,selectedName){
+        //console.log("selectedName:"+selectedName);
+        if(selectedName == "有效"){
+            item.flag = 1 ;
+        }else if(selectedName == "无效"){
+            item.flag = 0 ;
+        }
+    }
+});
+
+//系统配置
+App.controller("dictionaryController", function ($http,$timeout,$scope,
+                                             myservice) {
+    myservice.loginLockCheck();
+    myservice.dragFunc("cnDivAdd");
+    myservice.dragFunc("cnDivUpdate");
+    $("#cnDivAdd").hide();
+    $("#cnDivUpdate").hide();
+
+    $scope.add = function(){
+        $("#cnDivAdd").show();
+        $scope.add_dicGroup="";
+        $scope.add_value="";
+        $scope.add_dicShow="";
+        $scope.add_comment="";
+    }
+
+    $scope.close = function(){
+        $("#cnDivAdd").hide();
+        $("#cnDivUpdate").hide();
+    }
+
+    $scope.save = function(){
+        if(myservice.isEmpty($scope.add_dicGroup)){
+             alert("请填写字典组！");
+             return;
+        }
+        if(myservice.isEmpty($scope.add_value)){
+            alert("请填写字典值！");
+            return;
+        }
+        if(myservice.isEmpty($scope.add_dicShow)){
+            alert("请填写需要显示的内容！");
+            return;
+        }
+        var params = {
+            dicGroup:$scope.add_dicGroup,
+            value:$scope.add_value,
+            dicShow:$scope.add_dicShow,
+            comment:$scope.add_comment
+        }
+        var url = "/sysDictionary/saveSysDictionary";
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.getAll();
+            $("#cnDivAdd").hide();
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.getAll = function(){
+        $("#pleaseWait").show();
+        var url = "/sysDictionary/getAllSysDictionary";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }else{
+                var i = 1;
+                angular.forEach(temp.obj,function(item){
+                    item.no = i++;
+                });
+                $scope.obj=temp.obj;
+            }
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            $("#pleaseWait").hide();
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.getAll();
+
+    $scope.updateBefore = function(item){
+        $("#cnDivUpdate").show();
+         $scope.update_dicGroup = item.dicGroup;
+         $scope.update_value = item.value;
+         $scope.update_dicShow = item.dicShow;
+         $scope.update_comment = item.comment;
+         $scope.update_id = item.id;
+    }
+
+
+
+    $scope.update = function(item){
+        if(myservice.isEmpty($scope.update_dicGroup)){
+            alert("请填写字典组！");
+            return;
+        }
+        if(myservice.isEmpty($scope.update_value)){
+            alert("请填写字典值！");
+            return;
+        }
+        if(myservice.isEmpty($scope.update_dicShow)){
+            alert("请填写显示内容！");
+            return;
+        }
+        var msg = "您真的确定要修改吗？\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+        var url = "/sysDictionary/updateSysDictionary";
+        var params = {
+            id: $scope.update_id,
+            dicGroup:$scope.update_dicGroup,
+            value:$scope.update_value,
+            dicShow:$scope.update_dicShow,
+            comment:$scope.update_comment
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.getAll();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+        $("#cnDivUpdate").hide();
+    }
+
+    $scope.delete = function(id){
+        var msg = "您真的确定要删除吗？\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+        var url = "/sysDictionary/deleteSysDictionary?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.getAll();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+});
+
+//访问白名单
+App.controller("whiteListController", function ($http,$timeout,$scope,
+                                                myservice){
+    $("#pleaseWait").hide();
+    myservice.loginLockCheck();
+    myservice.dragFunc("cnDiv");
+    $("#cnDiv").hide();
+
+    $scope.add = function(){
+        $("#cnDiv").show();
+        $scope.s_Name="";
+        $scope.s_IdCard="";
+        $scope.s_PoliceNo="";
+        $scope.s_Ip="";
+        $scope.s_Mac="";
+        $scope.s_Comment="";
+    }
+
+    $scope.close = function(){
+        $("#cnDiv").hide();
+    }
+
+    $scope.save = function(){
+
+        var params = {
+            name:$scope.s_Name,
+            idCard:$scope.s_IdCard,
+            policeNo:$scope.s_PoliceNo,
+            ip:$scope.s_Ip,
+            mac:$scope.s_Mac,
+            comment:$scope.s_Comment
+        }
+        var url = "/nginx/save/whiteIp";
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("请检查必填项是否填写！");
+        });
+        $("#cnDiv").hide();
+    }
+
+    $scope.query = function () {
+        $("#pleaseWait").show();
+        var url = "/nginx/queryWhiteList";
+        var params = {
+            name:$scope.name,
+            idCard:$scope.idCard,
+            policeNo:$scope.policeNo,
+            ip:$scope.ip,
+            mac:$scope.mac
+        }
+        $http.post(url,params).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            console.log(temp.flag);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }else{
+                var i = 1;
+                angular.forEach(temp.obj,function(item){
+                    item.no = i++;
+                });
+                $scope.obj=temp.obj;
+            }
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            $("#pleaseWait").hide();
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    $scope.delete = function(id){
+        var msg = "您真的确定要删除吗？\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+        var url = "/nginx/deleteWhiteIp?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+});
+
+//用户审核
+App.controller("checkUserController", function ($http,$timeout,$scope,myservice) {
+    $("#pleaseWait").hide();
+    myservice.loginLockCheck();
+    $scope.names = ["不通过", "审核通过","待审核","全部"];
+    var selectedStatuesIndex = 3;
+    var keyWord = "";
+    $scope.getUsers = function(){
+        $("#pleaseWait").show();
+        if(!myservice.isEmpty($scope.keyWord)){
+            keyWord = $scope.keyWord;
+        }else{
+            keyWord = "";
+        }
+        var url = "/api/account/getUsers?flag="+selectedStatuesIndex +"&keyWord="+keyWord;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }else{
+                var i = 1;
+                angular.forEach(temp.obj,function(item){
+                    item.no = i++;
+                });
+                $scope.obj=temp.obj;
+            }
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            $("#pleaseWait").hide()
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.delete=function (id){
+        var r=confirm("确定要删除吗？");
+        if(r){
+            var url = "/api/account/deleteUser?id="+id;
+            $http.post(url).success(function(data)
+            {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                if(temp.flag == "FAILED"){
+                    myservice.errors(temp);
+                }else{
+                    var i = 1;
+                    angular.forEach(temp.obj,function(item){
+                        item.no = i++;
+                    });
+                    $scope.obj=temp.obj;
+                }
+                $scope.getUsers();
+            }).error(function(data)
+            {
+                alert("会话已经断开或者检查网络是否正常！");
+            });
+        }
+        $scope.getUsers();
+    }
+
+    $scope.update = function(item){
+        console.log(item.flag);
+        var url = "/api/account/userCheck"+"?id="+item.id+"&flag="+item.flag;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.getUsers();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.changeFlagTop = function(selectedName){
+        if(angular.equals(selectedName,"不通过")){
+            selectedStatuesIndex = 0 ;
+        }
+        if(angular.equals(selectedName,"审核通过")){
+            selectedStatuesIndex = 1 ;
+        }
+        if(angular.equals(selectedName,"待审核")){
+            selectedStatuesIndex = 2 ;
+        }
+        if(angular.equals(selectedName,"全部")){
+            selectedStatuesIndex = 3 ;
+        }
+    }
+
+    $scope.changeFlag = function(item,selectedName){
+        if(angular.equals(selectedName,"不通过")){
+            item.flag = 0 ;
+        }
+        if(angular.equals(selectedName,"审核通过")){
+            item.flag = 1 ;
+        }
+        if(angular.equals(selectedName,"待审核")){
+            item.flag = 2 ;
+        }
+        if(angular.equals(selectedName,"全部")){
+            item.flag = 3 ;
+        }
+    }
+
+});
 /**=========================================================
  * Module: access-login.js
  * Demo for login api
  =========================================================*/
-App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore','drawCodaService', function($scope, $http, $state,$cookieStore,drawCodaService) {
-  $scope.account = {};
-  var code = "";
-  var c=document.getElementById('drawCodaCanvas');
-  $(function() {
+App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore','drawCodaService','myservice', function($scope, $http, $state,$cookieStore,drawCodaService,myservice) {
+    $scope.account = {};
+    var code = "";
+    var c=document.getElementById('drawCodaCanvas');
+    $(function() {
         code = drawCodaService.drawCoda(c);
-        $scope.account.email = $cookieStore.get("email");
+        $scope.account.userName = $cookieStore.get("uaseName");
         $scope.account.password = $cookieStore.get("password");
-  });
+    });
 
-  $scope.drawCoda =function(){
-      code = drawCodaService.drawCoda(c);
-  }
-  $scope.login = function() {
-      if(angular.isDefined($scope.account.remember) && $scope.account.remember){
-          $cookieStore.put("email",$scope.account.email );
-          $cookieStore.put("password",$scope.account.password );
-      }
-    $scope.authMsg = '';
-    md5Password = md5($scope.account.password);
-    if($scope.loginForm.$valid && code.toLowerCase() == $scope.verificationCode.toLowerCase()) {
-      $http
-        .post('api/account/login', {email: $scope.account.email, password: md5Password})
-        .success(function(data) {
-          // assumes if ok, response is an object with some data, if not, a string with error
-          // customize according to your api
-            jsonString = angular.toJson(data);
-            response = angular.fromJson(jsonString);
-          if (  response.flag != "SUCESS") {
-            $scope.authMsg = "";
-            angular.forEach(response.errorList,function(e){
-                if(e.errorCode == "iris-00-002"){
-                    $state.go('page.register');
-                }
-                $scope.authMsg += e.errorMessage;
-                code = drawCodaService.drawCoda(c);
-            })
-          }else{
-            $state.go('app.dashboard');
-          }
-        }, function(x) {
-         $scope.authMsg = 'Server Request Error';
-        });
-    }
-    else {
-      // set as dirty if the user click directly to login so we show the validation messages
 
-      $scope.loginForm.account_email.$dirty = true;
-      $scope.loginForm.account_password.$dirty = true;
-        $scope.authMsg = "验证码错误";
+    $scope.drawCoda =function(){
         code = drawCodaService.drawCoda(c);
     }
 
-  };
+    $scope.login = function() {
+        if(angular.isDefined($scope.account.remember) && $scope.account.remember){
+            $cookieStore.put("userName",$scope.account.userName );
+            $cookieStore.put("password",$scope.account.password );
+        }
+        $scope.authMsg = '';
+        md5Password = md5($scope.account.password);
+        if($scope.loginForm.$valid && code.toLowerCase() == $scope.verificationCode.toLowerCase()) {
+            $http
+                .post('api/account/login', {userName: $scope.account.userName, password: md5Password})
+                .success(function(data) {
+                    // assumes if ok, response is an object with some data, if not, a string with error
+                    // customize according to your api
+                    jsonString = angular.toJson(data);
+                    response = angular.fromJson(jsonString);
+                    if (  response.flag != "SUCESS") {
+                        $scope.authMsg = "";
+                        angular.forEach(response.errorList,function(e){
+                            $scope.authMsg += e.errorMessage;
+                            code = drawCodaService.drawCoda(c);
+                        })
+                    }else{
+                        myservice.setCookie("irisEmail",$scope.account.email);
+                        $state.go('app.dashboard');
+                    }
+                }, function(x) {
+                    $scope.authMsg = 'Server Request Error';
+                });
+        }
+        else {
+            // set as dirty if the user click directly to login so we show the validation messages
+            //$scope.loginForm.account_email.$dirty = true;
+            $scope.loginForm.account_password.$dirty = true;
+            $scope.authMsg = "验证码错误";
+            code = drawCodaService.drawCoda(c);
+        }
 
+    };
 }]);
 
-App.controller('UnlockFormController', ['$scope', '$http', '$state', function($scope,$http,$state) {
+App.controller('UnlockFormController', function($scope,$http,$state,myservice) {
     $scope.lock = {};
     $scope.lock.password = "";
     $(lock = function(){
@@ -1017,13 +3048,7 @@ App.controller('UnlockFormController', ['$scope', '$http', '$state', function($s
             .success(function (data) {
                 jsonString = angular.toJson(data);
                 response = angular.fromJson(jsonString);
-                if (response.flag != "SUCESS") {
-                    $scope.authMsg = "";
-                    angular.forEach(response.errorList, function (e) {
-                        $scope.authMsg += e.errorMessage;
-                    })
-                    $scope.authMsg +=  response.message;
-                }
+                myservice.errors(response);
             }, function (x) {
                 $scope.authMsg = 'Server Request Error';
             });
@@ -1040,10 +3065,11 @@ App.controller('UnlockFormController', ['$scope', '$http', '$state', function($s
                         jsonString = angular.toJson(data);
                         response = angular.fromJson(jsonString);
                         if (response.flag != "SUCESS") {
-                            $scope.authMsg = "";
-                            angular.forEach(response.errorList, function (e) {
-                                $scope.authMsg += e.errorMessage;
-                            })
+                            myservice.errors(response);
+                            if(response.obj==1){
+                                $scope.alertessage = true;
+                                return;
+                            }
                         } else {
                             $state.go('app.dashboard');
                         }
@@ -1055,21 +3081,74 @@ App.controller('UnlockFormController', ['$scope', '$http', '$state', function($s
             $scope.lockForm.lock_password.$error.required = true;
         }
     }
-}]);
+});
 
 /**=========================================================
  * Module: access-register.js
  * Demo for register account api
  =========================================================*/
 
-App.controller('RegisterFormController', ['$scope', '$http', '$state', function($scope, $http, $state) {
+App.controller('RegisterFormController', ['$scope', '$http', '$state','myservice', function($scope, $http, $state,myservice) {
 
   // bind here all data from the form
   $scope.account = {};
   // place the message if something goes wrong
   $scope.authMsg = '';
 
+  var level = 0;
+
+  $scope.chkvalue = function() {
+      $scope.check_password = false;
+     if (myservice.isEmpty($scope.register.password) ||  $scope.register.password.length < 8){
+        $scope.check_password = true;
+         level = 1;
+     }else if(passwordLevel($scope.register.password)<3){
+         $scope.check_password = true;
+         level = 2;
+     }else if(passwordLevel($scope.register.password)<4){
+         $scope.check_password = false;
+         level = 3;
+     }else{
+         $scope.check_password = false;
+         level = 4;
+     }
+
+  }
+
+
+    function passwordLevel(password) {
+        var Modes = 0;
+        for (i = 0; i < password.length; i++) {
+            Modes |= CharMode(password.charCodeAt(i));
+        }
+        return bitTotal(Modes);
+        //CharMode函数
+        function CharMode(iN) {
+            if (iN >= 48 && iN <= 57)//数字
+                return 1;
+            if (iN >= 65 && iN <= 90) //大写字母
+                return 2;
+            if ((iN >= 97 && iN <= 122) || (iN >= 65 && iN <= 90))
+            //大小写
+                return 4;
+            else
+                return 8; //特殊字符
+        }
+        //bitTotal函数
+        function bitTotal(num) {
+            modes = 0;
+            for (i = 0; i < 4; i++) {
+                if (num & 1) modes++;
+                num >>>= 1;
+            }
+            return modes;
+        }
+    }
+
   $scope.register = function() {
+      if(level <= 1){
+          return;
+      }
       $scope.authMsg = '';
       if( !angular.isDefined($scope.register.account_password_confirm)){
           $scope.authMsg = '请再一次输入密码';
@@ -1079,7 +3158,13 @@ App.controller('RegisterFormController', ['$scope', '$http', '$state', function(
     if($scope.registerForm.$valid) {
 
       $http
-        .post('api/account/register', {email: $scope.account.email, password: md5Password})
+        .post('api/account/register',
+             {
+                       userName: $scope.account.userName,
+                       idCard: $scope.account.idCard,
+                       password: md5Password
+                    }
+             )
         .success(function(data) {
           // assumes if ok, response is an object with some data, if not, a string with error
           // customize according to your api
@@ -1099,9 +3184,10 @@ App.controller('RegisterFormController', ['$scope', '$http', '$state', function(
     }
     else {
       // set as dirty if the user click directly to login so we show the validation messages
-      $scope.registerForm.account_email.$dirty = true;
+      //$scope.registerForm.account_email.$dirty = true;
       $scope.registerForm.account_password.$dirty = true;
       $scope.registerForm.account_agreed.$dirty = true;
+      $scope.check_password = false;
       
     }
   };
@@ -3925,6 +6011,7 @@ App.controller('ModalController', ['$scope', '$modal', function ($scope, $modal)
 
   var ModalInstanceCtrl = function ($scope, $modalInstance) {
 
+
     $scope.ok = function () {
       $modalInstance.close('closed');
     };
@@ -5986,6 +8073,40 @@ App.directive('classyloader', ["$timeout", "Utils", function($timeout, Utils) {
       }
     }
   };
+}]);
+
+App.directive('draggable', ['$document', function($document) {
+    return function(scope, element, attr) {
+        var startX = 0, startY = 0, x = 0, y = 0;
+        element= angular.element(document.getElementsByClassName("modal-dialog"));
+        element.css({
+            position: 'relative',
+            cursor: 'move'
+        });
+
+        element.on('mousedown', function(event) {
+            // Prevent default dragging of selected content
+            event.preventDefault();
+            startX = event.pageX - x;
+            startY = event.pageY - y;
+            $document.on('mousemove', mousemove);
+            $document.on('mouseup', mouseup);
+        });
+
+        function mousemove(event) {
+            y = event.pageY - startY;
+            x = event.pageX - startX;
+            element.css({
+                top: y + 'px',
+                left:  x + 'px'
+            });
+        }
+
+        function mouseup() {
+            $document.off('mousemove', mousemove);
+            $document.off('mouseup', mouseup);
+        }
+    };
 }]);
 
 /**=========================================================

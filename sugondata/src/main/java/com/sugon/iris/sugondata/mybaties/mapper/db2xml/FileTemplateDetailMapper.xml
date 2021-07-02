@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateDetailMapper" >
+
+    <!--结果集-->
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="template_id" property="templateId" jdbcType="BIGINT" />
+        <result column="field_name" property="fieldName" jdbcType="VARCHAR" />
+        <result column="field_key" property="fieldKey" jdbcType="VARCHAR" />
+        <result column="regular" property="regular" jdbcType="VARCHAR" />
+        <result column="sort_no" property="sortNo" jdbcType="VARCHAR" />
+        <result column="comment" property="comment" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="user_id" property="userId" jdbcType="BIGINT" />
+        <result column="exclude" property="exclude" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--基础字段-->
+    <sql id="Base_Column_List" >
+        id,template_id,field_name,field_key,regular,create_time,update_time,sort_no,comment,user_id,exclude
+    </sql>
+
+    <!--表查询-->
+    <select id="selectFileTemplateDetailList" resultMap="BaseResultMap"  >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        file_template_detail
+        where
+        1=1
+        <if test="id!=null">
+            and id = #{id}
+        </if >
+        <if test="templateId!=null">
+            and template_id = #{templateId}
+        </if >
+        <if test="fieldName!=null and fieldName != ''">
+            and field_name like "%"#{fieldName}"%"
+        </if >
+        <if test="fieldKey!=null and fieldKey != ''">
+            and field_key like "%"#{fieldKey}"%"
+        </if >
+        <if test="sortNo!=null and sortNo != ''">
+            and sort_no = #{sortNo}
+        </if >
+        <if test="userId!=null">
+            and user_id = #{userId}
+        </if >
+    </select>
+
+    <!--插入-->
+    <insert id="fileTemplateDetailInsert" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="id">
+        insert into file_template_detail
+        (<include refid="Base_Column_List" />)
+        values
+             (
+             #{id,jdbcType=INTEGER},
+             #{templateId,jdbcType=INTEGER},
+             #{fieldName,jdbcType=VARCHAR},
+             #{fieldKey,jdbcType=VARCHAR},
+             #{regular,jdbcType=VARCHAR},
+             #{createTime,jdbcType=TIMESTAMP},
+             #{updateTime,jdbcType=TIMESTAMP},
+             #{sortNo,jdbcType=VARCHAR},
+             #{comment,jdbcType=VARCHAR},
+             #{userId,jdbcType=INTEGER},
+             #{exclude,jdbcType=VARCHAR}
+             )
+    </insert>
+
+    <!--更新-->
+    <update id="updateFileTemplateDetail">
+               update file_template_detail
+                      set field_name = #{fieldName},
+                          field_key = #{fieldKey},
+                          regular = #{regular},
+                          sort_no = #{sortNo},
+                          comment = #{comment},
+                          exclude = #{exclude}
+               where id = #{id}
+    </update>
+
+    <!--通过id删除-->
+    <delete id="deleteFileTemplateDetailById">
+            DELETE
+            FROM
+            file_template_detail
+            <where>
+                id in (
+                <foreach collection="idArr" item="item" index="i" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </where>
+    </delete>
+
+    <!--通过templatId删除-->
+    <delete id="deleteFileTemplateDetailByTemplatId">
+        DELETE
+        FROM
+        file_template_detail
+        <where>
+            template_id in (
+            <foreach collection="templatIdArr" item="item" index="i" separator=",">
+                #{item}
+            </foreach>
+            )
+        </where>
+    </delete>
+</mapper>

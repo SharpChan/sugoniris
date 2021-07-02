@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.FileCaseMapper" >
+
+    <!--结果集-->
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileCaseEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="case_no" property="caseNo" jdbcType="VARCHAR" />
+        <result column="case_name" property="caseName" jdbcType="VARCHAR" />
+        <result column="case_info" property="caseInfo" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <!--基础字段-->
+    <sql id="Base_Column_List" >
+        id,case_no,case_name,case_info,user_id,create_time,update_time
+    </sql>
+
+    <!--表查询-->
+    <select id="selectFileCaseEntityList" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileCaseEntity" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            file_case
+        where
+        1=1
+        <if test="id!=null">
+            and id = #{id}
+        </if >
+        <if test="caseNo!=null and caseNo != ''">
+            and case_no =  #{caseNo}
+        </if >
+        <if test="caseName!=null and caseName != ''">
+            and case_name =  #{caseName}
+        </if >
+        <if test="userId!=null">
+            and user_id = #{userId}
+        </if >
+    </select>
+
+
+    <!--批量插入-->
+    <insert id="fileCaseInsert" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileCaseEntity"  useGeneratedKeys="true" keyProperty="id">
+        insert into file_case
+        (<include refid="Base_Column_List" />)
+        values
+             (
+             #{id,jdbcType=INTEGER},
+             #{caseNo,jdbcType=VARCHAR},
+             #{caseName,jdbcType=VARCHAR},
+             #{caseInfo,jdbcType=VARCHAR},
+             #{userId,jdbcType=INTEGER},
+             #{createTime,jdbcType=TIMESTAMP},
+             #{updateTime,jdbcType=TIMESTAMP}
+             )
+    </insert>
+
+    <!--更新-->
+    <update id="updateFileCase">
+               update file_case
+                      set case_no = #{caseNo},
+                          case_name = #{caseName},
+                          case_info = #{caseInfo},
+                          user_id = #{userId},
+                          update_time = #{updateTime}
+               where id = #{id}
+    </update>
+
+    <!--删除-->
+    <delete id="deleteFileCaseById">
+            DELETE
+            FROM
+                 file_case
+            <where>
+                id in (
+                <foreach collection="idArr" item="item" index="i" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </where>
+    </delete>
+</mapper>

@@ -14,6 +14,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
                                            "com.sugon.iris.sugonannotation",
                                            "com.sugon.iris.sugonweb",
                                            "com.sugon.iris.sugoncommon",
+                                           "com.sugon.iris.sugonlistener",
                                            "com.sugon.iris.sugonrest"})
 public class SugonwebApplication {
     public static void main(String[] args) {

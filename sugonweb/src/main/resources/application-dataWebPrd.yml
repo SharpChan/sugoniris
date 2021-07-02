@@ -1,0 +1,48 @@
+spring:
+  #jpa
+  datasource:
+    ds1: #数据源1 jdbcTemplate
+      driver-class-name: com.mysql.cj.jdbc.Driver # mysql的驱动你可以配置别的关系型数据库
+      url: jdbc:mysql://50.73.68.61:3306/iris?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true #数据源地址
+      username: root
+      password: root@123
+
+  jackson:
+     date-format: yyyy-MM-dd HH:mm:ss
+     time-zone: GMT+8
+
+
+
+#mybatis
+datasource:
+  druid:
+      db1:
+        driverClassName: com.mysql.cj.jdbc.Driver
+        username: root
+        password: root@123
+        jdbc-url: jdbc:mysql://50.73.68.61:3306/fangzhousdm?useUnicode=true&characterEncoding=utf8
+        type: com.alibaba.druid.pool.DruidDataSource
+        initialSize: 2
+        minIdle: 2
+        maxActive: 5
+        validationQuery: SELECT 1 from dual
+        testWhileIdle: true
+        testOnBorrow: true
+        testOnReturn: false
+        maxWait: 6000
+        filters: stat,slf4j #wall,
+      db2:
+        driverClassName: com.mysql.jdbc.Driver
+        username: root
+        password: root@123
+        jdbc-url: jdbc:mysql://50.73.68.61:3306/iris?useUnicode=true&characterEncoding=utf8
+        type: com.alibaba.druid.pool.DruidDataSource
+        initialSize: 2
+        minIdle: 2
+        maxActive: 5
+        validationQuery: SELECT 1 from dual
+        testWhileIdle: true
+        testOnBorrow: true
+        testOnReturn: false
+        maxWait: 6000
+        filters: stat,slf4j

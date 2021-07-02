@@ -4,13 +4,14 @@ import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.AccountServiceDaoIntf;
 import com.sugon.iris.sugondomain.dtos.userDtos.UserDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.userEntities.UserEntity;
+import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.userInfoService.AccountService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
+import java.util.ArrayList;
 import java.util.List;
 import com.sugon.iris.sugondomain.beans.userBeans.User;
-
 import javax.annotation.Resource;
 
 @Service
@@ -20,14 +21,12 @@ public class AccountServiceImpl implements AccountService {
     private AccountServiceDaoIntf accountServiceDaoImpl;
 
 
-
-
   public int saveAccount(UserDto userDto, List<Error> errorList){
       int result = 0;
       try {
           UserEntity user = new UserEntity();
           PublicUtils.trans(userDto, user);
-          List<UserEntity> userEntityList = accountServiceDaoImpl.getUserEntitys(null,userDto.getEmail(),null,null,errorList);
+          List<UserEntity> userEntityList = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),null,null,errorList);
           if(null != userEntityList && userEntityList.size()>0){
               errorList.add(new Error("{iris-00-001}","已经注册请直接登录！",""));
               return result;
@@ -41,15 +40,14 @@ public class AccountServiceImpl implements AccountService {
   }
 
     public User getUserInfo(UserDto userDto, List<Error> errorList) throws IllegalAccessException {
-
-        List<UserEntity> userEntityList_01 = accountServiceDaoImpl.getUserEntitys(null,userDto.getEmail(),null,null,errorList);
+        List<UserEntity> userEntityList_01 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),null,null,errorList);
         if(CollectionUtils.isEmpty(userEntityList_01)){
-            errorList.add(new Error("iris-00-002","请先注册账户",""));
+            errorList.add(new Error(ErrorCode_Enum.SYS_02_000.getCode(),"请先注册账户",""));
             return null;
         }
-        List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,userDto.getEmail(),userDto.getPassword(),null,errorList);
+        List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),userDto.getPassword(),null,errorList);
         if(CollectionUtils.isEmpty(userEntityList_02)){
-            errorList.add(new Error("iris-00-003","邮箱或密码错误",""));
+            errorList.add(new Error(ErrorCode_Enum.IRIS_00_003.getCode(),"邮箱或密码错误",""));
             return null;
         }else if(userEntityList_02.size()>1){
             errorList.add(new Error("iris-00-004","存在多个账户请联系管理员",""));
@@ -64,4 +62,33 @@ public class AccountServiceImpl implements AccountService {
         PublicUtils.trans(userDto, user);
         return accountServiceDaoImpl.update(user,errorList);
   }
+
+    /**
+     * 作者:SharpChan
+     * 日期：2020.08.20
+     * 描述：用于用户审核模块查看所有用户
+     */
+    public List<User> getUserInfoCheck(String keyWord,Integer flag, List<Error> errorList ) throws IllegalAccessException {
+        List<UserEntity> userEntityList = accountServiceDaoImpl.getUserEntitysForCheck(keyWord,flag,errorList);
+        List<User> userList =null;
+        if(!CollectionUtils.isEmpty(userEntityList)){
+            userList = new ArrayList<User>();
+            for (UserEntity entity : userEntityList){
+                User user = new User();
+                PublicUtils.trans(entity, user);
+                userList.add(user);
+            }
+        }
+        return userList;
+    }
+
+    @Override
+    public int alterUserStatus(Long id ,Integer flag, List<Error> errorList) {
+        return accountServiceDaoImpl.updateForCheck(id,flag,errorList);
+    }
+
+    @Override
+    public int deleteUser(Long id , List<Error> errorList) {
+        return accountServiceDaoImpl.deleteUser(id,errorList);
+    }
 }

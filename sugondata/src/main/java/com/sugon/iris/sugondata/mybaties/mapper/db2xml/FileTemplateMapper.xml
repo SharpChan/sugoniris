@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateMapper" >
+
+    <!--结果集-->
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="template_name" property="templateName" jdbcType="VARCHAR" />
+        <result column="table_prefix" property="tablePrefix" jdbcType="VARCHAR" />
+        <result column="template_key" property="templateKey" jdbcType="VARCHAR" />
+        <result column="comment" property="comment" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="user_id" property="userId" jdbcType="BIGINT" />
+        <result column="exclude" property="exclude" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--基础字段-->
+    <sql id="Base_Column_List" >
+        id,template_name,table_prefix,template_key,create_time,update_time,comment,user_id,exclude
+    </sql>
+
+    <!--表查询-->
+    <select id="selectFileTemplateList" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateEntity" resultMap="BaseResultMap"  >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        file_template
+        where
+        1=1
+        <if test="id!=null">
+            and id = #{id}
+        </if >
+        <if test="templateName!=null and templateName != ''">
+            and template_name like  "%"#{templateName}"%"
+        </if >
+        <if test="tablePrefix!=null and tablePrefix != ''">
+            and table_prefix like "%"#{tablePrefix}"%"
+        </if >
+        <if test="templateKey!=null and templateKey != ''">
+            and template_key like "%"#{templateKey}"%"
+        </if >
+        <if test="userId!=null">
+            and user_id = #{userId}
+        </if >
+    </select>
+
+    <!--批量插入-->
+    <insert id="fileTemplateInsert" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into file_template
+        (<include refid="Base_Column_List" />)
+        values
+             (
+             #{id,jdbcType=INTEGER},
+             #{templateName,jdbcType=VARCHAR},
+             #{tablePrefix,jdbcType=VARCHAR},
+             #{templateKey,jdbcType=VARCHAR},
+             #{createTime,jdbcType=TIMESTAMP},
+             #{updateTime,jdbcType=TIMESTAMP},
+             #{comment,jdbcType=VARCHAR},
+             #{userId,jdbcType=INTEGER},
+             #{exclude,jdbcType=VARCHAR}
+             )
+    </insert>
+
+    <!--更新-->
+    <update id="updateFileTemplate">
+               update file_template
+                      set template_name = #{templateName},
+                          table_prefix = #{tablePrefix},
+                          template_key = #{templateKey},
+                          comment = #{comment},
+                          exclude = #{exclude}
+               where id = #{id}
+    </update>
+
+    <!--删除-->
+    <delete id="deleteFileTemplateById">
+            DELETE
+            FROM
+              file_template
+            <where>
+                id in (
+                <foreach collection="idArr" item="item" index="i" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </where>
+    </delete>
+</mapper>

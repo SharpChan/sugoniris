@@ -28,9 +28,9 @@ public enum MenuType_Enum {
         return describe;
     }
 
-    public static MenuType_Enum getValueName(String code){
+    public static MenuType_Enum getEnumByName(String name){
         for(MenuType_Enum c: MenuType_Enum.values()){
-            if(c.getName().equals(code)){
+            if(c.getName().equals(name)){
                 return c;
             }
         }

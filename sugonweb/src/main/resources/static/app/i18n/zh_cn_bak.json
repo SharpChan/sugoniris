@@ -1,0 +1,110 @@
+{
+  "dashboard": {
+    "WELCOME": "{{appName}},欢迎使用！"
+  },
+  "topbar": {
+    "messages": {
+      "UNREAD": "未读消息",
+      "MORE": "更多消息"
+    },
+    "search": {
+      "PLACEHOLDER": "输入并回车.."
+    },
+    "notification": {
+      "MORE": "更多通知"
+    }
+  },
+  "offsidebar": {
+    "setting": {
+      "SETTINGS": "设置",
+      "THEMES": "主题",
+      "layout": {
+        "FIXED": "固定",
+        "COLLAPSED": "折叠"
+      }
+    },
+    "chat": {
+      "CONNECTIONS": "联系",
+      "SEARCH": "搜索联系人",
+      "ONLINE": "在线",
+      "OFFLINE": "离线",
+      "LOAD_MORE": "加载更多",
+      "TASK_COMPLETION": "任务完成",
+      "QUOTA": "上传限额"
+    }
+  },
+  "sidebar": {
+    "WELCOME": "欢迎",
+    "heading": {
+      "HEADER": "主导航",
+      "COMPONENTS": "组件",
+      "MORE": "更多"
+    },
+    "nav": {
+      "DASHBOARD": "仪表盘",
+      "WIDGETS": "小工具",
+      "DOCUMENTATION": "说明书",
+      "element": {
+        "ELEMENTS": "元素",
+        "BUTTON": "按钮",
+        "COLOR": "颜色",
+        "NOTIFICATION": "通知",
+        "INTERACTION": "互动",
+        "SPINNER": "下拉列表",
+        "ANIMATION": "动画",
+        "DROPDOWN": "下拉列表",
+        "PANEL": "仪表板",
+        "PORTLET": "门户",
+        "GRID": "表格",
+        "GRID_MASONRY": "创建网格",
+        "TYPO": "排版样式",
+        "FONT_ICON": "字体图标",
+        "WEATHER_ICON": "天气图标",
+        "LOCALIZATION": "定位"
+      },
+      "form": {
+        "FORM": "表单",
+        "STANDARD": "标准",
+        "EXTENDED": "延伸",
+        "VALIDATION": "确认",
+        "WIZARD": "安装向导",
+        "UPLOAD": "上传"
+      },
+      "chart": {
+        "CHART": "排行榜",
+        "FLOT": "浮动",
+        "RADIAL": "射线"
+      },
+      "table": {
+        "TABLE": "表格",
+        "STANDARD": "标准",
+        "EXTENDED": "自适应扩展",
+        "DATATABLE": "数据表"
+      },
+      "map": {
+        "MAP": "地图",
+        "GOOGLE": "谷歌地图",
+        "VECTOR": "矢量地图"
+      },
+      "extra": {
+        "EXTRA": "附加",
+        "MAILBOX": "对话框",
+        "TIMELINE": "时间线",
+        "CALENDAR": "日历",
+        "INVOICE": "记账单",
+        "SEARCH": "搜索",
+        "TODO": "代办事项",
+        "PROFILE": "配置"
+      },
+      "pages": {
+        "PAGES": "页码",
+        "LOGIN": "登录",
+        "REGISTER": "注册",
+        "RECOVER": "重置密码",
+        "PROFILE": "配置文件",
+        "LOCK": "锁定",
+        "STARTER": "起始模板"
+      }
+    }
+  }
+}

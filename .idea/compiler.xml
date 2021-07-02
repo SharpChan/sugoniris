@@ -8,9 +8,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="sugonannotation" />
+        <module name="sugonfilerest" />
         <module name="sugondomain" />
         <module name="sugondata" />
         <module name="sugonweb" />
+        <module name="sugonlistener" />
         <module name="sugonservice" />
         <module name="sugonrest" />
         <module name="sugoncommon" />
@@ -22,7 +24,9 @@
       <module name="sugondao" target="1.8" />
       <module name="sugondata" target="1.8" />
       <module name="sugondomain" target="1.8" />
+      <module name="sugonfilerest" target="1.8" />
       <module name="sugoniris" target="1.8" />
+      <module name="sugonlistener" target="1.8" />
       <module name="sugonrest" target="1.8" />
       <module name="sugonservice" target="1.8" />
       <module name="sugonweb" target="1.8" />
@@ -36,7 +40,9 @@
       <module name="sugondao" options="-parameters" />
       <module name="sugondata" options="-parameters" />
       <module name="sugondomain" options="-parameters" />
+      <module name="sugonfilerest" options="-parameters" />
       <module name="sugoniris" options="-parameters" />
+      <module name="sugonlistener" options="-parameters" />
       <module name="sugonrest" options="-parameters" />
       <module name="sugonservice" options="-parameters" />
       <module name="sugonweb" options="-parameters" />

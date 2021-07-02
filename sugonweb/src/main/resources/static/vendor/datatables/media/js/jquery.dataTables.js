@@ -9851,7 +9851,7 @@
 		 *      } );
 		 *    } );
 		 */
-		"aLengthMenu": [ 10, 25, 50, 100 ],
+		"aLengthMenu": [ 5 ,10, 25, 50, 100 ],
 	
 	
 		/**
@@ -10880,7 +10880,8 @@
 		 *      } );
 		 *    } )
 		 */
-		"iDisplayLength": 10,
+		/*SharpChan*/
+		"iDisplayLength": 5,
 	
 	
 		/**
@@ -11074,7 +11075,7 @@
 				 *      } );
 				 *    } );
 				 */
-				"sNext": "Next",
+				"sNext": "下一页",
 	
 	
 				/**
@@ -11097,7 +11098,7 @@
 				 *      } );
 				 *    } );
 				 */
-				"sPrevious": "Previous"
+				"sPrevious": "前一页"
 			},
 	
 			/**
@@ -11120,7 +11121,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sEmptyTable": "No data available in table",
+			"sEmptyTable": "暂无数据",
 	
 	
 			/**
@@ -11152,7 +11153,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
+			"sInfo": "显示 _START_ - _END_   总数 _TOTAL_",
 	
 	
 			/**
@@ -11173,7 +11174,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sInfoEmpty": "Showing 0 to 0 of 0 entries",
+			"sInfoEmpty": "显示 0 - 0    总数 0 ",
 	
 	
 			/**
@@ -11313,7 +11314,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sLengthMenu": "Show _MENU_ entries",
+			"sLengthMenu": "每页 _MENU_ 条",
 	
 	
 			/**
@@ -11393,7 +11394,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sSearch": "Search:",
+			"sSearch": "搜索:",
 	
 	
 			/**

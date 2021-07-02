@@ -48,7 +48,9 @@ var loadGoogleMaps = (function($) {
 			google.load("maps", version || 3, {"other_params": $.param(params) , "callback" : resolve});
 
 		//Last, try pure jQuery Ajax technique to load the Google Maps API in Async.
-		} else {
+		}
+	/*
+		else {
 			
 			//Ajax URL params
 			params = $.extend( params, {
@@ -76,7 +78,7 @@ var loadGoogleMaps = (function($) {
 				url: 'http://maps.google.com.cn/maps/api/js'
 			});
 			
-		}
+		}*/
 	
 		promise = deferred.promise(); 
 		

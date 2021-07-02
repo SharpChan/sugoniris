@@ -18,4 +18,5 @@ public class SugonrestApplication {
         SpringApplication.run(SugonrestApplication.class, args);
     }
 
+
 }

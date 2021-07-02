@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.SequenceMapper" >
+
+
+    <!--表序列-->
+    <select id="getSeq" parameterType="java.util.Map" resultType="java.lang.Long"  >
+        SELECT
+                nextval(
+                     #{name,jdbcType=VARCHAR}
+                )
+    </select>
+</mapper>

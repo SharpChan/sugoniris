@@ -31,7 +31,7 @@ App.controller('LoginFormController', ['$scope', '$http', '$state', function($sc
     }
     else {
       // set as dirty if the user click directly to login so we show the validation messages
-      $scope.loginForm.account_email.$dirty = true;
+      //$scope.loginForm.account_email.$dirty = true;
       $scope.loginForm.account_password.$dirty = true;
     }
   };

@@ -10,10 +10,12 @@
          <p class="text-center pv">进行登录.</p>
          <form role="form" ng-submit="login()" name="loginForm" novalidate="" class="form-validate mb-lg">
             <div class="form-group has-feedback">
-               <input id="exampleInputEmail1" type="email" name="account_email" placeholder="邮箱" autocomplete="off" ng-model="account.email" required="" class="form-control" />
-               <span class="fa fa-envelope form-control-feedback text-muted"></span>
-               <span ng-show="loginForm.account_email.$dirty &amp;&amp; loginForm.account_email.$error.required" class="text-danger">请填写邮箱</span>
-               <span ng-show="loginForm.account_email.$dirty &amp;&amp; loginForm.account_email.$error.email" class="text-danger">必须是存在的邮箱地址</span>
+               <!--<input id="exampleInputEmail1" type="email" name="account_email" placeholder="邮箱" autocomplete="off" ng-model="account.email" required="" class="form-control" />-->
+               <input type="text"  placeholder="用户名" autocomplete="off" ng-model="account.userName" required="" class="form-control" />
+               <span class="icon-user form-control-feedback text-muted"></span>
+               <!--<span class="fa fa-envelope form-control-feedback text-muted"></span>
+              <span ng-show="loginForm.account_email.$dirty &amp;&amp; loginForm.account_email.$error.required" class="text-danger">请填写邮箱</span>
+              <span ng-show="loginForm.account_email.$dirty &amp;&amp; loginForm.account_email.$error.email" class="text-danger">必须是存在的邮箱地址</span>-->
             </div>
             <div class="form-group has-feedback">
                <input id="exampleInputPassword1" type="password" name="account_password" placeholder="密码" ng-model="account.password" required="" class="form-control" />

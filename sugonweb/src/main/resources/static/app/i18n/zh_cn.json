@@ -36,9 +36,11 @@
   "sidebar": {
     "WELCOME": "欢迎",
     "heading": {
+      "SYSTEM": "系统配置",
       "HEADER": "主导航",
       "COMPONENTS": "组件",
-      "MORE": "更多"
+      "MORE": "更多",
+      "Data": "数据处理"
     },
     "nav": {
       "DASHBOARD": "仪表盘",
@@ -60,7 +62,22 @@
         "TYPO": "排版样式",
         "FONT_ICON": "字体图标",
         "WEATHER_ICON": "天气图标",
-        "LOCALIZATION": "定位"
+        "LOCALIZATION": "定位",
+        "NGINX": "安全模块",
+        "BUTTON_whiteList": "配置白名单",
+        "BUTTON_caseManager": "案件登记",
+        "BUTTON_fileManager": "文件管理",
+        "BUTTON_fileTemplate": "文件模板",
+        "BUTTON_fileTemplateGroup": "模板组",
+        "CaseData": "案件数据",
+        "BUTTON_fileUpload": "文件上传",
+        "PRIVILEGE": "用户",
+        "BUTTON_checkUser": "用户审核",
+        "BUTTON_userGroup": "用户组",
+        "BUTTON_pageRegister": "页面注册",
+        "SYSTEMCONFIG":"系统配置",
+        "BUTTON_config":"参数配置",
+        "BUTTON_dictionary":"字典信息"
       },
       "form": {
         "FORM": "表单",

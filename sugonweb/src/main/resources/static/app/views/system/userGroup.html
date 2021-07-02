@@ -1,0 +1,73 @@
+<style type="text/css">
+    .panel{
+        border-left:1px solid #ccc;
+        border-right:1px solid #ccc
+    }
+</style>
+
+<div ng-controller="userGroupController">
+    <div class="topnavbar" style="height: 50px;">
+        <div align="left">
+            <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">用户组</strong></label>
+        </div>
+        <div align="right" style="margin-top:-30px;">
+        </div>
+    </div>
+
+    <div  class="table-grid table-grid-desktop" style="margin-top:30px;">
+        <div class="">
+            <div class="pr col-md-3">
+                <div class="form-inline" style="margin-bottom: 5px;">
+                    <div ng-show="hasClick" ng-init="hasClick = false" class="clearfix mb input-group">
+                        <a class="btn btn-purple btn-sm mb-compose-button" ng-click="removeUserGroup()">
+                            <em class="fa fa-remove"></em>
+                            <span>删除</span>
+                        </a>
+                    </div>
+                    <div ng-show="hasClick" ng-click="!hasClick" ng-init="hasClick = false" class="clearfix mb input-group">
+                        <a ui-sref="app.userGroup.AddOrModify({active: active.update,id:id})" class="btn btn-purple btn-sm mb-compose-button">
+                            <em class="fa fa-pencil"></em>
+                            <span>修改</span>
+                        </a>
+                    </div>
+                    <div class="clearfix mb input-group">
+                        <a ui-sref="app.userGroup.AddOrModify({active: active.save})" class="btn btn-purple btn-sm mb-compose-button">
+                            <em class="fa fa-plus"></em>
+                            <span>新增</span>
+                        </a>
+                    </div>
+                    <div class="clearfix mb input-group">
+                        <a ui-sref="app.userGroup.AddOrModify({active: active.save})" class="btn btn-purple btn-sm mb-compose-button">
+                            <em class="fa fa-plus"></em>
+                            <span>角色</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- START mailbox list-->
+                <div collapse="mailboxMenuCollapsed" class="mb-boxes">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li class="p">
+                                    <strong><small  class="text-muted">用户组</small></strong>
+                                </li>
+                                <li ui-sref-active="active" ng-repeat="item in obj">
+                                    <a ui-sref="app.userGroup.users({userGroupid:item.id})" ng-click="userGroupOnClick(item)">
+                                        <!--<span ng-if="item.alert" class="label label-green pull-right">{{item.alert}}</span>-->
+                                        <!--<em ng-class="fold.icon" class="fa fa-fw fa-lg"></em>-->
+                                        <span>{{item.groupName}}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- END mailbox list-->
+            </div>
+            <div ui-view="" class="col"></div>
+        </div>
+
+    </div>
+</div>

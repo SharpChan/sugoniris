@@ -1,5 +1,58 @@
 [
   {
+    "text": "Data",
+    "heading": "true",
+    "translate": "sidebar.heading.Data"
+  },
+  {
+    "text": "文件处理",
+    "sref": "#",
+    "icon": "icon-grid",
+    "submenu": [
+      {"text": "Buttons",       "sref": "app.caseManager", "translate": "sidebar.nav.element.BUTTON_caseManager" },
+      {"text": "Buttons",       "sref": "app.fileUpload", "translate": "sidebar.nav.element.BUTTON_fileUpload" },
+      {"text": "Buttons",       "sref": "app.fileManager", "translate": "sidebar.nav.element.BUTTON_fileManager" },
+      {"text": "Buttons",       "sref": "app.fileTemplate", "translate": "sidebar.nav.element.BUTTON_fileTemplate" },
+      {"text": "Buttons",       "sref": "app.fileTemplateGroup", "translate": "sidebar.nav.element.BUTTON_fileTemplateGroup" }
+    ],
+    "translate": "sidebar.nav.element.CaseData"
+  },
+  {
+    "text": "System",
+    "heading": "true",
+    "translate": "sidebar.heading.SYSTEM"
+  },
+  {
+    "text": "Elements",
+    "sref": "#",
+    "icon": "icon-grid",
+    "submenu": [
+      {"text": "Buttons",       "sref": "app.whiteList", "translate": "sidebar.nav.element.BUTTON_whiteList" }
+    ],
+    "translate": "sidebar.nav.element.NGINX"
+  },
+  {
+    "text": "Elements",
+    "sref": "#",
+    "icon": "icon-grid",
+    "submenu": [
+      {"text": "Buttons",       "sref": "app.checkUser", "translate": "sidebar.nav.element.BUTTON_checkUser" },
+      {"text": "Buttons",       "sref": "app.userGroup", "translate": "sidebar.nav.element.BUTTON_userGroup" },
+      {"text": "Buttons",       "sref": "app.pageRegister", "translate": "sidebar.nav.element.BUTTON_pageRegister" }
+    ],
+    "translate": "sidebar.nav.element.PRIVILEGE"
+  },
+  {
+    "text": "Elements",
+    "sref": "#",
+    "icon": "icon-grid",
+    "submenu": [
+      {"text": "Buttons",       "sref": "app.config", "translate": "sidebar.nav.element.BUTTON_config" },
+      {"text": "Buttons",       "sref": "app.dictionary", "translate": "sidebar.nav.element.BUTTON_dictionary" }
+    ],
+    "translate": "sidebar.nav.element.SYSTEMCONFIG"
+  },
+  {
     "text": "Main Navigation",
     "heading": "true",
     "translate": "sidebar.heading.HEADER"

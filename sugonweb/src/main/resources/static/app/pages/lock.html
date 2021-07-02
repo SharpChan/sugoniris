@@ -12,6 +12,7 @@
                      <input id="exampleInputPassword1" type="password" placeholder="密码" required="" name="lock_password" ng-model="lock.password" class="form-control" />
                      <span class="fa fa-lock form-control-feedback text-muted"></span>
                      <span ng-show="lockForm.lock_password.$dirty &amp;&amp; lockForm.lock_password.$error.required" class="text-danger">密码必填</span>
+                     <span ng-show="alertessage" class="text-danger">密码错误</span>
                   </div>
                   <div class="clearfix">
                      <div class="pull-left mt-sm">
@@ -32,7 +33,7 @@
    <!-- END panel-->
    <div class="p-lg text-center">
       <span>&copy;</span>
-      <span ng-"app.year"></span>
+      <span ng-bind="app.year"></span>
       <span>-</span>
       <span ng-bind="app.name"></span>
       <br/>

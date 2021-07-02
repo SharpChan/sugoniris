@@ -1,0 +1,187 @@
+<style type="text/css">
+    .panel{
+        border-left:1px solid #0007;
+        border-right:1px solid #0007;
+    }
+</style>
+<div  class="panel panel-primary" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+    <div class="topnavbar" style="height: 50px;">
+        <div align="left">
+            <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">页面注册</strong></label>
+        </div>
+    </div>
+                    <!-- 包含左右两个部分 -->
+                    <div ng-controller="pageRegisterController" class="form-inline">
+                        <!--左半部分-->
+                        <div style="width: 49%;height: 100%;margin-left:5px;margin-top: 10px;" class="input-group panel">
+                            <div>
+                                <div class="col-sm-8">
+                                    <div class="input-group mb">
+                                        <span class="input-group-addon">是否是导航头</span>
+                                        <!-- this uses fixed width to avoid expand outside the group container-->
+                                        <select  ng-model="selectedOptions_01" width="'150px'" >
+                                            <option  value="" >---请选择---</option>
+                                            <option ng-repeat="site in sites1" value="{{site.value}}">{{site.dicShow}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--设置导航菜单-->
+                            <div ng-show="selectedOptions_01 == 1" id="panel_01" class="panel panel-info" style="margin-top: 40px">
+                                <div class="panel-heading portlet-handler topnavbar">导航菜单设置（一级）
+                                    <div id="button1"  style="float:right;padding-right:4px;z-index: 99999">
+                                        <input type="button" value="保存" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="addHead();" >
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">名称</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="head_text" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">显示设置</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="head_translate" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">排序编号</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="head_sort" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!--设置主菜单节点-->
+                            <div style="margin-bottom: 60px;">
+                                <div class="col-sm-8">
+                                    <div class="input-group mb">
+                                        <span class="input-group-addon">选择导航头</span>
+                                        <!-- this uses fixed width to avoid expand outside the group container-->
+                                        <select  ng-model="selectedOptions_02" width="'150px'" >
+                                            <option  value="" >---请选择---</option>
+                                            <option ng-repeat="site in sites1" value="{{site.value}}">{{site.dicShow}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-show="selectedOptions_02" id="panel_02" class="panel panel-info" style="margin-top: 0px">
+                                <div class="panel-heading portlet-handler topnavbar">菜单主节点设置（二级）</div>
+                                <div class="panel-body">
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">鼠标放置显示</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_text" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">路由</span>
+                                            <input  placeholder="必填,没有请填#号" class="form-control" type="text" ng-model="two_sref" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">图标</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_icon" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">翻译</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_translate" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">提示</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_alert" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">排序字段</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_sort" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!---->
+
+
+                            <!--设置菜单节点-->
+                            <div style="margin-bottom: 60px;">
+                                <div class="col-sm-8">
+                                    <div class="input-group mb">
+                                        <span class="input-group-addon">选择主菜单</span>
+                                        <!-- this uses fixed width to avoid expand outside the group container-->
+                                        <select  ng-model="selectedOptions_03" width="'150px'" >
+                                            <option  value="" >---请选择---</option>
+                                            <option ng-repeat="site in sites1" value="{{site.value}}">{{site.dicShow}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-show="selectedOptions_03" id="panel_03" class="panel panel-info" style="margin-top: 0px">
+                                <div class="panel-heading portlet-handler topnavbar">菜单主节点设置（三级）</div>
+                                <div class="panel-body">
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">鼠标放置显示</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_text" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">路由</span>
+                                            <input  placeholder="必填,没有请填#号" class="form-control" type="text" ng-model="two_sref" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">图标</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_icon" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">翻译</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_translate" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">提示标签</span>
+                                            <input  placeholder="" class="form-control" type="text" ng-model="two_alert" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">标签颜色</span>
+                                            <input  placeholder="" class="form-control" type="text" ng-model="two_label" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">排序字段</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_sort" >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!---->
+                        </div>
+
+                        <!--右半部分-->
+                        <div style="width: 49%;height: 100%;" class="input-group panel">
+
+
+
+                        </div>
+                    </div>
+</div>
