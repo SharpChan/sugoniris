@@ -1,10 +1,9 @@
 package com.sugon.iris.sugondata.jdbcTemplate.intf.system;
 
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondomain.beans.userBeans.User;
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.userEntities.UserEntity;
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.userEntities.UserGroupDetailEntity;
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.userEntities.UserGroupEntity;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserEntity;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserGroupDetailEntity;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserGroupEntity;
 
 import java.util.List;
 

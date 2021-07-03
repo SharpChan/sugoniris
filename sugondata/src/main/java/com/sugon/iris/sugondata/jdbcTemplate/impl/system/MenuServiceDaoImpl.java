@@ -1,8 +1,8 @@
 package com.sugon.iris.sugondata.jdbcTemplate.impl.system;
 
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.MenuServiceDaoIntf;
-import com.sugon.iris.sugondomain.beans.menuBeans.Menu;
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.menuEntities.MenuEntity;
+import com.sugon.iris.sugondomain.beans.system.Menu;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.MenuEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

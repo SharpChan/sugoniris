@@ -1169,6 +1169,10 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
     $(function () {
         loadDictionary();
     })
+    
+    $scope.addHead = function () {
+        
+    }
 
 });
 

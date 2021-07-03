@@ -1,4 +1,4 @@
-package com.sugon.iris.sugondomain.beans.userBeans;
+package com.sugon.iris.sugondomain.beans.system;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

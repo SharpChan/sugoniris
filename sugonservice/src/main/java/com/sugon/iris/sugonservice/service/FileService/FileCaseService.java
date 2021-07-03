@@ -2,7 +2,7 @@ package com.sugon.iris.sugonservice.service.FileService;
 
 
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondomain.beans.userBeans.User;
+import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileCaseDto;
 
 import java.util.List;

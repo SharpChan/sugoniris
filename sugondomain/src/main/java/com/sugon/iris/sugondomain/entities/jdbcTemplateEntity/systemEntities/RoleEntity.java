@@ -1,4 +1,4 @@
-package com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.userEntities;
+package com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities;
 
 import lombok.Data;
 

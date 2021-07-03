@@ -1,7 +1,7 @@
 package com.sugon.iris.sugonannotation.resolver.system;
 
 import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
-import com.sugon.iris.sugondomain.beans.userBeans.User;
+import com.sugon.iris.sugondomain.beans.system.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.MethodParameter;

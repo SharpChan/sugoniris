@@ -1,16 +1,15 @@
 package com.sugon.iris.sugonservice.impl.userInfoImpl;
 
-import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.UserGroupDaoIntf;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondomain.beans.userBeans.User;
-import com.sugon.iris.sugondomain.dtos.userDtos.UserDto;
-import com.sugon.iris.sugondomain.dtos.userDtos.UserGroupDetailDto;
-import com.sugon.iris.sugondomain.dtos.userDtos.UserGroupDto;
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.userEntities.UserEntity;
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.userEntities.UserGroupDetailEntity;
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.userEntities.UserGroupEntity;
+import com.sugon.iris.sugondomain.beans.system.User;
+import com.sugon.iris.sugondomain.dtos.systemDtos.UserDto;
+import com.sugon.iris.sugondomain.dtos.systemDtos.UserGroupDetailDto;
+import com.sugon.iris.sugondomain.dtos.systemDtos.UserGroupDto;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserEntity;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserGroupDetailEntity;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserGroupEntity;
 import com.sugon.iris.sugonservice.service.userInfoService.UserGroupService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;

@@ -1,4 +1,4 @@
-package com.sugon.iris.sugondomain.beans.menuBeans;
+package com.sugon.iris.sugondomain.beans.system;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sugon.iris.sugondomain.enums.MenuType_Enum;
@@ -58,10 +58,7 @@ public class Menu implements Serializable {
      * 菜单类型
      */
     private MenuType_Enum menuType;
-    /**
-     * 子菜单
-     */
-    private List<Menu> submenu;
+
 
     @JsonFormat(shape= JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss.SSSSSS",timezone="GMT+8")
     private Date createTime = new Date();

@@ -2,7 +2,7 @@ package com.sugon.iris.sugondata.jdbcTemplate.impl.system;
 
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.AccountServiceDaoIntf;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.userEntities.UserEntity;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;

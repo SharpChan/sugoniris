@@ -1,10 +1,10 @@
 package com.sugon.iris.sugonservice.service.userInfoService;
 
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondomain.beans.userBeans.User;
-import com.sugon.iris.sugondomain.dtos.userDtos.UserDto;
-import com.sugon.iris.sugondomain.dtos.userDtos.UserGroupDetailDto;
-import com.sugon.iris.sugondomain.dtos.userDtos.UserGroupDto;
+import com.sugon.iris.sugondomain.beans.system.User;
+import com.sugon.iris.sugondomain.dtos.systemDtos.UserDto;
+import com.sugon.iris.sugondomain.dtos.systemDtos.UserGroupDetailDto;
+import com.sugon.iris.sugondomain.dtos.systemDtos.UserGroupDto;
 
 import java.util.List;
 

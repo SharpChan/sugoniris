@@ -1,6 +1,6 @@
 package com.sugon.iris.sugondata.jdbcTemplate.intf.system;
 
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.userEntities.UserEntity;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserEntity;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import org.springframework.jdbc.core.JdbcTemplate;
 

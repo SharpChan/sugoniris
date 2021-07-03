@@ -7,8 +7,8 @@ import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugoncommon.redisUtils.RedisUtil;
 import com.sugon.iris.sugoncommon.session.MySessionContext;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
-import com.sugon.iris.sugondomain.beans.userBeans.User;
-import com.sugon.iris.sugondomain.dtos.userDtos.UserDto;
+import com.sugon.iris.sugondomain.beans.system.User;
+import com.sugon.iris.sugondomain.dtos.systemDtos.UserDto;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.emailService.EmailService;
 import com.sugon.iris.sugonservice.service.userInfoService.AccountService;
@@ -24,13 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @RestController
 @RequestMapping("/api")

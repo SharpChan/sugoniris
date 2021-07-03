@@ -1,7 +1,7 @@
 package com.sugon.iris.sugondata.jdbcTemplate.intf.system;
 
-import com.sugon.iris.sugondomain.beans.menuBeans.Menu;
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.menuEntities.MenuEntity;
+import com.sugon.iris.sugondomain.beans.system.Menu;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.MenuEntity;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import java.util.List;
 
