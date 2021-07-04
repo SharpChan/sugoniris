@@ -146,7 +146,7 @@
                                     <div class="input-group mb">
                                         <span class="input-group-addon">选择二级节点</span>
                                         <!-- this uses fixed width to avoid expand outside the group container-->
-                                        <select  ng-model="selectedOptions_03" width="'150px'" >
+                                        <select  ng-model="selectedOptions_03" width="'150px'" ng-change="options03Changed()">
                                             <option  value="" >---请选择---</option>
                                             <option ng-repeat="site in sites3" value="{{site.id}}">{{site.name}}</option>
                                         </select>
@@ -180,12 +180,6 @@
                                         <div  class="input-group mb" style="width: 90%;margin-left: 0px">
                                             <span  class="input-group-addon">路由</span>
                                             <input  placeholder="必填,没有请填#号" class="form-control" type="text" ng-model="three_sref" >
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">图标</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="three_icon" >
                                         </div>
                                     </div>
                                     <div>
@@ -224,7 +218,7 @@
                                         <!-- this uses fixed width to avoid expand outside the group container-->
                                         <select  ng-model="selectedOptions_04" width="'150px'" >
                                             <option  value="" >---请选择---</option>
-                                            <option ng-repeat="site in sites1" value="{{site.value}}">{{site.dicShow}}</option>
+                                            <option ng-repeat="site in sites4" value="{{site.id}}">{{site.name}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -250,12 +244,6 @@
                                         <div  class="input-group mb" style="width: 90%;margin-left: 0px">
                                             <span  class="input-group-addon">路由</span>
                                             <input  placeholder="必填,没有请填#号" class="form-control" type="text" ng-model="four_sref" >
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">图标</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="four_icon" >
                                         </div>
                                     </div>
                                     <div>

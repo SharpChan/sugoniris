@@ -71,11 +71,11 @@
         "BUTTON_fileTemplateGroup": "模板组",
         "CaseData": "案件数据",
         "BUTTON_fileUpload": "文件上传",
-        "PRIVILEGE": "用户",
+        "PRIVILEGE": "权限配置",
         "BUTTON_checkUser": "用户审核",
         "BUTTON_userGroup": "用户组",
         "BUTTON_pageRegister": "页面注册",
-        "SYSTEMCONFIG":"系统配置",
+        "SYSTEMCONFIG":"系统参数",
         "BUTTON_config":"参数配置",
         "BUTTON_dictionary":"字典信息"
       },

@@ -1204,6 +1204,27 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
         });
     }
 
+    loadDictionary_4 = function(){
+        if(myservice.isEmpty($scope.selectedOptions_03)){
+            return;
+        }
+        var url = "/menu/getFatherMenu";
+        var params = {
+            fatherId: $scope.selectedOptions_03,
+            tier: 3
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.sites4 = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
     $(function () {
         loadDictionary_1();
         loadDictionary_2();
@@ -1212,6 +1233,9 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
     
     $scope.options02Changed = function () {
         loadDictionary_3();
+    }
+    $scope.options03Changed = function () {
+        loadDictionary_4();
     }
 
     function checkSort(sortNo) {
@@ -1248,7 +1272,7 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
             heading: true,
             tier: 1,
         }
-        $scope.doSave(params);
+        $scope.doSave(params,2);
         $scope.oneName ="";
         $scope.oneText ="";
         $scope.oneTranslate ="";
@@ -1270,7 +1294,7 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
             heading: false,
             tier: 2,
         }
-        $scope.doSave(params);
+        $scope.doSave(params,3);
         $scope.two_name ="";
         $scope.two_text ="";
         $scope.two_sref ="";
@@ -1281,14 +1305,72 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
         $scope.two_sort ="";
     }
 
+    $scope.addThree = function () {
+        var params = {
+            fatherId: $scope.selectedOptions_03,
+            name: $scope.three_name,
+            text: $scope.three_text,
+            sref: $scope.three_sref,
+            icon: $scope.three_icon,
+            translate: $scope.three_translate,
+            alert: $scope.three_alert,
+            label: $scope.three_label,
+            sort: $scope.three_sort,
+            heading: false,
+            tier: 3,
+        }
+        $scope.doSave(params,4);
+        $scope.three_name ="";
+        $scope.three_text ="";
+        $scope.three_sref ="";
+        $scope.three_icon ="";
+        $scope.three_translate ="";
+        $scope.three_alert ="";
+        $scope.three_label ="";
+        $scope.three_sort ="";
+    }
 
-    $scope.doSave = function(params){
+    $scope.addFour = function () {
+        var params = {
+            fatherId: $scope.selectedOptions_04,
+            name: $scope.four_name,
+            text: $scope.four_text,
+            sref: $scope.four_sref,
+            icon: $scope.four_icon,
+            translate: $scope.four_translate,
+            alert: $scope.four_alert,
+            label: $scope.four_label,
+            sort: $scope.four_sort,
+            heading: false,
+            tier: 4,
+        }
+        $scope.doSave(params,4);
+        $scope.four_name ="";
+        $scope.four_text ="";
+        $scope.four_sref ="";
+        $scope.four_icon ="";
+        $scope.four_translate ="";
+        $scope.four_alert ="";
+        $scope.four_label ="";
+        $scope.four_sort ="";
+    }
+
+
+    $scope.doSave = function(params,type){
         var url = "/menu/saveMenu";
         $http.post(url, params).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
-            loadDictionary_2();
+            if(type == 2){
+                loadDictionary_2();
+            }
+            if(type == 3){
+                loadDictionary_3();
+            }
+            if(type == 4){
+                loadDictionary_4();
+            }
         }).error(function (data) {
             alert("请检查必填项是否填写！");
         });
