@@ -1,4 +1,4 @@
-package com.sugon.iris.sugonservice.service.userInfoService;
+package com.sugon.iris.sugonservice.service.systemService;
 
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;

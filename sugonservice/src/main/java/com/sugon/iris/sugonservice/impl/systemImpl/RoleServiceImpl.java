@@ -1,9 +1,9 @@
-package com.sugon.iris.sugonservice.impl.userInfoImpl;
+package com.sugon.iris.sugonservice.impl.systemImpl;
 
 
 import com.sugon.iris.sugondata.mybaties.mapper.db2.RoleMapper;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RoleEntity;
-import com.sugon.iris.sugonservice.service.userInfoService.RoleService;
+import com.sugon.iris.sugonservice.service.systemService.RoleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

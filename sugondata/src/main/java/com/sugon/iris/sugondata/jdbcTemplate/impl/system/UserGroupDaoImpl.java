@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 
@@ -173,10 +174,22 @@ public class UserGroupDaoImpl implements UserGroupDaoIntf {
             result=ds1JdbcTemplate.update(sql, new PreparedStatementSetter(){
                 @Override
                 public void setValues(PreparedStatement ps) throws SQLException {
-                        ps.setLong(1,userGroupDetailEntitySql.getUserId());
-                        ps.setLong(2,userGroupDetailEntitySql.getUserGroupId());
+                    if(null != userGroupDetailEntitySql.getUserId()) {
+                        ps.setLong(1, userGroupDetailEntitySql.getUserId());
+                    }else{
+                        ps.setNull(1, Types.BIGINT);
+                    }
+                    if(null != userGroupDetailEntitySql.getUserGroupId()) {
+                        ps.setLong(2, userGroupDetailEntitySql.getUserGroupId());
+                    }else{
+                        ps.setNull(2, Types.BIGINT);
+                    }
                         ps.setTimestamp(3, new Timestamp(userGroupDetailEntitySql.getCreateTime().getTime()));
-                        ps.setLong(4,userGroupDetailEntitySql.getCreateUserId());
+                    if(null != userGroupDetailEntitySql.getCreateUserId()) {
+                        ps.setLong(4, userGroupDetailEntitySql.getCreateUserId());
+                    }else{
+                        ps.setNull(4, Types.BIGINT);
+                    }
                 }
             });
         }catch(Exception e){

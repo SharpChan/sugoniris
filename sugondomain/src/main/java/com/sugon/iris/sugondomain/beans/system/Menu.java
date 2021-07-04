@@ -5,7 +5,6 @@ import com.sugon.iris.sugondomain.enums.MenuType_Enum;
 import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 
 @Data
@@ -25,7 +24,7 @@ public class Menu implements Serializable {
     private String text;
 
     /**
-     * 是否为菜单头是字符串
+     * 是否为菜单头
      */
     private Boolean heading;
 
@@ -66,5 +65,18 @@ public class Menu implements Serializable {
     @JsonFormat(shape= JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss.SSSSSS",timezone="GMT+8")
     private Date updateTime;
 
-    private Long createUserId;
+    /**
+     * 创建者id
+     */
+    private Long userId;
+
+    /**
+     * 菜单层级1-4级
+     */
+    private Integer tier;
+
+    /**
+     * 排序编号
+     */
+    private Integer sort;
 }

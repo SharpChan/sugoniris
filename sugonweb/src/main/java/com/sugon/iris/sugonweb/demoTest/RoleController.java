@@ -2,7 +2,7 @@ package com.sugon.iris.sugonweb.demoTest;
 
 
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RoleEntity;
-import com.sugon.iris.sugonservice.service.userInfoService.RoleService;
+import com.sugon.iris.sugonservice.service.systemService.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

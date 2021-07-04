@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 @Service
@@ -88,11 +89,31 @@ public class AccountServiceDaoImpl implements AccountServiceDaoIntf {
             result=ds1JdbcTemplate.update(sql, new PreparedStatementSetter(){
                 @Override
                 public void setValues(PreparedStatement ps) throws SQLException {
+                    if(null != user.getId()) {
                         ps.setLong(1, user.getId());
+                    }else{
+                        ps.setNull(1, Types.BIGINT);
+                    }
+                    if(!StringUtils.isEmpty(user.getUserName())) {
                         ps.setString(2, user.getUserName());
+                    }else{
+                        ps.setNull(2,Types.VARCHAR);
+                    }
+                    if(!StringUtils.isEmpty(user.getIdCard())) {
                         ps.setString(3, user.getIdCard());
+                    }else{
+                        ps.setNull(3,Types.VARCHAR);
+                    }
+                    if(!StringUtils.isEmpty(user.getPassword())){
                         ps.setString(4, user.getPassword());
+                    }else{
+                        ps.setNull(4,Types.VARCHAR);
+                    }
+                    if(!StringUtils.isEmpty(user.getImageUrl())) {
                         ps.setString(5, user.getImageUrl());
+                    }else{
+                        ps.setNull(5,Types.VARCHAR);
+                    }
                         ps.setTimestamp(6, new Timestamp(user.getCreateTime().getTime()));
                         ps.setInt(7,user.getFlag());
                 }

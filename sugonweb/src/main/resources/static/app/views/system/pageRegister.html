@@ -17,7 +17,7 @@
                             <div style="margin-bottom: 50px">
                                 <div class="col-sm-8">
                                     <div class="input-group mb">
-                                        <span class="input-group-addon">是否是导航头</span>
+                                        <span class="input-group-addon">是否是一级节点</span>
                                         <!-- this uses fixed width to avoid expand outside the group container-->
                                         <select  ng-model="selectedOptions_01" width="'150px'" >
                                             <option  value="" >---请选择---</option>
@@ -30,26 +30,26 @@
                             <div ng-show="selectedOptions_01 == 1"  id="panel_01" class="panel panel-info" >
                                 <div class="panel-heading portlet-handler topnavbar">导航菜单设置（一级）
                                     <div id="button1"  style="float:right;padding-right:4px;z-index: 99999">
-                                        <input type="button" value="保存" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="addHead();" >
+                                        <input type="button" value="保存" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="addOne();" >
                                     </div>
                                 </div>
                                 <div class="panel-body">
                                     <div>
                                         <div  class="input-group mb" style="width: 90%;margin-left: 0px">
                                             <span  class="input-group-addon">名称</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="head_text" >
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="oneText" >
                                         </div>
                                     </div>
                                     <div>
                                         <div  class="input-group mb" style="width: 90%;margin-left: 0px">
                                             <span  class="input-group-addon">显示设置</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="head_translate" >
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="oneTranslate" >
                                         </div>
                                     </div>
                                     <div>
                                         <div  class="input-group mb" style="width: 90%;margin-left: 0px">
                                             <span  class="input-group-addon">排序编号</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="head_sort" >
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="oneSort" ng-change="headSortCheck(oneSort)" >
                                         </div>
                                     </div>
                                 </div>
@@ -59,7 +59,7 @@
                             <div style="margin-top: 30px">
                                 <div class="col-sm-8">
                                     <div class="input-group mb">
-                                        <span class="input-group-addon">选择导航头</span>
+                                        <span class="input-group-addon">选择一级节点</span>
                                         <!-- this uses fixed width to avoid expand outside the group container-->
                                         <select  ng-model="selectedOptions_02" width="'150px'" >
                                             <option  value="" >---请选择---</option>

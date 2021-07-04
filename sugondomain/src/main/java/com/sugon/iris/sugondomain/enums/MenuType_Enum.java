@@ -2,9 +2,10 @@ package com.sugon.iris.sugondomain.enums;
 
 public enum MenuType_Enum {
     ROOT_NODE("rootNode","1","根节点"),
-    BRANCH("branch","2","菜单分枝"),
-    LEAF_NODE("leaf_node","3","叶子节点"),
-    BUTTON("button","4","菜单按钮");
+    BOUGH("rootNode","2","主干"),
+    BRANCH("branch","3","菜单分枝"),
+    LEAF_NODE("leaf_node","4","叶子节点"),
+    BUTTON("button","5","菜单按钮");
 
     private String name;
     private String value;

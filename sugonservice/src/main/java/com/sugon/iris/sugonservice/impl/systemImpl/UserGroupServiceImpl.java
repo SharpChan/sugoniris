@@ -1,4 +1,4 @@
-package com.sugon.iris.sugonservice.impl.userInfoImpl;
+package com.sugon.iris.sugonservice.impl.systemImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.UserGroupDaoIntf;
@@ -10,7 +10,7 @@ import com.sugon.iris.sugondomain.dtos.systemDtos.UserGroupDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserEntity;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserGroupDetailEntity;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserGroupEntity;
-import com.sugon.iris.sugonservice.service.userInfoService.UserGroupService;
+import com.sugon.iris.sugonservice.service.systemService.UserGroupService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 

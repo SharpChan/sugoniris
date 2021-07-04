@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface MenuServiceDaoIntf {
 
-       public List<MenuEntity> getMenuInfos(Menu menu, List<Error> errorList);
+       public List<MenuEntity> getMenuInfos(MenuEntity menuEntity, List<Error> errorList);
 
        public int deleteMenu(Long id, List<Error> errorList);
 

@@ -11,7 +11,7 @@ import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.systemDtos.UserDto;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.emailService.EmailService;
-import com.sugon.iris.sugonservice.service.userInfoService.AccountService;
+import com.sugon.iris.sugonservice.service.systemService.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.session.Session;

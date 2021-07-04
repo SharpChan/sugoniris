@@ -8,7 +8,7 @@ import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.systemDtos.UserDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.UserGroupDetailDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.UserGroupDto;
-import com.sugon.iris.sugonservice.service.userInfoService.UserGroupService;
+import com.sugon.iris.sugonservice.service.systemService.UserGroupService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
@@ -38,7 +38,10 @@ public class UserGroupController {
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
             restResult.setErrorList(errorList);
+            restResult.setMessage("操作失败");
             return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
         }
         return restResult;
     }
@@ -56,7 +59,10 @@ public class UserGroupController {
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
             restResult.setErrorList(errorList);
+            restResult.setMessage("操作失败");
             return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
         }
         return restResult;
     }
@@ -74,7 +80,10 @@ public class UserGroupController {
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
             restResult.setErrorList(errorList);
+            restResult.setMessage("操作失败");
             return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
         }
         return restResult;
     }
@@ -92,7 +101,10 @@ public class UserGroupController {
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
             restResult.setErrorList(errorList);
+            restResult.setMessage("操作失败");
             return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
         }
         return restResult;
     }
@@ -110,7 +122,10 @@ public class UserGroupController {
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
             restResult.setErrorList(errorList);
+            restResult.setMessage("操作失败");
             return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
         }
         return restResult;
     }

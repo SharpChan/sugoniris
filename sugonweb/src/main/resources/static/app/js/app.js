@@ -1151,6 +1151,7 @@ App.service('myservice', function($window,$state,$http) {
 App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
                                                    myservice) {
 
+    //获取字典项
     loadDictionary = function(){
         var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"isOrNot";
         $http.post(url).success(function(data)
@@ -1166,12 +1167,51 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
         });
     }
 
+    //
+
     $(function () {
         loadDictionary();
     })
+
+    function checkSort(sortNo) {
+        var reg=/^[0-9]{1,3}$/;
+        if(!reg.test(sortNo)){
+            return false;
+        }
+        return true;
+    }
+
+
+    $scope.headSortCheck = function(sort){
+        if(!checkSort(sort)){
+            $scope.oneSort = "";
+            alert("排序编号必须为1-999三位数字！");
+        }
+    }
+
+
     
-    $scope.addHead = function () {
-        
+    $scope.addOne = function () {
+        var params = {
+            text: $scope.oneText,
+            translate: $scope.oneTranslate,
+            sort: $scope.oneSort,
+            heading: true,
+            tier: 1,
+            menuType: 1
+        }
+        $scope.doSave(params);
+    }
+
+    $scope.doSave = function(params){
+        var url = "/menu/saveMenu";
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
     }
 
 });
