@@ -13,7 +13,7 @@
                     <!-- 包含左右两个部分 -->
                     <div ng-controller="pageRegisterController" class="form-inline">
                         <!--左半部分-->
-                        <div style="width: 49%;height: 100%;margin-left:5px;margin-top: 10px;" class="input-group panel">
+                        <div style="width: 49%;height: 100%;margin-left:5px;margin-top: 30px;vertical-align: top;" class="input-group panel">
                             <div style="margin-bottom: 50px">
                                 <div class="col-sm-8">
                                     <div class="input-group mb">
@@ -276,9 +276,9 @@
                         </div>
 
                         <!--右半部分-->
-                        <div style="width: 49%;height: 100%;" class="input-group panel">
+                        <div style="width: 49%;height: 100%;margin-top: 30px;vertical-align: top;" class="input-group panel">
 
-
+                            <aside ng-include="'app/views/partials/sidebar.html'" ng-controller="SidebarController" class="aside"></aside>
 
                         </div>
                     </div>

@@ -10,4 +10,6 @@ public interface MenuService {
     Integer saveMenu(MenuDto menuDto, List<Error> errorList) throws IllegalAccessException;
 
     List<MenuDto>  getMenu(MenuDto menuDto, List<Error> errorList) throws IllegalAccessException;
+
+    List<MenuDto> getSiderBarMenu(Long userId,List<Error> errorList) throws IllegalAccessException;
 }

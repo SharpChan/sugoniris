@@ -1167,7 +1167,7 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
     }
 
     loadDictionary_2 = function(){
-        var url = "/menu/getFatherMenu";
+        var url = "/menu/getMenu";
         var params = {
             tier: 1
         }
@@ -1187,7 +1187,7 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
         if(myservice.isEmpty($scope.selectedOptions_02)){
             return;
         }
-        var url = "/menu/getFatherMenu";
+        var url = "/menu/getMenu";
         var params = {
             fatherId: $scope.selectedOptions_02,
             tier: 2
@@ -1208,7 +1208,7 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
         if(myservice.isEmpty($scope.selectedOptions_03)){
             return;
         }
-        var url = "/menu/getFatherMenu";
+        var url = "/menu/getMenu";
         var params = {
             fatherId: $scope.selectedOptions_03,
             tier: 3

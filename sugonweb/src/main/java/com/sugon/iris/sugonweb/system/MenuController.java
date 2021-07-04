@@ -55,14 +55,38 @@ public class MenuController {
     /**
      * 选择父节点
      */
-    @PostMapping("/getFatherMenu")
+    @PostMapping("/getMenu")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<List<MenuDto>> getFatherMenu(@CurrentUser User user, @RequestBody MenuDto menuDto){
+    public RestResult<List<MenuDto>> getrMenu(@CurrentUser User user, @RequestBody MenuDto menuDto){
         menuDto.setUserId(user.getId());
         RestResult<List<MenuDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
             restResult.setObj(menuServiceImpl.getMenu(menuDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setErrorList(errorList);
+            restResult.setMessage("操作失败");
+            return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 选择父节点
+     */
+    @PostMapping("/getSiderBarMenu")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<List<MenuDto>> getSiderBarMenu(@CurrentUser User user){
+        RestResult<List<MenuDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(menuServiceImpl.getSiderBarMenu(user.getId(),errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

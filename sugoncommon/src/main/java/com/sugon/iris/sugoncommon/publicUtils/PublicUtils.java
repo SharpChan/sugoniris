@@ -21,6 +21,10 @@ public  class PublicUtils {
     }
 
     public static <T,K> K trans(T tin, K tout) throws IllegalAccessException {
+        if(null == tin || tin instanceof Collection){
+            tout = null;
+            return null;
+        }
         Field[] userFieldsOut = getAllFields(tout);
         Field[] userFieldsIn = getAllFields(tin);
         for(Field fieldOut : userFieldsOut){

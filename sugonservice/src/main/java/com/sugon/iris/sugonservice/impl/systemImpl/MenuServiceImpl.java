@@ -3,13 +3,10 @@ package com.sugon.iris.sugonservice.impl.systemImpl;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.MenuServiceDaoIntf;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.MenuEntity;
-import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
 import com.sugon.iris.sugonservice.service.systemService.MenuService;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,6 +51,22 @@ public class MenuServiceImpl implements MenuService {
                 return 0; //相等为0
             }
         });
+        return menuDtoList;
+    }
+
+    @Override
+    public List<MenuDto> getSiderBarMenu(Long userId, List<Error> errorList) throws IllegalAccessException {
+        List<MenuDto> menuDtoList= new ArrayList();
+        List<MenuEntity> menuEntityList = menuServiceDaoImpl.getMenuInfos(null,errorList);
+
+
+
+        for(MenuEntity menuEntityBean : menuEntityList){
+            MenuDto menuDtoBean = new MenuDto();
+            PublicUtils.trans(menuEntityBean,menuDtoBean);
+            menuDtoList.add(menuDtoBean);
+        }
+
         return menuDtoList;
     }
 }
