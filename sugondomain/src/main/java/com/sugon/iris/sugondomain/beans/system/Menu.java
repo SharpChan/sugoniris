@@ -15,6 +15,11 @@ public class Menu implements Serializable {
     private Long id;
 
     /**
+     * 名称
+     */
+    private String name;
+
+    /**
      * 父菜单编码
      */
     private Long fatherId;

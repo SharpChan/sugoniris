@@ -37,7 +37,13 @@
                                     <div>
                                         <div  class="input-group mb" style="width: 90%;margin-left: 0px">
                                             <span  class="input-group-addon">名称</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="oneText" >
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="oneName" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">提示</span>
+                                            <input  placeholder="" class="form-control" type="text" ng-model="oneText" >
                                         </div>
                                     </div>
                                     <div>
@@ -55,15 +61,16 @@
                                 </div>
                             </div>
 
+
                             <!--设置主菜单节点-->
                             <div style="margin-top: 30px">
                                 <div class="col-sm-8">
                                     <div class="input-group mb">
                                         <span class="input-group-addon">选择一级节点</span>
                                         <!-- this uses fixed width to avoid expand outside the group container-->
-                                        <select  ng-model="selectedOptions_02" width="'150px'" >
+                                        <select  ng-model="selectedOptions_02" width="'150px'" ng-change="options02Changed()" >
                                             <option  value="" >---请选择---</option>
-                                            <option ng-repeat="site in sites1" value="{{site.value}}">{{site.dicShow}}</option>
+                                            <option ng-repeat="site in sites2" value="{{site.id}}">{{site.name}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -82,8 +89,14 @@
                                 <div class="panel-body">
                                     <div>
                                         <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">名称</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_name" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
                                             <span  class="input-group-addon">鼠标放置显示</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_text" >
+                                            <input  placeholder="" class="form-control" type="text" ng-model="two_text" >
                                         </div>
                                     </div>
                                     <div>
@@ -119,7 +132,7 @@
                                     <div>
                                         <div  class="input-group mb" style="width: 90%;margin-left: 0px">
                                             <span  class="input-group-addon">排序字段</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_sort" >
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_sort" ng-change="twoSortCheck(two_sort)">
                                         </div>
                                     </div>
                                 </div>
@@ -131,11 +144,11 @@
                             <div style="margin-top: 30px">
                                 <div class="col-sm-8">
                                     <div class="input-group mb">
-                                        <span class="input-group-addon">选择主菜单</span>
+                                        <span class="input-group-addon">选择二级节点</span>
                                         <!-- this uses fixed width to avoid expand outside the group container-->
                                         <select  ng-model="selectedOptions_03" width="'150px'" >
                                             <option  value="" >---请选择---</option>
-                                            <option ng-repeat="site in sites1" value="{{site.value}}">{{site.dicShow}}</option>
+                                            <option ng-repeat="site in sites3" value="{{site.id}}">{{site.name}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -153,8 +166,14 @@
                                 <div class="panel-body">
                                     <div>
                                         <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="input-group-addon">名称</span>
+                                            <input  placeholder="必填" class="form-control" type="text" ng-model="three_name" >
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
                                             <span  class="input-group-addon">鼠标放置显示</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="three_text" >
+                                            <input  placeholder="" class="form-control" type="text" ng-model="three_text" >
                                         </div>
                                     </div>
                                     <div>

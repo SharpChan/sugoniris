@@ -7,7 +7,6 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
-import com.sugon.iris.sugonservice.service.systemService.AccountService;
 import com.sugon.iris.sugonservice.service.systemService.MenuService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,7 +32,7 @@ public class MenuController {
      */
     @PostMapping("/saveMenu")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<Integer> saveUserGroup(@CurrentUser User user, @RequestBody MenuDto menuDto){
+    public RestResult<Integer> saveMenu(@CurrentUser User user, @RequestBody MenuDto menuDto){
         menuDto.setUserId(user.getId());
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -53,4 +52,28 @@ public class MenuController {
         return restResult;
     }
 
+    /**
+     * 选择父节点
+     */
+    @PostMapping("/getFatherMenu")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<List<MenuDto>> getFatherMenu(@CurrentUser User user, @RequestBody MenuDto menuDto){
+        menuDto.setUserId(user.getId());
+        RestResult<List<MenuDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(menuServiceImpl.getMenu(menuDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setErrorList(errorList);
+            restResult.setMessage("操作失败");
+            return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
+        }
+        return restResult;
+    }
 }

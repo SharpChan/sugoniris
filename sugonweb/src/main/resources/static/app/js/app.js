@@ -1152,7 +1152,7 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
                                                    myservice) {
 
     //获取字典项
-    loadDictionary = function(){
+    loadDictionary_1 = function(){
         var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"isOrNot";
         $http.post(url).success(function(data)
         {
@@ -1160,18 +1160,59 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
             $scope.sites1 = temp.obj;
-            console.log($scope.sites1);
         }).error(function(data)
         {
             alert("会话已经断开或者检查网络是否正常！");
         });
     }
 
-    //
+    loadDictionary_2 = function(){
+        var url = "/menu/getFatherMenu";
+        var params = {
+            tier: 1
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.sites2 = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    loadDictionary_3 = function(){
+        if(myservice.isEmpty($scope.selectedOptions_02)){
+            return;
+        }
+        var url = "/menu/getFatherMenu";
+        var params = {
+            fatherId: $scope.selectedOptions_02,
+            tier: 2
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.sites3 = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
 
     $(function () {
-        loadDictionary();
+        loadDictionary_1();
+        loadDictionary_2();
+        loadDictionary_3();
     })
+    
+    $scope.options02Changed = function () {
+        loadDictionary_3();
+    }
 
     function checkSort(sortNo) {
         var reg=/^[0-9]{1,3}$/;
@@ -1189,19 +1230,57 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
         }
     }
 
+    $scope.twoSortCheck = function(sort){
+        if(!checkSort(sort)){
+            $scope.twoSort = "";
+            alert("排序编号必须为1-999三位数字！");
+        }
+    }
+
 
     
     $scope.addOne = function () {
         var params = {
+            name: $scope.oneName,
             text: $scope.oneText,
             translate: $scope.oneTranslate,
             sort: $scope.oneSort,
             heading: true,
             tier: 1,
-            menuType: 1
         }
         $scope.doSave(params);
+        $scope.oneName ="";
+        $scope.oneText ="";
+        $scope.oneTranslate ="";
+        $scope.oneSort = "";
+
     }
+
+    $scope.addTwo = function () {
+        var params = {
+            fatherId: $scope.selectedOptions_02,
+            name: $scope.two_name,
+            text: $scope.two_text,
+            sref: $scope.two_sref,
+            icon: $scope.two_icon,
+            translate: $scope.two_translate,
+            alert: $scope.two_alert,
+            label: $scope.two_label,
+            sort: $scope.two_sort,
+            heading: false,
+            tier: 2,
+        }
+        $scope.doSave(params);
+        $scope.two_name ="";
+        $scope.two_text ="";
+        $scope.two_sref ="";
+        $scope.two_icon ="";
+        $scope.two_translate ="";
+        $scope.two_alert ="";
+        $scope.two_label ="";
+        $scope.two_sort ="";
+    }
+
 
     $scope.doSave = function(params){
         var url = "/menu/saveMenu";
@@ -1209,6 +1288,7 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
+            loadDictionary_2();
         }).error(function (data) {
             alert("请检查必填项是否填写！");
         });
