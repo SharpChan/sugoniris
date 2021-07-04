@@ -7,11 +7,10 @@ import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.MenuEntity;
 import com.sugon.iris.sugonservice.service.systemService.MenuService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class MenuServiceImpl implements MenuService {
@@ -58,15 +57,97 @@ public class MenuServiceImpl implements MenuService {
     public List<MenuDto> getSiderBarMenu(Long userId, List<Error> errorList) throws IllegalAccessException {
         List<MenuDto> menuDtoList= new ArrayList();
         List<MenuEntity> menuEntityList = menuServiceDaoImpl.getMenuInfos(null,errorList);
-
-
-
-        for(MenuEntity menuEntityBean : menuEntityList){
-            MenuDto menuDtoBean = new MenuDto();
-            PublicUtils.trans(menuEntityBean,menuDtoBean);
-            menuDtoList.add(menuDtoBean);
+        if(CollectionUtils.isEmpty(menuEntityList)){
+            return null;
         }
 
-        return menuDtoList;
+        List<Map<MenuDto,List<MenuDto>>>  menuDtoTmpList = new ArrayList<>();
+
+        for(MenuEntity menuEntityBean : menuEntityList){
+            MenuDto menuDto = new MenuDto();
+            PublicUtils.trans(menuEntityBean,menuDto);
+            menuDtoList.add(menuDto);
+        }
+
+        for(Iterator<MenuDto> it = menuDtoList.iterator();it.hasNext();){
+            MenuDto menuDto = it.next();
+            if(menuDto.getHeading()){
+                Map<MenuDto,List<MenuDto>> map = new HashMap<>();
+                List<MenuDto> menuDtolist = new ArrayList<>();
+                map.put(menuDto,menuDtolist);
+                menuDtoTmpList.add(map);
+                for( MenuDto menuDto2 : menuDtoList){
+                    if(null != menuDto2.getFatherId() && menuDto2.getFatherId().equals(menuDto.getId())){
+                        menuDtolist.add(menuDto2);
+                    }
+                }
+                it.remove();
+            }
+        }
+
+        //组装父子节点
+        for(MenuDto menuDto1 : menuDtoList){
+            for(MenuDto menuDto2 : menuDtoList){
+              if( null != menuDto1.getId() &&  menuDto1.getId().equals(menuDto2.getFatherId())){
+                  menuDto1.getSubmenu().add(menuDto2);
+              }
+            }
+        }
+        //对所有的submenu排序，倒序
+        for(MenuDto menuDto1 : menuDtoList){
+            if(!CollectionUtils.isEmpty(menuDto1.getSubmenu())){
+                Collections.sort(menuDto1.getSubmenu(), new Comparator<MenuDto>() {
+                    @Override
+                    public int compare(MenuDto bean1, MenuDto bean2) {
+                        int diff = bean2.getSort() - bean1.getSort();
+                        if (diff > 0) {
+                            return 1;
+                        }else if (diff < 0) {
+                            return -1;
+                        }
+                        return 0; //相等为0
+                    }
+                });
+            }
+        }
+
+        //通过map排序，倒序
+        Collections.sort(menuDtoTmpList, new Comparator<Map<MenuDto,List<MenuDto>>>() {
+            @Override
+            public int compare(Map<MenuDto,List<MenuDto>> bean1, Map<MenuDto,List<MenuDto>> bean2) {
+                int a = 0;
+                int b = 0;
+                for (Map.Entry<MenuDto,List<MenuDto>> entry : bean1.entrySet()) {
+                    a = entry.getKey().getSort();
+                }
+                for (Map.Entry<MenuDto,List<MenuDto>> entry : bean2.entrySet()) {
+                    b = entry.getKey().getSort();
+                }
+
+                int diff = b - a;
+                if (diff > 0) {
+                    return 1;
+                }else if (diff < 0) {
+                    return -1;
+                }
+                return 0; //相等为0
+            }
+        });
+
+        List<MenuDto> result = new ArrayList<>();
+        //把map平铺
+        for(Map<MenuDto,List<MenuDto>> map : menuDtoTmpList){
+            for (Map.Entry<MenuDto,List<MenuDto>> entry : map.entrySet()) {
+                result.add(entry.getKey());
+                if(!CollectionUtils.isEmpty(entry.getValue())) {
+                    result.addAll(entry.getValue());
+                }
+            }
+        }
+
+
+        return result;
     }
+
+
 }

@@ -7109,11 +7109,14 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
 
     $scope.loadSidebarMenu = function() {
 
-      var menuJson = 'server/sidebar-menu.json',
-          menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
-      $http.get(menuURL)
-        .success(function(items) {
-           $scope.menuItems = items;
+      //var menuJson = 'server/sidebar-menu.json',
+          //menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
+        var menuURL="/menu/getSiderBarMenu";
+      $http.post(menuURL)
+        .success(function(data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+           $scope.menuItems = temp.obj;
         })
         .error(function(data, status, headers, config) {
           alert('Failure loading menu');
