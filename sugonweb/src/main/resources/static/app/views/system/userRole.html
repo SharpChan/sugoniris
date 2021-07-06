@@ -1,1 +1,103 @@
-<h2>asdsdfsdf</h2>
+<style id="jsbin-css">
+    ul{
+        list-style: none;
+    }
+    .text-field{
+        cursor: pointer;
+    }
+    .check-box{
+        width: 24px;
+        height: 18px;
+        border-radius: 8px;
+    }
+</style>
+
+
+<div ng-controller="userRoleController as demo"  class="container">
+
+    <div class="row">
+        <h2>Tree view</h2>
+        <tree-view tree-data="demo.tree" text-field="name" value-field='id'
+                   item-clicked="demo.itemClicked($item)" item-checked-changed="demo.itemCheckedChanged($item)" can-checked="true" ></tree-view>
+    </div>
+
+    <!--    <div class="row">
+            <h2>Item selected</h2>
+            <pre>{{demo.selectedItem | json}}</pre>
+        </div>-->
+    <script type="text/ng-template" id="/treeView.html">
+        <ul class="tree-view">
+            <li ng-repeat="item in treeData" ng-include="itemTemplateUrl || '/treeItem.html'" ></li>
+        </ul>
+    </script>
+    <script type="text/ng-template" id="/treeItem.html">
+        <i ng-click="itemExpended(item, $event);" class="{{getItemIcon(item)}}"></i>
+
+        <input id="{{item.id}},{{item.pid}}"  type="checkbox" ng-model="item.$$isChecked" class="check-box" ng-if="canChecked">
+
+
+        <span class='text-field' ng-click="warpCallback('itemClicked', item, $event);" >{{item[textField]}}</span>
+        <ul ng-if="!isLeaf(item)"
+            ng-show="item.$$isExpend">
+            <li ng-repeat="item in item.children" ng-include="itemTemplateUrl || '/treeItem.html'">
+            </li>
+        </ul>
+    </script>
+
+
+</div>
+<script  type="text/javascript">
+    // Apparently click is better chan change? Cuz IE?
+    $(function(){
+        // Apparently click is better chan change? Cuz IE?
+        $('input[type="checkbox"]').change(function() {
+
+            var checked = $(this).prop("checked"),
+                container = $(this).parent(),
+                siblings = container.siblings();
+
+            container.find('input[type="checkbox"]').prop({
+                indeterminate: false,
+                checked: checked
+            });
+
+            function checkSiblings(el) {
+
+                var parent = el.parent().parent(),
+                    all = true;
+
+                el.siblings().each(function() {
+                    return all = ($(this).children('input[type="checkbox"]').prop("checked") === checked);
+                });
+
+                if (all && checked) {
+
+                    parent.children('input[type="checkbox"]').prop({
+                        indeterminate: false,
+                        checked: checked
+                    });
+
+                    checkSiblings(parent);
+
+                } else if (all && !checked) {
+
+                    parent.children('input[type="checkbox"]').prop("checked", checked);
+                    parent.children('input[type="checkbox"]').prop("indeterminate", (parent.find('input[type="checkbox"]:checked').length > 0));
+                    checkSiblings(parent);
+
+                } else {
+
+                    el.parents("li").children('input[type="checkbox"]').prop({
+                        indeterminate: true,
+                        checked: false
+                    });
+
+                }
+
+            }
+
+            checkSiblings(container);
+        });
+    });
+
+</script>
