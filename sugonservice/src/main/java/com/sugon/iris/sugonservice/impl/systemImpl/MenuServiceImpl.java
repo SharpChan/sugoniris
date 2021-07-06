@@ -65,7 +65,7 @@ public class MenuServiceImpl implements MenuService {
         for(MenuEntity menuEntityBean : menuEntityList){
             MenuDto menuDto = new MenuDto();
             PublicUtils.trans(menuEntityBean,menuDto);
-            //menuDto.setSref("#");
+            menuDto.setSref("#");
             menuDtoList.add(menuDto);
         }
 

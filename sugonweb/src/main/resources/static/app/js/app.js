@@ -1154,6 +1154,20 @@ App.service('myservice', function($window,$state,$http) {
         };
     }
 
+    this.doPost = function(url,params,message){
+        var that = this;
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            that.errors(temp);
+            alert(message);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
 });
 App.controller("userRoleController", function ($http,$timeout,$scope,$state,
                                                    myservice) {
@@ -1442,6 +1456,10 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
     }
 
     $scope.$on('to-parent_select_02', function(d,data1,data2,data3) {
+        if(data1){
+            $scope.select_03 = false;
+            $scope.select_04 = false;
+        }
         $scope.select_02 = data1;
         $scope.select2Btn = data2;
         $scope.select02Item = data3;
@@ -1453,9 +1471,16 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
         $scope.two_alert = data3.alert;
         $scope.two_label = data3.label;
         $scope.two_sort = data3.sort;
+
+        $scope.two_checked = false;
+        $scope.three_checked = false;
+        $scope.four_checked = false;
     });
 
     $scope.$on('to-parent_select_03', function(d,data1,data2,data3) {
+        if(data1){
+            $scope.select_02 = false;
+        }
         $scope.select_03 = data1;
         $scope.select3Btn = data2;
         $scope.select03Item = data3;
@@ -1467,7 +1492,129 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
         $scope.three_alert = data3.alert;
         $scope.three_label = data3.label;
         $scope.three_sort = data3.sort;
+
+        $scope.two_checked = false;
+        $scope.three_checked = false;
+        $scope.four_checked = false;
     });
+
+    $scope.$on('to-parent_select_04', function(d,data1,data2,data3) {
+        if(data1){
+            $scope.select_03 = false;
+        }
+        $scope.select_04 = data1;
+        $scope.select4Btn = data2;
+        $scope.select04Item = data3;
+        $scope.four_name = data3.name;
+        $scope.four_text = data3.text;
+        $scope.four_sref = data3.sref;
+        $scope.four_icon = data3.icon;
+        $scope.four_translate = data3.translate;
+        $scope.four_alert = data3.alert;
+        $scope.four_label = data3.label;
+        $scope.four_sort = data3.sort;
+
+        $scope.two_checked = false;
+        $scope.three_checked = false;
+        $scope.four_checked = false;
+    });
+
+    $scope.selectBox = function (checked) {
+        if(checked){
+            $scope.select_02 = false;
+            $scope.select_03 = false;
+            $scope.select_04 = false;
+            $scope.select2Btn = true;
+            $scope.select3Btn = true;
+            $scope.select4Btn = true;
+
+            $scope.two_name = "";
+            $scope.two_text = "";
+            $scope.two_sref = "";
+            $scope.two_icon = "";
+            $scope.two_translate = "";
+            $scope.two_alert = "";
+            $scope.two_label = "";
+            $scope.two_sort = "";
+
+            $scope.three_name = "";
+            $scope.three_text = "";
+            $scope.three_sref = "";
+            $scope.three_icon = "";
+            $scope.three_translate = "";
+            $scope.three_alert = "";
+            $scope.three_label = "";
+            $scope.three_sort = "";
+
+            $scope.four_name = "";
+            $scope.four_text = "";
+            $scope.four_sref = "";
+            $scope.four_icon = "";
+            $scope.four_translate = "";
+            $scope.four_alert = "";
+            $scope.four_label = "";
+            $scope.four_sort = "";
+        }
+    }
+
+    var updateUrl="/menu/updateMenu"
+    $scope.updateTwo = function () {
+        var params = {
+            id: $scope.select02Item.id,
+            fatherId: $scope.select02Item.fatherId,
+            name: $scope.two_name,
+            text: $scope.two_text,
+            sref: $scope.two_sref,
+            icon: $scope.two_icon,
+            translate: $scope.two_translate,
+            alert: $scope.two_alert,
+            label: $scope.two_label,
+            sort: $scope.two_sort,
+            heading: false,
+            tier: 2,
+        }
+      myservice.doPost(updateUrl,params,"修改成功！");
+
+    }
+
+    $scope.updateThree = function () {
+        var params = {
+            id: $scope.select03Item.id,
+            fatherId: $scope.select03Item.fatherId,
+            name: $scope.three_name,
+            text: $scope.three_text,
+            sref: $scope.three_sref,
+            icon: $scope.three_icon,
+            translate: $scope.three_translate,
+            alert: $scope.three_alert,
+            label: $scope.three_label,
+            sort: $scope.three_sort,
+            heading: false,
+            tier: 3,
+        }
+        myservice.doPost(updateUrl,params,"修改成功！");
+
+    }
+
+    $scope.updateFour = function () {
+
+        var params = {
+            id: $scope.select04Item.id,
+            fatherId: $scope.select04Item.fatherId,
+            name: $scope.four_name,
+            text: $scope.four_text,
+            sref: $scope.four_sref,
+            icon: $scope.four_icon,
+            translate: $scope.four_translate,
+            alert: $scope.four_alert,
+            label: $scope.four_label,
+            sort: $scope.four_sort,
+            heading: false,
+            tier: 4,
+        }
+        myservice.doPost(updateUrl,params,"修改成功！");
+    }
+
 
 });
 
@@ -1573,24 +1720,26 @@ App.controller("registerSidebarController",['$rootScope', '$scope', '$state', '$
         $scope.updateOrDelete2 = function(item){
             if(item.tier == 2){
                 if(lock1){
+                    lock1 = !lock1;
                     return;
                 }
-                $scope.$emit('to-parent_select_02', true,false,item);
+                $scope.$emit('to-parent_select_02', !$scope.select_02,false,item);
             }
         }
 
         $scope.updateOrDelete3 = function(item){
             if(item.tier == 3){
                 if(lock2){
+                    lock2 = !lock2;
                     return;
                 }
                 lock1 = true;
-                $scope.$emit('to-parent_select_03', true,false,item);
+                $scope.$emit('to-parent_select_03', !$scope.select_03,false,item);
             }
             if(item.tier == 4){
                 lock1 = true;
                 lock2 = true;
-                $scope.$emit('to-parent_select_04', true,false,item);
+                $scope.$emit('to-parent_select_04', !$scope.select_04,false,item);
             }
         }
     }]);

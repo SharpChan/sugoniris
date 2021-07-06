@@ -13,12 +13,12 @@
                     <!-- 包含左右两个部分 -->
                     <div ng-controller="pageRegisterController" class="form-inline">
                         <!--左半部分-->
-                        <div style="width: 49%;height: 100%;margin-left:5px;margin-top: 30px;vertical-align: top;" class="input-group panel">
+                        <div style="width: 59%;height: 100%;margin-left:5px;margin-top: 30px;vertical-align: top;" class="input-group panel">
 
                             <div style="margin-bottom: 50px">
                                 <div class="col-sm-8">
                                     <div class="input-group mb">
-                                        <span class="input-group-addon">是否新增一级节点</span>
+                                        <span class="input-group-addon">新增/修改一级节点</span>
                                         <!-- this uses fixed width to avoid expand outside the group container-->
                                         <select  ng-model="selectedOptions_01" width="'150px'" >
                                             <option  value="" >---请选择---</option>
@@ -122,15 +122,16 @@
                                 </div>
                                 <div>
                                     <span>新增二级节点</span>
-                                   <input type="checkbox" ng-model="two_checked" ng-change="selectOne(two_checked)" />
+                                   <input type="checkbox" ng-model="two_checked" ng-change="selectBox(two_checked)" />
                                 </div>
                             </div>
-                            <div ng-show="select_02||(selectedOptions_02 && two_checked)" id="panel_02" class="panel panel-info" style="margin-top: 50px">
+                            <div ng-show="select_02||(selectedOptions_02 && two_checked)" ng-init="select_02 = false" id="panel_02" class="panel panel-info" style="margin-top: 50px">
                                 <div class="panel-heading portlet-handler topnavbar">
                                     <span>菜单主节点设置（二级）</span>
                                     <div id="button2"  style="float:right;padding-right:4px;z-index: 99999">
                                         <input ng-show="select2Btn" ng-init="select2Btn = true" type="button" value="保存" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="addTwo();" >
                                         <input ng-show="!select2Btn" type="button" value="修改" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="updateTwo();" >
+                                        <input ng-show="!select2Btn" type="button" value="删除" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="deleteTwo();" >
                                     </div>
                                 </div>
                                 <div class="panel-body">
@@ -202,14 +203,15 @@
                                 </div>
                                 <div>
                                     <span>新增三级节点</span>
-                                    <input type="checkbox" ng-model="three_checked" ng-change="selectOne(three_checked)" />
+                                    <input type="checkbox" ng-model="three_checked" ng-change="selectBox(three_checked)" />
                                 </div>
                             </div>
-                            <div ng-show="select_03||(selectedOptions_03 && three_checked)" id="panel_03" class="panel panel-info" style="margin-top: 50px">
+                            <div ng-show="select_03||(selectedOptions_03 && three_checked)" ng-init="select_03 = false" id="panel_03" class="panel panel-info" style="margin-top: 50px">
                                 <div class="panel-heading portlet-handler topnavbar">菜单主节点设置（三级）
                                     <div id="button3"  style="float:right;padding-right:4px;z-index: 99999">
                                         <input ng-show="select3Btn" ng-init="select3Btn = true" type="button" value="保存" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="addThree();" >
                                         <input ng-show="!select3Btn" type="button" value="修改" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="updateThree();" >
+                                        <input ng-show="!select3Btn" type="button" value="删除" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="deleteThree();" >
                                     </div>
                                 </div>
                                 <div class="panel-body">
@@ -274,18 +276,26 @@
                                 </div>
                                 <div>
                                     <span>新增四级节点</span>
-                                    <input type="checkbox" ng-model="four_checked" ng-change="selectOne(four_checked)" />
+                                    <input type="checkbox" ng-model="four_checked" ng-change="selectBox(four_checked)" />
                                 </div>
                             </div>
-                            <div ng-show="select_04||(selectedOptions_04  && four_checked)" id="panel_04" class="panel panel-info" style="margin-top: 50px">
+                            <div ng-show="select_04||(selectedOptions_04  && four_checked)" ng-init="select_04 = false" id="panel_04" class="panel panel-info" style="margin-top: 50px">
                                 <div class="panel-heading portlet-handler topnavbar">菜单主节点设置（四级）
                                     <div id="button4"  style="float:right;padding-right:4px;z-index: 99999">
                                         <input ng-show="select4Btn" ng-init="select4Btn = true" type="button" value="保存" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="addFour();" >
                                         <input ng-show="!select4Btn" type="button" value="修改" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="updateFour();" >
+                                        <input ng-show="!select4Btn" type="button" value="删除" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="deleteFour();" >
                                     </div>
                                 </div>
                                 <div class="panel-body">
                                     <div>
+                                        <input  type="hidden" class="form-control" type="text" ng-model="select03Item" >
+                                        <div>
+                                            <div  class="input-group mb" style="width: 90%;margin-left: 0px">
+                                                <span  class="input-group-addon">名称</span>
+                                                <input  placeholder="必填" class="form-control" type="text" ng-model="four_name" >
+                                            </div>
+                                        </div>
                                         <div  class="input-group mb" style="width: 90%;margin-left: 0px">
                                             <span  class="input-group-addon">鼠标放置显示</span>
                                             <input  placeholder="必填" class="form-control" type="text" ng-model="four_text" >
@@ -327,7 +337,7 @@
                         </div>
 
                         <!--右半部分-->
-                        <div style="width: 49%;height: 100%;margin-top: 30px;vertical-align: top;" class="input-group panel">
+                        <div style="width: 39%;height: 100%;margin-top: 30px;vertical-align: top;" class="input-group panel">
 
                             <aside ng-include="'app/views/system/registerSidebar.html'" ng-controller="registerSidebarController" class="aside"></aside>
 
