@@ -5,6 +5,7 @@ import com.sugon.iris.sugondata.jdbcTemplate.intf.system.MenuServiceDaoIntf;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.MenuEntity;
+import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.systemService.MenuService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -18,6 +19,9 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public Integer saveMenu(MenuDto menuDto, List<Error> errorList) throws IllegalAccessException {
+        if(null == menuDto.getFatherId()){
+            errorList.add(new Error(ErrorCode_Enum.SUGON_01_005.getCode(),"请先选择节点"));
+        }
         int i=0;
         MenuEntity menuEntity = new MenuEntity();
         PublicUtils.trans(menuDto,menuEntity);
@@ -153,8 +157,14 @@ public class MenuServiceImpl implements MenuService {
     public Integer modifyMenu(MenuDto menuDto, List<Error> errorList) throws IllegalAccessException {
         MenuEntity menuEntity = new MenuEntity();
         PublicUtils.trans(menuDto,menuEntity);
-        menuServiceDaoImpl.updateMenu(menuEntity,errorList);
-        return null;
+        return menuServiceDaoImpl.updateMenu(menuEntity,errorList);
+    }
+
+    @Override
+    public Integer deleteMenu(Long id, List<Error> errorList) throws IllegalAccessException {
+
+        return menuServiceDaoImpl.deleteMenu(id,errorList);
+
     }
 
     private void menuSort(List<MenuDto> menuDtolist) {

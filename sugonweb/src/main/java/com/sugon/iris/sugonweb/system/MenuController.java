@@ -1,6 +1,5 @@
 package com.sugon.iris.sugonweb.system;
 
-
 import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
 import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
@@ -10,11 +9,9 @@ import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
 import com.sugon.iris.sugonservice.service.systemService.MenuService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/menu")
@@ -134,6 +131,30 @@ public class MenuController {
         List<Error> errorList = new ArrayList<>();
         try{
             restResult.setObj(menuServiceImpl.modifyMenu(menuDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setErrorList(errorList);
+            restResult.setMessage("操作失败");
+            return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 菜单删除
+     */
+    @PostMapping("/deleteMenu")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> deleteMenudeleteMenu(@RequestParam("id") Long id){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(menuServiceImpl.deleteMenu(id,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

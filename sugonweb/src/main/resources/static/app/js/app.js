@@ -1309,6 +1309,7 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
                 $scope.oneUpdateText = "";
                 $scope.oneUpdateTranslate = "";
                 $scope.oneUpdateSort = "";
+                $scope.$broadcast('to-child-reload',"child");
             }).error(function(data)
             {
                 alert("会话已经断开或者检查网络是否正常！");
@@ -1450,6 +1451,7 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
             if(type == 4){
                 loadDictionary_4();
             }
+            $scope.$broadcast('to-child-reload',"child");
         }).error(function (data) {
             alert("请检查必填项是否填写！");
         });
@@ -1574,6 +1576,7 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
             tier: 2,
         }
       myservice.doPost(updateUrl,params,"修改成功！");
+        $scope.$broadcast('to-child-reload',"child");
 
     }
 
@@ -1593,7 +1596,7 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
             tier: 3,
         }
         myservice.doPost(updateUrl,params,"修改成功！");
-
+        $scope.$broadcast('to-child-reload',"child");
     }
 
     $scope.updateFour = function () {
@@ -1613,8 +1616,50 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
             tier: 4,
         }
         myservice.doPost(updateUrl,params,"修改成功！");
+        $scope.$broadcast('to-child-reload',"child");
     }
 
+
+    var deleteUrl = "/menu/deleteMenu";
+    $scope.deleteOne = function(){
+
+        myservice.doPost(deleteUrl+"?id="+$scope.selectedOptions_10,null,"删除成功！");
+        $scope.selectedOptions_01 = "";
+        loadDictionary_1();
+        loadDictionary_2();
+        loadDictionary_3();
+        $scope.$broadcast('to-child-reload',"child");
+    }
+
+    $scope.deleteTwo = function(){
+
+        myservice.doPost(deleteUrl+"?id="+$scope.select02Item.id,null,"删除成功！");
+        $scope.select_02=false;
+        loadDictionary_1();
+        loadDictionary_2();
+        loadDictionary_3();
+        $scope.$broadcast('to-child-reload',"child");
+    }
+
+    $scope.deleteThree = function(){
+
+        myservice.doPost(deleteUrl+"?id="+$scope.select03Item.id,null,"删除成功！");
+        $scope.select_03=false;
+        loadDictionary_1();
+        loadDictionary_2();
+        loadDictionary_3();
+        $scope.$broadcast('to-child-reload',"child");
+    }
+
+    $scope.deleteFour = function(){
+
+        myservice.doPost(deleteUrl+"?id="+$scope.select04Item.id,null,"删除成功！");
+        $scope.select_04 = false;
+        loadDictionary_1();
+        loadDictionary_2();
+        loadDictionary_3();
+        $scope.$broadcast('to-child-reload',"child");
+    }
 
 });
 
@@ -1742,6 +1787,10 @@ App.controller("registerSidebarController",['$rootScope', '$scope', '$state', '$
                 $scope.$emit('to-parent_select_04', !$scope.select_04,false,item);
             }
         }
+
+        $scope.$on('to-child-reload', function(d,data) {
+            $scope.loadSidebarMenu();
+        });
     }]);
 
 App.controller("userGroupController", function ($http,$timeout,$scope,$state,

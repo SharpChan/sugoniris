@@ -15,4 +15,6 @@ public interface MenuService {
     MenuDto getNodeInfo(Long id, List<Error> errorList) throws IllegalAccessException;
 
     Integer modifyMenu(MenuDto menuDto, List<Error> errorList) throws IllegalAccessException;
+
+    Integer deleteMenu(Long id, List<Error> errorList) throws IllegalAccessException;
 }
