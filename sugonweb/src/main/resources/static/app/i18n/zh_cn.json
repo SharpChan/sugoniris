@@ -74,6 +74,7 @@
         "PRIVILEGE": "权限配置",
         "BUTTON_checkUser": "用户审核",
         "BUTTON_userGroup": "用户组",
+        "BUTTON_userRole": "角色",
         "BUTTON_pageRegister": "页面注册",
         "SYSTEMCONFIG":"系统参数",
         "BUTTON_config":"参数配置",

@@ -38,6 +38,7 @@
     "submenu": [
       {"text": "Buttons",       "sref": "app.checkUser", "translate": "sidebar.nav.element.BUTTON_checkUser" },
       {"text": "Buttons",       "sref": "app.userGroup", "translate": "sidebar.nav.element.BUTTON_userGroup" },
+      {"text": "Buttons",       "sref": "app.userRole", "translate": "sidebar.nav.element.BUTTON_userRole" },
       {"text": "Buttons",       "sref": "app.pageRegister", "translate": "sidebar.nav.element.BUTTON_pageRegister" }
     ],
     "translate": "sidebar.nav.element.PRIVILEGE"

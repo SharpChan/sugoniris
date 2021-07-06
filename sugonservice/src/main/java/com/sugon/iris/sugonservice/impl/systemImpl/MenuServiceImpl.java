@@ -8,7 +8,6 @@ import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.Men
 import com.sugon.iris.sugonservice.service.systemService.MenuService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -41,7 +40,7 @@ public class MenuServiceImpl implements MenuService {
         Collections.sort(menuDtoList, new Comparator<MenuDto>() {
             @Override
             public int compare(MenuDto bean1, MenuDto bean2) {
-                int diff = bean1.getSort() - bean2.getSort();
+                int diff = bean2.getSort() - bean1.getSort();
                 if (diff > 0) {
                     return 1;
                 }else if (diff < 0) {
@@ -66,6 +65,7 @@ public class MenuServiceImpl implements MenuService {
         for(MenuEntity menuEntityBean : menuEntityList){
             MenuDto menuDto = new MenuDto();
             PublicUtils.trans(menuEntityBean,menuDto);
+            //menuDto.setSref("#");
             menuDtoList.add(menuDto);
         }
 
@@ -74,13 +74,15 @@ public class MenuServiceImpl implements MenuService {
             if(menuDto.getHeading()){
                 Map<MenuDto,List<MenuDto>> map = new HashMap<>();
                 List<MenuDto> menuDtolist = new ArrayList<>();
-                map.put(menuDto,menuDtolist);
                 menuDtoTmpList.add(map);
                 for( MenuDto menuDto2 : menuDtoList){
                     if(null != menuDto2.getFatherId() && menuDto2.getFatherId().equals(menuDto.getId())){
                         menuDtolist.add(menuDto2);
                     }
                 }
+                //排序，倒序
+                //menuSort(menuDtolist);
+                map.put(menuDto,menuDtolist);
                 it.remove();
             }
         }
@@ -95,20 +97,7 @@ public class MenuServiceImpl implements MenuService {
         }
         //对所有的submenu排序，倒序
         for(MenuDto menuDto1 : menuDtoList){
-            if(!CollectionUtils.isEmpty(menuDto1.getSubmenu())){
-                Collections.sort(menuDto1.getSubmenu(), new Comparator<MenuDto>() {
-                    @Override
-                    public int compare(MenuDto bean1, MenuDto bean2) {
-                        int diff = bean2.getSort() - bean1.getSort();
-                        if (diff > 0) {
-                            return 1;
-                        }else if (diff < 0) {
-                            return -1;
-                        }
-                        return 0; //相等为0
-                    }
-                });
-            }
+            menuSort(menuDto1.getSubmenu());
         }
 
         //通过map排序，倒序
@@ -124,7 +113,7 @@ public class MenuServiceImpl implements MenuService {
                     b = entry.getKey().getSort();
                 }
 
-                int diff = b - a;
+                int diff = a - b;
                 if (diff > 0) {
                     return 1;
                 }else if (diff < 0) {
@@ -147,6 +136,42 @@ public class MenuServiceImpl implements MenuService {
 
 
         return result;
+    }
+
+    @Override
+    public MenuDto getNodeInfo(Long id, List<Error> errorList) throws IllegalAccessException {
+        if(null == id){
+            return null;
+        }
+        MenuEntity menuEntity =  menuServiceDaoImpl.getNode(id,errorList);
+        MenuDto menuDto = new MenuDto();
+        PublicUtils.trans(menuEntity,menuDto);
+        return menuDto;
+    }
+
+    @Override
+    public Integer modifyMenu(MenuDto menuDto, List<Error> errorList) throws IllegalAccessException {
+        MenuEntity menuEntity = new MenuEntity();
+        PublicUtils.trans(menuDto,menuEntity);
+        menuServiceDaoImpl.updateMenu(menuEntity,errorList);
+        return null;
+    }
+
+    private void menuSort(List<MenuDto> menuDtolist) {
+        if (!CollectionUtils.isEmpty(menuDtolist)) {
+            Collections.sort(menuDtolist, new Comparator<MenuDto>() {
+                @Override
+                public int compare(MenuDto bean1, MenuDto bean2) {
+                    int diff = bean1.getSort() - bean2.getSort();
+                    if (diff > 0) {
+                        return 1;
+                    } else if (diff < 0) {
+                        return -1;
+                    }
+                    return 0; //相等为0
+                }
+            });
+        }
     }
 
 

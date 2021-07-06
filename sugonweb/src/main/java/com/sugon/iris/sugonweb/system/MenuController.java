@@ -9,10 +9,7 @@ import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
 import com.sugon.iris.sugonservice.service.systemService.MenuService;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -79,6 +76,30 @@ public class MenuController {
     }
 
     /**
+     * 获取节点信息
+     */
+    @PostMapping("/getNodeInfo")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<MenuDto> getNodeInfo(@RequestParam(value = "id") Long id){
+        RestResult<MenuDto> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(menuServiceImpl.getNodeInfo(id,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setErrorList(errorList);
+            restResult.setMessage("操作失败");
+            return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
+        }
+        return restResult;
+    }
+
+    /**
      * 选择父节点
      */
     @PostMapping("/getSiderBarMenu")
@@ -88,6 +109,31 @@ public class MenuController {
         List<Error> errorList = new ArrayList<>();
         try{
             restResult.setObj(menuServiceImpl.getSiderBarMenu(user.getId(),errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setErrorList(errorList);
+            restResult.setMessage("操作失败");
+            return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 菜单注册
+     */
+    @PostMapping("/updateMenu")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> updateMenu(@CurrentUser User user, @RequestBody MenuDto menuDto){
+        menuDto.setUserId(user.getId());
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(menuServiceImpl.modifyMenu(menuDto,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

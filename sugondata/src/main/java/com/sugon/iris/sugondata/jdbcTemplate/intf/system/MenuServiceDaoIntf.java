@@ -9,6 +9,8 @@ public interface MenuServiceDaoIntf {
 
        public List<MenuEntity> getMenuInfos(MenuEntity menuEntity, List<Error> errorList);
 
+       public MenuEntity getNode(Long id, List<Error> errorList);
+
        public int deleteMenu(Long id, List<Error> errorList);
 
        public int insertMenu(MenuEntity MenuEntity, List<Error> errorList);

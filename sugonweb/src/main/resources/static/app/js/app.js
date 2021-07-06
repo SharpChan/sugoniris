@@ -45,7 +45,7 @@ App.run(["$rootScope", "$state", "$stateParams",  '$window', '$templateCache', f
   // Scope Globals
   // ----------------------------------- 
   $rootScope.app = {
-    name: 'Angle',
+    name: 'iris',
     description: 'Angular Bootstrap Admin Template',
     year: ((new Date()).getFullYear()),
     layout: {
@@ -98,6 +98,14 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         controller: 'AppController',
         resolve: helper.resolveFor('fastclick', 'modernizr', 'icons', 'screenfull', 'animo', 'sparklines', 'slimscroll', 'classyloader', 'toaster', 'whirl')
     })
+      .state('app.userRole', {
+          url: '/userRole',
+          title: 'UserRole',
+          templateUrl: helper.basepath('system/userRole.html'),
+          controller:'userRoleController',
+          cache: false,
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select','textAngular')
+      })
       .state('app.pageRegister', {
           url: '/pageRegister',
           title: 'PageRegister',
@@ -1147,6 +1155,13 @@ App.service('myservice', function($window,$state,$http) {
     }
 
 });
+App.controller("userRoleController", function ($http,$timeout,$scope,$state,
+                                                   myservice) {
+
+
+
+});
+
 
 App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
                                                    myservice) {
@@ -1237,6 +1252,55 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
     $scope.options03Changed = function () {
         loadDictionary_4();
     }
+    $scope.options10Changed = function (id) {
+        if(myservice.isEmpty(id)){
+            return;
+        }
+        var url =  "/menu/getNodeInfo?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.oneUpdateName = temp.obj.name;
+            $scope.oneUpdateText = temp.obj.text;
+            $scope.oneUpdateTranslate = temp.obj.translate;
+            $scope.oneUpdateSort = temp.obj.sort;
+            $scope.oneUpdateHeading = temp.obj.heading;
+            $scope.oneUpdateTier = temp.obj.tier;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.updateOne = function () {
+        var url =  "/menu/updateMenu";
+        var params = {
+            id: $scope.selectedOptions_10,
+            name: $scope.oneUpdateName,
+            text: $scope.oneUpdateText,
+            translate: $scope.oneUpdateTranslate,
+            sort: $scope.oneUpdateSort,
+            heading: $scope.oneUpdateHeading,
+            tier: $scope.oneUpdateTier
+        }
+            $http.post(url,params).success(function(data)
+            {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+                loadDictionary_2();
+                $scope.oneUpdateName = "";
+                $scope.oneUpdateText = "";
+                $scope.oneUpdateTranslate = "";
+                $scope.oneUpdateSort = "";
+            }).error(function(data)
+            {
+                alert("会话已经断开或者检查网络是否正常！");
+            });
+
+        }
 
     function checkSort(sortNo) {
         var reg=/^[0-9]{1,3}$/;
@@ -1250,6 +1314,7 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
     $scope.headSortCheck = function(sort){
         if(!checkSort(sort)){
             $scope.oneSort = "";
+            $scope.oneUpdateSort="";
             alert("排序编号必须为1-999三位数字！");
         }
     }
@@ -1376,7 +1441,159 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
         });
     }
 
+    $scope.$on('to-parent_select_02', function(d,data1,data2,data3) {
+        $scope.select_02 = data1;
+        $scope.select2Btn = data2;
+        $scope.select02Item = data3;
+        $scope.two_name = data3.name;
+        $scope.two_text = data3.text;
+        $scope.two_sref = data3.sref;
+        $scope.two_icon = data3.icon;
+        $scope.two_translate = data3.translate;
+        $scope.two_alert = data3.alert;
+        $scope.two_label = data3.label;
+        $scope.two_sort = data3.sort;
+    });
+
+    $scope.$on('to-parent_select_03', function(d,data1,data2,data3) {
+        $scope.select_03 = data1;
+        $scope.select3Btn = data2;
+        $scope.select03Item = data3;
+        $scope.three_name = data3.name;
+        $scope.three_text = data3.text;
+        $scope.three_sref = data3.sref;
+        $scope.three_icon = data3.icon;
+        $scope.three_translate = data3.translate;
+        $scope.three_alert = data3.alert;
+        $scope.three_label = data3.label;
+        $scope.three_sort = data3.sort;
+    });
+
 });
+
+App.controller("registerSidebarController",['$rootScope', '$scope', '$state', '$http', '$timeout', 'Utils','myservice',
+    function($rootScope, $scope, $state, $http, $timeout, Utils,myservice) {
+
+
+        var collapseList = [];
+
+        // demo: when switch from collapse to hover, close all items
+        $rootScope.$watch('app.layout.asideHover', function(oldVal, newVal){
+            if ( newVal === false && oldVal === true) {
+                closeAllBut(-1);
+            }
+        });
+
+        // Check item and children active state
+        var isActive = function(item) {
+
+            if(!item) return;
+
+            if( !item.sref || item.sref == '#') {
+                var foundActive = false;
+                angular.forEach(item.submenu, function(value, key) {
+                    if(isActive(value)) foundActive = true;
+                });
+                return foundActive;
+            }
+            else
+                return $state.is(item.sref) || $state.includes(item.sref);
+        };
+
+        // Load menu from json file
+        // -----------------------------------
+
+        $scope.getMenuItemPropClasses = function(item) {
+            return (item.heading ? 'nav-heading' : '') +
+                (isActive(item) ? ' active' : '') ;
+        };
+
+        $scope.loadSidebarMenu = function() {
+              var menuURL="/menu/getSiderBarMenu";
+              $http.post(menuURL).success(function(data) {
+                    var jsonString = angular.toJson(data);
+                    var temp = angular.fromJson(jsonString);
+                   $scope.menuItems = temp.obj;
+                }).error(function(data, status, headers, config) {
+                        alert('Failure loading menu');
+                });
+        };
+
+        $scope.loadSidebarMenu();
+
+        // Handle sidebar collapse items
+        // -----------------------------------
+
+        $scope.addCollapse = function($index, item) {
+            collapseList[$index] = $rootScope.app.layout.asideHover ? true : !isActive(item);
+        };
+
+        $scope.isCollapse = function($index) {
+            return (collapseList[$index]);
+        };
+
+        $scope.toggleCollapse = function($index, isParentItem) {
+
+
+            // collapsed sidebar doesn't toggle drodopwn
+            if( Utils.isSidebarCollapsed() || $rootScope.app.layout.asideHover ) return true;
+
+            // make sure the item index exists
+            if( angular.isDefined( collapseList[$index] ) ) {
+                if ( ! $scope.lastEventFromChild ) {
+                    collapseList[$index] = !collapseList[$index];
+                    closeAllBut($index);
+                }
+            }
+            else if ( isParentItem ) {
+                closeAllBut(-1);
+            }
+
+            $scope.lastEventFromChild = isChild($index);
+
+            return true;
+
+        };
+
+        function closeAllBut(index) {
+            index += '';
+            for(var i in collapseList) {
+                if(index < 0 || index.indexOf(i) < 0)
+                    collapseList[i] = true;
+            }
+        }
+
+        function isChild($index) {
+            return (typeof $index === 'string') && !($index.indexOf('-') < 0);
+        }
+
+
+        var lock1 = false;
+        var lock2 = false;
+        $scope.updateOrDelete2 = function(item){
+            if(item.tier == 2){
+                if(lock1){
+                    return;
+                }
+                $scope.$emit('to-parent_select_02', true,false,item);
+            }
+        }
+
+        $scope.updateOrDelete3 = function(item){
+            if(item.tier == 3){
+                if(lock2){
+                    return;
+                }
+                lock1 = true;
+                $scope.$emit('to-parent_select_03', true,false,item);
+            }
+            if(item.tier == 4){
+                lock1 = true;
+                lock2 = true;
+                $scope.$emit('to-parent_select_04', true,false,item);
+            }
+        }
+    }]);
 
 App.controller("userGroupController", function ($http,$timeout,$scope,$state,
                                                   myservice) {
@@ -7108,16 +7325,20 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
     };
 
     $scope.loadSidebarMenu = function() {
-
-      //var menuJson = 'server/sidebar-menu.json',
-          //menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
+        /*
         var menuURL="/menu/getSiderBarMenu";
       $http.post(menuURL)
         .success(function(data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
            $scope.menuItems = temp.obj;
-        })
+        })*/
+        var menuJson = 'server/sidebar-menu.json',
+            menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
+        $http.get(menuURL)
+            .success(function(items) {
+                $scope.menuItems = items;
+            })
         .error(function(data, status, headers, config) {
           alert('Failure loading menu');
         });

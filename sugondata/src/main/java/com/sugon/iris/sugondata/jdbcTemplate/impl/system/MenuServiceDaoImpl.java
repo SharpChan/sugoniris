@@ -2,6 +2,7 @@ package com.sugon.iris.sugondata.jdbcTemplate.impl.system;
 
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.MenuServiceDaoIntf;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.MenuEntity;
+import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,10 +46,27 @@ public class MenuServiceDaoImpl implements MenuServiceDaoIntf {
             menuEntityList = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(MenuEntity.class));
         }catch(Exception e){
             LOGGER.info("{}-{}","查询表sys_menu失败",e);
-            errorList.add(new Error("{SYS-02-006}","查询sys_menu表出错",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询sys_menu表出错",e.toString()));
         }
 
         return  menuEntityList;
+    }
+
+    @Override
+    public MenuEntity getNode(Long id, List<Error> errorList) {
+        MenuEntity menuEntity = null;
+        if(null == id){
+            return null;
+        }
+        String sql = "SELECT id,name,father_id ,`text` ,`translate` ,heading ,sref,icon,alert,label,user_id,createtime,updatetime,tier,sort FROM sys_menu sm where id ="+id;
+
+        try{
+            menuEntity = jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<>(MenuEntity.class));
+        }catch(Exception e){
+            LOGGER.info("{}-{}","查询表sys_menu失败",e);
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询sys_menu表出错",e.toString()));
+        }
+            return menuEntity;
     }
 
     @Override
@@ -61,7 +79,7 @@ public class MenuServiceDaoImpl implements MenuServiceDaoIntf {
         try {
             result = jdbcTemplate.update(sql);
         }catch (Exception e){
-            errorList.add(new Error("{SYS-02-007}","删除表sys_menu出错",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表sys_menu出错",e.toString()));
         }
         return result;
     }
@@ -144,7 +162,7 @@ public class MenuServiceDaoImpl implements MenuServiceDaoIntf {
             });
         }catch (Exception e){
             LOGGER.info("{}-{}","插入表menu失败",e);
-            errorList.add(new Error("{SYS-02-008}","插入user表出错",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"插入user表出错",e.toString()));
         }
         return result;
     }
@@ -152,45 +170,72 @@ public class MenuServiceDaoImpl implements MenuServiceDaoIntf {
     @Override
     public int updateMenu(MenuEntity menuEntity,List<Error> errorList){
         int result=0;
-        String sql = "update sys_menu set name=?,father_id = ? ,`text` = ? ,`translate` = ? ,heading = ?,sref = ?,icon = ?,alert = ?,label = ?,user_id = ?,updatetime = ? where id = "+menuEntity.getId();
+        String sql = "update sys_menu set name=?,father_id = ? ,`text` = ? ,`translate` = ? ,heading = ?,sref = ?,icon = ?,alert = ?,label = ?,user_id = ?,updatetime = ?,sort = ? where id = "+menuEntity.getId();
         try{
             result=jdbcTemplate.update(sql, new PreparedStatementSetter(){
                 @Override
                 public void setValues(PreparedStatement ps) throws SQLException {
                     if(null != menuEntity.getName()) {
                         ps.setString(1, menuEntity.getName());
+                    }else{
+                        ps.setNull(1,Types.VARCHAR);
                     }
                     if(null != menuEntity.getFatherId()) {
                         ps.setLong(2, menuEntity.getFatherId());
+                    }else{
+                        ps.setNull(2,Types.BIGINT);
                     }
                     if(!StringUtils.isEmpty(menuEntity.getText())) {
                         ps.setString(3, menuEntity.getText());
+                    }else{
+                        ps.setNull(3,Types.VARCHAR);
                     }
                     if(!StringUtils.isEmpty(menuEntity.getTranslate())) {
                         ps.setString(4, menuEntity.getTranslate());
+                    }else{
+                        ps.setNull(4,Types.VARCHAR);
                     }
-                    ps.setBoolean(5, menuEntity.getHeading());
-
+                    if(null != menuEntity.getHeading()) {
+                        ps.setBoolean(5, menuEntity.getHeading());
+                    }else{
+                        ps.setNull(5,Types.BOOLEAN);
+                    }
                     if(!StringUtils.isEmpty(menuEntity.getSref())) {
                         ps.setString(6, menuEntity.getSref());
                     }else{
-                        ps.setString(6, null);
+                        ps.setNull(6, Types.VARCHAR);
                     }
                     if(!StringUtils.isEmpty(menuEntity.getIcon())) {
                         ps.setString(7, menuEntity.getIcon());
+                    }else{
+                        ps.setNull(7, Types.VARCHAR);
                     }
                     if(!StringUtils.isEmpty(menuEntity.getAlert())) {
                         ps.setString(8, menuEntity.getAlert());
+                    }else{
+                        ps.setNull(8, Types.VARCHAR);
                     }
-
-                    ps.setLong(9, menuEntity.getUserId());
-
-                    ps.setTimestamp(10, new Timestamp(new Date().getTime()));
+                    if(!StringUtils.isEmpty(menuEntity.getLabel())) {
+                        ps.setString(9, menuEntity.getLabel());
+                    }else{
+                        ps.setNull(9, Types.VARCHAR);
+                    }
+                    if(null != menuEntity.getUserId()) {
+                        ps.setLong(10, menuEntity.getUserId());
+                    }else{
+                        ps.setNull(10,Types.BIGINT);
+                    }
+                    ps.setTimestamp(11, new Timestamp(new Date().getTime()));
+                    if(null != menuEntity.getSort()) {
+                        ps.setLong(12, menuEntity.getSort());
+                    }else{
+                        ps.setNull(12,Types.INTEGER);
+                    }
                 }
             });
         }catch(Exception e){
             LOGGER.info("{}-{}","插入表sys_menu失败",e);
-            errorList.add(new Error("{SYS-02-002}","修改user表出错",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"修改sys_menu表出错",e.toString()));
         }
         return result;
     }
@@ -208,7 +253,7 @@ public class MenuServiceDaoImpl implements MenuServiceDaoIntf {
             result = jdbcTemplate.queryForObject(sql,Long.class);
         }catch (Exception e){
             LOGGER.error(e.toString());
-            errorList.add(new Error("{SYS-02-009}","menu_seq",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"menu_seq",e.toString()));
         }
         return result;
     }
