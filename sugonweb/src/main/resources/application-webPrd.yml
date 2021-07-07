@@ -9,8 +9,8 @@ spring:
     store-type: redis
   redis:
     database: 0
-    host: 192.168.217.142
-    password: root
+    host: 172.18.20.1
+    password: E9T9E9TPU5
     port: 6379
 
 server:

@@ -120,6 +120,27 @@ public class MenuController {
         return restResult;
     }
 
+    @PostMapping("/getAllSiderBarMenu")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<List<MenuDto>> getAllSiderBarMenu(@CurrentUser User user){
+        RestResult<List<MenuDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(menuServiceImpl.getSiderBarMenu(user.getId(),errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setErrorList(errorList);
+            restResult.setMessage("操作失败");
+            return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
+        }
+        return restResult;
+    }
+
     /**
      * 菜单注册
      */

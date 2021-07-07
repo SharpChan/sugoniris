@@ -12,6 +12,8 @@ public interface MenuService {
 
     List<MenuDto> getSiderBarMenu(Long userId, List<Error> errorList) throws IllegalAccessException;
 
+    List<MenuDto> getAllSiderBarMenu(Long userId, List<Error> errorList) throws IllegalAccessException;
+
     MenuDto getNodeInfo(Long id, List<Error> errorList) throws IllegalAccessException;
 
     Integer modifyMenu(MenuDto menuDto, List<Error> errorList) throws IllegalAccessException;

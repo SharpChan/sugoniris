@@ -22,14 +22,9 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 @Service
 public class WhiteIpServiceImpl implements WhiteIpService {
 
-    @Value("${linux_nginx.userName}")
-    private String userName;
-
-    @Value("${linux_nginx.password}")
-    private String password;
-
-    @Value("${linux_nginx.ipAddress}")
-    private String ipAddress;
+    String userName = PublicUtils.getConfigMap().get("linux.userName");
+    String password = PublicUtils.getConfigMap().get("linux.password");
+    String ipAddress = PublicUtils.getConfigMap().get("linux.ipAddress");
 
     @Autowired
     private NginxServiceDaoIntf nginxServiceDaoImpl;
