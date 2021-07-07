@@ -1279,7 +1279,7 @@ App.directive('treeView',[function(){
 
     return {
         restrict: 'E',
-        templateUrl: '/treeView.html',
+        templateUrl: 'treeView.html',
         scope: {
             treeData: '=',
             canChecked: '=',
@@ -1318,6 +1318,11 @@ App.directive('treeView',[function(){
                     $item:item,
                     $event:$event
                 });
+            };
+
+            var ids = [];
+            $scope.itemChange = function(item){
+                console.log(item);
             };
         }]
     };
