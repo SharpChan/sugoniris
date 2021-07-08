@@ -1320,9 +1320,64 @@ App.directive('treeView',[function(){
                 });
             };
 
-            var ids = [];
-            $scope.itemChange = function(item){
-                console.log(item);
+            //递归获取所有的节点
+            var allNode=[];
+            function getAllNode(tree,allNode,father) {
+                angular.forEach(tree,function(e){
+                    if(father){
+                        e.fatherId = father.id;
+                    }
+                    allNode.push(e);
+                    if(e.children && e.children.length>0){
+                        e.childSize = e.children.length;
+                        getAllNode(e.children,allNode,e);
+                    }else{
+                        e.childSize = 0;
+                    }
+                });
+            }
+
+            //角色新增节点
+            var newNodeAdd = [];
+            //递归把已勾选的所有父节点进行勾选,并找出新增勾选
+            function doCheck(item,allNode) {
+                angular.forEach(allNode,function (e) {
+                    if(e.id == item.fatherId){
+                        if(e.$$isChecked == null || e.$$isChecked == undefined || e.$$isChecked == false){
+                            newNodeAdd.push(e);
+                        }
+                        e.$$isChecked = true;
+                        doCheck(e,allNode);
+                    }
+                })
+            }
+
+            var deleteNodes = [];
+            function deleteNode(item,allNode){
+                    //和item平级的全部去掉勾选则父节点也去掉勾选。
+                    //1.找出所有子节点去掉勾选
+                    angular.forEach(allNode,function (e) {
+                        if(item.id == e.fatherId){
+                           if(!(e.$$isChecked == null || e.$$isChecked == undefined || e.$$isChecked == false)){
+                               deleteNodes.push(e);
+                               e.$$isChecked = false;
+
+                               deleteNode(e,allNode);
+                           }
+                        }
+                    })
+                }
+
+            $scope.itemChange = function(item,tree){
+                //如果变化的那个变成勾选状态则他的父级依次递归都勾选，并且记录改变的项
+                if(item.$$isChecked){
+                    newNodeAdd.push(item);
+                    getAllNode(tree,allNode,null);
+                    doCheck(item,allNode);
+                }else{
+                    deleteNodes.push(item);
+                    deleteNode(item,allNode);
+                }
             };
         }]
     };
@@ -7675,20 +7730,20 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
 
     $scope.loadSidebarMenu = function() {
 
+        /*
         var menuURL="/menu/getSiderBarMenu";
       $http.post(menuURL)
         .success(function(data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
            $scope.menuItems = temp.obj;
-        })
-        /*
+        })*/
         var menuJson = 'server/sidebar-menu.json',
             menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
         $http.get(menuURL)
             .success(function(items) {
                 $scope.menuItems = items;
-            })*/
+            })
         .error(function(data, status, headers, config) {
           alert('Failure loading menu');
         });

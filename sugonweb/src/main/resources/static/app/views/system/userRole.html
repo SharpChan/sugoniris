@@ -21,10 +21,6 @@
                    item-clicked="demo.itemClicked($item)" item-checked-changed="demo.itemCheckedChanged($item)" can-checked="true" ></tree-view>
     </div>
 
-    <!--    <div class="row">
-            <h2>Item selected</h2>
-            <pre>{{demo.selectedItem | json}}</pre>
-        </div>-->
     <script type="text/ng-template" id="treeView.html">
         <ul class="tree-view">
             <li ng-repeat="item in treeData" ng-include="itemTemplateUrl || 'treeItem.html'" ></li>
@@ -33,7 +29,7 @@
     <script type="text/ng-template" id="treeItem.html">
         <i ng-click="itemExpended(item, $event);" class="{{getItemIcon(item)}}"></i>
 
-        <input id="{{item.id}},{{item.pid}}"  type="checkbox" ng-model="item.$$isChecked" class="check-box" ng-if="canChecked" ng-change="itemChange(item)">
+        <input id="{{item.id}},{{item.pid}}"  type="checkbox" ng-model="item.$$isChecked" class="check-box" ng-if="canChecked" ng-change="itemChange(item,treeData)">
 
 
         <span class='text-field' ng-click="warpCallback('itemClicked', item, $event);" >{{item[textField]}}</span>
