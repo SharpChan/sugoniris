@@ -54,8 +54,9 @@
                                 </li>
                                 <li ui-sref-active="active" ng-repeat="item in obj">
                                     <a ui-sref="app.userGroup.users({userGroupid:item.id})" ng-click="userGroupOnClick(item)">
-                                        <!--<span ng-if="item.alert" class="label label-green pull-right">{{item.alert}}</span>-->
-                                        <!--<em ng-class="fold.icon" class="fa fa-fw fa-lg"></em>-->
+                                        <span ng-if="item.count" class="label label-green pull-right">{{item.count}}</span>
+                                        <em ng-class="fold.icon" class="fa fa-group"></em>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                         <span>{{item.groupName}}</span>
                                     </a>
                                 </li>

@@ -1,0 +1,42 @@
+<style id="jsbin-css">
+    ul{
+        list-style: none;
+    }
+    .text-field{
+        cursor: pointer;
+    }
+    .check-box{
+        width: 24px;
+        height: 18px;
+        border-radius: 8px;
+    }
+</style>
+
+
+<div ng-controller="userRolePageController as demo"  class="container">
+
+    <div class="row">
+        <h2>Tree view</h2>
+        <tree-view tree-data="demo.tree" text-field="name" value-field='id'
+                   item-clicked="demo.itemClicked($item)" item-checked-changed="demo.itemCheckedChanged($item)" can-checked="true" ></tree-view>
+    </div>
+
+    <script type="text/ng-template" id="treeView.html">
+        <ul class="tree-view">
+            <li ng-repeat="item in treeData" ng-include="itemTemplateUrl || 'treeItem.html'" ></li>
+        </ul>
+    </script>
+    <script type="text/ng-template" id="treeItem.html">
+        <i ng-click="itemExpended(item, $event);" class="{{getItemIcon(item)}}"></i>
+
+        <input id="{{item.id}},{{item.pid}}"  type="checkbox" ng-model="item.$$isChecked" class="check-box" ng-if="canChecked" ng-change="itemChange(item,treeData)">
+
+
+        <span class='text-field' ng-click="warpCallback('itemClicked', item, $event);" >{{item[textField]}}</span>
+        <ul ng-if="!isLeaf(item)"
+            ng-show="item.$$isExpend">
+            <li ng-repeat="item in item.children" ng-include="itemTemplateUrl || 'treeItem.html'">
+            </li>
+        </ul>
+    </script>
+</div>

@@ -1,42 +1,68 @@
-<style id="jsbin-css">
-    ul{
-        list-style: none;
-    }
-    .text-field{
-        cursor: pointer;
-    }
-    .check-box{
-        width: 24px;
-        height: 18px;
-        border-radius: 8px;
+<style type="text/css">
+    .panel{
+        border-left:1px solid #ccc;
+        border-right:1px solid #ccc
     }
 </style>
 
-
-<div ng-controller="userRoleController as demo"  class="container">
-
-    <div class="row">
-        <h2>Tree view</h2>
-        <tree-view tree-data="demo.tree" text-field="name" value-field='id'
-                   item-clicked="demo.itemClicked($item)" item-checked-changed="demo.itemCheckedChanged($item)" can-checked="true" ></tree-view>
+<div ng-controller="userRoleController">
+    <div class="topnavbar" style="height: 50px;">
+        <div align="left">
+            <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">角色</strong></label>
+        </div>
+        <div align="right" style="margin-top:-30px;">
+        </div>
     </div>
 
-    <script type="text/ng-template" id="treeView.html">
-        <ul class="tree-view">
-            <li ng-repeat="item in treeData" ng-include="itemTemplateUrl || 'treeItem.html'" ></li>
-        </ul>
-    </script>
-    <script type="text/ng-template" id="treeItem.html">
-        <i ng-click="itemExpended(item, $event);" class="{{getItemIcon(item)}}"></i>
+    <div  class="table-grid table-grid-desktop" style="margin-top:30px;">
+        <div class="">
+            <div class="pr col-md-3">
+                <div class="form-inline" style="margin-bottom: 5px;">
+                    <div ng-show="hasClick" ng-init="hasClick = false" class="clearfix mb input-group">
+                        <a class="btn btn-purple btn-sm mb-compose-button" ng-click="removeUserRole()">
+                            <em class="fa fa-remove"></em>
+                            <span>删除</span>
+                        </a>
+                    </div>
+                    <div ng-show="hasClick" ng-click="!hasClick" ng-init="hasClick = false" class="clearfix mb input-group">
+                        <a ui-sref="app.userRole.AddOrModify({active: active.update,id:id})" class="btn btn-purple btn-sm mb-compose-button">
+                            <em class="fa fa-pencil"></em>
+                            <span>修改</span>
+                        </a>
+                    </div>
+                    <div class="clearfix mb input-group">
+                        <a ui-sref="app.userRole.AddOrModify({active: active.save})" class="btn btn-purple btn-sm mb-compose-button">
+                            <em class="fa fa-plus"></em>
+                            <span>新增</span>
+                        </a>
+                    </div>
+                </div>
 
-        <input id="{{item.id}},{{item.pid}}"  type="checkbox" ng-model="item.$$isChecked" class="check-box" ng-if="canChecked" ng-change="itemChange(item,treeData)">
+                <!-- START mailbox list-->
+                <div collapse="mailboxMenuCollapsed" class="mb-boxes">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li class="p">
+                                    <strong><small  class="text-muted">角色</small></strong>
+                                </li>
+                                <li ui-sref-active="active" ng-repeat="item in obj">
+                                    <a ui-sref="app.userRole.roles({userRoleId:item.id})" ng-click="userRoleOnClick(item)">
+                                        <span ng-if="item.count" class="label label-green pull-right">{{item.count}}</span>
+                                        <em ng-class="fold.icon" class="fa fa-anchor"></em>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span>{{item.groupName}}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- END mailbox list-->
+            </div>
+            <div ui-view="" class="col"></div>
+        </div>
 
-        <span class='text-field' ng-click="warpCallback('itemClicked', item, $event);" >{{item[textField]}}</span>
-        <ul ng-if="!isLeaf(item)"
-            ng-show="item.$$isExpend">
-            <li ng-repeat="item in item.children" ng-include="itemTemplateUrl || 'treeItem.html'">
-            </li>
-        </ul>
-    </script>
+    </div>
 </div>

@@ -33,7 +33,7 @@ public class UserGroupDaoImpl implements UserGroupDaoIntf {
     public List<UserGroupEntity> getUserGroupEntitys(List<Error> errorList) {
         List<UserGroupEntity>  userGroupEntityList = null;
         try{
-            String sql = "select id,group_name,description,create_time,update_time,user_id from sys_user_group  ";
+            String sql = "select id,group_name,description,create_time,update_time,user_id ,(select count(*) from sys_user_group_detail b where a.id = b.user_group_id) as count from sys_user_group a ";
             userGroupEntityList = ds1JdbcTemplate.query(sql,new BeanPropertyRowMapper<>(UserGroupEntity.class));
         }catch(Exception e){
             LOGGER.info("{}-{}","查询表sys_user_group失败",e);

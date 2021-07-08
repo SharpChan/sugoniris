@@ -106,6 +106,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           cache: false,
           resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select','textAngular')
       })
+      .state('app.userRole.AddOrModify', {
+          url: '/userRoleAddOrModify/:active/:id',
+          title: 'UserRoleAddOrModify',
+          templateUrl: helper.basepath('system/userRoleAddOrModify.html'),
+          resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
       .state('app.pageRegister', {
           url: '/pageRegister',
           title: 'PageRegister',
@@ -1169,9 +1175,90 @@ App.service('myservice', function($window,$state,$http) {
     }
 
 });
+
 App.controller("userRoleController", function ($http,$timeout,$scope,$state,
                                                    myservice) {
+            myservice.loginLockCheck();
 
+            $scope.active = {
+                save: "0",
+                update: "1"
+            }
+
+            $scope.userGroupOnClick = function (item) {
+                $scope.id = item.id;
+                $scope.hasClick = true;
+            }
+});
+
+App.controller('userRoleAddOrModifyController', ['$http','$timeout','$state','$scope', '$stateParams','myservice', function($http,$timeout,$state,$scope, $stateParams,myservice) {
+    $scope.active = $stateParams.active === 'inbox' ? '' : $stateParams.active;
+    $scope.id = $stateParams.id === 'inbox' ? '' : $stateParams.id;
+    if($scope.active == "0"){
+        $scope.showSave = true;
+        $scope.showUpdate = false;
+    }else if($scope.active == "1"){
+        $scope.showSave = false;
+        $scope.showUpdate = true;
+        var url="/userGroup/getUserGroupById?id=" + $scope.id;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.roleName = temp.obj.roleName;
+            $scope.description = temp.obj.description;
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.save = function () {
+        if(myservice.isEmpty($scope.roleName)){
+            alert("请填写用户组名称！")
+            return;
+        }
+        var url="/userRole/saveUserRole";
+        var params = {
+            roleName: $scope.roleName,
+            description: $scope.description
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $state.go('app.userRole',{},{reload: true});
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.update = function () {
+        if(myservice.isEmpty($scope.roleName)){
+            alert("请填写用户组名称！")
+            return;
+        }
+        var url="/userGroup/modifyUserGroup";
+        var params = {
+            id: $scope.id,
+            roleName: $scope.roleName,
+            description: $scope.description
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $state.go('app.userRole',{},{reload: true});
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+}]);
+
+App.controller("userRolePageController", function ($http,$timeout,$scope,$state,
+                                                   myservice) {
+    //登录和锁定校验
+    myservice.loginLockCheck();
     var vm = this;
     vm.tree = [
         {
@@ -1272,6 +1359,8 @@ App.controller("userRoleController", function ($http,$timeout,$scope,$state,
             ]
         }
     ];
+
+
 
 });
 
@@ -1385,7 +1474,8 @@ App.directive('treeView',[function(){
 
 App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
                                                    myservice) {
-
+    //登录和锁定校验
+    myservice.loginLockCheck();
     //获取字典项
     loadDictionary_1 = function(){
         var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"isOrNot";
@@ -1871,6 +1961,8 @@ App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
 
 App.controller("registerSidebarController",['$rootScope', '$scope', '$state', '$http', '$timeout', 'Utils','myservice',
     function($rootScope, $scope, $state, $http, $timeout, Utils,myservice) {
+        //登录和锁定校验
+        myservice.loginLockCheck();
 
 
         var collapseList = [];
@@ -2001,7 +2093,7 @@ App.controller("registerSidebarController",['$rootScope', '$scope', '$state', '$
 
 App.controller("userGroupController", function ($http,$timeout,$scope,$state,
                                                   myservice) {
-    $("#pleaseWait").hide();
+    //$("#pleaseWait").hide();
     //登录和锁定校验
     myservice.loginLockCheck();
 

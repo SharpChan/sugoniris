@@ -40,4 +40,9 @@ public class UserGroup implements Serializable {
      * 用户id
      */
     private Long userId;
+
+    /**
+     * 用户数量
+     */
+    Integer count;
 }
