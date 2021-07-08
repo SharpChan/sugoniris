@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserRoleService {
 
-     List<RoleDto> getAllRoles(List<Error> errorList ) throws IllegalAccessException;
+     List<RoleDto> getAllRoles(RoleDto roleDto,List<Error> errorList ) throws IllegalAccessException;
 
      Integer saveRole(RoleDto roleDto,List<Error> errorList) throws IllegalAccessException;
 

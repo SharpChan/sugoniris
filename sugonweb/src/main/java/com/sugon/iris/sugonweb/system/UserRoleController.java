@@ -44,13 +44,13 @@ public class UserRoleController {
         return restResult;
     }
 
-    @PostMapping("/getAllUserRole")
+    @PostMapping("/getUserRole")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<List<RoleDto>> getAllUserGroup(){
+    public RestResult<List<RoleDto>> getAllUserGroup(@RequestBody RoleDto roleDto){
         RestResult<List<RoleDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
-            restResult.setObj(userRoleServiceImpl.getAllRoles(errorList));
+            restResult.setObj(userRoleServiceImpl.getAllRoles(roleDto,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -65,7 +65,7 @@ public class UserRoleController {
         return restResult;
     }
 
-    @PostMapping("/modifyUserGroup")
+    @PostMapping("/modifyUserRole")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<Integer> modifyUserGroup( @RequestBody RoleDto roleDto){
         RestResult<Integer> restResult = new RestResult();

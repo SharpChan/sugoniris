@@ -1200,13 +1200,16 @@ App.controller('userRoleAddOrModifyController', ['$http','$timeout','$state','$s
     }else if($scope.active == "1"){
         $scope.showSave = false;
         $scope.showUpdate = true;
-        var url="/userGroup/getUserGroupById?id=" + $scope.id;
-        $http.post(url).success(function (data) {
+        var url="/userRole/getUserRole";
+        var params = {
+            id: $scope.id
+        }
+        $http.post(url,params).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
-            $scope.roleName = temp.obj.roleName;
-            $scope.description = temp.obj.description;
+            $scope.roleName = temp.obj[0].roleName;
+            $scope.description = temp.obj[0].description;
         }).error(function (data) {
             alert("请检查必填项是否填写！");
         });
@@ -1234,10 +1237,10 @@ App.controller('userRoleAddOrModifyController', ['$http','$timeout','$state','$s
 
     $scope.update = function () {
         if(myservice.isEmpty($scope.roleName)){
-            alert("请填写用户组名称！")
+            alert("请填写角色名称！")
             return;
         }
-        var url="/userGroup/modifyUserGroup";
+        var url="/userRole/modifyUserRole";
         var params = {
             id: $scope.id,
             roleName: $scope.roleName,

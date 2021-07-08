@@ -7,21 +7,25 @@ import com.sugon.iris.sugondomain.dtos.systemDtos.RoleDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.RoleEntity;
 import com.sugon.iris.sugonservice.service.systemService.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class UserRoleServiceImpl implements UserRoleService {
 
     @Autowired
     private RoleServiceDaoIntf roleServiceDaoImpl;
 
     @Override
-    public List<RoleDto> getAllRoles(List<Error> errorList) throws IllegalAccessException {
+    public List<RoleDto> getAllRoles(RoleDto roleDto,List<Error> errorList) throws IllegalAccessException {
+        RoleEntity roleEntity = new RoleEntity();
+        PublicUtils.trans(roleDto,roleEntity);
         List<RoleDto> roleDtoList = new ArrayList<>();
-        List<RoleEntity> roleEntityList = roleServiceDaoImpl.getRoles(null,errorList);
-        for(RoleEntity roleEntity : roleEntityList){
+        List<RoleEntity> roleEntityList = roleServiceDaoImpl.getRoles(roleEntity,errorList);
+        for(RoleEntity roleEntityBean : roleEntityList){
             RoleDto roleDtoBean = new RoleDto();
-            PublicUtils.trans(roleEntity,roleDtoBean);
+            PublicUtils.trans(roleEntityBean,roleDtoBean);
             roleDtoList.add(roleDtoBean);
         }
         return roleDtoList;

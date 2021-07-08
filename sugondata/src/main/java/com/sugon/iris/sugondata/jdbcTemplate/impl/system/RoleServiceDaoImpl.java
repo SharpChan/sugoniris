@@ -11,12 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.List;
 
+@Repository
 public class RoleServiceDaoImpl implements RoleServiceDaoIntf {
     private static final Logger LOGGER = LogManager.getLogger(MenuServiceDaoImpl.class);
     @Autowired
