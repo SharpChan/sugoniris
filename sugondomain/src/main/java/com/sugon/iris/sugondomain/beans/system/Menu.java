@@ -68,7 +68,7 @@ public class Menu implements Serializable {
     private Date createTime = new Date();
 
     @JsonFormat(shape= JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss.SSSSSS",timezone="GMT+8")
-    private Date updateTime;
+    private Date updateTime = new Date();
 
     /**
      * 创建者id

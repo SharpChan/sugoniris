@@ -2,24 +2,26 @@ package com.sugon.iris.sugondomain.beans.system;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-
-import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class Role implements Serializable {
+public class RolePage {
 
+    /**
+     * 自增序列
+     */
     private Long id;
 
-    private String roleName;
+    /**
+     * 角色id
+     */
+    private Long roleId;
 
-    private String description;
-
-    private Long create_user_id;
+    /**
+     * 菜单id
+     */
+    private Long menuId;
 
     @JsonFormat(shape= JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss.SSSSSS",timezone="GMT+8")
     private Date createTime = new Date();
-
-    @JsonFormat(shape= JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss.SSSSSS",timezone="GMT+8")
-    private Date updateTime = new Date();;
 }

@@ -112,6 +112,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('system/userRoleAddOrModify.html'),
           resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
+      .state('app.userRole.userRolePage', {
+          url: '/userRolePage/:userRoleId',
+          title: 'UserRolePage',
+          templateUrl: helper.basepath('system/userRolePage.html'),
+          resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
       .state('app.pageRegister', {
           url: '/pageRegister',
           title: 'PageRegister',
@@ -1185,10 +1191,42 @@ App.controller("userRoleController", function ($http,$timeout,$scope,$state,
                 update: "1"
             }
 
-            $scope.userGroupOnClick = function (item) {
+            $scope.userRoleOnClick = function (item) {
                 $scope.id = item.id;
                 $scope.hasClick = true;
             }
+
+    //获取用户组列表
+    $scope.getUserRole = function () {
+        var url="/userRole/getUserRole";
+        $http.post(url,{}).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj=temp.obj;
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+    $scope.getUserRole();
+
+    $scope.removeUserRole = function () {
+
+        if(myservice.isEmpty($scope.id)){
+            return;
+        }
+        var url="/userRole/removeUserRole?id="+$scope.id;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $state.go('app.userRole',{},{reload: true});
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+
+    }
+
 });
 
 App.controller('userRoleAddOrModifyController', ['$http','$timeout','$state','$scope', '$stateParams','myservice', function($http,$timeout,$state,$scope, $stateParams,myservice) {
@@ -1367,113 +1405,6 @@ App.controller("userRolePageController", function ($http,$timeout,$scope,$state,
 
 });
 
-App.directive('treeView',[function(){
-
-    return {
-        restrict: 'E',
-        templateUrl: 'treeView.html',
-        scope: {
-            treeData: '=',
-            canChecked: '=',
-            textField: '@',
-            itemClicked: '&',
-            itemCheckedChanged: '&',
-            itemTemplateUrl: '@'
-        },
-        controller:['$scope', function($scope){
-            $scope.itemExpended = function(item, $event){
-                item.$$isExpend = ! item.$$isExpend;
-                $event.stopPropagation();
-            };
-
-            $scope.getItemIcon = function(item){
-                var isLeaf = $scope.isLeaf(item);
-
-                if(isLeaf){
-                    return 'fa fa-leaf';
-                }
-
-                return item.$$isExpend ? 'fa fa-minus': 'fa fa-plus';
-            };
-
-            $scope.isLeaf = function(item){
-                return !item.children || !item.children.length;
-            };
-
-            $scope.chk = function(callback , item){
-                var itemId = item.id;
-
-            };
-
-            $scope.warpCallback = function(callback, item, $event){
-                ($scope[callback] || angular.noop)({
-                    $item:item,
-                    $event:$event
-                });
-            };
-
-            //递归获取所有的节点
-            var allNode=[];
-            function getAllNode(tree,allNode,father) {
-                angular.forEach(tree,function(e){
-                    if(father){
-                        e.fatherId = father.id;
-                    }
-                    allNode.push(e);
-                    if(e.children && e.children.length>0){
-                        e.childSize = e.children.length;
-                        getAllNode(e.children,allNode,e);
-                    }else{
-                        e.childSize = 0;
-                    }
-                });
-            }
-
-            //角色新增节点
-            var newNodeAdd = [];
-            //递归把已勾选的所有父节点进行勾选,并找出新增勾选
-            function doCheck(item,allNode) {
-                angular.forEach(allNode,function (e) {
-                    if(e.id == item.fatherId){
-                        if(e.$$isChecked == null || e.$$isChecked == undefined || e.$$isChecked == false){
-                            newNodeAdd.push(e);
-                        }
-                        e.$$isChecked = true;
-                        doCheck(e,allNode);
-                    }
-                })
-            }
-
-            var deleteNodes = [];
-            function deleteNode(item,allNode){
-                    //和item平级的全部去掉勾选则父节点也去掉勾选。
-                    //1.找出所有子节点去掉勾选
-                    angular.forEach(allNode,function (e) {
-                        if(item.id == e.fatherId){
-                           if(!(e.$$isChecked == null || e.$$isChecked == undefined || e.$$isChecked == false)){
-                               deleteNodes.push(e);
-                               e.$$isChecked = false;
-
-                               deleteNode(e,allNode);
-                           }
-                        }
-                    })
-                }
-
-            $scope.itemChange = function(item,tree){
-                //如果变化的那个变成勾选状态则他的父级依次递归都勾选，并且记录改变的项
-                if(item.$$isChecked){
-                    newNodeAdd.push(item);
-                    getAllNode(tree,allNode,null);
-                    doCheck(item,allNode);
-                }else{
-                    deleteNodes.push(item);
-                    deleteNode(item,allNode);
-                }
-            };
-        }]
-    };
-}]);
 
 App.controller("pageRegisterController", function ($http,$timeout,$scope,$state,
                                                    myservice) {
@@ -2096,7 +2027,6 @@ App.controller("registerSidebarController",['$rootScope', '$scope', '$state', '$
 
 App.controller("userGroupController", function ($http,$timeout,$scope,$state,
                                                   myservice) {
-    //$("#pleaseWait").hide();
     //登录和锁定校验
     myservice.loginLockCheck();
 
@@ -8838,6 +8768,115 @@ App.directive('href', function() {
       }
    };
 });
+
+App.directive('treeView',[function(){
+
+    return {
+        restrict: 'E',
+        templateUrl: 'treeView.html',
+        scope: {
+            treeData: '=',
+            canChecked: '=',
+            textField: '@',
+            itemClicked: '&',
+            itemCheckedChanged: '&',
+            itemTemplateUrl: '@'
+        },
+        controller:['$scope', function($scope){
+            $scope.itemExpended = function(item, $event){
+                item.$$isExpend = ! item.$$isExpend;
+                $event.stopPropagation();
+            };
+
+            $scope.getItemIcon = function(item){
+                var isLeaf = $scope.isLeaf(item);
+
+                if(isLeaf){
+                    return 'fa fa-leaf';
+                }
+
+                return item.$$isExpend ? 'fa fa-minus': 'fa fa-plus';
+            };
+
+            $scope.isLeaf = function(item){
+                return !item.children || !item.children.length;
+            };
+
+            $scope.chk = function(callback , item){
+                var itemId = item.id;
+
+            };
+
+            $scope.warpCallback = function(callback, item, $event){
+                ($scope[callback] || angular.noop)({
+                    $item:item,
+                    $event:$event
+                });
+            };
+
+            //递归获取所有的节点
+            var allNode=[];
+            function getAllNode(tree,allNode,father) {
+                angular.forEach(tree,function(e){
+                    if(father){
+                        e.fatherId = father.id;
+                    }
+                    allNode.push(e);
+                    if(e.children && e.children.length>0){
+                        e.childSize = e.children.length;
+                        getAllNode(e.children,allNode,e);
+                    }else{
+                        e.childSize = 0;
+                    }
+                });
+            }
+
+            //角色新增节点
+            var newNodeAdd = [];
+            //递归把已勾选的所有父节点进行勾选,并找出新增勾选
+            function doCheck(item,allNode) {
+                angular.forEach(allNode,function (e) {
+                    if(e.id == item.fatherId){
+                        if(e.$$isChecked == null || e.$$isChecked == undefined || e.$$isChecked == false){
+                            newNodeAdd.push(e);
+                        }
+                        e.$$isChecked = true;
+                        doCheck(e,allNode);
+                    }
+                })
+            }
+
+            var deleteNodes = [];
+            function deleteNode(item,allNode){
+                //和item平级的全部去掉勾选则父节点也去掉勾选。
+                //1.找出所有子节点去掉勾选
+                angular.forEach(allNode,function (e) {
+                    if(item.id == e.fatherId){
+                        if(!(e.$$isChecked == null || e.$$isChecked == undefined || e.$$isChecked == false)){
+                            deleteNodes.push(e);
+                            e.$$isChecked = false;
+
+                            deleteNode(e,allNode);
+                        }
+                    }
+                })
+            }
+
+            $scope.itemChange = function(item,tree){
+                //如果变化的那个变成勾选状态则他的父级依次递归都勾选，并且记录改变的项
+                if(item.$$isChecked){
+                    newNodeAdd.push(item);
+                    getAllNode(tree,allNode,null);
+                    doCheck(item,allNode);
+                }else{
+                    deleteNodes.push(item);
+                    deleteNode(item,allNode);
+                }
+            };
+        }]
+    };
+}]);
+
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive

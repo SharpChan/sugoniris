@@ -50,5 +50,5 @@ public class WhiteIp implements Serializable {
     private Date createTime = new Date();
 
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    private Date updateTime;
+    private Date updateTime = new Date();
 }

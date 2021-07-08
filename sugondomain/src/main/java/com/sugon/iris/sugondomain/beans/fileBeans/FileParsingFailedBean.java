@@ -48,7 +48,7 @@ public class FileParsingFailedBean {
      *修改时间
      */
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    private Date updateTime;
+    private Date updateTime = new Date();
 
     /**
      * 模板id

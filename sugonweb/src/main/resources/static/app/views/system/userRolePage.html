@@ -13,10 +13,10 @@
 </style>
 
 
-<div ng-controller="userRolePageController as demo"  class="container">
+<div ng-controller="userRolePageController as demo"  class="container" style="width: 80%;margin-left: 100px">
 
     <div class="row">
-        <h2>Tree view</h2>
+        <h3>配置页面</h3>
         <tree-view tree-data="demo.tree" text-field="name" value-field='id'
                    item-clicked="demo.itemClicked($item)" item-checked-changed="demo.itemCheckedChanged($item)" can-checked="true" ></tree-view>
     </div>

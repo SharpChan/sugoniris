@@ -41,7 +41,7 @@ public class FileAttachmentBean {
      * 创建时间呢
      */
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    private Date createTime;
+    private Date createTime = new Date();
 
     /**
      *上传者id

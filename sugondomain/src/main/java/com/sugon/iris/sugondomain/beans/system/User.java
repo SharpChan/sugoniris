@@ -50,5 +50,5 @@ public class User implements Serializable {
     private Integer flag = 1;
 
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss.SSSSSS",timezone="GMT+8")
-    private Date updateTime;
+    private Date updateTime = new Date();
 }

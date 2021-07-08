@@ -53,7 +53,7 @@ public class RoleServiceDaoImpl implements RoleServiceDaoIntf {
         if(null == roleEntity){
             return result;
         }
-        String sql = "insert into sys_role(role_name,description,create_user_id,createtime) " +
+        String sql = "insert into sys_role(role_name,description,create_user_id,create_time) " +
                 "values(?,?,?,?)";
 
         try{
