@@ -203,7 +203,7 @@ public class UserGroupDaoImpl implements UserGroupDaoIntf {
     public Integer deleteUserGroupDetailEntity(UserGroupDetailEntity userGroupDetailEntitySql, List<Error> errorList) {
         int result = 0;
         try {
-            String sql = "delete from sys_user_group_detail where 1=1  ";
+            String sql = "delete from sys_user_group_detail where  ";
             if(null != userGroupDetailEntitySql.getUserId()){
                 sql += " and user_id = " + userGroupDetailEntitySql.getUserId();
             }

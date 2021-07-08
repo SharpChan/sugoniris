@@ -8,6 +8,11 @@ import java.util.List;
 
 public interface RoleServiceDaoIntf {
 
-    List<RoleEntity> getMenuInfos(RoleEntity roleEntity, List<Error> errorList);
+    List<RoleEntity> getRoles(RoleEntity roleEntity, List<Error> errorList);
 
+    Integer saveRole(RoleEntity roleEntity, List<Error> errorList);
+
+    Integer updateRole(RoleEntity roleEntity, List<Error> errorList);
+
+    Integer deleteRole(Long id, List<Error> errorList);
 }
