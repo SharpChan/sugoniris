@@ -6,7 +6,7 @@ import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.securityModuleEnti
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import java.util.List;
 
-public interface NginxServiceDaoIntf {
+public interface NginxServiceDao {
 
     List<WhiteIpEntity> queryWhiteIp(WhiteIpEntity whiteIpEntity, List<Error> errorList);
 

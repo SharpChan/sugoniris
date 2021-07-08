@@ -1,7 +1,7 @@
 package com.sugon.iris.sugonservice.impl.systemImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
-import com.sugon.iris.sugondata.jdbcTemplate.intf.system.MenuServiceDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.MenuServiceDao;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.MenuEntity;
@@ -15,7 +15,7 @@ import java.util.*;
 @Service
 public class MenuServiceImpl implements MenuService {
     @Resource
-    private MenuServiceDaoIntf menuServiceDaoImpl;
+    private MenuServiceDao menuServiceDaoImpl;
 
     @Override
     public Integer saveMenu(MenuDto menuDto, List<Error> errorList) throws IllegalAccessException {

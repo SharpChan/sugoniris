@@ -1,7 +1,7 @@
 package com.sugon.iris.sugonservice.impl.configServiceImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
-import com.sugon.iris.sugondata.jdbcTemplate.intf.config.ConfigServiceDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.config.ConfigServiceDao;
 import com.sugon.iris.sugondomain.beans.configBeans.ConfigBean;
 import com.sugon.iris.sugondomain.dtos.configDtos.ConfigDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.configEntities.ConfigEntity;
@@ -21,7 +21,7 @@ import java.util.List;
 public class ConfigServiceImpl implements ConfigService {
 
     @Autowired
-    private ConfigServiceDaoIntf configServiceDaoIntfImpl;
+    private ConfigServiceDao configServiceDaoIntfImpl;
 
     /**
      * 作者:SharpChan

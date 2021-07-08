@@ -4,7 +4,7 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.configEntities.SysDictionaryEntity;
 import java.util.List;
 
-public interface SysDictionaryDaoIntf {
+public interface SysDictionaryDao {
 
     /**
      * 查询所有的字典项

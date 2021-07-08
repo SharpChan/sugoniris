@@ -1,7 +1,7 @@
 package com.sugon.iris.sugonservice.impl.systemImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
-import com.sugon.iris.sugondata.jdbcTemplate.intf.system.UserGroupDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.UserGroupDao;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.systemDtos.UserDto;
@@ -22,7 +22,7 @@ import java.util.List;
 public class UserGroupServiceImpl implements UserGroupService {
 
     @Resource
-    private UserGroupDaoIntf userGroupDaoImpl;
+    private UserGroupDao userGroupDaoImpl;
 
     @Override
     public List<UserGroupDto> userGroupList(List<Error> errorList) throws IllegalAccessException {

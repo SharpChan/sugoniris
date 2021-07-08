@@ -1,7 +1,7 @@
 package com.sugon.iris.sugonservice.impl.systemImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
-import com.sugon.iris.sugondata.jdbcTemplate.intf.system.AccountServiceDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.AccountServiceDao;
 import com.sugon.iris.sugondomain.dtos.systemDtos.UserDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 public class AccountServiceImpl implements AccountService {
 
     @Resource
-    private AccountServiceDaoIntf accountServiceDaoImpl;
+    private AccountServiceDao accountServiceDaoImpl;
 
 
   public int saveAccount(UserDto userDto, List<Error> errorList){

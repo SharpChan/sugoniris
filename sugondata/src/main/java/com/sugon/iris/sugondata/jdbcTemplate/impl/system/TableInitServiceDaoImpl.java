@@ -1,7 +1,7 @@
 package com.sugon.iris.sugondata.jdbcTemplate.impl.system;
 
-import com.sugon.iris.sugondata.jdbcTemplate.intf.system.AccountServiceDaoIntf;
-import com.sugon.iris.sugondata.jdbcTemplate.intf.system.TableInitServiceDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.AccountServiceDao;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.TableInitServiceDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 @Service
-public class TableInitServiceDaoImpl implements TableInitServiceDaoIntf {
+public class TableInitServiceDaoImpl implements TableInitServiceDao {
 
     private static final Logger LOGGER = LogManager.getLogger(TableInitServiceDaoImpl.class);
 
@@ -20,7 +20,7 @@ public class TableInitServiceDaoImpl implements TableInitServiceDaoIntf {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private AccountServiceDaoIntf accountServiceDaoImpl;
+    private AccountServiceDao accountServiceDaoImpl;
 
     @Override
     public void createTables() {

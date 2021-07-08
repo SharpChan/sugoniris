@@ -5,7 +5,7 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 
 import java.util.List;
 
-public interface ConfigServiceDaoIntf {
+public interface ConfigServiceDao {
 
     List<ConfigEntity> getAllConfig(List<Error> errorList);
 

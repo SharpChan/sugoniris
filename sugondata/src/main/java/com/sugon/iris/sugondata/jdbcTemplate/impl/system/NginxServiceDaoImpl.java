@@ -1,6 +1,6 @@
 package com.sugon.iris.sugondata.jdbcTemplate.impl.system;
 
-import com.sugon.iris.sugondata.jdbcTemplate.intf.system.NginxServiceDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.NginxServiceDao;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.securityModuleEntities.WhiteIpEntity;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Repository
-public class NginxServiceDaoImpl implements NginxServiceDaoIntf {
+public class NginxServiceDaoImpl implements NginxServiceDao {
     private static final Logger LOGGER = LogManager.getLogger(NginxServiceDaoImpl.class);
 
     @Autowired

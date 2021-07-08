@@ -1,7 +1,6 @@
 package com.sugon.iris.sugondata.jdbcTemplate.impl.config;
 
-import com.ctc.wstx.util.StringUtil;
-import com.sugon.iris.sugondata.jdbcTemplate.intf.config.SysDictionaryDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.config.SysDictionaryDao;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.configEntities.SysDictionaryEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
@@ -15,11 +14,10 @@ import org.springframework.stereotype.Service;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.List;
 
 @Service
-public class SysDictionaryDaoImpl implements SysDictionaryDaoIntf {
+public class SysDictionaryDaoImpl implements SysDictionaryDao {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

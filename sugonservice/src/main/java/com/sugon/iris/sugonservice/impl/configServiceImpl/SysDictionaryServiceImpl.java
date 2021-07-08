@@ -1,7 +1,7 @@
 package com.sugon.iris.sugonservice.impl.configServiceImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
-import com.sugon.iris.sugondata.jdbcTemplate.intf.config.SysDictionaryDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.config.SysDictionaryDao;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.dtos.configDtos.SysDictionaryDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.configEntities.SysDictionaryEntity;
@@ -16,7 +16,7 @@ import java.util.List;
 public class SysDictionaryServiceImpl implements SysDictionaryService {
 
     @Resource
-    private SysDictionaryDaoIntf sysDictionaryDaoImpl;
+    private SysDictionaryDao sysDictionaryDaoImpl;
 
 
     @Override

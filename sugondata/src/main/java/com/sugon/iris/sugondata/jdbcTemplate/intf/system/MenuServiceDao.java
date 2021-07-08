@@ -5,7 +5,7 @@ import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.Men
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import java.util.List;
 
-public interface MenuServiceDaoIntf {
+public interface MenuServiceDao {
 
         List<MenuEntity> getMenuInfos(MenuEntity menuEntity, List<Error> errorList);
 

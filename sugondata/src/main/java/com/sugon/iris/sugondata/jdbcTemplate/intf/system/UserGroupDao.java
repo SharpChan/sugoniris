@@ -7,7 +7,7 @@ import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.Use
 
 import java.util.List;
 
-public interface UserGroupDaoIntf {
+public interface UserGroupDao {
 
     List<UserGroupEntity> getUserGroupEntitys( List<Error> errorList);
 

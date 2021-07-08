@@ -1,6 +1,6 @@
 package com.sugon.iris.sugondata.jdbcTemplate.impl.system;
 
-import com.sugon.iris.sugondata.jdbcTemplate.intf.system.UserGroupDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.UserGroupDao;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserEntity;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserGroupDetailEntity;
@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public class UserGroupDaoImpl implements UserGroupDaoIntf {
+public class UserGroupDaoImpl implements UserGroupDao {
 
     private static final Logger LOGGER = LogManager.getLogger(UserGroupDaoImpl.class);
 

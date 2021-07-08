@@ -1,6 +1,6 @@
 package com.sugon.iris.sugondata.jdbcTemplate.impl.system;
 
-import com.sugon.iris.sugondata.jdbcTemplate.intf.system.MenuServiceDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.MenuServiceDao;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.MenuEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public class MenuServiceDaoImpl implements MenuServiceDaoIntf {
+public class MenuServiceDaoImpl implements MenuServiceDao {
     private static final Logger LOGGER = LogManager.getLogger(MenuServiceDaoImpl.class);
 
     @Autowired

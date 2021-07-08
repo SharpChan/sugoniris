@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 
-public interface AccountServiceDaoIntf {
+public interface AccountServiceDao {
 
     List<UserEntity> getUserEntitys (Long id,String email,String password,Integer flag, List<Error> errorList);
 

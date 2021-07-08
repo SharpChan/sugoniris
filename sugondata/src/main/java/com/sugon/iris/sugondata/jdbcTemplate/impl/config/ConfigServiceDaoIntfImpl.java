@@ -1,7 +1,7 @@
 package com.sugon.iris.sugondata.jdbcTemplate.impl.config;
 
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondata.jdbcTemplate.intf.config.ConfigServiceDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.config.ConfigServiceDao;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.configEntities.ConfigEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import org.apache.commons.lang.StringUtils;
@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public class ConfigServiceDaoIntfImpl implements ConfigServiceDaoIntf {
+public class ConfigServiceDaoIntfImpl implements ConfigServiceDao {
     private static final Logger LOGGER = LogManager.getLogger(ConfigServiceDaoIntfImpl.class);
     @Autowired
     private JdbcTemplate jdbcTemplate;

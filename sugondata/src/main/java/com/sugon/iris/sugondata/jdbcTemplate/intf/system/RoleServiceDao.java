@@ -4,7 +4,7 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.RoleEntity;
 import java.util.List;
 
-public interface RoleServiceDaoIntf {
+public interface RoleServiceDao {
 
     List<RoleEntity> getRoles(RoleEntity roleEntity, List<Error> errorList);
 

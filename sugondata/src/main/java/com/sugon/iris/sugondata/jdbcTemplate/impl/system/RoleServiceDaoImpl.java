@@ -1,6 +1,6 @@
 package com.sugon.iris.sugondata.jdbcTemplate.impl.system;
 
-import com.sugon.iris.sugondata.jdbcTemplate.intf.system.RoleServiceDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.RoleServiceDao;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.RoleEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
@@ -19,7 +19,7 @@ import java.sql.Types;
 import java.util.List;
 
 @Repository
-public class RoleServiceDaoImpl implements RoleServiceDaoIntf {
+public class RoleServiceDaoImpl implements RoleServiceDao {
     private static final Logger LOGGER = LogManager.getLogger(MenuServiceDaoImpl.class);
     @Autowired
     private JdbcTemplate jdbcTemplate;

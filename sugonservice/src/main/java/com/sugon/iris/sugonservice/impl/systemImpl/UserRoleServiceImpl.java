@@ -1,7 +1,7 @@
 package com.sugon.iris.sugonservice.impl.systemImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
-import com.sugon.iris.sugondata.jdbcTemplate.intf.system.RoleServiceDaoIntf;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.RoleServiceDao;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.dtos.systemDtos.RoleDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.RoleEntity;
@@ -15,7 +15,7 @@ import java.util.List;
 public class UserRoleServiceImpl implements UserRoleService {
 
     @Autowired
-    private RoleServiceDaoIntf roleServiceDaoImpl;
+    private RoleServiceDao roleServiceDaoImpl;
 
     @Override
     public List<RoleDto> getAllRoles(RoleDto roleDto,List<Error> errorList) throws IllegalAccessException {
