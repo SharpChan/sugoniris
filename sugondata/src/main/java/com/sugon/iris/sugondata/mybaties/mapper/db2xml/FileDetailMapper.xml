@@ -83,29 +83,27 @@
 
 
 
-    <!--批量插入-->
-    <insert id="fileDetailInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+    <!--单个插入-->
+    <insert id="fileDetailInsert" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity" useGeneratedKeys="true" keyProperty="id">
         insert into file_detail
         (<include refid="Base_Column_List" />)
         values
-          <foreach collection="fileDetailEntityList" item="item" index="i" separator=",">
              (
-             #{item.id,jdbcType=INTEGER},
-             #{item.fileAttachmentId,jdbcType=INTEGER},
-             #{item.fileType,jdbcType=VARCHAR},
-             #{item.fileName,jdbcType=VARCHAR},
-             #{item.filePath,jdbcType=VARCHAR},
-             #{item.fileTemplateId,jdbcType=INTEGER},
-             #{item.rowCount,jdbcType=INTEGER},
-             #{item.importRowCount,jdbcType=INTEGER},
-             #{item.caseId,jdbcType=VARCHAR},
-             #{item.tableName,jdbcType=VARCHAR},
-             #{item.userId,jdbcType=INTEGER},
-             #{item.createTime,jdbcType=TIMESTAMP},
-             #{item.updateTime,jdbcType=TIMESTAMP},
-             #{item.hasImport,jdbcType=TINYINT}
+             #{id,jdbcType=INTEGER},
+             #{fileAttachmentId,jdbcType=INTEGER},
+             #{fileType,jdbcType=VARCHAR},
+             #{fileName,jdbcType=VARCHAR},
+             #{filePath,jdbcType=VARCHAR},
+             #{fileTemplateId,jdbcType=INTEGER},
+             #{rowCount,jdbcType=INTEGER},
+             #{importRowCount,jdbcType=INTEGER},
+             #{caseId,jdbcType=VARCHAR},
+             #{tableName,jdbcType=VARCHAR},
+             #{userId,jdbcType=INTEGER},
+             #{createTime,jdbcType=TIMESTAMP},
+             #{updateTime,jdbcType=TIMESTAMP},
+             #{hasImport,jdbcType=TINYINT}
              )
-          </foreach>
     </insert>
 
     <!--删除-->

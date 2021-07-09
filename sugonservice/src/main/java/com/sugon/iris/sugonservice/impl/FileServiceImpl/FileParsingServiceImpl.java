@@ -81,7 +81,6 @@ public class FileParsingServiceImpl implements FileParsingService {
 
 
         List<FileParsingFailedEntity>  fileParsingFailedEntityListSql = new ArrayList<>();
-        List<FileDetailEntity>  fileDetailEntityfListSql = new ArrayList<>();
 
         //通过模板id获取模板信息和模板字段信息，并用当前模板对文件依次进行解析
         for(FileTemplateGroupEntity fileTemplateGroupEntityBean : fileTemplateGroupEntityList){
@@ -241,7 +240,8 @@ public class FileParsingServiceImpl implements FileParsingService {
                     fileDetailEntityfSql.setImportRowCount(importRowCount);
                     fileDetailEntityfSql.setRowCount(rowCount);
                     fileDetailEntityfSql.setTableName(tableName);
-                    fileDetailEntityfListSql.add(fileDetailEntityfSql);
+                    //把信息存入文件信息表
+                    fileDetailMapper.fileDetailInsert(fileDetailEntityfSql);
                 }
             }
         }
@@ -249,9 +249,8 @@ public class FileParsingServiceImpl implements FileParsingService {
         if(!CollectionUtils.isEmpty(fileParsingFailedEntityListSql)) {
             fileParsingFailedMapper.fileParsingFailedInsert(fileParsingFailedEntityListSql);
         }
-        //把信息存入文件信息表
-        fileDetailMapper.fileDetailInsert(fileDetailEntityfListSql);
-        return false;
+
+        return true;
     }
 
     //获取原始文件信息

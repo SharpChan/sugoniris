@@ -59,7 +59,11 @@
             <artifactId>postgresql</artifactId>
             <version>42.2.3</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.huawei</groupId>
+            <artifactId>gsjdbc200</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

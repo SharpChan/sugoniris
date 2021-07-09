@@ -7,7 +7,7 @@ public interface FileDetailMapper {
 
     List<FileDetailEntity> selectFileDetailList(FileDetailEntity fileDetailEntity);
 
-    int fileDetailInsert(List<FileDetailEntity> fileDetailEntityList);
+    int fileDetailInsert(FileDetailEntity fileDetailEntity);
 
     int deleteFileDetailById(String[] idArr);
 

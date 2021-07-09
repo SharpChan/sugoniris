@@ -11,8 +11,8 @@
         <module name="sugonfilerest" />
         <module name="sugondomain" />
         <module name="sugondata" />
-        <module name="sugonweb" />
         <module name="sugonlistener" />
+        <module name="sugonweb" />
         <module name="sugonservice" />
         <module name="sugonrest" />
         <module name="sugoncommon" />
