@@ -40,8 +40,10 @@ public class ConfigController {
         }
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
+            restResult.setMessage("操作失败！");
             restResult.setErrorList(errorList);
-            return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
         }
         return restResult;
     }
@@ -58,8 +60,10 @@ public class ConfigController {
         }
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
+            restResult.setMessage("操作失败！");
             restResult.setErrorList(errorList);
-            return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
         }
         return restResult;
     }
@@ -79,8 +83,10 @@ public class ConfigController {
         }
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
+            restResult.setMessage("操作失败！");
             restResult.setErrorList(errorList);
-            return  restResult;
+        }else{
+            restResult.setMessage("操作成功");
         }
         return restResult;
     }
@@ -97,10 +103,10 @@ public class ConfigController {
         }
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
-            restResult.setMessage("删除失败！");
+            restResult.setMessage("操作失败！");
             restResult.setErrorList(errorList);
         }else{
-            restResult.setMessage("删除成功");
+            restResult.setMessage("操作成功");
         }
         return restResult;
     }

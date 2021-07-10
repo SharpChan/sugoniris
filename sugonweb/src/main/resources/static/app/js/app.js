@@ -1300,6 +1300,11 @@ App.controller("userRolePageController", function ($http,$timeout,$scope,$state,
                                                    myservice) {
     //登录和锁定校验
     myservice.loginLockCheck();
+    $scope.userRoleId = $stateParams.userRoleId === 'inbox' ? '' : $stateParams.userRoleId;
+    //通过userRoleId获取页面
+
+
+
     var vm = this;
     vm.tree = [
         {

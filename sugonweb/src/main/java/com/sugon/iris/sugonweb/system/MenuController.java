@@ -105,7 +105,7 @@ public class MenuController {
         RestResult<List<MenuDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
-            restResult.setObj(menuServiceImpl.getSiderBarMenu(user.getId(),errorList));
+            restResult.setObj(menuServiceImpl.getSiderBarMenu(errorList));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -126,7 +126,7 @@ public class MenuController {
         RestResult<List<MenuDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
-            restResult.setObj(menuServiceImpl.getAllSiderBarMenu(user.getId(),errorList));
+            restResult.setObj(menuServiceImpl.getAllSiderBarMenu(errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

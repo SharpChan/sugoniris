@@ -10,4 +10,6 @@ public interface RolePageServiceDao {
 
     int[] deleteRolePages(List<Object[]> idList,List<Error> errorList);
 
+    List<RolePageEntity>  getRolePageByRoleId(Long roleId,List<Error> errorList);
+
 }

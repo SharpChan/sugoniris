@@ -18,6 +18,12 @@ public class MenuDto extends Menu {
     @JSONField(name="submenu")
     private List<MenuDto> submenu;
 
+    private boolean isCheck;
+
+
+    @JSONField(name="children")
+    private List<MenuDto> children = this.submenu;
+
 
     public List<MenuDto> getSubmenu(){
         if(CollectionUtils.isEmpty(submenu)){

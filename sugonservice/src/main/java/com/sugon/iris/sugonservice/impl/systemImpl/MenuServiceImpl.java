@@ -57,7 +57,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<MenuDto> getSiderBarMenu(Long userId, List<Error> errorList) throws IllegalAccessException {
+    public List<MenuDto> getSiderBarMenu(List<Error> errorList) throws IllegalAccessException {
         List<MenuDto> menuDtoList= new ArrayList();
         List<MenuEntity> menuEntityList = menuServiceDaoImpl.getMenuInfos(null,errorList);
         if(CollectionUtils.isEmpty(menuEntityList)){
@@ -141,7 +141,7 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<MenuDto> getAllSiderBarMenu(Long userId, List<Error> errorList) throws IllegalAccessException {
+    public List<MenuDto> getAllSiderBarMenu(List<Error> errorList) throws IllegalAccessException {
         List<MenuDto> menuDtoList= new ArrayList();
         List<MenuEntity> menuEntityList = menuServiceDaoImpl.getMenuInfos(null,errorList);
         if(CollectionUtils.isEmpty(menuEntityList)){
@@ -265,6 +265,4 @@ public class MenuServiceImpl implements MenuService {
             });
         }
     }
-
-
 }
