@@ -1079,17 +1079,23 @@ App.service('myservice', function($window,$state,$http) {
             var isExpired = false;
             var isLocked = false;
             var unRegister = false;
+            var keepGoing = true;
             angular.forEach(restResult.errorList,function(e){
-                if(e.errorCode.indexOf("SYS-00-000") != -1){
-                    isExpired = true;
-                }
-                if(e.errorCode.indexOf("SYS-01-000") != -1){
-                    isLocked = true;
-                }
-                if(e.errorCode.indexOf("SYS-02-000") != -1){
-                    unRegister = true;
-                }
                 message += e.errorMessage + "\r\n";
+                if(keepGoing){
+                    if(e.errorCode.indexOf("SYS-00-000") != -1){
+                        isExpired = true;
+                        keepGoing = false;
+                    }
+                    if(e.errorCode.indexOf("SYS-01-000") != -1){
+                        isLocked = true;
+                    }
+                    if(e.errorCode.indexOf("SYS-02-000") != -1){
+                        unRegister = true;
+                    }
+                }
+
+
             })
             alert(message);
             if(isExpired){
@@ -7726,7 +7732,6 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
 
     $scope.loadSidebarMenu = function() {
 
-
         var menuURL="/menu/getSiderBarMenu";
       $http.post(menuURL)
         .success(function(data) {
@@ -7734,7 +7739,7 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
             var temp = angular.fromJson(jsonString);
            $scope.menuItems = temp.obj;
         })
-        /*
+       /*
         var menuJson = 'server/sidebar-menu.json',
             menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
         $http.get(menuURL)
