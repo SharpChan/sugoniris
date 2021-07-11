@@ -53,6 +53,26 @@ public class MenuServiceDaoImpl implements MenuServiceDao {
     }
 
     @Override
+    public List<MenuEntity> getMenuInfosByUserId(Long userId, List<Error> errorList) {
+        List<MenuEntity>  menuEntityList = null;
+        String sql = "select a.* from sys_menu a," +
+                "                sys_role_page b," +
+                "                sys_group_role c," +
+                "                sys_user_group_detail d" +
+                "           where a.id = b.menu_id" +
+                "            and  b.role_id=c.role_id" +
+                "            and  c.group_id = d.user_group_id" +
+                "            and  d.user_id="+userId;
+        try{
+            menuEntityList = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(MenuEntity.class));
+        }catch(Exception e){
+            LOGGER.info("{}-{}","查询表sys_menu失败",e);
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询sys_menu表出错",e.toString()));
+        }
+        return  menuEntityList;
+    }
+
+    @Override
     public MenuEntity getNode(Long id, List<Error> errorList) {
         MenuEntity menuEntity = null;
         if(null == id){

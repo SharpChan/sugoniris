@@ -6,5 +6,8 @@ import lombok.Data;
 @Data
 public class RoleDto extends Role {
 
-
+    /**
+     *是否勾选
+     */
+    private boolean isChecked;
 }

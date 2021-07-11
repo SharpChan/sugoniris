@@ -8,6 +8,8 @@ public interface GroupRoleServiceDao {
 
     Integer saveGroupRole(GroupRoleEntity groupRoleEntity, List<Error> errorList);
 
-    Integer deleteGroupRole(Long id,List<Error> errorList);
+    Integer deleteGroupRole(GroupRoleEntity groupRoleEntity,List<Error> errorList);
+
+    List<GroupRoleEntity>  getGroupRole(Long groupId,List<Error> errorList);
 
 }

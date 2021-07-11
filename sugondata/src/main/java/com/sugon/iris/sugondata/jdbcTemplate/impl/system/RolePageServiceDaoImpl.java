@@ -64,7 +64,7 @@ public class RolePageServiceDaoImpl implements RolePageServiceDao {
     public int[] deleteRolePages(List<Object[]> idList, List<Error> errorList) {
         int[] ints = null;
         //1.创建sql语句
-        String sql = "delete from sys_role_page where id=?";
+        String sql = "delete from sys_role_page where role_id =?  and menu_id =?";
         //2.调用方法实现
         try {
             ints = jdbcTemplate.batchUpdate(sql, idList);
@@ -77,19 +77,19 @@ public class RolePageServiceDaoImpl implements RolePageServiceDao {
     @Override
     public List<RolePageEntity> getRolePageByRoleId(Long roleId, List<Error> errorList) {
 
-        List<RolePageEntity>  rolePageEntity = null;
+        List<RolePageEntity>  rolePageEntityList = null;
         String sql = "SELECT * FROM sys_role_page  where 1=1 ";
 
         if(null != roleId){
             sql += " and role_id = "+roleId;
         }
         try{
-            rolePageEntity = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(RolePageEntity.class));
+            rolePageEntityList = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(RolePageEntity.class));
         }catch(Exception e){
             LOGGER.info("{}-{}","查询表sys_role_page失败",e);
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询sys_role_page表出错",e.toString()));
         }
 
-        return  rolePageEntity;
+        return  rolePageEntityList;
     }
 }

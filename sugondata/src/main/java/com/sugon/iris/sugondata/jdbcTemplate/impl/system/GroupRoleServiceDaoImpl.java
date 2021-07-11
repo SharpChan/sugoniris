@@ -7,13 +7,16 @@ import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
+@Repository
 public class GroupRoleServiceDaoImpl implements GroupRoleServiceDao {
     private static final Logger LOGGER = LogManager.getLogger(MenuServiceDaoImpl.class);
     @Autowired
@@ -43,10 +46,10 @@ public class GroupRoleServiceDaoImpl implements GroupRoleServiceDao {
     }
 
     @Override
-    public Integer deleteGroupRole(Long id, List<Error> errorList) {
+    public Integer deleteGroupRole(GroupRoleEntity groupRoleEntity, List<Error> errorList) {
         int i = 0;
         //1.创建sql语句
-        String sql = "delete from sys_group_role where id="+id;
+        String sql = "delete from sys_group_role where group_id="+groupRoleEntity.getGroupId() +" and role_id = "+groupRoleEntity.getRoleId();
         //2.调用方法实现
         try {
             i = jdbcTemplate.update(sql);
@@ -55,4 +58,26 @@ public class GroupRoleServiceDaoImpl implements GroupRoleServiceDao {
         }
         return i;
     }
+
+    @Override
+    public List<GroupRoleEntity> getGroupRole(Long groupId, List<Error> errorList) {
+
+
+        List<GroupRoleEntity>  groupRoleEntityList = null;
+        String sql = "SELECT * FROM sys_group_role  where 1=1 ";
+
+        if(null != groupId){
+            sql += " and group_id = "+groupId;
+        }
+        try{
+            groupRoleEntityList = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(GroupRoleEntity.class));
+        }catch(Exception e){
+            LOGGER.info("{}-{}","查询表sys_group_role失败",e);
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询sys_group_role表出错",e.toString()));
+        }
+
+        return  groupRoleEntityList;
+    }
+
+
 }

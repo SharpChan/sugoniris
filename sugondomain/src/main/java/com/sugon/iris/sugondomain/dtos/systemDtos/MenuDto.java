@@ -18,11 +18,7 @@ public class MenuDto extends Menu {
     @JSONField(name="submenu")
     private List<MenuDto> submenu;
 
-    private boolean isCheck;
-
-
-    @JSONField(name="children")
-    private List<MenuDto> children = this.submenu;
+    private boolean isIsChecked;
 
 
     public List<MenuDto> getSubmenu(){

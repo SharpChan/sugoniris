@@ -9,6 +9,8 @@ public interface MenuServiceDao {
 
         List<MenuEntity> getMenuInfos(MenuEntity menuEntity, List<Error> errorList);
 
+        List<MenuEntity> getMenuInfosByUserId(Long userId, List<Error> errorList);
+
         MenuEntity getNode(Long id, List<Error> errorList);
 
         int deleteMenu(Long id, List<Error> errorList);

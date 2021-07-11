@@ -112,6 +112,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('system/userRoleAddOrModify.html'),
           resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
+      .state('app.userGroup.groupRole', {
+          url: '/groupRole/:groupId/:groupName',
+          title: 'GroupRole',
+          templateUrl: helper.basepath('system/groupRole.html'),
+          resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
       .state('app.userRole.userRolePage', {
           url: '/userRolePage/:userRoleId',
           title: 'UserRolePage',
@@ -1296,8 +1302,49 @@ App.controller('userRoleAddOrModifyController', ['$http','$timeout','$state','$s
 
 }]);
 
+App.controller('groupRoleController', ['$http','$timeout','$state','$scope', '$stateParams','myservice', function($http,$timeout,$state,$scope, $stateParams,myservice) {
+    $scope.groupId = $stateParams.groupId === 'inbox' ? '' : $stateParams.groupId;
+    $scope.groupName = $stateParams.groupName === 'inbox' ? '' : $stateParams.groupName;
+    $scope.getGroupRole = function(){
+        var url="/groupRole/getGroupRole?id="+$scope.groupId;
+
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj =  myservice.setSerialNumber(temp.obj);
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.getGroupRole();
+    
+    $scope.addOrDelRole = function (item) {
+        var url = "";
+        if(item.checked) {
+             url = "/groupRole/saveGroupRole";
+        }
+        else{
+            url = "/groupRole/deleteGroupRole";
+        }
+            var params = {
+                groupId: $scope.groupId,
+                roleId: item.id
+            }
+            $http.post(url, params).success(function (data) {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+            }).error(function (data) {
+                alert("请检查必填项是否填写！");
+            });
+    }
+
+}]);
+
 App.controller("userRolePageController", function ($http,$timeout,$scope,$state,
-                                                   myservice) {
+                                                   myservice,$stateParams) {
     //登录和锁定校验
     myservice.loginLockCheck();
     $scope.userRoleId = $stateParams.userRoleId === 'inbox' ? '' : $stateParams.userRoleId;
@@ -1306,108 +1353,26 @@ App.controller("userRolePageController", function ($http,$timeout,$scope,$state,
 
 
     var vm = this;
-    vm.tree = [
-        {
-            "id":"1",
-            "pid":"0",
-            "name":"家用电器",
-            "children":[
-                {
-                    "id":"4",
-                    "pid":"1",
-                    "name":"大家电",
-                    "children":[
-                        {
-                            "id":"7",
-                            "pid":"4",
-                            "name":"空调",
-                            "children":[
-                                {
-                                    "id":"15",
-                                    "pid":"7",
-                                    "name":"海尔空调"
-                                },
-                                {
-                                    "id":"16",
-                                    "pid":"7",
-                                    "name":"美的空调"
-                                }
-                            ]
-                        },
-                        {
-                            "id":"8",
-                            "pid":"4",
-                            "name":"冰箱"
-                        },
-                        {
-                            "id":"9",
-                            "pid":"4",
-                            "name":"洗衣机"
-                        },
-                        {
-                            "id":"10",
-                            "pid":"4",
-                            "name":"热水器"
-                        }
-                    ]
-                },
-                {
-                    "id":"5",
-                    "pid":"1",
-                    "name":"生活电器",
-                    "children":[
-                        {
-                            "id":"19",
-                            "pid":"5",
-                            "name":"加湿器"
-                        },
-                        {
-                            "id":"20",
-                            "pid":"5",
-                            "name":"电熨斗"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "id":"2",
-            "pid":"0",
-            "name":"服饰",
-            "children":[
-                {
-                    "id":"13",
-                    "pid":"2",
-                    "name":"男装"
-                },
-                {
-                    "id":"14",
-                    "pid":"2",
-                    "name":"女装"
-                }
-            ]
-        },
-        {
-            "id":"3",
-            "pid":"0",
-            "name":"化妆",
-            "children":[
-                {
-                    "id":"11",
-                    "pid":"3",
-                    "name":"面部护理"
-                },
-                {
-                    "id":"12",
-                    "pid":"3",
-                    "name":"口腔护理"
-                }
-            ]
-        }
-    ];
 
+    $scope.initTree = function () {
 
+        var url = "/rolePage/getRolePages?id="+$scope.userRoleId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            vm.tree = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    $scope.initTree();
 
+    $scope.deleteUrl_1 = "/rolePage/deleteRolePage";
+    $scope.addUrl_1 = "/rolePage/saveRolePage";
+    $scope.param_1 = $scope.userRoleId;
 });
 
 
@@ -2041,6 +2006,7 @@ App.controller("userGroupController", function ($http,$timeout,$scope,$state,
     }
 
     $scope.userGroupOnClick=function(item){
+        $scope.groupName = item.groupName;
         $scope.id=item.id;
         $scope.hasClick = true;
     }
@@ -7760,20 +7726,21 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
 
     $scope.loadSidebarMenu = function() {
 
-        /*
+
         var menuURL="/menu/getSiderBarMenu";
       $http.post(menuURL)
         .success(function(data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
            $scope.menuItems = temp.obj;
-        })*/
+        })
+        /*
         var menuJson = 'server/sidebar-menu.json',
             menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
         $http.get(menuURL)
             .success(function(items) {
                 $scope.menuItems = items;
-            })
+            })*/
         .error(function(data, status, headers, config) {
           alert('Failure loading menu');
         });
@@ -8785,9 +8752,12 @@ App.directive('treeView',[function(){
             textField: '@',
             itemClicked: '&',
             itemCheckedChanged: '&',
-            itemTemplateUrl: '@'
+            itemTemplateUrl: '@',
+            deleteUrl: '@',
+            addUrl: '@',
+            paramOne: '@'
         },
-        controller:['$scope', function($scope){
+        controller:['$scope', '$http','myservice',function($scope,$http,myservice){
             $scope.itemExpended = function(item, $event){
                 item.$$isExpend = ! item.$$isExpend;
                 $event.stopPropagation();
@@ -8804,7 +8774,7 @@ App.directive('treeView',[function(){
             };
 
             $scope.isLeaf = function(item){
-                return !item.children || !item.children.length;
+                return !item.submenu || !item.submenu.length;
             };
 
             $scope.chk = function(callback , item){
@@ -8819,6 +8789,23 @@ App.directive('treeView',[function(){
                 });
             };
 
+           function setAllExpanFlag(tree,flag){
+               angular.forEach(tree,function(e){
+                   e.$$isExpend = flag;
+                   if(e.submenu){
+                       setAllExpanFlag(e.submenu,flag);
+                   }
+               });
+            }
+            $scope.expandAll = function (tree) {
+                setAllExpanFlag(tree,true);
+            }
+
+            $scope.collapseAll = function (tree) {
+                setAllExpanFlag(tree,false);
+            }
+
+
             //递归获取所有的节点
             var allNode=[];
             function getAllNode(tree,allNode,father) {
@@ -8827,9 +8814,9 @@ App.directive('treeView',[function(){
                         e.fatherId = father.id;
                     }
                     allNode.push(e);
-                    if(e.children && e.children.length>0){
-                        e.childSize = e.children.length;
-                        getAllNode(e.children,allNode,e);
+                    if(e.submenu && e.submenu.length>0){
+                        e.childSize = e.submenu.length;
+                        getAllNode(e.submenu,allNode,e);
                     }else{
                         e.childSize = 0;
                     }
@@ -8842,10 +8829,10 @@ App.directive('treeView',[function(){
             function doCheck(item,allNode) {
                 angular.forEach(allNode,function (e) {
                     if(e.id == item.fatherId){
-                        if(e.$$isChecked == null || e.$$isChecked == undefined || e.$$isChecked == false){
+                        if(e.isChecked == null || e.isChecked == undefined || e.isChecked == false){
                             newNodeAdd.push(e);
                         }
-                        e.$$isChecked = true;
+                        e.isChecked = true;
                         doCheck(e,allNode);
                     }
                 })
@@ -8857,9 +8844,9 @@ App.directive('treeView',[function(){
                 //1.找出所有子节点去掉勾选
                 angular.forEach(allNode,function (e) {
                     if(item.id == e.fatherId){
-                        if(!(e.$$isChecked == null || e.$$isChecked == undefined || e.$$isChecked == false)){
+                        if(!(e.isChecked == null || e.isChecked == undefined || e.isChecked == false)){
                             deleteNodes.push(e);
-                            e.$$isChecked = false;
+                            e.isChecked = false;
 
                             deleteNode(e,allNode);
                         }
@@ -8867,15 +8854,53 @@ App.directive('treeView',[function(){
                 })
             }
 
+            function RolePageDto(roleId,menuId){
+                var o = new Object();
+                o.roleId = roleId;
+                o.menuId = menuId;
+                return o;
+            }
+
+
             $scope.itemChange = function(item,tree){
                 //如果变化的那个变成勾选状态则他的父级依次递归都勾选，并且记录改变的项
-                if(item.$$isChecked){
+                if(item.isChecked){
+                    newNodeAdd = [];
                     newNodeAdd.push(item);
                     getAllNode(tree,allNode,null);
                     doCheck(item,allNode);
+
+                    var RolePageDtoArr = []
+                    angular.forEach(newNodeAdd,function (e) {
+                        RolePageDtoArr.push(RolePageDto($scope.paramOne,e.id));
+                    });
+                    $http.post($scope.addUrl,RolePageDtoArr).success(function(data)
+                    {
+                        var jsonString = angular.toJson(data);
+                        var temp = angular.fromJson(jsonString);
+                        myservice.errors(temp);
+                    }).error(function(data)
+                    {
+                        alert("会话已经断开或者检查网络是否正常！");
+                    });
                 }else{
+                    deleteNodes = [];
                     deleteNodes.push(item);
                     deleteNode(item,allNode);
+
+                    var RolePageDtoArr = []
+                    angular.forEach(deleteNodes,function (e) {
+                        RolePageDtoArr.push(RolePageDto($scope.paramOne,e.id));
+                    });
+                    $http.post($scope.deleteUrl,RolePageDtoArr).success(function(data)
+                    {
+                        var jsonString = angular.toJson(data);
+                        var temp = angular.fromJson(jsonString);
+                        myservice.errors(temp);
+                    }).error(function(data)
+                    {
+                        alert("会话已经断开或者检查网络是否正常！");
+                    });
                 }
             };
         }]

@@ -11,8 +11,8 @@ import com.sugon.iris.sugonservice.service.systemService.RolePageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 @Service
 public class RolePageServiceImpl implements RolePageService {
@@ -38,11 +38,12 @@ public class RolePageServiceImpl implements RolePageService {
     }
 
     @Override
-    public int[] deleteRolePage(List<Long> idList, List<Error> errorList) {
+    public int[] deleteRolePage(List<RolePageDto> rolePageDtoList, List<Error> errorList) {
         List<Object[]> objArrList = new ArrayList<>();
-        for(Long id : idList){
-            Object[] objArr = new Object[1];
-            objArr[0] = id;
+        for(RolePageDto rolePageDto : rolePageDtoList){
+            Object[] objArr = new Object[2];
+            objArr[0] = rolePageDto.getRoleId();
+            objArr[1] = rolePageDto.getMenuId();
             objArrList.add(objArr);
         }
         return rolePageServiceDaoImpl.deleteRolePages(objArrList,errorList);
@@ -52,11 +53,43 @@ public class RolePageServiceImpl implements RolePageService {
     public List<MenuDto> getPagesByRoleId(Long roleId, List<Error> errorList) throws IllegalAccessException {
         //获取所有的页面
         List<MenuDto> menuDtoList =menuServiceImpl.getAllSiderBarMenu(errorList);
+        if(CollectionUtils.isEmpty(menuDtoList)){
+            return null;
+        }
         //获取该角色配置的页面
         List<RolePageEntity> rolePageEntityList = rolePageServiceDaoImpl.getRolePageByRoleId(roleId,errorList);
 
+        //设置勾选标记
+        setCheckFlag( menuDtoList , rolePageEntityList);
 
+        List<MenuDto> menuDtoList2 = new ArrayList<>();
+        menuDtoList2.addAll(menuDtoList);
+        for(Iterator<MenuDto> it = menuDtoList.iterator(); it.hasNext();){
+            MenuDto menuDto1 = it.next();
+            for(MenuDto menuDto2 : menuDtoList2){
+                if(menuDto2.getId().equals(menuDto1.getFatherId())){
+                    menuDto2.getSubmenu().add(menuDto1);
+                    it.remove();
+                    continue;
+                }
+            }
+        }
+        return menuDtoList;
+    }
 
-        return null;
+    private void setCheckFlag(List<MenuDto> menuDtoList ,List<RolePageEntity> rolePageEntityList){
+        for(MenuDto menuDto : menuDtoList) {
+            for (RolePageEntity rolePageEntity : rolePageEntityList) {
+                if (menuDto.getId().equals(rolePageEntity.getMenuId())) {
+                    menuDto.setIsChecked(true);
+                    break;
+                }
+            }
+            if(!CollectionUtils.isEmpty(menuDto.getSubmenu())){
+                setCheckFlag(menuDto.getSubmenu(),rolePageEntityList);
+            }
+        }
     }
 }
+
+

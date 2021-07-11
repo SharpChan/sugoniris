@@ -1,0 +1,28 @@
+<div ng-controller="groupRoleController">
+   <div class="panel" style="margin-left:50px;">
+      <div class="panel-heading  topnavbar">
+         <strong style="color: #FFF">{{groupName}}:配置角色</strong>
+      </div>
+
+      <div class="panel-body">
+         <table   class="table table-striped" style="width: 350px">
+            <thead>
+            <tr>
+               <th>选择</th>
+               <th>序号</th>
+               <th>角色名称</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in obj">
+               <td align="left">
+                  <input type="checkbox" ng-model="item.checked" ng-change="addOrDelRole(item)" />
+               </td>
+               <td align="left">{{item.no}}</td>
+               <td align="left" style="width: 120px">{{item.roleName}}</td>
+            </tr>
+            </tbody>
+         </table>
+      </div>
+  </div>
+</div>

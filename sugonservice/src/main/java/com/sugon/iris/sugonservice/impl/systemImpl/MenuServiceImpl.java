@@ -57,9 +57,9 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<MenuDto> getSiderBarMenu(List<Error> errorList) throws IllegalAccessException {
+    public List<MenuDto> getSiderBarMenu(Long userId,List<Error> errorList) throws IllegalAccessException {
         List<MenuDto> menuDtoList= new ArrayList();
-        List<MenuEntity> menuEntityList = menuServiceDaoImpl.getMenuInfos(null,errorList);
+        List<MenuEntity> menuEntityList = menuServiceDaoImpl.getMenuInfosByUserId(userId,errorList);
         if(CollectionUtils.isEmpty(menuEntityList)){
             return null;
         }

@@ -3,31 +3,30 @@ package com.sugon.iris.sugonweb.system;
 import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
-import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
-import com.sugon.iris.sugondomain.dtos.systemDtos.RolePageDto;
-import com.sugon.iris.sugonservice.service.systemService.RolePageService;
+import com.sugon.iris.sugondomain.dtos.systemDtos.GroupRoleDto;
+import com.sugon.iris.sugondomain.dtos.systemDtos.RoleDto;
+import com.sugon.iris.sugonservice.service.systemService.GroupRoleService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/rolePage")
-public class RolePageController {
+@RequestMapping("/groupRole")
+public class GroupRoleController {
 
     private static final String FAILED = "FAILED";
     @Resource
-    private RolePageService rolePageServiceImpl;
+    private GroupRoleService groupRoleServiceImpl;
 
-    @PostMapping("/saveRolePage")
+    @PostMapping("/saveGroupRole")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<int[]> saveRolePage(@RequestBody  List<RolePageDto> rolePageDtoList){
-        RestResult<int[]> restResult = new RestResult();
+    public RestResult<Integer> saveGroupRole(@RequestBody  GroupRoleDto groupRoleDto){
+        RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
-            restResult.setObj(rolePageServiceImpl.saveRolePage(rolePageDtoList,errorList));
+            restResult.setObj(groupRoleServiceImpl.saveGroupRole(groupRoleDto,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -41,13 +40,13 @@ public class RolePageController {
         return restResult;
     }
 
-    @PostMapping("/getRolePages")
+    @PostMapping("/getGroupRole")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<List<MenuDto>> getRolePages(@RequestParam(value = "id") Long id){
-        RestResult<List<MenuDto>> restResult = new RestResult();
+    public RestResult<List<RoleDto>> getGroupRole(@RequestParam(value = "id") Long id){
+        RestResult<List<RoleDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
-            restResult.setObj(rolePageServiceImpl.getPagesByRoleId(id,errorList));
+            restResult.setObj(groupRoleServiceImpl.getGroupRoleByGroupId(id,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -61,13 +60,13 @@ public class RolePageController {
         return restResult;
     }
 
-    @PostMapping("/deleteRolePage")
+    @PostMapping("/deleteGroupRole")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<int[]> deleteRolePage(@RequestBody  List<RolePageDto> rolePageDtoList){
-        RestResult<int[]> restResult = new RestResult();
+    public RestResult<Integer> deleteGroupRole(@RequestBody  GroupRoleDto groupRoleDto){
+        RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
-            restResult.setObj(rolePageServiceImpl.deleteRolePage(rolePageDtoList,errorList));
+            restResult.setObj(groupRoleServiceImpl.deleteGroupRole(groupRoleDto,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

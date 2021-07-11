@@ -9,7 +9,7 @@ public interface RolePageService {
 
       int[] saveRolePage(List<RolePageDto> rolePageDtoList,List<Error> errorList) throws IllegalAccessException;
 
-      int[] deleteRolePage(List<Long> idList,List<Error> errorList);
+      int[] deleteRolePage(List<RolePageDto> rolePageDtoList,List<Error> errorList);
 
       List<MenuDto> getPagesByRoleId(Long roleId,List<Error> errorList) throws IllegalAccessException;
 }
