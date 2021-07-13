@@ -112,6 +112,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('system/userRoleAddOrModify.html'),
           resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
+      .state('app.userRole.dataAuthority', {
+          url: '/dataAuthority/:id',
+          title: 'DataAuthority',
+          templateUrl: helper.basepath('system/dataAuthority.html'),
+          resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
       .state('app.userGroup.groupRole', {
           url: '/groupRole/:groupId/:groupName',
           title: 'GroupRole',
@@ -2934,10 +2940,10 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,
         {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
-            myservice.errors(temp);
             $scope.details = myservice.setSerialNumber (temp.obj);
             $("#cnDivDetailAddOrUpdate").hide();
             $scope.detail($scope.item);
+            myservice.errors(temp);
         }).error(function(data)
         {
             alert("请检查必填项是否填写！");
@@ -6757,6 +6763,9 @@ App.controller('AppController',
       $event.stopPropagation();
     };
 
+    $scope.search = function () {
+        console.log(1111);
+    }
 }]);
 
 /**=========================================================

@@ -36,6 +36,12 @@
                             <span>新增</span>
                         </a>
                     </div>
+                    <div ng-show="hasClick" ng-click="!hasClick" ng-init="hasClick = false" class="clearfix mb input-group">
+                        <a ui-sref="app.userRole.dataAuthority({id:id})" class="btn btn-purple btn-sm mb-compose-button">
+                            <em class="fa fa-cogs"></em>
+                            <span>数据权限</span>
+                        </a>
+                    </div>
                 </div>
 
                 <!-- START mailbox list-->
@@ -63,6 +69,5 @@
             </div>
             <div ui-view="" class="col"></div>
         </div>
-
     </div>
 </div>
