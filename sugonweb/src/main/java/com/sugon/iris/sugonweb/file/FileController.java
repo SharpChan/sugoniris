@@ -41,7 +41,6 @@ public class FileController {
     @RequestMapping("/uploadFile")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<Integer> uploadFile(@CurrentUser User user, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
-
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try {
