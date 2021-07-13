@@ -129,13 +129,13 @@ public class FileParsingServiceImpl implements FileParsingService {
 
                 //判断文件名排除字段,优先级高，命中一个直接对下一个文件进行操作
                 for(String str : file_excludeArr){
-                    if(StringUtils.isNotEmpty(str) && file.getName().contains(str)){
+                    if(StringUtils.isNotEmpty(str) && file.getName().contains(str.trim())){
                         break  breakFor;
                     }
                 }
                 //判断文件名字段,都不满足continue
                 for(String str : file_keyArr){
-                    if(StringUtils.isNotEmpty(str) && file.getName().contains(str)){
+                    if(StringUtils.isNotEmpty(str) && file.getName().contains(str.trim())){
                         key_flag = true;
                     }
                 }
@@ -351,14 +351,14 @@ public class FileParsingServiceImpl implements FileParsingService {
                        breakFor:  for(int i=0;i<headList.size();i++){
                             if(null != excludeList && excludeList.length>0 ){
                                   for(String exclude:excludeList){
-                                        if(StringUtils.isNotEmpty(exclude) && headList.get(i).contains(exclude)){
+                                        if(StringUtils.isNotEmpty(exclude) && headList.get(i).contains(exclude.trim())){
                                             break  breakFor;
                                         }
                                   }
                             }
                             if(null != keyList && keyList.length>0 ){
                                   for(String key:keyList){
-                                      if(StringUtils.isNotEmpty(key) && headList.get(i).contains(key)){
+                                      if(StringUtils.isNotEmpty(key) && headList.get(i).contains(key.trim())){
                                           feildRefIndex.put(idAndSortNo,i);
                                           break ;
                                       }

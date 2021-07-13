@@ -1,7 +1,9 @@
 package com.sugon.iris.sugoncommon.publicUtils;
 
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
@@ -9,6 +11,10 @@ import java.util.*;
  * dto和entity的属性定义一样的名称，用反射进行互转
  */
 public  class PublicUtils {
+
+    private static final String JAVA_TYPE = "java.lang.String";
+    private static final String GET = "get";
+    private static final String SET = "set";
 
     /**
      * 把tin赋值到tout
@@ -44,8 +50,12 @@ public  class PublicUtils {
               }
            }
         }
+        beanAttributeValueTrim(tout);
         return tout;
     }
+
+
+
 
     /**
      *获取指定路径下的所有文件
@@ -77,6 +87,75 @@ public  class PublicUtils {
         Field[] fields = new Field[fieldList.size()];
         fieldList.toArray(fields);
         return fields;
+    }
+
+
+    /**
+     * 循环去除每个字段的空格
+     *
+     * @param bean 实体
+     */
+    private static void beanAttributeValueTrim(Object bean) {
+        if (bean != null) {
+            //获取所有的字段包括public,private,protected,private
+            List<Field> fieldList = Lists.newArrayList(bean.getClass().getDeclaredFields());
+            fieldList.stream().forEach(field -> {
+                //判断每个字段是否是sting类型，只有是string类型时才能去除前后空格
+                if (JAVA_TYPE.equals(field.getType().getName())) {
+                    //获取每个字段的字段名
+                    String fieldName = field.getName();
+                    try {
+                        //利用java反射机制获取对应字段的值
+                        Object value = getFieldValue(bean, fieldName);
+                        if (null != value) {
+                            // 同样利用java 反射机制将修改后的值进行赋值
+                            setFieldValue(bean, fieldName, value.toString());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * 利用反射通过get方法获取bean中字段fieldName的值
+     *
+     * @param bean      实体
+     * @param fieldName 字段
+     * @return object   对应值
+     * @throws Exception
+     */
+    private static Object getFieldValue(Object bean, String fieldName) throws Exception {
+        Method method;
+        // 获取对应字段的get方法名称，首字母改为大写： getName
+        StringBuffer methodName = new StringBuffer();
+        methodName.append(GET).append(fieldName.substring(0, 1).toUpperCase())
+                .append(fieldName.substring(1));
+        //获取对应的方法
+        method = bean.getClass().getMethod(methodName.toString(), new Class[0]);
+        return method.invoke(bean);
+    }
+
+    /**
+     * 利用发射调用bean.set方法将value设置到字段
+     *
+     * @param bean       实体
+     * @param fieldName  字段
+     * @param fieldValue 赋值
+     * @throws Exception
+     */
+    private static void setFieldValue(Object bean, String fieldName, String fieldValue) throws Exception {
+        Class[] classArr = new Class[1];
+        StringBuffer methodName = new StringBuffer();
+        // 获取对应字段的set方法名称，首字母改为大写：setName
+        methodName.append(SET).append(fieldName.substring(0, 1).toUpperCase())
+                .append(fieldName.substring(1));
+        //利用发射调用bean.set方法将value设置到字段
+        classArr[0] = JAVA_TYPE.getClass();
+        Method method = bean.getClass().getMethod(methodName.toString(), classArr);
+        method.invoke(bean, fieldValue.trim());
     }
 
     public static void main(String[] args) {

@@ -1085,13 +1085,10 @@ App.service('myservice', function($window,$state,$http) {
             var isExpired = false;
             var isLocked = false;
             var unRegister = false;
-            var keepGoing = true;
             angular.forEach(restResult.errorList,function(e){
                 message += e.errorMessage + "\r\n";
-                if(keepGoing){
                     if(e.errorCode.indexOf("SYS-00-000") != -1){
                         isExpired = true;
-                        keepGoing = false;
                     }
                     if(e.errorCode.indexOf("SYS-01-000") != -1){
                         isLocked = true;
@@ -1099,9 +1096,6 @@ App.service('myservice', function($window,$state,$http) {
                     if(e.errorCode.indexOf("SYS-02-000") != -1){
                         unRegister = true;
                     }
-                }
-
-
             })
             alert(message);
             if(isExpired){
@@ -2871,7 +2865,6 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,
         $scope.exclude = item.exclude;
         $scope.sortNo = item.sortNo;
         $scope.comment = item.comment;
-
     }
 
     $scope.closeUpdateDetail = function () {
@@ -2911,12 +2904,15 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,
 
         if(myservice.isEmpty($scope.fieldName)){
             alert("请填写字段名称！");
+            return;
         }
         if(myservice.isEmpty($scope.fieldKey)){
             alert("请填写字段关键字以&&分隔！");
+            return;
         }
         if(myservice.isEmpty($scope.sortNo)){
             alert("请填写字段排序编号为0-999数字！");
+            return;
         }
 
         var url = "";
@@ -2940,10 +2936,9 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,
         {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
-            $scope.details = myservice.setSerialNumber (temp.obj);
+            myservice.errors(temp);
             $("#cnDivDetailAddOrUpdate").hide();
             $scope.detail($scope.item);
-            myservice.errors(temp);
         }).error(function(data)
         {
             alert("请检查必填项是否填写！");
