@@ -14,7 +14,7 @@ import org.pentaho.di.trans.steps.insertupdate.InsertUpdateMeta;
 import org.pentaho.di.trans.steps.tableinput.TableInputMeta;
 import org.springframework.stereotype.Service;
 
-@Service
+//@Service
 public class CreateTran{
     /**
      * 两个库中的表名
@@ -131,6 +131,7 @@ public class CreateTran{
         return transMeta;
     }
 
+    /*
     public static void main(String[] args) {
         try {
             KettleEnvironment.init();
@@ -148,5 +149,5 @@ public class CreateTran{
             return;
         }
     }
-
+*/
 }

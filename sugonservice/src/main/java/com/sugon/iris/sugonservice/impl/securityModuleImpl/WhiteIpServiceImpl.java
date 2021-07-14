@@ -1,7 +1,9 @@
 package com.sugon.iris.sugonservice.impl.securityModuleImpl;
 
+import com.jcraft.jsch.Session;
+import com.sugon.iris.sugoncommon.SSHRemote.SSHConfig;
+import com.sugon.iris.sugoncommon.SSHRemote.SSHServiceBs;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
-import com.sugon.iris.sugoncommon.publicUtils.SSHRemoteCall;
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.NginxServiceDao;
 import com.sugon.iris.sugondomain.dtos.securityModuleDtos.WhiteIpDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.securityModuleEntities.WhiteIpEntity;
@@ -111,23 +113,23 @@ public class WhiteIpServiceImpl implements WhiteIpService {
     private void checkConfFile(String filePath){
 
         try {
-            //1.首先远程连接ssh
-            SSHRemoteCall.getInstance().sshRemoteCallLogin(ipAddress, userName, password);
+            Session session = new SSHConfig().getSession();
+            SSHServiceBs sSHServiceBs = new SSHServiceBs(session);
             //2.查看配置目录
             String command = "ls /usr/local/nginx/conf ";
-            List<String> cmdResult = SSHRemoteCall.getInstance().execCommand(command);
+            List<String> cmdResult =  sSHServiceBs.execCommand(command);
             if(cmdResult.contains("whitelist.conf")){
                 command = "rm -rf /usr/local/nginx/conf/whitelist.conf ";
-                SSHRemoteCall.getInstance().execCommand(command);
+                sSHServiceBs.execCommand(command);
             }
             //进行文件上传
             String directory = "/usr/local/nginx/conf/whitelist.conf";
-            SSHRemoteCall.getInstance().uploadFile(directory, filePath);
+            sSHServiceBs.uploadFile(directory,filePath);
             command = "pkill nginx";
-            SSHRemoteCall.getInstance().execCommand(command);
+            sSHServiceBs.execCommand(command);
             command = "/usr/local/nginx/sbin/nginx";
-            SSHRemoteCall.getInstance().execCommand(command);
-            SSHRemoteCall.getInstance().closeSession();
+            sSHServiceBs.execCommand(command);
+            sSHServiceBs.closeSession(session);
         }catch (Exception e){
             e.printStackTrace();
         }

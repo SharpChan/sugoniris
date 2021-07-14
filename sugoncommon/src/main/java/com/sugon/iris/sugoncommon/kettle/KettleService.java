@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@Service
+//@Service
 public class KettleService {
 
     @Value("${kettle.script.path}")
