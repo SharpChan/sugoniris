@@ -112,10 +112,16 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('system/userRoleAddOrModify.html'),
           resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
-      .state('app.userRole.dataAuthority', {
+      .state('app.dataAuthority', {
           url: '/dataAuthority/:id',
           title: 'DataAuthority',
-          templateUrl: helper.basepath('system/dataAuthority.html'),
+          templateUrl: helper.basepath('file/dataAuthority.html'),
+          resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
+      .state('app.dataAuthority.AddOrModify', {
+          url: '/dataAuthorityAddOrModify/:active/:id',
+          title: 'DataAuthorityAddOrModify',
+          templateUrl: helper.basepath('file/dataAuthorityAddOrModify.html'),
           resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
       .state('app.userGroup.groupRole', {
@@ -1185,7 +1191,9 @@ App.service('myservice', function($window,$state,$http) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             that.errors(temp);
-            alert(message);
+            if(message){
+                alert(message);
+            }
         }).error(function(data)
         {
             alert("会话已经断开或者检查网络是否正常！");
@@ -1193,6 +1201,111 @@ App.service('myservice', function($window,$state,$http) {
     }
 
 });
+
+App.controller("dataGroupController", function ($http,$timeout,$scope,$state,
+                                               myservice) {
+    myservice.loginLockCheck();
+
+    $scope.active = {
+        save: "0",
+        update: "1"
+    }
+
+    //获取所有的数据组信息
+    $scope.getDataGroup = function () {
+        var url="/fileDataGroup/getFileDataGroup";
+        $http.post(url,{}).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.getDataGroup();
+
+    $scope.dataGroupOnClick = function (item){
+        $scope.item = item;
+        $scope.id = item.id;
+        $scope.hasClick = true;
+    }
+
+
+});
+
+App.controller('dataGroupAddOrModifyController', ['$http','$timeout','$state','$scope', '$stateParams','myservice', function($http,$timeout,$state,$scope, $stateParams,myservice) {
+    $scope.active = $stateParams.active === 'inbox' ? '' : $stateParams.active;
+    $scope.id = $stateParams.id === 'inbox' ? '' : $stateParams.id;
+    if($scope.active == "0"){
+        $scope.showSave = true;
+        $scope.showUpdate = false;
+    }else if($scope.active == "1"){
+        $scope.showSave = false;
+        $scope.showUpdate = true;
+
+        var url="/fileDataGroup/getFileDataGroup";
+        var params = {
+            id: $scope.id
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.groupName = temp.obj[0].groupName;
+            $scope.description = temp.obj[0].description;
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+
+
+    }
+
+    $scope.save = function () {
+        if(myservice.isEmpty($scope.groupName)){
+            alert("请填写用户组名称！")
+            return;
+        }
+        var url="/fileDataGroup/fileDataGroupSave";
+        var params = {
+            groupName: $scope.groupName,
+            description: $scope.description
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $state.go('app.dataAuthority',{},{reload: true});
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.update = function () {
+        if(myservice.isEmpty($scope.groupName)){
+            alert("请填写角色名称！")
+            return;
+        }
+        var url="/fileDataGroup/updateFileDataGroup";
+        var params = {
+            id: $scope.id,
+            groupName: $scope.groupName,
+            description: $scope.description
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $state.go('app.dataAuthority',{},{reload: true});
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+}]);
 
 App.controller("userRoleController", function ($http,$timeout,$scope,$state,
                                                    myservice) {
@@ -3166,8 +3279,6 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
     $scope.changeFlag = function(item,selectName){
 
         var arr = selectName.split("::");
-        console.log(arr[0]);
-        console.log(arr[1]);
         var url = "/file/updateFileAttachmentTemplateGroup";
         var params = {
             id: item.id,
@@ -3432,7 +3543,6 @@ App.controller("configController", function ($http,$timeout,$scope,
     }
 
     $scope.changeFlag = function(item,selectedName){
-        //console.log("selectedName:"+selectedName);
         if(selectedName == "有效"){
             item.flag = 1 ;
         }else if(selectedName == "无效"){
@@ -3658,7 +3768,6 @@ App.controller("whiteListController", function ($http,$timeout,$scope,
         {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
-            console.log(temp.flag);
             if(temp.flag == "FAILED"){
                 myservice.errors(temp);
             }else{
@@ -3762,7 +3871,6 @@ App.controller("checkUserController", function ($http,$timeout,$scope,myservice)
     }
 
     $scope.update = function(item){
-        console.log(item.flag);
         var url = "/api/account/userCheck"+"?id="+item.id+"&flag="+item.flag;
         $http.post(url).success(function(data)
         {

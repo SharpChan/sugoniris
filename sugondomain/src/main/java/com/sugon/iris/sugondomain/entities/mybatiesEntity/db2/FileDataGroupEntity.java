@@ -4,5 +4,8 @@ import com.sugon.iris.sugondomain.beans.fileBeans.FileDataGroupBeanBean;
 import lombok.Data;
 
 @Data
-public class FileDataGroupBeanEntity extends FileDataGroupBeanBean {
+public class FileDataGroupEntity extends FileDataGroupBeanBean {
+
+
+
 }

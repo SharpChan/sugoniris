@@ -1,9 +1,9 @@
-<div ng-controller="userRoleAddOrModifyController">
+<div ng-controller="dataGroupAddOrModifyController">
    <input  type="hidden" class="form-control" type="text" ng-model="parm" >
    <div class="panel" style="margin-left:50px;">
       <div class="panel-heading  topnavbar">
-         <strong ng-show="showSave" style="color: #FFF">添加角色</strong>
-         <strong ng-show="showUpdate" style="color: #FFF">修改角色</strong>
+         <strong ng-show="showSave" style="color: #FFF">添加数据组</strong>
+         <strong ng-show="showUpdate" style="color: #FFF">修改数据组</strong>
          <div ng-show="showSave" style="float:right;">
             <input type="button" value="保存" style="margin-right:2px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="save();" />
          </div>
@@ -13,14 +13,13 @@
       </div>
 
       <div class="panel-body">
-
          <form class="bs-example bs-example-form" role="form">
             <div  class="form-group" style="top: 20px;width: 100%" >
                <div class="input-group" align="left"  style=" z-index: 9999">
                   <div class="form-group mb">
                         <div class="input-group mb">
-                           <span class="input-group-addon">角色名称</span>
-                           <input type="text" placeholder="必填" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control" ng-model="roleName">
+                           <span class="input-group-addon">数据组名称</span>
+                           <input type="text" placeholder="必填" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control" ng-model="groupName">
                         </div>
                   </div>
                </div>

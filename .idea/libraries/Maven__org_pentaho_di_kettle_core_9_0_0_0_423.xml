@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.pentaho.di:kettle-core:9.0.0.0-423">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/pentaho/di/kettle-core/9.0.0.0-423/kettle-core-9.0.0.0-423.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/pentaho/di/kettle-core/9.0.0.0-423/kettle-core-9.0.0.0-423-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/pentaho/di/kettle-core/9.0.0.0-423/kettle-core-9.0.0.0-423-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
