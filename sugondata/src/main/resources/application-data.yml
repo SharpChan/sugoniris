@@ -30,6 +30,7 @@ datasource:
       testOnReturn: false
       maxWait: 6000
       filters: stat,slf4j #wall,
+
     #连接本地数据库
     db2:
       driverClassName: com.mysql.jdbc.Driver

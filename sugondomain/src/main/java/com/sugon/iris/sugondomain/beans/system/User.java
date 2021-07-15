@@ -27,6 +27,12 @@ public class User implements Serializable {
      */
     private String idCard;
 
+    /**
+     * 警号
+     */
+    private String policeNo;
+
+
     @Size(min = 1, max = 50)
     private String password;
 

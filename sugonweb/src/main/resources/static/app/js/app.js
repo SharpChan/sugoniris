@@ -163,6 +163,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('system/userGroupUsers.html'),
           resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
+      .state('app.dataAuthority.users', {
+          url: '/dataAuthorityUsers/:dataGroupId',
+          title: 'DataAuthorityUsers',
+          templateUrl: helper.basepath('file/dataAuthorityUsers.html'),
+          resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
       .state('app.userGroup.edit', {
           url: '/userGroupEdit',
           title: 'UserGroupEdit',
@@ -1234,8 +1240,186 @@ App.controller("dataGroupController", function ($http,$timeout,$scope,$state,
         $scope.hasClick = true;
     }
 
-
+    $scope.removeDataGroup = function(){
+        var url="/fileDataGroup/deleteFileDataGroup?id="+$scope.id;
+        myservice.doPost(url);
+        $state.go('app.dataAuthority',{},{reload: true});
+    }
 });
+
+App.controller('dataGroupUsersController', ['$http','$timeout','$state','$scope', '$stateParams','myservice', function($http,$timeout,$state,$scope, $stateParams,myservice) {
+    $scope.dataGroupId = $stateParams.dataGroupId === 'inbox' ? '' : $stateParams.dataGroupId;
+    $scope.selected_01 = [];
+    $scope.selected_02 = [];
+    var getUsers_1 = function(){
+        var url = "/userGroup/getUsers?userGroupId="+$scope.userGroupid;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.users_01 = myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+    var getUsers_2 = function(){
+        var url = "/userGroup/getGroupUsers?userGroupId="+$scope.userGroupid;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.users_02 = myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $(function () {
+        getUsers_1();
+        getUsers_2();
+    })
+
+    //单个勾选去勾选
+    $scope.selectOne_01 = function (item) {
+        if (item.checked) {
+            $scope.selected_01.push(item.id);
+        } else {
+            $scope.selected_01.splice($scope.selected_01.indexOf(item.id), 1);
+        }
+    }
+
+    //单个勾选去勾选
+    $scope.selectOne_02 = function (item) {
+        if (item.checked) {
+            $scope.selected_02.push(item.id);
+        } else {
+            $scope.selected_02.splice($scope.selected_02.indexOf(item.id), 1);
+        }
+    }
+    //全选全去勾选
+    $scope.selectAll_01 = function (checked_01) {
+        $scope.selected_01 = [];
+        if (checked_01) {
+            angular.forEach($scope.users_01, function (e) {
+                e.checked = true;
+                $scope.selected_01.push(e.id);
+            })
+        } else {
+            angular.forEach($scope.users_01, function (e) {
+                e.checked = false;
+                $scope.selected_01.splice($scope.selected_01.indexOf(e.id), 1);
+            })
+        }
+    }
+
+    //全选全去勾选
+    $scope.selectAll_02 = function (checked_02) {
+        $scope.selected_02 = [];
+        if (checked_02) {
+            angular.forEach($scope.users_02, function (e) {
+                e.checked = true;
+                $scope.selected_02.push(e.id);
+            })
+        } else {
+            angular.forEach($scope.users_02, function (e) {
+                e.checked = false;
+                $scope.selected_02.splice($scope.selected_02.indexOf(e.id), 1);
+            })
+        }
+    }
+
+
+
+    $scope.addUserToUserGroup = function (userId) {
+
+        var url="/userGroup/addUserToUserGroup";
+        var params = {
+            userId: userId,
+            userGroupId: $scope.userGroupid
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            getUsers_1();
+            getUsers_2();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    function UserGroupDetailDto(userId,userGroupId){
+        var o = new Object();
+        o.userId = userId;
+        o.userGroupId = userGroupId;
+        return o;
+    }
+
+    $scope.addToUserGroupBatch = function () {
+        if(myservice.isEmpty($scope.selected_01)){
+            return;
+        }
+        userGroupDetailDtoArr = [];
+        angular.forEach($scope.selected_01, function (e){
+            userGroupDetailDtoArr.push(UserGroupDetailDto(e,$scope.userGroupid));
+        })
+        var url="/userGroup/addUserToUserGroupBatch";
+        $http.post(url, JSON.stringify(userGroupDetailDtoArr)).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.selected_01 = [];
+            getUsers_1();
+            getUsers_2();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+
+    }
+
+    $scope.deleteUserGroup = function (userId) {
+        var url="/userGroup/removeUserFromUserGroup";
+        var params = {
+            userId: userId,
+            userGroupId: $scope.userGroupid
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            getUsers_1();
+            getUsers_2();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+
+    $scope.deleteUserFromUserGroupBatch = function () {
+        if(myservice.isEmpty($scope.selected_02)){
+            return;
+        }
+        userGroupDetailDtoArr = [];
+        angular.forEach($scope.selected_02, function (e){
+            userGroupDetailDtoArr.push(UserGroupDetailDto(e,$scope.userGroupid));
+        })
+
+        var url="/userGroup/removeUserFromUserGroupBatch";
+        $http.post(url, JSON.stringify(userGroupDetailDtoArr)).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.selected_02 = [];
+            getUsers_1();
+            getUsers_2();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+}]);
 
 App.controller('dataGroupAddOrModifyController', ['$http','$timeout','$state','$scope', '$stateParams','myservice', function($http,$timeout,$state,$scope, $stateParams,myservice) {
     $scope.active = $stateParams.active === 'inbox' ? '' : $stateParams.active;
@@ -4100,6 +4284,7 @@ App.controller('RegisterFormController', ['$scope', '$http', '$state','myservice
              {
                        userName: $scope.account.userName,
                        idCard: $scope.account.idCard,
+                       policeNo:  $scope.account.policeNo,
                        password: md5Password
                     }
              )

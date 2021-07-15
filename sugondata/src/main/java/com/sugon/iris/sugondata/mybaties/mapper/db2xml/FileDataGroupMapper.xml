@@ -39,15 +39,16 @@
 
 
     <!--批量插入-->
-    <insert id="saveFileDataGroup"  useGeneratedKeys="true" keyProperty="id">
-        insert into file_data_group
+    <insert id="saveUserFromDataGroupDetail"  useGeneratedKeys="true" keyProperty="id">
+        insert into file_data_group_detail
         (<include refid="Base_Column_List" />)
         values
              (
              #{id,jdbcType=INTEGER},
              #{groupName,jdbcType=VARCHAR},
              #{description,jdbcType=VARCHAR},
-             #{createTime,jdbcType=TIMESTAMP}
+             #{createTime,jdbcType=TIMESTAMP},
+             #{updateTime,jdbcType=TIMESTAMP},
              #{userId,jdbcType=INTEGER}
              )
     </insert>

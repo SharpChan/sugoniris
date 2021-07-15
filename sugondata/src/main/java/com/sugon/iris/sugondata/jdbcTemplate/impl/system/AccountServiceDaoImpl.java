@@ -84,7 +84,7 @@ public class AccountServiceDaoImpl implements AccountServiceDao {
     @Override
     public int insertAccount(UserEntity user, List<Error> errorList){
         int result=0;
-        String sql = "insert into sys_user(id,username,id_card,password,imageurl,createTime,flag) values(?,?,?,?,?,?,?)";
+        String sql = "insert into sys_user(id,username,id_card,password,imageurl,createTime,flag,policeNo) values(?,?,?,?,?,?,?,?)";
         try{
             result=ds1JdbcTemplate.update(sql, new PreparedStatementSetter(){
                 @Override
@@ -116,6 +116,11 @@ public class AccountServiceDaoImpl implements AccountServiceDao {
                     }
                         ps.setTimestamp(6, new Timestamp(user.getCreateTime().getTime()));
                         ps.setInt(7,user.getFlag());
+                        if(!StringUtils.isEmpty(user.getPoliceNo())){
+                            ps.setString(8, user.getPoliceNo());
+                        }else{
+                            ps.setNull(8,Types.VARCHAR);
+                        }
                 }
             });
         }catch(Exception e){
