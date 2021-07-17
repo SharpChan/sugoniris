@@ -41,10 +41,10 @@ public class FileDataGroupDetailServiceImpl implements FileDataGroupDetailServic
     }
 
     @Override
-    public List<UserDto> findUsersNotInDataGroupsByUserId(Long createUserId, List<Error> errorList) {
+    public List<UserDto> findUsersNotInDataGroupsByUserId(Long groupId, List<Error> errorList) {
         List<UserDto> userDtoList = new ArrayList<>();
         try {
-            List<UserEntity> userEntityList = fileDataGroupDetailMapper.findUsersNotInDataGroupsByUserId(createUserId);
+            List<UserEntity> userEntityList = fileDataGroupDetailMapper.findUsersNotInDataGroupsByUserId(groupId);
             userEntityList.stream().forEach(a -> {
                 try {
                     userDtoList.add(PublicUtils.trans(a,new UserDto()));
@@ -92,7 +92,7 @@ public class FileDataGroupDetailServiceImpl implements FileDataGroupDetailServic
             }
         });
         try {
-            fileDataGroupDetailEntityList.stream().forEach(a -> fileDataGroupDetailMapper.deleteUserFromDataGroup(a));
+            fileDataGroupDetailEntityList.stream().forEach(a -> fileDataGroupDetailMapper.deleteFileDataGroupDetail(a));
             i = fileDataGroupDetailEntityList.size();
         }catch (Exception e){
             e.printStackTrace();

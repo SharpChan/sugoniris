@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.FileDataGroupTableMapper" >
+
+    <!--结果集-->
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDataGroupTableEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="data_group_id" property="dataGroupId" jdbcType="BIGINT" />
+        <result column="table_id" property="tableId" jdbcType="BIGINT" />
+        <result column="create_user_id" property="createUserId" jdbcType="BIGINT" />
+    </resultMap>
+
+    <!--基础字段-->
+    <sql id="Base_Column_List" >
+        id,data_group_id,table_id,case_id,create_user_id
+    </sql>
+
+
+    <select id="findFileDataGroupTable" resultType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDataGroupTableEntity"  >
+        SELECT
+        (<include refid="Base_Column_List" />)
+        FROM
+        file_data_group_table
+        where
+        1=1
+        <if test="id!=null">
+            and id =  #{id}
+        </if>
+        <if test="dataGroupId!=null">
+            and data_group_id =  #{dataGroupId}
+        </if >
+        <if test="tableId!=null">
+            and table_id = #{tableId}
+        </if >
+        <if test="createUserId!=null">
+            and create_user_id = #{createUserId}
+        </if >
+    </select>
+
+
+
+    <!--批量插入-->
+    <insert id="saveFileDataGroupTables" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into file_data_group_table
+        (<include refid="Base_Column_List" />)
+        values
+        <foreach collection="fileUserTableEntitySqlParmList" item="item" index="i" separator=",">
+             (
+             #{id,jdbcType=INTEGER},
+             #{dataGroupId,jdbcType=INTEGER},
+             #{tableId,jdbcType=INTEGER},
+             #{createUserId,jdbcType=INTEGER}
+             )
+        </foreach>
+    </insert>
+
+    <!--删除-->
+    <delete id="deleteFileDataGroupTables">
+            DELETE
+            FROM
+        file_data_group_table
+            <where>
+                id in (
+                <foreach collection="idList" item="item" index="i" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </where>
+    </delete>
+</mapper>

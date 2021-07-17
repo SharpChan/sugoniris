@@ -48,11 +48,11 @@ public class FileDataGroupDetailController {
 
     @RequestMapping("/findUsersNotInDataGroupsByUserId")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<List<UserDto>> findUsersNotInDataGroupsByUserId(@CurrentUser User user){
+    public RestResult<List<UserDto>> findUsersNotInDataGroupsByUserId(@RequestParam(value = "groupId") Long  groupId){
         RestResult<List<UserDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
-            restResult.setObj(fileDataGroupDetailServiceImpl.findUsersNotInDataGroupsByUserId(user.getId(),errorList));
+            restResult.setObj(fileDataGroupDetailServiceImpl.findUsersNotInDataGroupsByUserId(groupId,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

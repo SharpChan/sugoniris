@@ -7,7 +7,7 @@
         <id column="id" property="id" jdbcType="BIGINT" />
         <result column="file_attachment_id" property="fileAttachmentId" jdbcType="BIGINT" />
         <result column="file_type" property="fileType" jdbcType="VARCHAR" />
-        <result column="file_name" property="fileName" jdbcType="BIGINT" />
+        <result column="file_name" property="fileName" jdbcType="VARCHAR" />
         <result column="file_path" property="filePath" jdbcType="VARCHAR" />
         <result column="file_template_id" property="fileTemplateId" jdbcType="VARCHAR" />
         <result column="row_count" property="rowCount" jdbcType="BIGINT" />
@@ -18,11 +18,12 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
         <result column="has_import" property="hasImport" jdbcType="TINYINT" />
+        <result column="file_table_id" property="fileTableId" jdbcType="BIGINT" />
     </resultMap>
 
     <!--基础字段-->
     <sql id="Base_Column_List" >
-        id,file_attachment_id,file_type,file_name,file_path,file_template_id,row_count,import_row_count,case_id,table_name,user_id,create_time,update_time,has_import
+        id,file_attachment_id,file_type,file_name,file_path,file_template_id,row_count,import_row_count,case_id,table_name,user_id,create_time,update_time,has_import,file_table_id
     </sql>
 
     <!--表查询-->
@@ -62,12 +63,12 @@
         </if >
     </select>
 
-    <!--查询mpp表名-->
+
     <select id="selectTableName" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity" resultType="java.lang.String"  >
         SELECT
-        DISTINCT   table_name
+           table_name
         FROM
-        file_detail
+        file_table
         where
         1=1
         <if test="fileTemplateId!=null and fileTemplateId != ''">
@@ -102,7 +103,8 @@
              #{userId,jdbcType=INTEGER},
              #{createTime,jdbcType=TIMESTAMP},
              #{updateTime,jdbcType=TIMESTAMP},
-             #{hasImport,jdbcType=TINYINT}
+             #{hasImport,jdbcType=TINYINT},
+             #{fileTableId,jdbcType=INTEGER}
              )
     </insert>
 

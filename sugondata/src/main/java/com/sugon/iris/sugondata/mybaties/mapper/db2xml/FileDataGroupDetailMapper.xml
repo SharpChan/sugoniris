@@ -36,7 +36,7 @@
          (select * from file_data_group_detail b
             where
                a.id = b.user_id
-               and b.id=#{groupId}
+               and b.file_data_group_id=#{groupId}
         )
     </select>
 
@@ -50,7 +50,7 @@
         (select * from file_data_group_detail b
         where
         a.id = b.user_id
-        and b.id=#{groupId}
+        and b.file_data_group_id=#{groupId}
         )
     </select>
 
@@ -67,7 +67,6 @@
              #{item.userId,jdbcType=INTEGER},
              #{item.fileDataGroupId,jdbcType=INTEGER},
              #{item.createTime,jdbcType=TIMESTAMP},
-             #{item.,jdbcType=TIMESTAMP},
              #{item.createUserId,jdbcType=INTEGER}
              )
         </foreach>
@@ -81,7 +80,6 @@
             <where>
                      user_id = #{userId}
                 and  file_data_group_id = #{fileDataGroupId}
-                and  create_user_id = #{createUserId}
             </where>
     </delete>
 </mapper>

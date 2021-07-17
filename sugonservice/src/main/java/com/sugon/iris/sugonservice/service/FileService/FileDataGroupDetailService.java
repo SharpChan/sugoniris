@@ -10,7 +10,7 @@ public interface FileDataGroupDetailService {
 
     List<UserDto> findFileDataGroupUsersByGroupId(Long groupId, List<Error> errorList);
 
-    List<UserDto> findUsersNotInDataGroupsByUserId(Long createUserId, List<Error> errorList);
+    List<UserDto> findUsersNotInDataGroupsByUserId(Long groupId, List<Error> errorList);
 
     Integer saveUserFromDataGroupDetail(User user,List<FileDataGroupDetailDto> fileDataGroupDetailDtoList, List<Error> errorList);
 

@@ -1252,25 +1252,23 @@ App.controller('dataGroupUsersController', ['$http','$timeout','$state','$scope'
     $scope.selected_01 = [];
     $scope.selected_02 = [];
     var getUsers_1 = function(){
-        var url = "/userGroup/getUsers?userGroupId="+$scope.userGroupid;
+        var url = "/fileDataGroupDetail/findUsersNotInDataGroupsByUserId?groupId="+$scope.dataGroupId;
         $http.post(url).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
             $scope.users_01 = myservice.setSerialNumber(temp.obj);
-            $("#pleaseWait").hide();
         }).error(function (data) {
             alert("请检查必填项是否填写！");
         });
     }
     var getUsers_2 = function(){
-        var url = "/userGroup/getGroupUsers?userGroupId="+$scope.userGroupid;
+        var url = "/fileDataGroupDetail/findFileDataGroupUsersByGroupId?groupId="+$scope.dataGroupId;
         $http.post(url).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
             $scope.users_02 = myservice.setSerialNumber(temp.obj);
-            $("#pleaseWait").hide();
         }).error(function (data) {
             alert("请检查必填项是否填写！");
         });
@@ -1330,16 +1328,20 @@ App.controller('dataGroupUsersController', ['$http','$timeout','$state','$scope'
         }
     }
 
+    function DataGroupDetailDto(userId,dataGroupId){
+        var o = new Object();
+        o.userId = userId;
+        o.fileDataGroupId = dataGroupId;
+        return o;
+    }
 
 
-    $scope.addUserToUserGroup = function (userId) {
+    $scope.addUserToDataGroup = function (userId) {
 
-        var url="/userGroup/addUserToUserGroup";
-        var params = {
-            userId: userId,
-            userGroupId: $scope.userGroupid
-        }
-        $http.post(url, params).success(function (data) {
+        var url="/fileDataGroupDetail/saveUserFromDataGroupDetail";
+        dataGroupDetailDtoArr = [];
+        dataGroupDetailDtoArr.push(DataGroupDetailDto(userId,$scope.dataGroupId));
+        $http.post(url, JSON.stringify(dataGroupDetailDtoArr)).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
@@ -1350,23 +1352,18 @@ App.controller('dataGroupUsersController', ['$http','$timeout','$state','$scope'
         });
     }
 
-    function UserGroupDetailDto(userId,userGroupId){
-        var o = new Object();
-        o.userId = userId;
-        o.userGroupId = userGroupId;
-        return o;
-    }
 
-    $scope.addToUserGroupBatch = function () {
+
+    $scope.addToDataGroupBatch = function () {
         if(myservice.isEmpty($scope.selected_01)){
             return;
         }
-        userGroupDetailDtoArr = [];
+        dataGroupDetailDtoArr = [];
         angular.forEach($scope.selected_01, function (e){
-            userGroupDetailDtoArr.push(UserGroupDetailDto(e,$scope.userGroupid));
+            dataGroupDetailDtoArr.push(DataGroupDetailDto(e,$scope.dataGroupId));
         })
-        var url="/userGroup/addUserToUserGroupBatch";
-        $http.post(url, JSON.stringify(userGroupDetailDtoArr)).success(function (data) {
+        var url="/fileDataGroupDetail/saveUserFromDataGroupDetail";
+        $http.post(url, JSON.stringify(dataGroupDetailDtoArr)).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
@@ -1379,13 +1376,11 @@ App.controller('dataGroupUsersController', ['$http','$timeout','$state','$scope'
 
     }
 
-    $scope.deleteUserGroup = function (userId) {
-        var url="/userGroup/removeUserFromUserGroup";
-        var params = {
-            userId: userId,
-            userGroupId: $scope.userGroupid
-        }
-        $http.post(url, params).success(function (data) {
+    $scope.deleteDataGroup = function (userId) {
+        var url="/fileDataGroupDetail/deleteUserFromDataGroup";
+        dataGroupDetailDtoArr = [];
+        dataGroupDetailDtoArr.push(DataGroupDetailDto(userId,$scope.dataGroupId));
+        $http.post(url, JSON.stringify(dataGroupDetailDtoArr)).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
@@ -1397,17 +1392,17 @@ App.controller('dataGroupUsersController', ['$http','$timeout','$state','$scope'
     }
 
 
-    $scope.deleteUserFromUserGroupBatch = function () {
+    $scope.deleteUserFromDataGroupBatch = function () {
         if(myservice.isEmpty($scope.selected_02)){
             return;
         }
-        userGroupDetailDtoArr = [];
+        dataGroupDetailDtoArr = [];
         angular.forEach($scope.selected_02, function (e){
-            userGroupDetailDtoArr.push(UserGroupDetailDto(e,$scope.userGroupid));
+            dataGroupDetailDtoArr.push(DataGroupDetailDto(e,$scope.dataGroupId));
         })
 
-        var url="/userGroup/removeUserFromUserGroupBatch";
-        $http.post(url, JSON.stringify(userGroupDetailDtoArr)).success(function (data) {
+        var url="/fileDataGroupDetail/deleteUserFromDataGroup";
+        $http.post(url, JSON.stringify(dataGroupDetailDtoArr)).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);

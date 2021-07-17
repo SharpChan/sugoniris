@@ -46,6 +46,9 @@ public class FileParsingServiceImpl implements FileParsingService {
     @Resource
     private FileParsingFailedMapper fileParsingFailedMapper;
 
+    @Resource
+    private FileTableMapper fileTableMapper;
+
     /**
      * 解析csv文件并且写入mpp,并对文件和文件数据进行统计
      *
@@ -144,10 +147,11 @@ public class FileParsingServiceImpl implements FileParsingService {
                     //数据总函数
                     Integer rowCount = 0;
                     Integer importRowCount = 0;
+                    FileDetailEntity fileDetailEntityfSql = new FileDetailEntity();
                     //从文件信息表中获取已有存库的mpp表名
                     String tableName = getMppTableName(userId, fileAttachmentEntity, fileTemplateGroupEntityBean);
                     //先建表再存入数据库，数据库中没有，就是mppp没有创建表。则进行建表
-                    tableName = createMppTable(userId,fileAttachmentEntity, fileTemplateEntityBean, fileTemplateDetailEntityList, tableName);
+                    tableName = createMppTable(userId,fileDetailEntityfSql,fileAttachmentEntity, fileTemplateEntityBean, fileTemplateDetailEntityList, tableName);
                     //组装insert语句
                     String sqlInsert = getInsertSql(fileAttachmentEntity,fileTemplateDetailEntityList, tableName);
 
@@ -227,7 +231,6 @@ public class FileParsingServiceImpl implements FileParsingService {
 
                     }
                     //把文件信息存入文件信息表
-                    FileDetailEntity fileDetailEntityfSql = new FileDetailEntity();
                     fileDetailEntityfSql.setId(fileSeq);
                     fileDetailEntityfSql.setFileTemplateId(fileTemplateGroupEntityBean.getTemplateId());
                     fileDetailEntityfSql.setUserId(userId);
@@ -306,7 +309,7 @@ public class FileParsingServiceImpl implements FileParsingService {
     }
 
     //创建mpp数据表
-    private String createMppTable(Long userId,FileAttachmentEntity fileAttachmentEntity, FileTemplateEntity fileTemplateEntityBean, List<FileTemplateDetailEntity> fileTemplateDetailEntityList, String tableName) {
+    private String createMppTable(Long userId,FileDetailEntity fileDetailEntityfSql,FileAttachmentEntity fileAttachmentEntity, FileTemplateEntity fileTemplateEntityBean, List<FileTemplateDetailEntity> fileTemplateDetailEntityList, String tableName) {
         if(StringUtils.isEmpty(tableName)) {
             //组装建表和插入语句
             //表名="base_"+模板配置前缀+"_"+案件编号
@@ -317,6 +320,22 @@ public class FileParsingServiceImpl implements FileParsingService {
             }
             sqlCreate += "file_attachment_id  varchar NULL );";
             mppMapper.mppSqlExec(sqlCreate);
+
+            FileTableEntity fileTableEntity = new FileTableEntity();
+            fileTableEntity.setCase_id(fileAttachmentEntity.getCaseId());
+            fileTableEntity.setFileTemplateId(fileTemplateEntityBean.getId());
+            fileTableEntity.setTableName(tableName);
+            fileTableEntity.setUserId(userId);
+            fileTableMapper.saveFileTable(fileTableEntity);
+            fileDetailEntityfSql.setFileTableId(fileTableEntity.getId());
+        }else{
+            FileTableEntity fileTableEntity = new FileTableEntity();
+            fileTableEntity.setCase_id(fileAttachmentEntity.getCaseId());
+            fileTableEntity.setFileTemplateId(fileTemplateEntityBean.getId());
+            fileTableEntity.setUserId(userId);
+            fileTableEntity.setTitle(fileAttachmentEntity.getCaseId()+"_"+fileTemplateEntityBean.getTemplateName());
+            fileTableEntity = fileTableMapper.findFileTableList(fileTableEntity).get(0);
+            fileDetailEntityfSql.setFileTableId(fileTableEntity.getId());
         }
         return tableName;
     }

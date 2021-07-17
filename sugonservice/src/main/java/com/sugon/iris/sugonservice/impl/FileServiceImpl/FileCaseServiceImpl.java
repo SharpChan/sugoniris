@@ -3,6 +3,7 @@ package com.sugon.iris.sugonservice.impl.FileServiceImpl;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileAttachmentMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileCaseMapper;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTableMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileCaseDto;
@@ -27,6 +28,9 @@ public class FileCaseServiceImpl implements FileCaseService {
 
     @Resource
     private FolderService folderServiceImpl;
+
+    @Resource
+    private FileTableMapper fileTableMapper;
 
     @Override
     public Integer saveCase(User user, FileCaseDto fileCaseDto, List<Error> errorList) throws IllegalAccessException {
@@ -105,6 +109,7 @@ public class FileCaseServiceImpl implements FileCaseService {
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除文件和对应的信息出错",e.toString()));
         }
         try{
+            fileTableMapper.deleteFileTableByCaseId(arr);
             count =  fileCaseMapper.deleteFileCaseById(arr);
         }catch (Exception e){
             e.printStackTrace();

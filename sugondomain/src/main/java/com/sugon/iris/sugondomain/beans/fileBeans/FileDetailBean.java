@@ -81,4 +81,9 @@ public class FileDetailBean {
      * 数据是否同步
      */
     private Boolean hasImport;
+
+    /**
+     * 表id
+     */
+    private Long fileTableId;
 }

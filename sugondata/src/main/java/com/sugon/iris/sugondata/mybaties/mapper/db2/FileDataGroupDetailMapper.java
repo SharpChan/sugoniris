@@ -10,9 +10,9 @@ public interface FileDataGroupDetailMapper {
 
     List<UserEntity> findFileDataGroupUsersByGroupId(Long groupId);
 
-    List<UserEntity> findUsersNotInDataGroupsByUserId(Long createUserId);
+    List<UserEntity> findUsersNotInDataGroupsByUserId(Long groupId);
 
     Integer saveUserFromDataGroupDetail(List<FileDataGroupDetailEntity> fileDataGroupDetailEntityList);
 
-    Integer deleteUserFromDataGroup(FileDataGroupDetailEntity fileDataGroupDetailEntity);
+    Integer deleteFileDataGroupDetail(FileDataGroupDetailEntity fileDataGroupDetailEntity);
 }
