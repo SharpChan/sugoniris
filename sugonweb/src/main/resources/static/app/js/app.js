@@ -1496,6 +1496,27 @@ App.controller('dataGroupTableController', ['$http','$timeout','$state','$scope'
     $scope.groupId = $stateParams.groupId === 'inbox' ? '' : $stateParams.groupId;
 
 
+    var vm = this;
+
+    $scope.initTree = function () {
+
+        var url = "/rolePage/getRolePages?id="+$scope.userRoleId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            vm.tree = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    $scope.initTree();
+
+    $scope.deleteUrl_1 = "/rolePage/deleteRolePage";
+    $scope.addUrl_1 = "/rolePage/saveRolePage";
+    $scope.param_1 = $scope.groupId;
 
 }]);
 
