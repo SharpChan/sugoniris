@@ -124,6 +124,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('file/dataAuthorityAddOrModify.html'),
           resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
+      .state('app.dataAuthority.dataGroupTable', {
+          url: '/dataAuthorityDataGroupTable/:groupId',
+          title: 'DataAuthorityDataGroupTable',
+          templateUrl: helper.basepath('file/dataGroupTable.html'),
+          resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
       .state('app.userGroup.groupRole', {
           url: '/groupRole/:groupId/:groupName',
           title: 'GroupRole',
@@ -1483,6 +1489,13 @@ App.controller('dataGroupAddOrModifyController', ['$http','$timeout','$state','$
             alert("请检查必填项是否填写！");
         });
     }
+
+}]);
+
+App.controller('dataGroupTableController', ['$http','$timeout','$state','$scope', '$stateParams','myservice', function($http,$timeout,$state,$scope, $stateParams,myservice) {
+    $scope.groupId = $stateParams.groupId === 'inbox' ? '' : $stateParams.groupId;
+
+
 
 }]);
 

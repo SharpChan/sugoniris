@@ -322,18 +322,18 @@ public class FileParsingServiceImpl implements FileParsingService {
             mppMapper.mppSqlExec(sqlCreate);
 
             FileTableEntity fileTableEntity = new FileTableEntity();
-            fileTableEntity.setCase_id(fileAttachmentEntity.getCaseId());
+            fileTableEntity.setCaseId(fileAttachmentEntity.getCaseId());
             fileTableEntity.setFileTemplateId(fileTemplateEntityBean.getId());
             fileTableEntity.setTableName(tableName);
             fileTableEntity.setUserId(userId);
+            fileTableEntity.setTitle(fileAttachmentEntity.getCaseId()+"_"+fileTemplateEntityBean.getTemplateName());
             fileTableMapper.saveFileTable(fileTableEntity);
             fileDetailEntityfSql.setFileTableId(fileTableEntity.getId());
         }else{
             FileTableEntity fileTableEntity = new FileTableEntity();
-            fileTableEntity.setCase_id(fileAttachmentEntity.getCaseId());
+            fileTableEntity.setCaseId(fileAttachmentEntity.getCaseId());
             fileTableEntity.setFileTemplateId(fileTemplateEntityBean.getId());
             fileTableEntity.setUserId(userId);
-            fileTableEntity.setTitle(fileAttachmentEntity.getCaseId()+"_"+fileTemplateEntityBean.getTemplateName());
             fileTableEntity = fileTableMapper.findFileTableList(fileTableEntity).get(0);
             fileDetailEntityfSql.setFileTableId(fileTableEntity.getId());
         }

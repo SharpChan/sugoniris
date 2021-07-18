@@ -14,19 +14,22 @@ import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDataGroupTable
 import com.sugon.iris.sugonservice.service.FileService.FileDataGroupTableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.sugon.iris.sugondomain.beans.system.User;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class FileDataGroupTableServiceImpl implements FileDataGroupTableService {
 
-    @Autowired
+    @Resource
     private FileTableMapper fileTableMapper;
 
-    @Autowired
+    @Resource
     private FileDataGroupTableMapper fileDataGroupTableMapper;
 
-    @Autowired
+    @Resource
     private FileCaseMapper fileCaseMapper;
 
     @Override
@@ -69,7 +72,7 @@ public class FileDataGroupTableServiceImpl implements FileDataGroupTableService 
             List<MenuDto> submenu = new ArrayList<>();
             menuDtoCase.setSubmenu(submenu);
             for(FileTableEntity fileTableEntityBean : fileTableEntityList){
-                if(fileTableEntityBean.getCase_id().equals(fileCaseEntityBean.getId())){
+                if(fileTableEntityBean.getCaseId().equals(fileCaseEntityBean.getId())){
                     MenuDto menuDtoTable = new MenuDto();
                     submenu.add(menuDtoTable);
                     menuDtoTable.setName(fileTableEntityBean.getTableName());

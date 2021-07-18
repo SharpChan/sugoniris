@@ -27,7 +27,7 @@ public class FileTableBean {
     /**
      * 案件编号
      */
-    private String case_id;
+    private String caseId;
 
     /**
      * 创建人id
