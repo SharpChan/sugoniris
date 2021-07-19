@@ -4,8 +4,8 @@ import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.RolePageServiceDao;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
-import com.sugon.iris.sugondomain.dtos.systemDtos.RolePageDto;
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.RolePageEntity;
+import com.sugon.iris.sugondomain.dtos.systemDtos.OwnerMenuDto;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.OwnerMenuEntity;
 import com.sugon.iris.sugonservice.service.systemService.MenuService;
 import com.sugon.iris.sugonservice.service.systemService.RolePageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +24,13 @@ public class RolePageServiceImpl implements RolePageService {
     private MenuService menuServiceImpl;
 
     @Override
-    public int[] saveRolePage(List<RolePageDto> rolePageDtoList, List<Error> errorList) throws IllegalAccessException {
+    public int[] saveRolePage(List<OwnerMenuDto> rolePageDtoList, List<Error> errorList) throws IllegalAccessException {
         if(CollectionUtils.isEmpty(rolePageDtoList)){
             return null;
         }
-        List<RolePageEntity> rolePageEntityList = new ArrayList<>();
-        for (RolePageDto rolePageDto : rolePageDtoList){
-            RolePageEntity rolePageEntity = new RolePageEntity();
+        List<OwnerMenuEntity> rolePageEntityList = new ArrayList<>();
+        for (OwnerMenuDto rolePageDto : rolePageDtoList){
+            OwnerMenuEntity rolePageEntity = new OwnerMenuEntity();
             PublicUtils.trans(rolePageDto,rolePageEntity);
             rolePageEntityList.add(rolePageEntity);
         }
@@ -38,11 +38,11 @@ public class RolePageServiceImpl implements RolePageService {
     }
 
     @Override
-    public int[] deleteRolePage(List<RolePageDto> rolePageDtoList, List<Error> errorList) {
+    public int[] deleteRolePage(List<OwnerMenuDto> rolePageDtoList, List<Error> errorList) {
         List<Object[]> objArrList = new ArrayList<>();
-        for(RolePageDto rolePageDto : rolePageDtoList){
+        for(OwnerMenuDto rolePageDto : rolePageDtoList){
             Object[] objArr = new Object[2];
-            objArr[0] = rolePageDto.getRoleId();
+            objArr[0] = rolePageDto.getOwnerId();
             objArr[1] = rolePageDto.getMenuId();
             objArrList.add(objArr);
         }
@@ -57,7 +57,7 @@ public class RolePageServiceImpl implements RolePageService {
             return null;
         }
         //获取该角色配置的页面
-        List<RolePageEntity> rolePageEntityList = rolePageServiceDaoImpl.getRolePageByRoleId(roleId,errorList);
+        List<OwnerMenuEntity> rolePageEntityList = rolePageServiceDaoImpl.getRolePageByRoleId(roleId,errorList);
 
         //设置勾选标记
         setCheckFlag( menuDtoList , rolePageEntityList);
@@ -77,9 +77,9 @@ public class RolePageServiceImpl implements RolePageService {
         return menuDtoList;
     }
 
-    private void setCheckFlag(List<MenuDto> menuDtoList ,List<RolePageEntity> rolePageEntityList){
+    private void setCheckFlag(List<MenuDto> menuDtoList ,List<OwnerMenuEntity> rolePageEntityList){
         for(MenuDto menuDto : menuDtoList) {
-            for (RolePageEntity rolePageEntity : rolePageEntityList) {
+            for (OwnerMenuEntity rolePageEntity : rolePageEntityList) {
                 if (menuDto.getId().equals(rolePageEntity.getMenuId())) {
                     menuDto.setIsChecked(true);
                     break;

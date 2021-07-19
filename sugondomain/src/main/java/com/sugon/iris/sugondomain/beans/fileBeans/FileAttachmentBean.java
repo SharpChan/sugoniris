@@ -54,9 +54,9 @@ public class FileAttachmentBean {
     private Boolean hasImport;
 
     /**
-     *案件编号
+     *案件内部编号
      */
-    private String caseId;
+    private Long caseId;
 
     /**
      *模板组编号

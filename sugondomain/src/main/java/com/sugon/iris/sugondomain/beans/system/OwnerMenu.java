@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class RolePage {
+public class OwnerMenu {
 
     /**
      * 自增序列
@@ -15,7 +15,7 @@ public class RolePage {
     /**
      * 角色id
      */
-    private Long roleId;
+    private Long ownerId;
 
     /**
      * 菜单id

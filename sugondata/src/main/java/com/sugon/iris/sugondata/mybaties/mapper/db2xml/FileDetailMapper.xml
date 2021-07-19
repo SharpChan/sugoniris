@@ -12,7 +12,7 @@
         <result column="file_template_id" property="fileTemplateId" jdbcType="VARCHAR" />
         <result column="row_count" property="rowCount" jdbcType="BIGINT" />
         <result column="import_row_count" property="importRowCount" jdbcType="BIGINT" />
-        <result column="case_id" property="caseId" jdbcType="VARCHAR" />
+        <result column="case_id" property="caseId" jdbcType="BIGINT" />
         <result column="table_name" property="tableName" jdbcType="VARCHAR" />
         <result column="user_id" property="userId" jdbcType="BIGINT" />
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -49,7 +49,7 @@
         <if test="fileTemplateId!=null and fileTemplateId != ''">
             and file_template_id =  #{fileTemplateId}
         </if >
-        <if test="caseId!=null and caseId != ''">
+        <if test="caseId!=null">
             and case_id =  #{caseId}
         </if >
         <if test="tableName!=null and tableName != ''">
@@ -74,7 +74,7 @@
         <if test="fileTemplateId!=null and fileTemplateId != ''">
             and file_template_id =  #{fileTemplateId}
         </if >
-        <if test="caseId!=null and caseId != ''">
+        <if test="caseId!=null">
             and case_id =  #{caseId}
         </if >
         <if test="userId!=null">
@@ -98,7 +98,7 @@
              #{fileTemplateId,jdbcType=INTEGER},
              #{rowCount,jdbcType=INTEGER},
              #{importRowCount,jdbcType=INTEGER},
-             #{caseId,jdbcType=VARCHAR},
+             #{caseId,jdbcType=INTEGER},
              #{tableName,jdbcType=VARCHAR},
              #{userId,jdbcType=INTEGER},
              #{createTime,jdbcType=TIMESTAMP},

@@ -32,7 +32,7 @@ public class FileDataGroupTableController {
      * 查询模板信息
      */
 
-    @RequestMapping("/getFileDataGroup")
+    @RequestMapping("/getFileDataGroupTable")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<List<MenuDto>> getFileDataGroup(@CurrentUser User user, @RequestParam(value = "dataGroupId") Long  dataGroupId){
         RestResult<List<MenuDto>> restResult = new RestResult();

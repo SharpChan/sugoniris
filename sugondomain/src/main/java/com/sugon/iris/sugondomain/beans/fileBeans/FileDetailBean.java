@@ -53,7 +53,7 @@ public class FileDetailBean {
     /**
      * 案件编号
      */
-    private String caseId;
+    private Long caseId;
 
     /**
      * 表名="base_"+模板配置前缀+"_"+md5加密案件编号

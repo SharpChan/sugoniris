@@ -3,7 +3,7 @@
 <mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.FileTableMapper" >
 
     <!--结果集-->
-    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity" >
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTableEntity" >
         <id column="id" property="id" jdbcType="BIGINT" />
         <result column="table_name" property="tableName" jdbcType="VARCHAR" />
         <result column="file_template_id" property="fileTemplateId" jdbcType="BIGINT" />
@@ -29,7 +29,7 @@
         <if test="fileTemplateId!=null">
             and file_template_id =  #{fileTemplateId}
         </if>
-        <if test="caseId!=null and caseId != ''">
+        <if test="caseId!=null">
             and case_id =  #{caseId}
         </if >
         <if test="userId!=null">
@@ -37,9 +37,9 @@
         </if >
     </select>
 
-    <select id="findFileTableList" resultType="java.util.List">
+    <select id="findFileTableList" resultMap="BaseResultMap">
         SELECT
-        (<include refid="Base_Column_List" />)
+        <include refid="Base_Column_List" />
         FROM
         file_table
         where
@@ -47,7 +47,7 @@
         <if test="fileTemplateId!=null">
             and file_template_id =  #{fileTemplateId}
         </if>
-        <if test="caseId!=null and caseId != ''">
+        <if test="caseId!=null">
             and case_id =  #{caseId}
         </if >
         <if test="userId!=null">
@@ -66,7 +66,7 @@
              #{id,jdbcType=INTEGER},
              #{tableName,jdbcType=VARCHAR},
              #{fileTemplateId,jdbcType=INTEGER},
-             #{caseId,jdbcType=VARCHAR},
+             #{caseId,jdbcType=INTEGER},
              #{userId,jdbcType=INTEGER},
              #{title,jdbcType=VARCHAR}
              )

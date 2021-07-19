@@ -1500,7 +1500,7 @@ App.controller('dataGroupTableController', ['$http','$timeout','$state','$scope'
 
     $scope.initTree = function () {
 
-        var url = "/rolePage/getRolePages?id="+$scope.userRoleId;
+        var url = "/fileDataGroupTable/getFileDataGroupTable?dataGroupId="+$scope.groupId;
         $http.post(url).success(function(data)
         {
             var jsonString = angular.toJson(data);
@@ -1517,6 +1517,7 @@ App.controller('dataGroupTableController', ['$http','$timeout','$state','$scope'
     $scope.deleteUrl_1 = "/rolePage/deleteRolePage";
     $scope.addUrl_1 = "/rolePage/saveRolePage";
     $scope.param_1 = $scope.groupId;
+
 
 }]);
 
@@ -9164,7 +9165,9 @@ App.directive('treeView',[function(){
                             newNodeAdd.push(e);
                         }
                         e.isChecked = true;
-                        doCheck(e,allNode);
+                        if(e.id){
+                            doCheck(e,allNode);
+                        }
                     }
                 })
             }
@@ -9185,9 +9188,9 @@ App.directive('treeView',[function(){
                 })
             }
 
-            function RolePageDto(roleId,menuId){
+            function OwnerMenuDto(ownerId,menuId){
                 var o = new Object();
-                o.roleId = roleId;
+                o.ownerId = ownerId;
                 o.menuId = menuId;
                 return o;
             }
@@ -9201,11 +9204,11 @@ App.directive('treeView',[function(){
                     getAllNode(tree,allNode,null);
                     doCheck(item,allNode);
 
-                    var RolePageDtoArr = []
+                    var OwnerMenuDtoArr = []
                     angular.forEach(newNodeAdd,function (e) {
-                        RolePageDtoArr.push(RolePageDto($scope.paramOne,e.id));
+                        OwnerMenuDtoArr.push(OwnerMenuDto($scope.paramOne,e.id));
                     });
-                    $http.post($scope.addUrl,RolePageDtoArr).success(function(data)
+                    $http.post($scope.addUrl,OwnerMenuDtoArr).success(function(data)
                     {
                         var jsonString = angular.toJson(data);
                         var temp = angular.fromJson(jsonString);
@@ -9219,11 +9222,11 @@ App.directive('treeView',[function(){
                     deleteNodes.push(item);
                     deleteNode(item,allNode);
 
-                    var RolePageDtoArr = []
+                    var OwnerMenuDtoArr = []
                     angular.forEach(deleteNodes,function (e) {
-                        RolePageDtoArr.push(RolePageDto($scope.paramOne,e.id));
+                        OwnerMenuDtoArr.push(OwnerMenuDto($scope.paramOne,e.id));
                     });
-                    $http.post($scope.deleteUrl,RolePageDtoArr).success(function(data)
+                    $http.post($scope.deleteUrl,OwnerMenuDtoArr).success(function(data)
                     {
                         var jsonString = angular.toJson(data);
                         var temp = angular.fromJson(jsonString);

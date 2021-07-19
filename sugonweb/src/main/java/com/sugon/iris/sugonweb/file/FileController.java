@@ -48,7 +48,7 @@ public class FileController {
             response.setCharacterEncoding("UTF-8");
             MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
             List<MultipartFile> files = multipartHttpServletRequest.getFiles("file");
-            restResult.setObj(folderServiceImpl.uploadFile(user,files,(String) session.getAttribute("caseId"),errorList));
+            restResult.setObj(folderServiceImpl.uploadFile(user,files, (String) session.getAttribute("caseId"),errorList));
         }catch(Exception e){
             e.printStackTrace();
         }

@@ -12,13 +12,13 @@
 
     <!--基础字段-->
     <sql id="Base_Column_List" >
-        id,data_group_id,table_id,case_id,create_user_id
+        id,data_group_id,table_id,create_user_id
     </sql>
 
 
-    <select id="findFileDataGroupTable" resultType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDataGroupTableEntity"  >
+    <select id="findFileDataGroupTable" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDataGroupTableEntity" resultMap="BaseResultMap"  >
         SELECT
-        (<include refid="Base_Column_List" />)
+        <include refid="Base_Column_List" />
         FROM
         file_data_group_table
         where

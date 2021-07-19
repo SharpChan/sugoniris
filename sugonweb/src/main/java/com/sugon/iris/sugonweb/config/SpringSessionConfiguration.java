@@ -15,7 +15,7 @@ import org.springframework.session.events.SessionExpiredEvent;
  *
  */
 @Configuration
-@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 18000)
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 36000)
 public class SpringSessionConfiguration {
     private MySessionContext myc = MySessionContext.getInstance();
      /**

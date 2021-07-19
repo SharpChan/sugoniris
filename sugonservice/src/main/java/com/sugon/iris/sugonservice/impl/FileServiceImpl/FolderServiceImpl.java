@@ -197,7 +197,7 @@ public class FolderServiceImpl implements FolderService {
             String attachment = fileServerPAth+md5FileName+type;
             FileAttachmentEntity fileAttachmentEntity = new FileAttachmentEntity();
             fileAttachmentEntity.setAttachment(attachment);
-            fileAttachmentEntity.setCaseId(caseId);
+            fileAttachmentEntity.setCaseId(Long.parseLong(caseId));
             fileAttachmentEntity.setFileName(fileName);
             fileAttachmentEntity.setFileType(type);
             fileAttachmentEntity.setFileSize(size);
@@ -312,7 +312,7 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
-    public Integer csvReadOperation(String userId, String caseId, String filePath) {
+    public Integer csvReadOperation(String userId, Long caseId, String filePath) {
 
 
         return null;

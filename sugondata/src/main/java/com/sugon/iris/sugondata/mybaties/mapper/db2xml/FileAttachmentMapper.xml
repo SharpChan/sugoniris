@@ -13,7 +13,7 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="user_id" property="userId" jdbcType="BIGINT" />
         <result column="has_import" property="hasImport" jdbcType="TINYINT" />
-        <result column="case_id" property="caseId" jdbcType="VARCHAR" />
+        <result column="case_id" property="caseId" jdbcType="BIGINT" />
         <result column="template_group_id" property="templateGroupId" jdbcType="BIGINT" />
         <result column="template_group_name" property="templateGroupName" jdbcType="VARCHAR" />
     </resultMap>
@@ -46,7 +46,7 @@
         <if test="hasImport!=null">
             and has_import = #{hasImport}
         </if >
-        <if test="caseId!=null and caseId != ''">
+        <if test="caseId!=null">
             and case_id = #{caseId}
         </if >
         <if test="userId!=null">
@@ -56,7 +56,7 @@
 
     <!--表查询-->
     <select id="getFileAttachmentIds" resultType="java.lang.String">
-        <if test="caseId!=null and caseId != ''">
+        <if test="caseId!=null">
         SELECT
          id
         FROM
@@ -83,7 +83,7 @@
              #{item.createTime,jdbcType=TIMESTAMP},
              #{item.userId,jdbcType=INTEGER},
              #{item.hasImport,jdbcType=TINYINT},
-             #{item.caseId,jdbcType=VARCHAR},
+             #{item.caseId,jdbcType=INTEGER},
              #{item.templateGroupId,jdbcType=INTEGER},
              #{item.templateGroupName,jdbcType=VARCHAR}
              )
@@ -127,7 +127,7 @@
                 <if test="id!=null">
                     id = #{id}
                 </if >
-                <if test="caseId!=null and caseId != ''">
+                <if test="caseId!=null">
                     and case_id = #{caseId}
                 </if >
                 <if test="userId!=null">

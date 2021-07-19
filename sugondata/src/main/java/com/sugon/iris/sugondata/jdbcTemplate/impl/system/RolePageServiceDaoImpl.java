@@ -2,8 +2,7 @@ package com.sugon.iris.sugondata.jdbcTemplate.impl.system;
 
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.RolePageServiceDao;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.MenuEntity;
-import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.RolePageEntity;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.OwnerMenuEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +24,7 @@ public class RolePageServiceDaoImpl implements RolePageServiceDao {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public int[] saveRolePages(List<RolePageEntity> rolePageEntityList, List<Error> errorList) {
+    public int[] saveRolePages(List<OwnerMenuEntity> rolePageEntityList, List<Error> errorList) {
 
         int[] result=null;
 
@@ -47,7 +46,7 @@ public class RolePageServiceDaoImpl implements RolePageServiceDao {
 
                 @Override
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
-                    ps.setLong(1, rolePageEntityList.get(i).getRoleId());
+                    ps.setLong(1, rolePageEntityList.get(i).getOwnerId());
                     ps.setLong(2, rolePageEntityList.get(i).getMenuId());
                     ps.setTimestamp(3, new Timestamp( rolePageEntityList.get(i).getCreateTime().getTime()));
                 }
@@ -75,16 +74,16 @@ public class RolePageServiceDaoImpl implements RolePageServiceDao {
     }
 
     @Override
-    public List<RolePageEntity> getRolePageByRoleId(Long roleId, List<Error> errorList) {
+    public List<OwnerMenuEntity> getRolePageByRoleId(Long roleId, List<Error> errorList) {
 
-        List<RolePageEntity>  rolePageEntityList = null;
+        List<OwnerMenuEntity>  rolePageEntityList = null;
         String sql = "SELECT * FROM sys_role_page  where 1=1 ";
 
         if(null != roleId){
             sql += " and role_id = "+roleId;
         }
         try{
-            rolePageEntityList = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(RolePageEntity.class));
+            rolePageEntityList = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(OwnerMenuEntity.class));
         }catch(Exception e){
             LOGGER.info("{}-{}","查询表sys_role_page失败",e);
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询sys_role_page表出错",e.toString()));

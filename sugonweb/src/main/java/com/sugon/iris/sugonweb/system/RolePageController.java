@@ -4,7 +4,7 @@ import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
-import com.sugon.iris.sugondomain.dtos.systemDtos.RolePageDto;
+import com.sugon.iris.sugondomain.dtos.systemDtos.OwnerMenuDto;
 import com.sugon.iris.sugonservice.service.systemService.RolePageService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +23,7 @@ public class RolePageController {
 
     @PostMapping("/saveRolePage")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<int[]> saveRolePage(@RequestBody  List<RolePageDto> rolePageDtoList){
+    public RestResult<int[]> saveRolePage(@RequestBody  List<OwnerMenuDto> rolePageDtoList){
         RestResult<int[]> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
@@ -63,7 +63,7 @@ public class RolePageController {
 
     @PostMapping("/deleteRolePage")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<int[]> deleteRolePage(@RequestBody  List<RolePageDto> rolePageDtoList){
+    public RestResult<int[]> deleteRolePage(@RequestBody  List<OwnerMenuDto> rolePageDtoList){
         RestResult<int[]> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
