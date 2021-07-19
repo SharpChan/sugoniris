@@ -159,7 +159,8 @@ module
             /**
              * Uploads all not uploaded items of queue
              */
-            FileUploader.prototype.uploadAll = function() {
+            FileUploader.prototype.uploadAll = function(a) {
+                console.log(a);
                 var items = this.getNotUploadedItems().filter(function(item) {
                     return !item.isUploading;
                 });

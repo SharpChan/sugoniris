@@ -3393,8 +3393,10 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
     }
 
     //数据同步
-    $scope.dataSyncOne = function (id) {
-        var url = "/file/dataSync?selected="+id+",";
+    $scope.dataSyncOne = function (item) {
+        item.doImport = true;
+        item.hasImport = true;
+        var url = "/file/dataSync?selected="+item.id+",";
         $http.post(url).success(function(data)
         {
             var jsonString = angular.toJson(data);
@@ -3560,6 +3562,7 @@ App.controller("myFileUploadController", ['$scope', 'FileUploader','$http','myse
     }
     loadDictionary1();
 
+    /*
     $scope.caseIdChanged =function(){
         if(myservice.isEmpty($scope.selectedOptions1)){
             $("#fileUpload").hide();
@@ -3581,6 +3584,14 @@ App.controller("myFileUploadController", ['$scope', 'FileUploader','$http','myse
         {
             alert("会话已经断开或者检查网络是否正常！");
         });
+    }*/
+
+    $scope.caseIdChanged =function(){
+        if(myservice.isEmpty($scope.selectedOptions1)){
+            $("#fileUpload").hide();
+            return;
+        }
+        $("#fileUpload").show();
     }
 
     var uploader = $scope.uploader = new FileUploader({
@@ -3608,6 +3619,7 @@ App.controller("myFileUploadController", ['$scope', 'FileUploader','$http','myse
         console.info('onAfterAddingAll', addedFileItems);
     };
     uploader.onBeforeUploadItem = function(item) {
+        item.url += "?caseId="+$scope.selectedOptions1;
         console.info('onBeforeUploadItem', item);
     };
     uploader.onProgressItem = function(fileItem, progress) {

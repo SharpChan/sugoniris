@@ -149,7 +149,7 @@ public class FolderServiceImpl implements FolderService {
         }
     }
 
-    public int uploadFile(User user, List<MultipartFile> files, String caseId, List<Error> errorList) throws Exception {
+    public int uploadFile(User user, List<MultipartFile> files, Long caseId, List<Error> errorList) throws Exception {
         //在配置页面配置文件的上传路径
         String uploadPath = PublicUtils.getConfigMap().get("fileUploadPath");
 
@@ -197,7 +197,7 @@ public class FolderServiceImpl implements FolderService {
             String attachment = fileServerPAth+md5FileName+type;
             FileAttachmentEntity fileAttachmentEntity = new FileAttachmentEntity();
             fileAttachmentEntity.setAttachment(attachment);
-            fileAttachmentEntity.setCaseId(Long.parseLong(caseId));
+            fileAttachmentEntity.setCaseId(caseId);
             fileAttachmentEntity.setFileName(fileName);
             fileAttachmentEntity.setFileType(type);
             fileAttachmentEntity.setFileSize(size);

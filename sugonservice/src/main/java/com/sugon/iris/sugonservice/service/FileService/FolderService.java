@@ -16,7 +16,7 @@ public interface FolderService {
     void decompress( User user,String[] selectedArr,List<Error> errorList) throws Exception;
 
     //上传文件写到文件服务器
-    int uploadFile(User user, List<MultipartFile> files, String caseId, List<Error> errorList) throws Exception;
+    int uploadFile(User user, List<MultipartFile> files, Long caseId, List<Error> errorList) throws Exception;
 
     //删除文件
     int deleteFile(User user, String[] idArr, List<Error> errorList) throws Exception;

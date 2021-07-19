@@ -75,6 +75,8 @@ public class AccountResource {
         session .setAttribute("user",user);
         Cookie cookie = new Cookie("jsessionid", session.getId());
         response.addCookie(cookie);
+        //以秒为单位，即在没有活动120分钟后，session将失效
+        session.setMaxInactiveInterval(8*60*60);
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
             restResult.setMessage("登录失败！");

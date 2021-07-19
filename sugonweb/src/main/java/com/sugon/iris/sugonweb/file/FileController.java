@@ -28,7 +28,7 @@ public class FileController {
     @Resource
     private FolderService folderServiceImpl;
 
-
+    /*
     @PostMapping("/setCaseId")
     @LogInCheck(doLock = true,doProcess = true)
     @ResponseStatus(HttpStatus.CREATED)
@@ -36,11 +36,11 @@ public class FileController {
         RestResult<Void> restResult = new RestResult<Void>();
         session.setAttribute("caseId",caseId);
         return restResult;
-    }
+    }*/
 
     @RequestMapping("/uploadFile")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<Integer> uploadFile(@CurrentUser User user, HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+    public RestResult<Integer> uploadFile(@CurrentUser User user,@RequestParam(value = "caseId") Long caseId ,HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try {
@@ -48,7 +48,7 @@ public class FileController {
             response.setCharacterEncoding("UTF-8");
             MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
             List<MultipartFile> files = multipartHttpServletRequest.getFiles("file");
-            restResult.setObj(folderServiceImpl.uploadFile(user,files, (String) session.getAttribute("caseId"),errorList));
+            restResult.setObj(folderServiceImpl.uploadFile(user,files, caseId,errorList));
         }catch(Exception e){
             e.printStackTrace();
         }
