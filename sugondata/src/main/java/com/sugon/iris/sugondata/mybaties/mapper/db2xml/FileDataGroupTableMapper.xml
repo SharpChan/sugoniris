@@ -44,12 +44,12 @@
         insert into file_data_group_table
         (<include refid="Base_Column_List" />)
         values
-        <foreach collection="fileUserTableEntitySqlParmList" item="item" index="i" separator=",">
+        <foreach collection="fileDataGroupTableEntitySqlParmList" item="item" index="i" separator=",">
              (
-             #{id,jdbcType=INTEGER},
-             #{dataGroupId,jdbcType=INTEGER},
-             #{tableId,jdbcType=INTEGER},
-             #{createUserId,jdbcType=INTEGER}
+             #{item.id,jdbcType=INTEGER},
+             #{item.dataGroupId,jdbcType=INTEGER},
+             #{item.tableId,jdbcType=INTEGER},
+             #{item.createUserId,jdbcType=INTEGER}
              )
         </foreach>
     </insert>

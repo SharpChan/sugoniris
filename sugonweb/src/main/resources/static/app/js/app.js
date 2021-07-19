@@ -1514,8 +1514,8 @@ App.controller('dataGroupTableController', ['$http','$timeout','$state','$scope'
     }
     $scope.initTree();
 
-    $scope.deleteUrl_1 = "/rolePage/deleteRolePage";
-    $scope.addUrl_1 = "/rolePage/saveRolePage";
+    $scope.deleteUrl_1 = "/fileDataGroupTable/deleteFileDataGroupTables";
+    $scope.addUrl_1 = "/fileDataGroupTable/saveFileDataGroupTables";
     $scope.param_1 = $scope.groupId;
 
 

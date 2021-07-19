@@ -1,21 +1,18 @@
 package com.sugon.iris.sugonservice.impl.FileServiceImpl;
 
-import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileCaseMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTableMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileDataGroupTableMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondomain.dtos.fileDtos.FileDataGroupTableDto;
-import com.sugon.iris.sugondomain.dtos.fileDtos.FileTableDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
+import com.sugon.iris.sugondomain.dtos.systemDtos.OwnerMenuDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileCaseEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTableEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDataGroupTableEntity;
+import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.FileService.FileDataGroupTableService;
-import org.springframework.beans.factory.annotation.Autowired;
 import com.sugon.iris.sugondomain.beans.system.User;
 import org.springframework.stereotype.Service;
-
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,21 +46,6 @@ public class FileDataGroupTableServiceImpl implements FileDataGroupTableService 
         FileCaseEntity fileCaseEntity = new FileCaseEntity();
         fileCaseEntity.setUserId(user.getId());
         List<FileCaseEntity> fileCaseEntityList = fileCaseMapper.selectFileCaseEntityList(fileCaseEntity);
-
-        /*
-        for(FileTableEntity fileTableEntityBean : fileTableEntityList){
-            FileTableDto fileTableDto = new FileTableDto();
-            PublicUtils.trans(fileTableEntityBean,fileTableDto);
-            for(FileDataGroupTableEntity fileDataGroupTableEntityBean : fileUserTableEntityList){
-                FileDataGroupTableDto fileDataGroupTableDto = new FileDataGroupTableDto();
-                PublicUtils.trans(fileDataGroupTableEntityBean,fileDataGroupTableDto);
-                if(fileDataGroupTableDto.getTableId().equals(fileTableDto.getId())){
-                    fileTableDto.setFileDataGroupTableDto(fileDataGroupTableDto);
-                    break;
-                }
-            }
-            fileTableDtoList.add(fileTableDto);
-        }*/
         List<MenuDto> menuDtoList = new ArrayList<>();
         for(FileCaseEntity fileCaseEntityBean : fileCaseEntityList){
             MenuDto menuDtoCase = new MenuDto();
@@ -85,17 +67,45 @@ public class FileDataGroupTableServiceImpl implements FileDataGroupTableService 
                 }
             }
         }
-
         return menuDtoList;
     }
 
     @Override
-    public Integer removeFileDataGroupTables(List<Long> idList, List<Error> errorList) {
-        return null;
+    public Integer removeFileDataGroupTables(User user, List<OwnerMenuDto> fileDataGroupTableList, List<Error> errorList) {
+        List<Long> idList = new ArrayList<>();
+        for(OwnerMenuDto ownerMenuDto : fileDataGroupTableList){
+            if(null == ownerMenuDto.getMenuId()){
+                continue;
+            }
+            FileDataGroupTableEntity fileDataGroupTableEntitySqlParm = new FileDataGroupTableEntity();
+            fileDataGroupTableEntitySqlParm.setTableId(ownerMenuDto.getMenuId());
+            fileDataGroupTableEntitySqlParm.setDataGroupId(ownerMenuDto.getOwnerId());
+            fileDataGroupTableEntitySqlParm.setCreateUserId(user.getId());
+            idList.add(fileDataGroupTableMapper.findFileDataGroupTable(fileDataGroupTableEntitySqlParm).get(0).getId());
+        }
+        return fileDataGroupTableMapper.deleteFileDataGroupTables(idList);
     }
 
     @Override
-    public Integer saveFileDataGroupTables(List<FileDataGroupTableDto> fileUserTableList, List<Error> errorList) {
+    public Integer saveFileDataGroupTables(User user, List<OwnerMenuDto> fileDataGroupTableList, List<Error> errorList) {
+        List<FileDataGroupTableEntity> fileDataGroupTableEntitySqlParmList = new ArrayList<>();
+        for(OwnerMenuDto ownerMenuDto : fileDataGroupTableList){
+            if(null == ownerMenuDto.getMenuId()){
+                continue;
+            }
+            FileDataGroupTableEntity fileDataGroupTableEntity = new FileDataGroupTableEntity();
+            fileDataGroupTableEntity.setCreateUserId(user.getId());
+            fileDataGroupTableEntity.setDataGroupId(ownerMenuDto.getOwnerId());
+            fileDataGroupTableEntity.setTableId(ownerMenuDto.getMenuId());
+            fileDataGroupTableEntitySqlParmList.add(fileDataGroupTableEntity);
+        }
+
+        try {
+            fileDataGroupTableMapper.saveFileDataGroupTables(fileDataGroupTableEntitySqlParmList);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"插入表file_data_group_table出错",e.toString()));
+        }
         return null;
     }
 }

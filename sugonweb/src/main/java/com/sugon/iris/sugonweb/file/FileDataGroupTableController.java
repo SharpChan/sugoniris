@@ -5,9 +5,8 @@ import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
-import com.sugon.iris.sugondomain.dtos.fileDtos.FileDataGroupDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
-import com.sugon.iris.sugonservice.service.FileService.FileDataGroupService;
+import com.sugon.iris.sugondomain.dtos.systemDtos.OwnerMenuDto;
 import com.sugon.iris.sugonservice.service.FileService.FileDataGroupTableService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,4 +50,45 @@ public class FileDataGroupTableController {
         }
         return restResult;
     }
+
+    @RequestMapping("/saveFileDataGroupTables")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> saveFileDataGroupTables(@CurrentUser User user, @RequestBody List<OwnerMenuDto> fileUserTableList){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(FileDataGroupTableServiceImpl.saveFileDataGroupTables(user,fileUserTableList,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @RequestMapping("/deleteFileDataGroupTables")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> deleteFileDataGroupTables(@CurrentUser User user, @RequestBody List<OwnerMenuDto> fileUserTableList){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(FileDataGroupTableServiceImpl.removeFileDataGroupTables(user,fileUserTableList,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
 }
