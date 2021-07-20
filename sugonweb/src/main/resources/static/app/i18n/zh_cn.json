@@ -70,6 +70,7 @@
         "BUTTON_fileTemplate": "文件模板",
         "BUTTON_fileTemplateGroup": "模板组",
         "BUTTON_dataAuthority": "数据权限",
+        "BUTTON_importCount": "导入统计",
         "CaseData": "案件数据",
         "BUTTON_fileUpload": "文件上传",
         "PRIVILEGE": "权限配置",

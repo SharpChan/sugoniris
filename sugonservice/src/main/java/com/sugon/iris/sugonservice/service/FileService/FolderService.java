@@ -22,7 +22,7 @@ public interface FolderService {
     int deleteFile(User user, String[] idArr, List<Error> errorList) throws Exception;
 
     //查询文件信息
-    List<FileAttachmentDto> findFileAttachmentList(User user,FileAttachmentDto fileAttachmentDto , List<Error> errorList) throws IllegalAccessException;
+    List<FileAttachmentDto> findFileAttachmentList(FileAttachmentDto fileAttachmentDto , List<Error> errorList) throws IllegalAccessException;
 
     Integer csvReadOperation(String userId,Long caseId,String filePath );
 

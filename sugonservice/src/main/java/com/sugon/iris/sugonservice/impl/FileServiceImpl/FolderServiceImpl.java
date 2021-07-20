@@ -293,15 +293,10 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
-    public List<FileAttachmentDto> findFileAttachmentList(User user,FileAttachmentDto fileAttachmentDto , List<Error> errorList) throws IllegalAccessException {
+    public List<FileAttachmentDto> findFileAttachmentList(FileAttachmentDto fileAttachmentDto , List<Error> errorList) throws IllegalAccessException {
         List<FileAttachmentDto> FileAttachmentDtoList = new ArrayList<>();
         FileAttachmentEntity fleAttachmentEntity = new FileAttachmentEntity();
-        fleAttachmentEntity.setFileName(fileAttachmentDto.getFileName());
-        fleAttachmentEntity.setFileType(fileAttachmentDto.getFileType());
-        fleAttachmentEntity.setHasDecompress(fileAttachmentDto.getHasDecompress());
-        fleAttachmentEntity.setHasImport(fileAttachmentDto.getHasImport());
-        fleAttachmentEntity.setCaseId(fileAttachmentDto.getCaseId());
-        fleAttachmentEntity.setUserId(user.getId());
+        PublicUtils.trans(fileAttachmentDto,fleAttachmentEntity);
         List<FileAttachmentEntity> fileAttachmentEntityList = fileAttachmentMapper.selectFileAttachmentList(fleAttachmentEntity);
         for(FileAttachmentEntity fileAttachmentEntity: fileAttachmentEntityList){
             FileAttachmentDto fileAttachmentDtoBean = new FileAttachmentDto();

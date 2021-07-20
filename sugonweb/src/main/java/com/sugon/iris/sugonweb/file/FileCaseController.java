@@ -49,8 +49,9 @@ public class FileCaseController {
     public RestResult<List<FileCaseDto>> getCases(@CurrentUser User user, @RequestBody FileCaseDto fileCaseDto){
         RestResult<List<FileCaseDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
+        fileCaseDto.setUserId(user.getId());
         try{
-            restResult.setObj(fileCaseServiceImpl.selectCaseList(user,fileCaseDto,errorList));
+            restResult.setObj(fileCaseServiceImpl.selectCaseList(fileCaseDto,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

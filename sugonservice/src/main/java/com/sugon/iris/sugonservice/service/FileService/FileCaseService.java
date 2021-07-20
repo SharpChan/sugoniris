@@ -13,7 +13,7 @@ public interface FileCaseService {
 
     Integer updateCase(User user,FileCaseDto fileCaseDto,List<Error> errorList) throws IllegalAccessException;
 
-    List<FileCaseDto> selectCaseList(User user,FileCaseDto fileCaseDto,List<Error> errorList) throws IllegalAccessException;
+    List<FileCaseDto> selectCaseList(FileCaseDto fileCaseDto,List<Error> errorList) throws IllegalAccessException;
 
     Integer deleteCase(User user,String[] arr,List<Error> errorList) throws Exception;
 }

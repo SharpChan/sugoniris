@@ -63,10 +63,9 @@ public class FileCaseServiceImpl implements FileCaseService {
     }
 
     @Override
-    public List<FileCaseDto> selectCaseList(User user,FileCaseDto fileCaseDto,List<Error> errorList) throws IllegalAccessException {
+    public List<FileCaseDto> selectCaseList(FileCaseDto fileCaseDto,List<Error> errorList) throws IllegalAccessException {
         FileCaseEntity fileCaseEntity = new FileCaseEntity();
         PublicUtils.trans(fileCaseDto,fileCaseEntity);
-        fileCaseEntity.setUserId(user.getId());
         List<FileCaseEntity> fileCaseEntityList = null;
         List<FileCaseDto> fileCaseDtoList = new ArrayList<>();
         try {

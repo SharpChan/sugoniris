@@ -87,8 +87,9 @@ public class FileController {
     public RestResult<List<FileAttachmentDto>>  findFileList(@CurrentUser User user,@RequestBody FileAttachmentDto fileAttachmentDto){
         RestResult<List<FileAttachmentDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
+        fileAttachmentDto.setUserId(user.getId());
         try {
-            restResult.setObj(folderServiceImpl.findFileAttachmentList(user,fileAttachmentDto,errorList));
+            restResult.setObj(folderServiceImpl.findFileAttachmentList(fileAttachmentDto,errorList));
         }catch(Exception e){
             e.printStackTrace();
         }
