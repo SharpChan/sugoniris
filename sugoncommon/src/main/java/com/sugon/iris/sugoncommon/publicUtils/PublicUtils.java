@@ -15,6 +15,9 @@ public  class PublicUtils {
     private static final String JAVA_TYPE = "java.lang.String";
     private static final String GET = "get";
     private static final String SET = "set";
+    private static final String[]  KEYWORD = {"create","table","insert","delete","%",
+                                              "update","set","where","and","or","drop",
+                                              "alter","add","not","all","*","join","between","null","not"};
 
     /**
      * 把tin赋值到tout
@@ -54,7 +57,17 @@ public  class PublicUtils {
     }
 
 
-
+    /**
+     * 校验sql中有没有关键字,有的话进行剔除
+     */
+    public static String checkSql(String str){
+        for(String key : KEYWORD){
+           if(str.contains(key)){
+              str = str.replaceAll(key,"");
+           }
+        }
+    return str;
+    }
 
     /**
      *获取指定路径下的所有文件
@@ -155,12 +168,5 @@ public  class PublicUtils {
         classArr[0] = JAVA_TYPE.getClass();
         Method method = bean.getClass().getMethod(methodName.toString(), classArr);
         method.invoke(bean, fieldValue.trim());
-    }
-
-    public static void main(String[] args) {
-        File file = new File("C:\\uplaodFile\\86c6adf8270a9563107ffeb03221914b");
-        List<File> list = new ArrayList<>();
-        List<File>  pathList= getAllFile(file,list);
-        System.out.println(pathList);
     }
 }

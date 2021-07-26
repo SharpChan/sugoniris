@@ -142,12 +142,16 @@ public class FileParsingServiceImpl implements FileParsingService {
                         key_flag = true;
                     }
                 }
+
+                Long fileSeq = sequenceMapper.getSeq("file_detail");
+                FileDetailEntity fileDetailEntityfSql = new FileDetailEntity();
+                boolean hasImport = false;
                 //匹配到文件名则进行解析
                 if(key_flag){
                     //数据总函数
                     Integer rowCount = 0;
                     Integer importRowCount = 0;
-                    FileDetailEntity fileDetailEntityfSql = new FileDetailEntity();
+
                     //从文件信息表中获取已有存库的mpp表名
                     String tableName = getMppTableName(userId, fileAttachmentEntity, fileTemplateGroupEntityBean);
                     //先建表再存入数据库，数据库中没有，就是mppp没有创建表。则进行建表
@@ -157,9 +161,7 @@ public class FileParsingServiceImpl implements FileParsingService {
 
                     //进行文件解析
                     //获取文件编号
-                    Long fileSeq = sequenceMapper.getSeq("file_detail");
                     String fileType = "";
-                    boolean hasImport = false;
                     if(file.getName().contains(".csv")) {
                         hasImport = true;
                         fileType = ".csv";
@@ -206,7 +208,10 @@ public class FileParsingServiceImpl implements FileParsingService {
                                             fileParsingFailedEntitySql.setFileTemplateId(fileTemplateGroupEntityBean.getTemplateId());
                                             fileParsingFailedEntitySql.setFileTemplateDetailId(Long.parseLong(entry.getKey()[1]));
                                             fileParsingFailedEntitySql.setContent(rows.get(i).getField(entry.getValue()));
+                                            fileParsingFailedEntitySql.setCaseId(fileAttachmentEntity.getCaseId());
+                                            fileParsingFailedEntitySql.setTableName(tableName);
                                             fileParsingFailedEntitySql.setUserId(userId);
+                                            fileParsingFailedEntitySql.setMark(false);
                                             fileParsingFailedEntityListSql.add(fileParsingFailedEntitySql);
                                             //调到下一行
                                             continue nextRow;
@@ -243,6 +248,18 @@ public class FileParsingServiceImpl implements FileParsingService {
                     fileDetailEntityfSql.setImportRowCount(importRowCount);
                     fileDetailEntityfSql.setRowCount(rowCount);
                     fileDetailEntityfSql.setTableName(tableName);
+                    //把信息存入文件信息表
+                    fileDetailMapper.fileDetailInsert(fileDetailEntityfSql);
+                }
+                //把为不匹配的文件信息入库
+                else{
+                    fileDetailEntityfSql.setId(fileSeq);
+                    fileDetailEntityfSql.setUserId(userId);
+                    fileDetailEntityfSql.setCaseId(fileAttachmentEntity.getCaseId());
+                    fileDetailEntityfSql.setFileAttachmentId(fileAttachmentEntity.getId());
+                    fileDetailEntityfSql.setFileName(file.getName());
+                    fileDetailEntityfSql.setFilePath(file.getAbsolutePath());
+                    fileDetailEntityfSql.setHasImport(hasImport);
                     //把信息存入文件信息表
                     fileDetailMapper.fileDetailInsert(fileDetailEntityfSql);
                 }

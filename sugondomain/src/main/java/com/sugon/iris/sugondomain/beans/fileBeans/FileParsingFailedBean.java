@@ -1,9 +1,7 @@
 package com.sugon.iris.sugondomain.beans.fileBeans;
 
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-
 import java.util.Date;
 
 /**
@@ -34,6 +32,16 @@ public class FileParsingFailedBean {
     private String content;
 
     /**
+     * 案件编号
+     */
+    private Long caseId;
+
+    /**
+     * 表名
+     */
+    private String tableName;
+
+    /**
      *用户id
      */
     private Long userId;
@@ -59,4 +67,9 @@ public class FileParsingFailedBean {
      * 字段id
      */
     private Long fileTemplateDetailId;
+
+    /**
+     *问题处理
+     */
+    private Boolean mark;
 }

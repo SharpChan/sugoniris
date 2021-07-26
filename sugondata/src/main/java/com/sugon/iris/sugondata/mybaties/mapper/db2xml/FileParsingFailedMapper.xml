@@ -8,16 +8,19 @@
         <result column="file_detail_id" property="fileDetailId" jdbcType="BIGINT" />
         <result column="row_number" property="rowNumber" jdbcType="VARCHAR" />
         <result column="content" property="content" jdbcType="BIGINT" />
+        <result column="case_id" property="caseId" jdbcType="BIGINT" />
+        <result column="table_name" property="tableName" jdbcType="VARCHAR" />
         <result column="user_id" property="userId" jdbcType="BIGINT" />
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
         <result column="file_template_id" property="fileTemplateId" jdbcType="BIGINT" />
         <result column="file_template_detail_id" property="fileTemplateDetailId" jdbcType="BIGINT" />
+        <result column="mark" property="mark" jdbcType="TINYINT" />
     </resultMap>
 
     <!--基础字段-->
     <sql id="Base_Column_List" >
-        id,file_detail_id,row_number,content,user_id,create_time,update_time,file_template_id,file_template_detail_id
+        id,file_detail_id,row_number,content,case_id,table_name,user_id,create_time,update_time,file_template_id,file_template_detail_id,mark
     </sql>
 
     <!--表查询-->
@@ -37,6 +40,9 @@
         <if test="userId!=null">
             and user_id = #{userId}
         </if >
+        <if test="mark!=null">
+            and mark = #{mark}
+        </if >
     </select>
 
 
@@ -52,11 +58,14 @@
              #{item.fileDetailId,jdbcType=INTEGER},
              #{item.rowNumber,jdbcType=VARCHAR},
              #{item.content,jdbcType=VARCHAR},
+             #{item.caseId,jdbcType=INTEGER},
+             #{item.tableName,jdbcType=VARCHAR},
              #{item.userId,jdbcType=INTEGER},
              #{item.createTime,jdbcType=TIMESTAMP},
              #{item.updateTime,jdbcType=TIMESTAMP},
              #{item.fileTemplateId,jdbcType=INTEGER},
-             #{item.fileTemplateDetailId,jdbcType=INTEGER}
+             #{item.fileTemplateDetailId,jdbcType=INTEGER},
+             #{item.mark,jdbcType=TINYINT}
              )
           </foreach>
     </insert>

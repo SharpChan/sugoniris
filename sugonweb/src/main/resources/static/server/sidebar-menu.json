@@ -9,11 +9,13 @@
     "sref": "#",
     "icon": "icon-grid",
     "submenu": [
+      {"text": "Buttons",       "sref": "app.importCount", "translate": "sidebar.nav.element.BUTTON_importCount" },
       {"text": "Buttons",       "sref": "app.caseManager", "translate": "sidebar.nav.element.BUTTON_caseManager" },
       {"text": "Buttons",       "sref": "app.fileUpload", "translate": "sidebar.nav.element.BUTTON_fileUpload" },
       {"text": "Buttons",       "sref": "app.fileManager", "translate": "sidebar.nav.element.BUTTON_fileManager" },
       {"text": "Buttons",       "sref": "app.fileTemplate", "translate": "sidebar.nav.element.BUTTON_fileTemplate" },
-      {"text": "Buttons",       "sref": "app.fileTemplateGroup", "translate": "sidebar.nav.element.BUTTON_fileTemplateGroup" }
+      {"text": "Buttons",       "sref": "app.fileTemplateGroup", "translate": "sidebar.nav.element.BUTTON_fileTemplateGroup" },
+      {"text": "Buttons",       "sref": "app.dataAuthority", "translate": "sidebar.nav.element.BUTTON_dataAuthority" }
     ],
     "translate": "sidebar.nav.element.CaseData"
   },

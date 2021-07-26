@@ -13,14 +13,35 @@ public class FileCaseDto extends FileCaseBean {
     List<FileTableDto> fileTableDtoList;
 
     /**
+     * 已导入的数据量
+     */
+    Integer  caseImportRowCount=0;
+
+    /**
+     * 该案件数据总量
+     */
+    Integer caseRowCount=0;
+
+    /**
      * 导入压缩包或文件详细信息
      */
     List<FileAttachmentDto>  fileAttachmentDtoList;
 
     public List<FileAttachmentDto> getFileAttachmentDtoList(){
         if(CollectionUtils.isEmpty(fileAttachmentDtoList)){
-            return new ArrayList<FileAttachmentDto>();
+              this.fileAttachmentDtoList = new ArrayList<>();
         }
-        return fileAttachmentDtoList;
+        return this.fileAttachmentDtoList;
+    }
+
+    public void  rowCount(){
+        if(CollectionUtils.isEmpty(fileAttachmentDtoList)){
+            return;
+        }
+        for(FileAttachmentDto fileAttachmentDto : fileAttachmentDtoList){
+            fileAttachmentDto.setRowCount();
+            caseImportRowCount += fileAttachmentDto.getAttachmentImportRowCount();
+            caseRowCount +=  fileAttachmentDto.getAttachmentImportRowCount();
+        }
     }
 }
