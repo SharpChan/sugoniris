@@ -1,0 +1,43 @@
+<style type="text/css">
+    .panel{
+        border-left:1px solid #ccc;
+        border-right:1px solid #ccc
+    }
+</style>
+
+<div ng-controller="infoSearchController">
+    <div class="panel" style="width: 85%">
+        <div class="panel-heading  topnavbar">
+            <strong style="color: #FFF">查询内容</strong>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped" >
+                <thead>
+                <tr>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in obj">
+                    <td>
+                            <!-- START panel-->
+                        <div id="panelDemo1" class="panel panel-default">
+                                <div ng-class="{'panel-heading-collapsed':panelDemo1}" class="panel-heading">案件编号：{{item.caseNo}}||案件名称：{{item.caseName}}||模板名称：{{item.templateName}}||表名：{{item.tableName}}
+                                    <paneltool tool-collapse="tool-collapse"></paneltool>
+                                </div>
+                                <div collapse="panelDemo1" class="panel-wrapper">
+                                    <div class="panel-body">
+                                        <ul ng-repeat="cell in item.result">
+                                            <li>{{cell}}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="panel-footer">面板脚注</div>
+    </div>
+</div>

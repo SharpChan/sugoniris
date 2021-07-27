@@ -111,8 +111,6 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           url: '/infoSearch',
           title: 'InfoSearch',
           templateUrl: helper.basepath('search/infoSearch.html'),
-          controller:'userRoleController',
-          cache: false,
           resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select','textAngular')
       })
       .state('app.importCount', {
@@ -1228,6 +1226,26 @@ App.service('myservice', function($window,$state,$http) {
     }
 
 });
+
+App.controller("infoSearchController", function ($http,$timeout,$scope,$rootScope,$state,
+                                                      myservice) {
+
+    $scope.query = function () {
+        var url="/search/searchAllTables?condition="+$rootScope.app.searchKey;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    $scope.query();
+
+                                                      });
 
 App.controller("fileImportCountController", function ($http,$timeout,$scope,$state,
                                                 myservice) {
@@ -7193,7 +7211,7 @@ App.controller('AppController',
 
     $scope.search = function () {
         console.log($rootScope.app.searchKey);
-        $state.go('app.search');
+        $state.go('app.infoSearch',{},{reload: true});
     }
 }]);
 
@@ -8170,21 +8188,23 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
 
     $scope.loadSidebarMenu = function() {
 
-        /*
+
         var menuURL="/menu/getSiderBarMenu";
       $http.post(menuURL)
         .success(function(data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
            $scope.menuItems = temp.obj;
-        })*/
+        })
 
+        /*
         var menuJson = 'server/sidebar-menu.json',
             menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
         $http.get(menuURL)
             .success(function(items) {
                 $scope.menuItems = items;
-            })
+            })*/
+
         .error(function(data, status, headers, config) {
           alert('Failure loading menu');
         });

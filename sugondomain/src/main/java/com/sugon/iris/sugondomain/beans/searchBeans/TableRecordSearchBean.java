@@ -2,6 +2,8 @@ package com.sugon.iris.sugondomain.beans.searchBeans;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class TableRecordSearchBean {
 
@@ -28,5 +30,5 @@ public class TableRecordSearchBean {
     /**
      * 查询结果
      */
-    private String result;
+    private List<String> result;
 }

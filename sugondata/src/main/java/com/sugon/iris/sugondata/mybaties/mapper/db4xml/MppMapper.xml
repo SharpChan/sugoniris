@@ -7,5 +7,7 @@
          ${sql}
     </update>
 
-
+    <select id="mppSqlExecForSearch" parameterType="String" resultType="String">
+         ${sql}
+    </select>
 </mapper>

@@ -13,4 +13,6 @@ public interface FileTableMapper {
     List<FileTableEntity> findFileTableList(FileTableEntity fileTableEntity);
 
     Integer deleteFileTableByCaseId(String[] idArr);
+
+    List<FileTableEntity>   findAllFileTablesByUserId(Long userId);
 }
