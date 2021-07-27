@@ -16,7 +16,6 @@ public class FileTemplateDto extends FileTemplateBean {
     private List<FileTemplateDetailDto> fileTemplateDetailDtoList;
 
 
-
     public List<FileTemplateDetailDto> getFileTemplateDetailDtoList(){
         if(CollectionUtils.isEmpty(fileTemplateDetailDtoList)){
             this.fileTemplateDetailDtoList = new ArrayList<FileTemplateDetailDto>();

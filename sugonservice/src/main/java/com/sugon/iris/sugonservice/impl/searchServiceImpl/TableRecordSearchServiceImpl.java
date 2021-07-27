@@ -99,6 +99,9 @@ public class TableRecordSearchServiceImpl implements TableRecordSearchService {
                          unitStr +=") as result from "+fileTableEntity.getTableName()+") a  where 1=1  "+conditionNew;
                          //进行查询
                         List<String>  resultList = mppMapper.mppSqlExecForSearch(unitStr);
+                        if(CollectionUtils.isEmpty(resultList)){
+                             continue;
+                        }
                         //通过caseId获取案件信息
                          FileCaseEntity fileCaseEntity = new FileCaseEntity();
                          fileCaseEntity.setId(fileTableEntity.getCaseId());
@@ -110,6 +113,7 @@ public class TableRecordSearchServiceImpl implements TableRecordSearchService {
                         tableRecordSearchDto.setTemplateName(fileTemplateDto.getTemplateName());
                         tableRecordSearchDto.setResult(resultList);
                         tableRecordSearchDto.setTableName(fileTableEntity.getTableName());
+
                         tableRecordSearchDtoList.add(tableRecordSearchDto);
                         break;
                      }

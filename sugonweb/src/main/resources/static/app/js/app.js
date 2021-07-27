@@ -29,7 +29,7 @@ var App = angular.module('angle', [
     'ui.utils'
   ]);
 
-App.run(["$rootScope", "$state", "$stateParams",  '$window', '$templateCache', function ($rootScope, $state, $stateParams, $window, $templateCache) {
+App.run(["$rootScope", "$state", "$stateParams",  '$window', '$templateCache','$localStorage', function ($rootScope, $state, $stateParams, $window, $templateCache,$localStorage) {
   // Set reference to access them from any scope
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
@@ -64,7 +64,7 @@ App.run(["$rootScope", "$state", "$stateParams",  '$window', '$templateCache', f
     viewAnimation: 'ng-fadeInUp' //淡入淡出
   };
   $rootScope.user = {
-    name:     'John',
+    name:     $localStorage.userName,
     job:      'ng-developer',
     picture:  'app/img/user/02.jpg'
   };
@@ -4264,7 +4264,8 @@ App.controller("checkUserController", function ($http,$timeout,$scope,myservice)
  * Module: access-login.js
  * Demo for login api
  =========================================================*/
-App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore','drawCodaService','myservice', function($scope, $http, $state,$cookieStore,drawCodaService,myservice) {
+App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore','drawCodaService','myservice','$rootScope','$localStorage', function($scope, $http, $state,$cookieStore,drawCodaService,myservice,$rootScope,$localStorage) {
+
     $scope.account = {};
     var code = "";
     var c=document.getElementById('drawCodaCanvas');
@@ -4302,6 +4303,8 @@ App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore
                         })
                     }else{
                         myservice.setCookie("irisEmail",$scope.account.email);
+                        $localStorage.userName=$scope.account.userName;
+                        console.log($localStorage.userName);
                         $state.go('app.dashboard');
                     }
                 }, function(x) {
