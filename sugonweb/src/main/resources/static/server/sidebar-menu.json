@@ -1,5 +1,19 @@
 [
   {
+    "text": "Declare",
+    "heading": "true",
+    "translate": "sidebar.heading.Declare"
+  },
+  {
+    "text": "文件处理",
+    "sref": "#",
+    "icon": "icon-grid",
+    "submenu": [
+      {"text": "Buttons",       "sref": "app.declaration", "translate": "sidebar.nav.element.BUTTON_declaration" }
+    ],
+    "translate": "sidebar.nav.element.declarCenter"
+  },
+  {
     "text": "Data",
     "heading": "true",
     "translate": "sidebar.heading.Data"

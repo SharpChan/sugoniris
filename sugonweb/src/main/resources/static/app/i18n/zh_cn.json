@@ -40,7 +40,8 @@
       "HEADER": "主导航",
       "COMPONENTS": "组件",
       "MORE": "更多",
-      "Data": "数据处理"
+      "Data": "数据处理",
+      "Declare": "流程申报"
     },
     "nav": {
       "DASHBOARD": "仪表盘",
@@ -71,7 +72,9 @@
         "BUTTON_fileTemplateGroup": "模板组",
         "BUTTON_dataAuthority": "数据权限",
         "BUTTON_importCount": "导入统计",
+        "BUTTON_declaration": "操作申报",
         "CaseData": "案件数据",
+        "declarCenter": "申报中心",
         "BUTTON_fileUpload": "文件上传",
         "PRIVILEGE": "权限配置",
         "BUTTON_checkUser": "用户审核",

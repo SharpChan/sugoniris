@@ -27,6 +27,11 @@ public class FileAttachmentDto extends FileAttachmentBean {
    private FileTemplateGroupDto fileTemplateGroupDto;
 
     /**
+     * 申报状态0:未申报；1：已经申报；2：未通过
+     */
+    private String declarationStatus;
+
+    /**
      * 导入文件列表
      */
    private List<FileDetailDto>  fileDetailDtoList;

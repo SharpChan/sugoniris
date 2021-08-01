@@ -54,7 +54,7 @@
                     <tbody>
                     <tr ng-repeat="item in obj">
                         <td align="left">
-                            <input type="checkbox" ng-model="item.checked" ng-change="selectOne(item)" />
+                            <input ng-show="item.declarationStatus == 0 || item.declarationStatus == 2" type="checkbox" ng-model="item.checked" ng-change="selectOne(item)" />
                         </td>
                         <td align="left">{{item.no}}</td>
                         <td align="left">{{item.caseNo}}</td>
@@ -67,9 +67,12 @@
                             </button>
                         </td>
                         <td align="left">
-                            <button type="button" ng-click="deleteOne(item.id)" class="btn btn-sm btn-danger">
+                            <button ng-show="item.declarationStatus == 0 || item.declarationStatus == 2" type="button" ng-click="deleteOne(item.id)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-trash-o"></em>
                             </button>
+                            <span ng-show="item.declarationStatus == 1">
+                                <b>等待删除审核</b>
+                            </span>
                         </td>
                     </tr>
                     </tbody>

@@ -95,7 +95,7 @@
                     <tbody>
                     <tr ng-repeat="item in obj">
                         <td align="center">
-                            <input type="checkbox" ng-model="item.checked" ng-change="selectOne(item)" />
+                            <input ng-show="item.declarationStatus == 0 || item.declarationStatus == 2" type="checkbox" ng-model="item.checked" ng-change="selectOne(item)" />
                         </td>
                         <td align="center">{{item.no}}</td>
                         <td align="center">{{item.caseId}}</td>
@@ -122,9 +122,12 @@
                                 <span ng-show="item.hasImport&&!item.doImport" class="btn btn-sm btn-warning"><em class="fa fa-close"></em></span>
                         </td>
                         <td align="center">
-                                <button type="button" ng-click="deleteOne(item.id)" class="btn btn-sm btn-danger">
+                                <button ng-show="item.declarationStatus == 0 || item.declarationStatus == 2" type="button" ng-click="deleteOne(item.id)" class="btn btn-sm btn-danger">
                                     <em class="fa fa-trash-o"></em>
                                 </button>
+                                <span ng-show="item.declarationStatus == 1">
+                                    <b>等待删除审核</b>
+                                </span>
                         </td>
                     </tr>
                     </tbody>

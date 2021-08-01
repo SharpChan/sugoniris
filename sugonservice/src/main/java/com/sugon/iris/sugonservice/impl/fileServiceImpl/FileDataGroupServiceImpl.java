@@ -1,4 +1,4 @@
-package com.sugon.iris.sugonservice.impl.FileServiceImpl;
+package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileDataGroupMapper;

@@ -55,7 +55,6 @@ public class FileCaseController {
         }catch (Exception e){
             e.printStackTrace();
         }
-
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
             restResult.setMessage("执行失败！");

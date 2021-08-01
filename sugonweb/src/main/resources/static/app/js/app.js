@@ -99,6 +99,20 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         controller: 'AppController',
         resolve: helper.resolveFor('fastclick', 'modernizr', 'icons', 'screenfull', 'animo', 'sparklines', 'slimscroll', 'classyloader', 'toaster', 'whirl')
     })
+      .state('app.declaration', {
+          url: '/declaration',
+          title: 'Declaration',
+          templateUrl: helper.basepath('declare/declaration.html'),
+          controller:'declarationController',
+          cache: false,
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
+      .state('app.declaration.declar', {
+          url: '/declarDetail/:status/:declarName',
+          title: 'DeclarDetail',
+          templateUrl: helper.basepath('declare/declarDetail.html'),
+          resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
       .state('app.userRole', {
           url: '/userRole',
           title: 'UserRole',
@@ -168,7 +182,6 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           controller:'userGroupController',
           cache: false,
           resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
-
       })
       .state('app.userGroup.AddOrModify', {
           url: '/userGroupAddOrModify/:active/:id',
@@ -1227,9 +1240,51 @@ App.service('myservice', function($window,$state,$http) {
 
 });
 
+App.controller("declarationController", function ($http,$timeout,$scope,$state,
+                                                myservice) {
+    //登录和锁定校验
+    myservice.loginLockCheck();
+    $scope.query = function () {
+        var url="/declar/getDeclarInfo";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    $scope.query();
+
+});
+App.controller('declarDetailController', ['$http','$scope', '$stateParams','myservice', function($http,$scope, $stateParams,myservice) {
+    $scope.status = $stateParams.status === 'inbox' ? '' : $stateParams.status;
+    $scope.declarName = $stateParams.declarName === 'inbox' ? '' : $stateParams.declarName;
+
+    $scope.query = function () {
+        var url="/declar/getDeclarDetail?status="+$scope.status;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj =myservice.setSerialNumber(temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    $scope.query();
+
+}]);
+
 App.controller("infoSearchController", function ($http,$timeout,$scope,$rootScope,$state,
                                                       myservice) {
-
+    //登录和锁定校验
+    myservice.loginLockCheck();
     $scope.query = function () {
         var url="/search/searchAllTables?condition="+$rootScope.app.searchKey;
         $http.post(url).success(function(data)
@@ -1245,7 +1300,7 @@ App.controller("infoSearchController", function ($http,$timeout,$scope,$rootScop
     }
     $scope.query();
 
-                                                      });
+});
 
 App.controller("fileImportCountController", function ($http,$timeout,$scope,$state,
                                                 myservice) {
@@ -2748,9 +2803,9 @@ App.controller("caseManagerController", function ($http,$timeout,$scope,
     //单个勾选去勾选
     $scope.selectOne = function (item) {
         if (item.checked) {
-            $scope.selected.push(item.groupId);
+            $scope.selected.push(item.id);
         } else {
-            $scope.selected.splice($scope.selected.indexOf(item.groupId), 1);
+            $scope.selected.splice($scope.selected.indexOf(item.id), 1);
         }
     }
     //全选全去勾选
@@ -2759,12 +2814,12 @@ App.controller("caseManagerController", function ($http,$timeout,$scope,
         if (checked) {
             angular.forEach($scope.obj, function (e) {
                 e.checked = true;
-                $scope.selected.push(e.groupId);
+                $scope.selected.push(e.id);
             })
         } else {
             angular.forEach($scope.obj, function (e) {
                 e.checked = false;
-                $scope.selected.splice($scope.selected.indexOf(e.groupId), 1);
+                $scope.selected.splice($scope.selected.indexOf(e.id), 1);
             })
         }
     }
@@ -2807,6 +2862,9 @@ App.controller("caseManagerController", function ($http,$timeout,$scope,
     }
 
     $scope.query = function () {
+        //清空选择项
+        $scope.selected = [];
+        $scope.checked = false;
         $("#pleaseWait").show();
         var url = "/fileCase/getCases";
         var params = {
@@ -8201,12 +8259,12 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
         })
 
         /*
-        var menuJson = 'server/sidebar-menu.json',
-            menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
-        $http.get(menuURL)
-            .success(function(items) {
-                $scope.menuItems = items;
-            })*/
+              var menuJson = 'server/sidebar-menu.json',
+                  menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
+              $http.get(menuURL)
+                  .success(function(items) {
+                      $scope.menuItems = items;
+                  })*/
 
         .error(function(data, status, headers, config) {
           alert('Failure loading menu');

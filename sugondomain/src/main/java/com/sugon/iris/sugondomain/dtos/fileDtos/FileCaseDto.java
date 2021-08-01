@@ -10,17 +10,24 @@ import java.util.List;
 @Data
 public class FileCaseDto extends FileCaseBean {
 
-    List<FileTableDto> fileTableDtoList;
+   private  List<FileTableDto> fileTableDtoList;
 
     /**
      * 已导入的数据量
      */
-    Integer  caseImportRowCount=0;
+    private Integer  caseImportRowCount=0;
 
     /**
      * 该案件数据总量
      */
-    Integer caseRowCount=0;
+    private Integer caseRowCount=0;
+
+    /**
+     * 申报状态0:未申报；1：已经申报；2：未通过
+     */
+    private String declarationStatus;
+
+
 
     /**
      * 导入压缩包或文件详细信息

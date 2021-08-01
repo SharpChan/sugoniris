@@ -1,0 +1,29 @@
+<div ng-controller="declarDetailController"  class="form-inline">
+   <div style="margin-left:5px;" class="input-group panel">
+      <div class="panel-heading  topnavbar">
+         <strong style="color: #FFF">{{declarName}}:详细列表</strong>
+      </div>
+      <div class="panel-body">
+         <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+            <thead>
+                <tr>
+                   <th>序号</th>
+                   <th>类型</th>
+                    <th>业务编号</th>
+                   <th>申报内容</th>
+                   <th>申报时间</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in obj">
+                    <td align="center" style="width:50px">{{item.no}}</td>
+                    <td align="left" style="width:150px">{{item.typeName}}</td>
+                    <td align="left" style="width:100px">{{item.businessId}}</td>
+                    <td align="left" style="width:300px">{{item.detail}}</td>
+                    <td align="left" style="width:300px">{{item.createTime}}</td>
+                </tr>
+            </tbody>
+         </table>
+      </div>
+   </div>
+</div>

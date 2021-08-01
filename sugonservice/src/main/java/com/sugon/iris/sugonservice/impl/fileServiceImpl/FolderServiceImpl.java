@@ -1,9 +1,10 @@
-package com.sugon.iris.sugonservice.impl.FileServiceImpl;
+package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
 import com.sugon.iris.sugoncommon.SSHRemote.SSHConfig;
 import com.sugon.iris.sugoncommon.SSHRemote.SSHServiceBs;
 import com.sugon.iris.sugoncommon.publicUtils.PublicRuleUtils;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.DeclarMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileAttachmentMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileDetailMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppMapper;
@@ -11,15 +12,21 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.fileBeans.FileInfoBean;
 import com.sugon.iris.sugondomain.beans.system.User;
+import com.sugon.iris.sugondomain.dtos.declarDtos.DeclarationDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileAttachmentDto;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.DeclarationDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileAttachmentEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileCaseEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugondomain.enums.FileType_Enum;
 import com.sugon.iris.sugondomain.enums.Peripheral_Enum;
 import com.sugon.iris.sugonservice.service.FileService.FolderService;
+import com.sugon.iris.sugonservice.service.declarService.DeclarService;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -32,10 +39,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.regex.Pattern;
+
 import com.jcraft.jsch.Session;
 
 @Service
@@ -51,6 +57,8 @@ public class FolderServiceImpl implements FolderService {
 
     private static final String CSV = ".csv";
 
+    private final static String DETAIL = "文件删除:";
+
     @Resource
     private FileAttachmentMapper fileAttachmentMapper;
 
@@ -62,6 +70,12 @@ public class FolderServiceImpl implements FolderService {
 
     @Resource
     private RestTemplate restTemplate;
+
+    @Resource
+    private DeclarService declarServiceImpl;
+
+    @Resource
+    private DeclarMapper declarMapper;
 
 
     //进行数据同步
@@ -256,8 +270,47 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
-    public int deleteFile(User user, String[] idArr, List<Error> errorList) throws Exception {
-        for(String id :idArr ){
+    public int deleteFile(User user, String[] arr, List<Error> errorList) throws Exception {
+        List<String> arrList = new ArrayList<>(Arrays.asList(arr));
+        int j = 0;
+        if(StringUtils.isNotEmpty(PublicUtils.getConfigMap().get("file_delete_time"))) {
+            String time = PublicUtils.getConfigMap().get("case_delete_time").trim().replaceAll("^\\s*$", "");
+            Pattern pattern = Pattern.compile("^-?[0-9]+");
+            if (StringUtils.isNotEmpty(time) && pattern.matcher(time).matches()) {
+                List<DeclarationDetailDto> declarationDetailDtoList = new ArrayList<>();
+                for (Iterator<String> it = arrList.iterator(); it.hasNext();) {
+                    String   id = it.next();
+                    FileAttachmentEntity fleAttachmentEntity = new FileAttachmentEntity();
+                    fleAttachmentEntity.setId(Long.parseLong(id));
+                    fleAttachmentEntity.setUserId(user.getId());
+                    //查询到文件服务器的文件路径进行删除
+                    FileAttachmentEntity fileAttachmentEntity = fileAttachmentMapper.selectFileAttachmentList(fleAttachmentEntity).get(0);
+                    Long createTime = fileAttachmentEntity.getCreateTime().getTime();
+                    Long nowTime = new Date().getTime();
+
+                    if ((nowTime - createTime) / 1000 / 60 / 60 >= Long.parseLong(time)) {
+                        DeclarationDetailDto declarationDetailDto = new DeclarationDetailDto();
+                        declarationDetailDto.setDetail(DETAIL + fileAttachmentEntity.getFileName());
+                        declarationDetailDto.setOwnerUserId(user.getId());
+                        declarationDetailDto.setStatus(PublicRuleUtils.ZERO);
+                        declarationDetailDto.setType(PublicRuleUtils.TWO);
+                        declarationDetailDto.setBusinessId(fileAttachmentEntity.getId());
+                        declarationDetailDtoList.add(declarationDetailDto);
+                        //删除数组中对应的值
+                        it.remove();
+                        j++;
+                    }
+                }
+                declarServiceImpl.saveDeclaration(user, declarationDetailDtoList, errorList);
+                if (arrList.size() == 0) {
+                    return j;
+                }
+            }
+        }
+        arr  = (String[])arrList.toArray(new String[arrList.size()]);
+
+        int i = 0;
+        for(String id :arr ){
             FileAttachmentEntity fleAttachmentEntity = new FileAttachmentEntity();
             fleAttachmentEntity.setId(Long.parseLong(id));
             fleAttachmentEntity.setUserId(user.getId());
@@ -289,7 +342,7 @@ public class FolderServiceImpl implements FolderService {
             fileDetailMapper.deleteFileDetailByFileAttachmentId(fleAttachmentEntity.getId());
             fileAttachmentMapper.deleteFileAttachmentById(fleAttachmentEntity);
         }
-        return 0;
+        return i+j;
     }
 
     @Override
@@ -300,6 +353,19 @@ public class FolderServiceImpl implements FolderService {
         List<FileAttachmentEntity> fileAttachmentEntityList = fileAttachmentMapper.selectFileAttachmentList(fleAttachmentEntity);
         for(FileAttachmentEntity fileAttachmentEntity: fileAttachmentEntityList){
             FileAttachmentDto fileAttachmentDtoBean = new FileAttachmentDto();
+            //查询申报状态
+            DeclarationDetailEntity declarationDetailEntitySql = new DeclarationDetailEntity();
+            declarationDetailEntitySql.setType(PublicRuleUtils.TWO);
+            declarationDetailEntitySql.setBusinessId(fileAttachmentEntity.getId());
+            List<DeclarationDetailEntity> declarationDetailEntityList = declarMapper.findDeclarationDetail(declarationDetailEntitySql);
+            if(CollectionUtils.isEmpty(declarationDetailEntityList)){
+                fileAttachmentDtoBean.setDeclarationStatus(PublicRuleUtils.ZERO);
+            }else if(PublicRuleUtils.ZERO.equals(declarationDetailEntityList.get(0).getStatus())){
+                fileAttachmentDtoBean.setDeclarationStatus(PublicRuleUtils.ONE);
+            }else if(PublicRuleUtils.TWO.equals(declarationDetailEntityList.get(0).getStatus())){
+                fileAttachmentDtoBean.setDeclarationStatus(PublicRuleUtils.TWO);
+            }
+
             PublicUtils.trans(fileAttachmentEntity,fileAttachmentDtoBean);
             FileAttachmentDtoList.add(fileAttachmentDtoBean);
         }
