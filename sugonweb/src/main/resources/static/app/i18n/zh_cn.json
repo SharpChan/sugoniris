@@ -36,7 +36,7 @@
   "sidebar": {
     "WELCOME": "欢迎",
     "heading": {
-      "SYSTEM": "系统配置",
+      "SYSTEM": "后台业务",
       "HEADER": "主导航",
       "COMPONENTS": "组件",
       "MORE": "更多",
@@ -82,7 +82,9 @@
         "BUTTON_userRole": "角色",
         "BUTTON_pageRegister": "页面注册",
         "SYSTEMCONFIG":"系统参数",
+        "declarCkeck":"申报审核",
         "BUTTON_config":"参数配置",
+        "BUTTON_businessCheck":"业务审核",
         "BUTTON_dictionary":"字典信息"
       },
       "form": {

@@ -113,6 +113,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('declare/declarDetail.html'),
           resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
+      .state('app.businessCheck', {
+          url: '/businessCheck',
+          title: 'BusinessCheck',
+          templateUrl: helper.basepath('declare/businessCheck.html'),
+          resolve: helper.resolveFor('ngWig','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
       .state('app.userRole', {
           url: '/userRole',
           title: 'UserRole',
@@ -1258,6 +1264,26 @@ App.controller("declarationController", function ($http,$timeout,$scope,$state,
         });
     }
     $scope.query();
+
+});
+App.controller("businessCheckController", function ($http,$timeout,$scope,$state,
+                                                  myservice) {
+    //登录和锁定校验
+    myservice.loginLockCheck();
+    $scope.query = function () {
+        var url="/declar/getDeclarInfo";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    //$scope.query();
 
 });
 App.controller('declarDetailController', ['$http','$scope', '$stateParams','myservice', function($http,$scope, $stateParams,myservice) {
