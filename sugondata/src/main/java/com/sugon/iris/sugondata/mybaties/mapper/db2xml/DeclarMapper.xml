@@ -71,6 +71,44 @@
         order by id desc
     </select>
 
+    <!--表查询-->
+    <select id="findDeclarationDetail4Check"  resultMap="DeclarationResultMap" >
+        SELECT
+         a.id,
+         a.type,
+         a.detail,
+         a.owner_user_id,
+         a.status,
+         a.check_user_id,
+         a.create_time,
+         a.business_id,
+        (select b.username from sys_user b where b.id = a.owner_user_id) as ownerUserName,
+        (select b.username from sys_user b where b.id = a.check_user_id) as checkUserName
+        FROM
+        declaration a
+        where
+        1=1
+        <if test="id!=null">
+            and a.id = #{id}
+        </if >
+        <if test="type!=null and type != ''">
+            and a.type = #{type}
+        </if >
+        <if test="ownerUserId!=null">
+            and a.owner_user_id = #{ownerUserId}
+        </if >
+        <if test="status!=null and status != ''">
+            and a.status = #{status}
+        </if >
+        <if test="checkUserId!=null">
+            and a.check_user_id = #{checkUserId}
+        </if >
+        <if test="businessId!=null">
+            and a.business_id = #{businessId}
+        </if >
+        order by a.id desc
+    </select>
+
     <!--批量插入-->
     <insert id="saveDeclarationDetail"  useGeneratedKeys="true" keyProperty="id">
         insert into declaration

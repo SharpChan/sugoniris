@@ -67,4 +67,24 @@ public class DeclarController {
         }
         return restResult;
     }
+
+    @PostMapping("/getAllDeclarDetail")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<List<DeclarationDetailDto>> getAllDeclarDetail(){
+        RestResult<List<DeclarationDetailDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(declarServiceImpl.getAllDeclarDetail(errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
 }

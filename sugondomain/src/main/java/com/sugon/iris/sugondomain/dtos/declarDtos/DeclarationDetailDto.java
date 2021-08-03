@@ -12,4 +12,9 @@ public class DeclarationDetailDto extends DeclarationDetailBean {
      */
     private String typeName;
 
+    /**
+     * 审核状态 0：未审核；1：审核通过；2：审核不通过；
+     */
+    private String  statusName;
+
 }

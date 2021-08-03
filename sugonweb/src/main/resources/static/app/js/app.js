@@ -1270,20 +1270,21 @@ App.controller("businessCheckController", function ($http,$timeout,$scope,$state
                                                   myservice) {
     //登录和锁定校验
     myservice.loginLockCheck();
+    $("#pleaseWait").hide();
     $scope.query = function () {
-        var url="/declar/getDeclarInfo";
+        var url="/declar/getAllDeclarDetail";
         $http.post(url).success(function(data)
         {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
-            $scope.obj = temp.obj;
+            $scope.obj =myservice.setSerialNumber(temp.obj);
         }).error(function(data)
         {
             alert("会话已经断开或者检查网络是否正常！");
         });
     }
-    //$scope.query();
+    $scope.query();
 
 });
 App.controller('declarDetailController', ['$http','$scope', '$stateParams','myservice', function($http,$scope, $stateParams,myservice) {

@@ -27,6 +27,11 @@ public class DeclarationDetailBean {
     private Long ownerUserId;
 
     /**
+     *申报者id
+     */
+    private String ownerUserName;
+
+    /**
      *审核状态 0：未审核；1：审核通过；2：审核不通过；
      */
     private String status;
@@ -35,6 +40,11 @@ public class DeclarationDetailBean {
      *审核人id
      */
     private Long checkUserId;
+
+    /**
+     *审核人名称
+     */
+    private String checkUserName;
 
     /**
      * 创建时间

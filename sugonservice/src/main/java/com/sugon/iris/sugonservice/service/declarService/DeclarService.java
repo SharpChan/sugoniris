@@ -12,5 +12,7 @@ public interface DeclarService {
 
    List<DeclarationDetailDto> getDeclarDetail(Long userId,String status, List<Error> errorList) throws IllegalAccessException;
 
+   List<DeclarationDetailDto> getAllDeclarDetail(List<Error> errorList) throws IllegalAccessException;
+
    int  saveDeclaration(User user, List<DeclarationDetailDto> declarationDetailDtoList, List<Error> errorList)throws IllegalAccessException;
 }

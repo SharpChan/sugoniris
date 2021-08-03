@@ -11,4 +11,6 @@ public interface DeclarMapper{
   int saveDeclarationDetail(List<DeclarationDetailEntity>  declarationDetailEntityList);
 
   List<DeclarationDetailEntity>  findDeclarationDetail(DeclarationDetailEntity declarationDetailEntity);
+
+  List<DeclarationDetailEntity> findDeclarationDetail4Check(DeclarationDetailEntity declarationDetailEntity);
 }

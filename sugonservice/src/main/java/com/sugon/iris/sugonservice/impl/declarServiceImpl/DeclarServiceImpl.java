@@ -76,6 +76,38 @@ public class DeclarServiceImpl implements DeclarService {
     }
 
     @Override
+    public List<DeclarationDetailDto> getAllDeclarDetail(List<Error> errorList) throws IllegalAccessException {
+        List<DeclarationDetailEntity> declarationDetailEntityList = null;
+        DeclarationDetailEntity declarationDetailEntitySql = new DeclarationDetailEntity();
+        try {
+            declarationDetailEntityList = declarMapper.findDeclarationDetail4Check(declarationDetailEntitySql);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表declaration出错",e.toString()));
+        }
+        List<DeclarationDetailDto> declarationDetailDtoList = new ArrayList<>();
+        for(DeclarationDetailEntity declarationDetailEntity : declarationDetailEntityList){
+            DeclarationDetailDto declarationDetailDto = new DeclarationDetailDto();
+            if( PublicRuleUtils.ONE.equals(declarationDetailEntity.getType()) ) {
+                declarationDetailDto.setTypeName("删除案件");
+            }else if( PublicRuleUtils.TWO.equals(declarationDetailEntity.getType()) ){
+                declarationDetailDto.setTypeName("删除文件");
+            }
+
+            if( PublicRuleUtils.ZERO.equals(declarationDetailEntity.getStatus()) ) {
+                declarationDetailDto.setStatusName("未审核");;
+            }else if( PublicRuleUtils.ONE.equals(declarationDetailEntity.getStatus()) ){
+                declarationDetailDto.setStatusName("审核通过");
+            }else if( PublicRuleUtils.TWO.equals(declarationDetailEntity.getStatus()) ){
+                declarationDetailDto.setStatusName("审核不通过");
+            }
+            declarationDetailDtoList.add(PublicUtils.trans(declarationDetailEntity,declarationDetailDto));
+
+        }
+        return declarationDetailDtoList;
+    }
+
+    @Override
     public int saveDeclaration(User user, List<DeclarationDetailDto> declarationDetailDtoList, List<Error> errorList) throws IllegalAccessException {
         List<DeclarationDetailEntity> declarationDetailEntityList = new ArrayList<>();
         for(DeclarationDetailDto declarationDetailDto : declarationDetailDtoList){
