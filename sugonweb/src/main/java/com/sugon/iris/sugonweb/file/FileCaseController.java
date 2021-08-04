@@ -92,7 +92,7 @@ public class FileCaseController {
         List<Error> errorList = new ArrayList<>();
         String[] selectedArr = selected.split(",");
         try {
-            restResult.setObj(fileCaseServiceImpl.deleteCase(user,selectedArr,errorList));
+            restResult.setObj(fileCaseServiceImpl.deleteCase(user,selectedArr,true,errorList));
         }catch(Exception e){
             e.printStackTrace();
         }

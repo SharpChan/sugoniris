@@ -24,6 +24,8 @@ public class DeclarController {
 
     private static final String FAILED = "FAILED";
 
+    private static final String UNDEFINED = "undefined";
+
     @Resource
     private DeclarServiceImpl declarServiceImpl;
 
@@ -70,11 +72,14 @@ public class DeclarController {
 
     @PostMapping("/getAllDeclarDetail")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<List<DeclarationDetailDto>> getAllDeclarDetail(){
+    public RestResult<List<DeclarationDetailDto>> getAllDeclarDetail(@RequestParam(value = "declarType") String declarType,@RequestParam(value = "declarStatus") String declarStatus){
         RestResult<List<DeclarationDetailDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
+        DeclarationDetailDto declarationDetail = new DeclarationDetailDto();
+        declarationDetail.setStatus(UNDEFINED.equals(declarStatus) ? null : declarStatus);
+        declarationDetail.setType(UNDEFINED.equals(declarType)? null : declarType);
         try{
-            restResult.setObj(declarServiceImpl.getAllDeclarDetail(errorList));
+            restResult.setObj(declarServiceImpl.getAllDeclarDetail(declarationDetail,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -87,4 +92,71 @@ public class DeclarController {
         }
         return restResult;
     }
+
+    @RequestMapping("/deleteDeclarDetail")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> deleteDeclarDetail(@RequestParam(value = "selected") String selected) throws Exception {
+
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        String[] selectedArr = selected.split(",");
+        try {
+            restResult.setObj(declarServiceImpl.deleteDeclarDetail(selectedArr,errorList));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @RequestMapping("/failedDeclar")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> failedDeclar(@CurrentUser User user,@RequestParam(value = "selected") String selected) throws Exception {
+
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        String[] selectedArr = selected.split(",");
+        try {
+            restResult.setObj(declarServiceImpl.failedDeclar(user.getId(),selectedArr,errorList));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @RequestMapping("/approveDeclar")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> approveDeclar(@CurrentUser User user,@RequestParam(value = "selected") String selected) throws Exception {
+
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        String[] selectedArr = selected.split(",");
+        try {
+            restResult.setObj(declarServiceImpl.approveDeclar(user.getId(),selectedArr,errorList));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
 }

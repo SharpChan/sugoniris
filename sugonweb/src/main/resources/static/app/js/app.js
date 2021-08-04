@@ -1272,7 +1272,7 @@ App.controller("businessCheckController", function ($http,$timeout,$scope,$state
     myservice.loginLockCheck();
     $("#pleaseWait").hide();
     $scope.query = function () {
-        var url="/declar/getAllDeclarDetail";
+        var url="/declar/getAllDeclarDetail?declarType="+$scope.selectedOptions1+"&declarStatus="+$scope.selectedOptions2;
         $http.post(url).success(function(data)
         {
             var jsonString = angular.toJson(data);
@@ -1286,6 +1286,195 @@ App.controller("businessCheckController", function ($http,$timeout,$scope,$state
     }
     $scope.query();
 
+    //已选择的文件
+    $scope.selected = [];
+
+    //label:要赋值的标签，dic_group：字典组名称
+    loadDictionary1 = function(){
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"declarType";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.sites1 = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    loadDictionary2 = function(){
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"declarStatus";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.sites2 = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    loadDictionary1();
+    loadDictionary2();
+
+    $scope.selectOne = function (item) {
+        if (item.checked) {
+            $scope.selected.push(item.id);
+        }else{
+            $scope.selected.splice($scope.selected.indexOf(item.id),1);
+        }
+    }
+
+    $scope.selectAll = function(checked){
+        $scope.selected = [];
+        if(checked){
+            angular.forEach($scope.obj,function(e){
+                e.checked = true;
+                $scope.selected.push(e.id);
+            })
+        }else{
+            angular.forEach($scope.obj,function(e){
+                e.checked = false;
+                $scope.selected.splice($scope.selected.indexOf(e.id),1);
+            })
+        }
+    }
+
+    $scope.deleteOne = function (id) {
+        var url = "/declar/deleteDeclarDetail?selected="+id+",";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.failedOne = function (id) {
+        var url = "/declar/failedDeclar?selected="+id+",";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.approveOne = function (id) {
+        var url = "/declar/approveDeclar?selected="+id+",";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.deleteSelected = function () {
+        if($scope.selected.length == 0){
+            alert("请先勾选");
+            return;
+        }
+        var msg = "您真的确定要删除吗？\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+        var url = "/declar/deleteDeclarDetail?selected="+$scope.selected;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.failedSelected = function () {
+        if($scope.selected.length == 0){
+            alert("请先勾选");
+            return;
+        }
+        var msg = "您真的确定要删除吗？\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+        var url = "/declar/failedDeclar?selected="+$scope.selected;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.approveSelected = function () {
+        if($scope.selected.length == 0){
+            alert("请先勾选");
+            return;
+        }
+        var msg = "您真的确定要删除吗？\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+        var url = "/declar/approveDeclar?selected="+$scope.selected;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
 });
 App.controller('declarDetailController', ['$http','$scope', '$stateParams','myservice', function($http,$scope, $stateParams,myservice) {
     $scope.status = $stateParams.status === 'inbox' ? '' : $stateParams.status;

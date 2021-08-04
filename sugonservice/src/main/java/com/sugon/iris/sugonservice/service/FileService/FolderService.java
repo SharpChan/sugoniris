@@ -19,7 +19,7 @@ public interface FolderService {
     int uploadFile(User user, List<MultipartFile> files, Long caseId, List<Error> errorList) throws Exception;
 
     //删除文件
-    int deleteFile(User user, String[] idArr, List<Error> errorList) throws Exception;
+    int deleteFile(User user, String[] idArr,boolean flag, List<Error> errorList) throws Exception;
 
     //查询文件信息
     List<FileAttachmentDto> findFileAttachmentList(FileAttachmentDto fileAttachmentDto , List<Error> errorList) throws IllegalAccessException;

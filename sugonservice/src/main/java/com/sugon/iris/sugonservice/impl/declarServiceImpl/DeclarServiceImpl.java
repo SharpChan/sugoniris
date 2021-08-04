@@ -10,6 +10,8 @@ import com.sugon.iris.sugondomain.dtos.declarDtos.DeclarationDetailDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.DeclarInfoBeanEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.DeclarationDetailEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
+import com.sugon.iris.sugonservice.service.FileService.FileCaseService;
+import com.sugon.iris.sugonservice.service.FileService.FolderService;
 import com.sugon.iris.sugonservice.service.declarService.DeclarService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,6 +24,12 @@ public class DeclarServiceImpl implements DeclarService {
 
     @Resource
     private DeclarMapper declarMapper;
+
+    @Resource
+    private FileCaseService fileCaseServiceImpl;
+
+    @Resource
+    private FolderService folderServiceImpl;
 
     @Override
     public List<DeclarInfoDto> getDeclarInfo(Long userId, List<Error> errorList) throws IllegalAccessException {
@@ -76,9 +84,11 @@ public class DeclarServiceImpl implements DeclarService {
     }
 
     @Override
-    public List<DeclarationDetailDto> getAllDeclarDetail(List<Error> errorList) throws IllegalAccessException {
+    public List<DeclarationDetailDto> getAllDeclarDetail(DeclarationDetailDto declarationDetail,List<Error> errorList) throws IllegalAccessException {
         List<DeclarationDetailEntity> declarationDetailEntityList = null;
         DeclarationDetailEntity declarationDetailEntitySql = new DeclarationDetailEntity();
+        declarationDetailEntitySql.setType(declarationDetail.getType());
+        declarationDetailEntitySql.setStatus(declarationDetail.getStatus());
         try {
             declarationDetailEntityList = declarMapper.findDeclarationDetail4Check(declarationDetailEntitySql);
         }catch (Exception e){
@@ -117,5 +127,57 @@ public class DeclarServiceImpl implements DeclarService {
             declarationDetailEntityList.add(declarationDetailEntity);
         }
         return declarMapper.saveDeclarationDetail(declarationDetailEntityList);
+    }
+
+    @Override
+    public int deleteDeclarDetail(String[] arr, List<Error> errorList) {
+        int i=0;
+        try {
+            i = declarMapper.deleteDeclarationDetail(arr);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表declaration出错",e.toString()));
+        }
+        return i;
+    }
+
+    @Override
+    public int failedDeclar(Long userId,String[] arr, List<Error> errorList) {
+        int i=0;
+        try {
+            i = declarMapper.updateDeclaration(userId, "2", arr);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"修改表declaration出错",e.toString()));
+        }
+        return   i;
+    }
+
+    @Override
+    public int approveDeclar(Long userId, String[] arr, List<Error> errorList) throws Exception {
+        int i = 0 ;
+        //通过id获取申报信息
+        for(String id : arr){
+            DeclarationDetailEntity declarationDetailEntity = new DeclarationDetailEntity();
+            declarationDetailEntity.setId(Long.parseLong(id));
+            declarationDetailEntity = declarMapper.findDeclarationDetail(declarationDetailEntity).get(0);
+            String[] idArr = {declarationDetailEntity.getBusinessId()+""};
+            //案件删除
+            if(PublicRuleUtils.ONE.equals(declarationDetailEntity.getType())){
+                User user = new User();
+                user.setId(declarationDetailEntity.getOwnerUserId());
+                fileCaseServiceImpl.deleteCase(user,idArr,false,errorList);
+            }
+            //文件删除
+            if(PublicRuleUtils.TWO.equals(declarationDetailEntity.getType())){
+                User user = new User();
+                user.setId(declarationDetailEntity.getOwnerUserId());
+                folderServiceImpl.deleteFile(user,idArr,false,errorList);
+            }
+
+            declarMapper.updateDeclaration(userId, "1", arr);
+            i++;
+        }
+        return i;
     }
 }

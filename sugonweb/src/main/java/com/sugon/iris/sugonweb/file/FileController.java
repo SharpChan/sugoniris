@@ -112,7 +112,7 @@ public class FileController {
         List<Error> errorList = new ArrayList<>();
         String[] selectedArr = selected.split(",");
         try {
-            restResult.setObj(folderServiceImpl.deleteFile(user,selectedArr,errorList));
+            restResult.setObj(folderServiceImpl.deleteFile(user,selectedArr,true,errorList));
         }catch(Exception e){
             e.printStackTrace();
         }

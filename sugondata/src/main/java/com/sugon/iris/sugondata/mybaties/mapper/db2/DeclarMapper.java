@@ -13,4 +13,8 @@ public interface DeclarMapper{
   List<DeclarationDetailEntity>  findDeclarationDetail(DeclarationDetailEntity declarationDetailEntity);
 
   List<DeclarationDetailEntity> findDeclarationDetail4Check(DeclarationDetailEntity declarationDetailEntity);
+
+  int  deleteDeclarationDetail(String[] ids);
+
+  int  updateDeclaration(Long userId,String status,String[] ids);
 }

@@ -127,4 +127,32 @@
              )
         </foreach>
     </insert>
+
+    <!--删除-->
+    <delete id="deleteDeclarationDetail">
+        DELETE
+        FROM
+        declaration
+        <where>
+            id in (
+            <foreach collection="ids" item="item" index="i" separator=",">
+                #{item}
+            </foreach>
+            )
+        </where>
+    </delete>
+
+
+    <update id="updateDeclaration">
+        update declaration
+        set  status = #{status},check_user_id=#{userId}
+        <where>
+            id in (
+            <foreach collection="ids" item="item" index="i" separator=",">
+                #{item}
+            </foreach>
+            )
+        </where>
+    </update>
+
 </mapper>

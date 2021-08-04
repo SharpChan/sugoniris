@@ -270,10 +270,10 @@ public class FolderServiceImpl implements FolderService {
     }
 
     @Override
-    public int deleteFile(User user, String[] arr, List<Error> errorList) throws Exception {
+    public int deleteFile(User user, String[] arr,boolean flag ,List<Error> errorList) throws Exception {
         List<String> arrList = new ArrayList<>(Arrays.asList(arr));
         int j = 0;
-        if(StringUtils.isNotEmpty(PublicUtils.getConfigMap().get("file_delete_time"))) {
+        if(flag && StringUtils.isNotEmpty(PublicUtils.getConfigMap().get("file_delete_time"))) {
             String time = PublicUtils.getConfigMap().get("case_delete_time").trim().replaceAll("^\\s*$", "");
             Pattern pattern = Pattern.compile("^-?[0-9]+");
             if (StringUtils.isNotEmpty(time) && pattern.matcher(time).matches()) {

@@ -114,11 +114,11 @@ public class FileCaseServiceImpl implements FileCaseService {
     }
 
     @Override
-    public Integer deleteCase(User user,String[] arr,List<Error> errorList) throws Exception {
+    public Integer deleteCase(User user,String[] arr,boolean flag,List<Error> errorList) throws IllegalAccessException {
         //对超过一定时间的案件删除，走申报流程
         List<String> arrList = new ArrayList<>(Arrays.asList(arr));
         int j = 0;
-        if(StringUtils.isNotEmpty(PublicUtils.getConfigMap().get("case_delete_time"))) {
+        if(flag && StringUtils.isNotEmpty(PublicUtils.getConfigMap().get("case_delete_time"))) {
             String time = PublicUtils.getConfigMap().get("case_delete_time").trim().replaceAll("^\\s*$", "");
             Pattern pattern = Pattern.compile("^-?[0-9]+");
             if (StringUtils.isNotEmpty(time) && pattern.matcher(time).matches()) {
@@ -168,7 +168,7 @@ public class FileCaseServiceImpl implements FileCaseService {
         }
         try {
             if (!CollectionUtils.isEmpty(fileAttachmentIdList)) {
-                folderServiceImpl.deleteFile(user, (String[]) fileAttachmentIdList.toArray(new String[fileAttachmentIdList.size()]), errorList);
+                folderServiceImpl.deleteFile(user, (String[]) fileAttachmentIdList.toArray(new String[fileAttachmentIdList.size()]),false,errorList);
             }
         }catch (Exception e){
             e.printStackTrace();

@@ -13,8 +13,8 @@
             </div>
             <div align="right" style="margin-top:-30px;">
                 <input type="button" value="查询" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="query();" />
-                <input type="button" value="审核通过" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="approve();" />
-                <input type="button" value="审核不通过" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="failed();" />
+                <input type="button" value="审核通过" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="approveSelected();" />
+                <input type="button" value="审核不通过" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="failedSelected();" />
                 <input type="button" value="删除" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="deleteSelected();" />
 
             </div>
@@ -24,14 +24,13 @@
             <form class="bs-example bs-example-form" role="form">
                 <div class="form-inline">
                     <div class="input-group" align="left"  style=" z-index: 9999">
-                        <!--<input type="text" placeholder="是否解压" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control" ng-model="hasDecompress">-->
                         <div class="form-group mb">
                             <div class="col-sm-4">
                                 <div class="input-group mb">
                                     <span class="input-group-addon">申报类型</span>
                                     <!-- this uses fixed width to avoid expand outside the group container-->
                                     <select  ng-model="selectedOptions1" width="'150px'" >
-                                        <option  value="" >---请选择---</option>
+                                        <option  value="" >全部</option>
                                         <option ng-repeat="site in sites1" value="{{site.value}}">{{site.dicShow}}</option>
                                     </select>
                                 </div>
@@ -46,7 +45,7 @@
                                     <span class="input-group-addon">审核状态</span>
                                     <!-- this uses fixed width to avoid expand outside the group container-->
                                     <select  ng-model="selectedOptions2" width="'150px'" >
-                                        <option  value="" >---请选择---</option>
+                                        <option  value="" >全部</option>
                                         <option ng-repeat="site in sites2" value="{{site.value}}">{{site.dicShow}}</option>
 
                                     </select>
@@ -99,12 +98,12 @@
                             <td align="center">{{item.detail}}</td>
                             <td align="center">{{item.createTime}}</td>
                             <td align="center">
-                                <button type="button" ng-click="approve(item.id)" class="btn btn-sm btn-primary">
+                                <button type="button" ng-click="approveOne(item.id)" class="btn btn-sm btn-primary">
                                     <em class="fa fa-check"></em>
                                 </button>
                             </td>
                             <td align="center">
-                                <button type="button" ng-click="failed(item.id)" class="btn btn-sm btn-warning">
+                                <button type="button" ng-click="failedOne(item.id)" class="btn btn-sm btn-warning">
                                     <em class="fa fa-close"></em>
                                 </button>
                             </td>

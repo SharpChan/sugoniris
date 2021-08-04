@@ -12,7 +12,13 @@ public interface DeclarService {
 
    List<DeclarationDetailDto> getDeclarDetail(Long userId,String status, List<Error> errorList) throws IllegalAccessException;
 
-   List<DeclarationDetailDto> getAllDeclarDetail(List<Error> errorList) throws IllegalAccessException;
+   List<DeclarationDetailDto> getAllDeclarDetail(DeclarationDetailDto declarationDetailDto,List<Error> errorList) throws IllegalAccessException;
 
    int  saveDeclaration(User user, List<DeclarationDetailDto> declarationDetailDtoList, List<Error> errorList)throws IllegalAccessException;
+
+   int deleteDeclarDetail(String[] arr,List<Error> errorList);
+
+   int failedDeclar(Long userId,String[] arr,List<Error> errorList);
+
+   int approveDeclar(Long userId,String[] arr,List<Error> errorList) throws Exception;
 }
