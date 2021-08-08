@@ -4,10 +4,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableRedisHttpSession
 @ServletComponentScan
+//@EnableNeo4jRepositories("com.sugon.iris.sugondata.neo4j")
+//@EnableTransactionManagement
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class},
                        scanBasePackages = {"com.sugon.iris.sugonservice",
                                            "com.sugon.iris.sugondata",

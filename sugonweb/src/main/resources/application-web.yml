@@ -16,6 +16,11 @@ spring:
      multipart:
         max-file-size: 2048MB
         max-request-size: 4000MB
+  data:
+    neo4j:
+      uri: bolt://192.168.217.137:7687
+      username: neo4j
+      password: neo4j
 
 server:
   port: 8090
