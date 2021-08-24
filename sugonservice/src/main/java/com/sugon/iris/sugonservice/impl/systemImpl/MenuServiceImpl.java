@@ -7,6 +7,7 @@ import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.MenuEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.systemService.MenuService;
+import com.sugon.iris.sugonservice.service.systemService.TranslateService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
@@ -17,6 +18,9 @@ public class MenuServiceImpl implements MenuService {
     @Resource
     private MenuServiceDao menuServiceDaoImpl;
 
+    @Resource
+    private TranslateService translateServiceImpl;
+
     @Override
     public Integer saveMenu(MenuDto menuDto, List<Error> errorList) throws IllegalAccessException {
         if(null == menuDto.getFatherId()){
@@ -26,6 +30,7 @@ public class MenuServiceImpl implements MenuService {
         MenuEntity menuEntity = new MenuEntity();
         PublicUtils.trans(menuDto,menuEntity);
         i=menuServiceDaoImpl.insertMenu(menuEntity,errorList);
+        translateServiceImpl.addTranslate(menuDto.getTranslate(),menuEntity.getId(),"zh_cn",menuDto.getName(),errorList);
         return i;
     }
 
@@ -237,14 +242,17 @@ public class MenuServiceImpl implements MenuService {
     public Integer modifyMenu(MenuDto menuDto, List<Error> errorList) throws IllegalAccessException {
         MenuEntity menuEntity = new MenuEntity();
         PublicUtils.trans(menuDto,menuEntity);
+        //获取之前的翻译看有没有发生改变，没发生改变不修改
+        if(!menuDto.getTranslate().equals(menuServiceDaoImpl.getMenuInfos(menuEntity,errorList).get(0).getTranslate())){
+            translateServiceImpl.updateTranslate(menuDto.getTranslate(),menuDto.getId(),"zh_cn",menuDto.getName(),errorList);
+        }
         return menuServiceDaoImpl.updateMenu(menuEntity,errorList);
     }
 
     @Override
     public Integer deleteMenu(Long id, List<Error> errorList) throws IllegalAccessException {
-
+        translateServiceImpl.deleteTranslate(id,"zh_cn",errorList);
         return menuServiceDaoImpl.deleteMenu(id,errorList);
-
     }
 
     private void menuSort(List<MenuDto> menuDtolist) {

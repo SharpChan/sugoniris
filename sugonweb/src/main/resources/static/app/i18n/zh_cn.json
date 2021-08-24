@@ -41,7 +41,8 @@
       "COMPONENTS": "组件",
       "MORE": "更多",
       "Data": "数据处理",
-      "Declare": "流程申报"
+      "Declare": "流程申报",
+      "Neo4j": "关系图谱"
     },
     "nav": {
       "DASHBOARD": "仪表盘",
@@ -74,6 +75,9 @@
         "BUTTON_importCount": "导入统计",
         "BUTTON_declaration": "操作申报",
         "CaseData": "案件数据",
+        "Neo4jIframe": "图谱模型",
+        "Neo4jModel1": "图谱模型一",
+        "Neo4jModel2": "图谱模型二",
         "declarCenter": "申报中心",
         "BUTTON_fileUpload": "文件上传",
         "PRIVILEGE": "权限配置",

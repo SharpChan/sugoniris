@@ -107,6 +107,20 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           cache: false,
           resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
+      .state('app.neo4jModel1', {
+          url: '/neo4jModel1',
+          title: 'Neo4jModel1',
+          templateUrl: helper.basepath('neo4j/neo4jModel1.html'),
+          cache: false,
+          resolve: helper.resolveFor('cytoscape','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
+      .state('app.neo4jModel2', {
+          url: '/neo4jModel2',
+          title: 'Neo4jModel2',
+          templateUrl: helper.basepath('neo4j/neo4jModel2.html'),
+          cache: false,
+          resolve: helper.resolveFor('cytoscape','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
       .state('app.declaration.declar', {
           url: '/declarDetail/:status/:declarName',
           title: 'DeclarDetail',
@@ -914,6 +928,7 @@ App
   .constant('APP_REQUIRES', {
     // jQuery based and standalone scripts
     scripts: {
+      'cytoscape':          ['vendor/cytoscape/cytoscape.min.js'],
       'whirl':              ['vendor/whirl/dist/whirl.css'],
       'classyloader':       ['vendor/jquery-classyloader/js/jquery.classyloader.min.js'],
       'animo':              ['vendor/animo.js/animo.js'],
@@ -1242,6 +1257,66 @@ App.service('myservice', function($window,$state,$http) {
         {
             alert("会话已经断开或者检查网络是否正常！");
         });
+    }
+
+});
+
+App.controller("CytoscapeCtrl2", function ($http,$timeout,$scope,$state,$rootScope) {
+
+})
+
+App.controller("CytoscapeCtrl", function ($http,$timeout,$scope,$state,$rootScope) {
+    // container objects
+    $scope.mapData = [];
+    $scope.edgeData = [];
+    // data types/groups object - used Cytoscape's shapes just to make it more clear
+    $scope.objTypes = ['ellipse','triangle','rectangle','roundrectangle','pentagon','octagon','hexagon','heptagon','star'];
+
+    // add object from the form then broadcast event which triggers the directive redrawing of the chart
+    // you can pass values and add them without redrawing the entire chart, but this is the simplest way
+    $scope.addObj = function(){
+        // collecting data from the form
+        var newObj = $scope.form.obj.name;
+        var newObjType = $scope.form.obj.objTypes;
+        // building the new Node object
+        // using the array length to generate an id for the sample (you can do it any other way)
+        var newNode = {id:'n'+($scope.mapData.length), name:newObj, type:newObjType};
+        // adding the new Node to the nodes array
+        $scope.mapData.push(newNode);
+        // broadcasting the event
+        //$rootScope.$broadcast('appChanged');
+        // resetting the form
+        $scope.form.obj = '';
+    };
+
+    // add Edges to the edges object, then broadcast the change event
+    $scope.addEdge = function(){
+        // collecting the data from the form
+        var edge1 = $scope.formEdges.fromName.id;
+        var edge2 = $scope.formEdges.toName.id;
+        // building the new Edge object from the data
+        // using the array length to generate an id for the sample (you can do it any other way)
+        var newEdge = {id:'e'+($scope.edgeData.length), source: edge1, target: edge2};
+        // adding the new edge object to the adges array
+        $scope.edgeData.push(newEdge);
+        // broadcasting the event
+        $rootScope.$broadcast('appChanged');
+        // resetting the form
+        $scope.formEdges = '';
+    };
+
+    // sample function to be called when clicking on an object in the chart
+    $scope.doClick = function(value)
+    {
+        // sample just passes the object's ID then output it to the console and to an alert
+        alert(value);
+    };
+
+    // reset the sample nodes
+    $scope.reset = function(){
+        $scope.mapData = [];
+        $scope.edgeData = [];
+        $rootScope.$broadcast('appChanged');
     }
 
 });
@@ -9482,6 +9557,8 @@ App.directive('href', function() {
    };
 });
 
+
+
 App.directive('treeView',[function(){
 
     return {
@@ -9615,7 +9692,10 @@ App.directive('treeView',[function(){
 
                     var OwnerMenuDtoArr = []
                     angular.forEach(newNodeAdd,function (e) {
-                        OwnerMenuDtoArr.push(OwnerMenuDto($scope.paramOne,e.id));
+                        if(null != e.id){
+                            console.log(e.id);
+                            OwnerMenuDtoArr.push(OwnerMenuDto($scope.paramOne,e.id));
+                        }
                     });
                     $http.post($scope.addUrl,OwnerMenuDtoArr).success(function(data)
                     {
@@ -9633,7 +9713,11 @@ App.directive('treeView',[function(){
 
                     var OwnerMenuDtoArr = []
                     angular.forEach(deleteNodes,function (e) {
-                        OwnerMenuDtoArr.push(OwnerMenuDto($scope.paramOne,e.id));
+
+                        if(null != e.id){
+                            OwnerMenuDtoArr.push(OwnerMenuDto($scope.paramOne,e.id));
+                        }
+
                     });
                     $http.post($scope.deleteUrl,OwnerMenuDtoArr).success(function(data)
                     {
@@ -9650,6 +9734,242 @@ App.directive('treeView',[function(){
     };
 }]);
 
+/**=========================================================
+ * Module: colors.js
+ * Services to retrieve global colors
+ =========================================================*/
+
+App.factory('cytoscapeAttrFactory',  function($http,$q) {
+
+    var colors= {
+        colors_01: "#993284",
+        colors_02: "#99576d",
+        colors_03: "#217999",
+        colors_04: "#706699",
+        colors_05: "#992508",
+        colors_06: "#993C8E",
+        colors_07: "#786799",
+        colors_08: "#6B8299",
+        colors_09: "#189911",
+        colors_10: "#999824"
+    }
+
+    return {
+        colors: colors
+    }
+
+});
+
+App.directive('cytoscape2', ['$rootScope','cytoscapeAttrFactory',function($rootScope,cytoscapeAttrFactory) {
+
+    return {
+        restrict: 'E',
+        template: '<div id="cy"></div>',
+        replace: true,
+        scope: {},
+        link: function (scope, element, attrs, fn) {
+            var cy = window.cy = cytoscape({
+                container: document.getElementById('cy'),
+                boxSelectionEnabled: true,
+                style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'background-color': cytoscapeAttrFactory.colors.colors_01,
+                            'text-valign': 'center',
+                            'content': 'data(id)'
+                        }
+                    },
+
+                    {
+                        selector: 'edge',
+                        style: {
+                            'content': 'data(relationship)',
+                            'curve-style': 'bezier',
+                            'target-arrow-shape': 'triangle'
+                        }
+                    }
+                ],
+                elements: {
+                    nodes: [
+                        { data: { id: 'a' } },
+                        { data: { id: 'b' } },
+                        { data: { id: 'c' } },
+                        { data: { id: 'd' } }
+                    ],
+                    edges: [
+                        { data: { id: 'ab', source: 'a', target: 'b' , relationship: 'hhh'} },
+                        { data: { id: 'ba', source: 'b', target: 'a' , relationship: 'kkk'} },
+                        { data: { id: 'ca', source: 'b', target: 'a' , relationship: 'ccc'} }
+                    ]
+                },
+                layout: {
+                    name: 'circle',
+                    fit: true,
+                    //name: 'grid',
+                    padding: 5
+                }
+            })
+        }
+    }
+}]);
+
+App.directive('cytoscape', ['$rootScope',function($rootScope) {
+    // graph visualisation by - https://github.com/cytoscape/cytoscape.js
+    return {
+        restrict: 'E',
+        template :'<div id="cy"></div>',
+        replace: true,
+        scope: {
+            // data objects to be passed as an attributes - for nodes and edges
+            cyData: '=',
+            cyEdges: '=',
+            // controller function to be triggered when clicking on a node
+            cyClick:'&'
+        },
+        link: function(scope, element, attrs, fn) {
+            // dictionary of colors by types. Just to show some design options
+            scope.typeColors = {
+                'ellipse':'#992222',
+                'triangle':'#222299',
+                'rectangle':'#661199',
+                'roundrectangle':'#772244',
+                'pentagon':'#990088',
+                'hexagon':'#229988',
+                'heptagon':'#118844',
+                'octagon':'#335577',
+                'star':'#113355'
+            };
+
+            // graph  build
+            scope.doCy = function(){ // will be triggered on an event broadcast
+                // initialize data object
+                scope.elements = {};
+                scope.elements.nodes = [];
+                scope.elements.edges = [];
+
+                // parse edges
+                // you can build a complete object in the controller and pass it without rebuilding it in the directive.
+                // doing it like that allows you to add options, design or what needed to the objects
+                // doing it like that is also good if your data object/s has a different structure
+                for (i=0; i<scope.cyEdges.length; i++)
+                {
+                    // get edge source
+                    var eSource = scope.cyEdges[i].source;
+                    // get edge target
+                    var eTarget = scope.cyEdges[i].target;
+                    // get edge id
+                    var eId = scope.cyEdges[i].id;
+                    // build the edge object
+                    var edgeObj = {
+                        data:{
+                            id:eId,
+                            source:eSource,
+                            target:eTarget
+                        }
+                    };
+                    // adding the edge object to the edges array
+                    scope.elements.edges.push(edgeObj);
+                }
+
+                // parse data and create the Nodes array
+                // object type - is the object's group
+                for (i=0; i<scope.cyData.length; i++)
+                {
+                    // get id, name and type  from the object
+                    var dId = scope.cyData[i].id;
+                    var dName = scope.cyData[i].name;
+                    var dType = scope.cyData[i].type;
+                    // get color from the object-color dictionary
+                    var typeColor = scope.typeColors['rectangle'];
+                    // build the object, add or change properties as you need - just have a name and id
+                    var elementObj = {
+                        group:dType,'data':{
+                            id:dId,
+                            name:dName,
+                            typeColor:typeColor,
+                            typeShape:dType,
+                            type:dType
+                        }};
+                    // add new object to the Nodes array
+                    scope.elements.nodes.push(elementObj);
+                }
+                // graph  initialization
+                // use object's properties as properties using: data(propertyName)
+                // check Cytoscapes site for much more data, options, designs etc
+                // http://cytoscape.github.io/cytoscape.js/
+                // here are just some basic options
+                $('#cy').cytoscape({
+                    layout: {
+                        name: 'circle',
+                        fit: true, // whether to fit the viewport to the graph
+                        ready: undefined, // callback on layoutready
+                        stop: undefined, // callback on layoutstop
+                        mouseover: undefined,
+                        padding: 5 // the padding on fit
+                    },
+                    style: cytoscape.stylesheet()
+                        .selector('node')
+                        .css({
+                            'shape': 'data(typeShape)',
+                            'width': '120',
+                            'height': '90',
+                            'background-color': 'data(typeColor)',
+                            'content': 'data(name)',
+                            'text-valign': 'center',
+                            'color': 'white',
+                            'text-outline-width': 2,
+                            'text-outline-color': 'data(typeColor)'
+                        })
+                        .selector('edge')
+                        .css({
+                            'target-arrow-shape': 'triangle',
+                            'source-arrow-shape': 'triangle'
+                        })
+                        .selector(':selected')
+                        .css({
+                            'background-color': 'black',
+                            'line-color': 'black',
+                            'target-arrow-color': 'black',
+                            'source-arrow-color': 'black'
+                        })
+                        .selector('.faded')
+                        .css({
+                            'opacity': 0.65,
+                            'text-opacity': 0.65
+                        }),
+                    ready: function(){
+                        var cy = window.cy = this;
+
+                        // giddy up...
+                        cy.elements().unselectify();
+
+                        // Event listeners
+                        // with sample calling to the controller function as passed as an attribute
+                        cy.on('tap', 'node', function(e){
+
+                            var evtTarget = e.cyTarget;
+                            var nodeId = evtTarget.id();
+                            scope.cyClick({value:nodeId});
+                        });
+
+                        // load the objects array
+                        // use cy.add() / cy.remove() with passed data to add or remove nodes and edges without rebuilding the graph
+                        // sample use can be adding a passed variable which will be broadcast on change
+                        cy.load(scope.elements);
+                    }
+                });
+
+            }; // end doCy()
+            // When the app object changed = redraw the graph
+            // you can use it to pass data to be added or removed from the object without redrawing it
+            // using cy.remove() / cy.add()
+            $rootScope.$on('appChanged', function(){
+                scope.doCy();
+            });
+        }
+    };
+}]);
 /**=========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
@@ -11127,6 +11447,8 @@ App.factory('colors', ['APP_COLORS', function(colors) {
   };
 
 }]);
+
+
 
 /**=========================================================
  * Module: nav-search.js

@@ -13,6 +13,8 @@ import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.FileService.FileDataGroupTableService;
 import com.sugon.iris.sugondomain.beans.system.User;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +74,9 @@ public class FileDataGroupTableServiceImpl implements FileDataGroupTableService 
 
     @Override
     public Integer removeFileDataGroupTables(User user, List<OwnerMenuDto> fileDataGroupTableList, List<Error> errorList) {
+        if(CollectionUtils.isEmpty(fileDataGroupTableList)){
+           return 0;
+        }
         List<Long> idList = new ArrayList<>();
         for(OwnerMenuDto ownerMenuDto : fileDataGroupTableList){
             if(null == ownerMenuDto.getMenuId()){
@@ -88,6 +93,9 @@ public class FileDataGroupTableServiceImpl implements FileDataGroupTableService 
 
     @Override
     public Integer saveFileDataGroupTables(User user, List<OwnerMenuDto> fileDataGroupTableList, List<Error> errorList) {
+        if(CollectionUtils.isEmpty(fileDataGroupTableList)){
+            return 0;
+        }
         List<FileDataGroupTableEntity> fileDataGroupTableEntitySqlParmList = new ArrayList<>();
         for(OwnerMenuDto ownerMenuDto : fileDataGroupTableList){
             if(null == ownerMenuDto.getMenuId()){

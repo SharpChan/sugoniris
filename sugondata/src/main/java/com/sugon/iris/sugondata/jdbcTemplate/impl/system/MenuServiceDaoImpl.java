@@ -9,14 +9,15 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
+
+import java.sql.*;
 import java.util.Date;
 import java.util.List;
 
@@ -112,11 +113,12 @@ public class MenuServiceDaoImpl implements MenuServiceDao {
         }
         String sql = "insert into sys_menu(name,father_id ,text ,translate,heading ,sref,icon,alert,label,user_id,createtime,tier,sort) " +
                      "values(?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
+        KeyHolder keyHolder = new GeneratedKeyHolder();
         try{
-            result=jdbcTemplate.update(sql, new PreparedStatementSetter(){
+            jdbcTemplate.update(new PreparedStatementCreator() {
                 @Override
-                public void setValues(PreparedStatement ps) throws SQLException {
+                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                    PreparedStatement ps  = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                     if(!StringUtils.isEmpty(menuEntity.getName())) {
                         ps.setString(1, menuEntity.getName());
                     }else{
@@ -167,7 +169,7 @@ public class MenuServiceDaoImpl implements MenuServiceDao {
                     }else{
                         ps.setNull(10,Types.BIGINT);
                     }
-                        ps.setTimestamp(11, new Timestamp(menuEntity.getCreateTime().getTime()));
+                    ps.setTimestamp(11, new Timestamp(menuEntity.getCreateTime().getTime()));
                     if(null != menuEntity.getTier()) {
                         ps.setInt(12, menuEntity.getTier());
                     }else{
@@ -178,12 +180,14 @@ public class MenuServiceDaoImpl implements MenuServiceDao {
                     }else{
                         ps.setNull(13,Types.INTEGER);
                     }
+                    return ps;
                 }
-            });
+            }, keyHolder);
         }catch (Exception e){
             LOGGER.info("{}-{}","插入表menu失败",e);
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"插入user表出错",e.toString()));
         }
+        menuEntity.setId(keyHolder.getKey().longValue());
         return result;
     }
 

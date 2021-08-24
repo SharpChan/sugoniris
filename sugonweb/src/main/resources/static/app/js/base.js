@@ -11,7 +11,6 @@
  *
  * Date: 2014-12-18T15:11Z
  */
-
 (function( global, factory ) {
 
 	if ( typeof module === "object" && typeof module.exports === "object" ) {
@@ -6089,7 +6088,6 @@ jQuery.each({
 
 				// Assumes a single number if not a string
 				parts = typeof value === "string" ? value.split(" ") : [ value ];
-
 			for ( ; i < 4; i++ ) {
 				expanded[ prefix + cssExpand[ i ] + suffix ] =
 					parts[ i ] || parts[ i - 2 ] || parts[ 0 ];
@@ -49952,9 +49950,20 @@ angular.module('pascalprecht.translate')
       if (!file || (!angular.isString(file.prefix) || !angular.isString(file.suffix))) {
         throw new Error('Couldn\'t load static file, no prefix or suffix specified!');
       }
-
       var deferred = $q.defer();
 
+        var url =  "/translate/getTranslate?tsType="+options.key;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            console.log(temp.obj);
+            deferred.resolve(temp.obj);
+        }).error(function(data)
+        {
+            deferred.reject(options.key);
+        });
+      /*
       $http(angular.extend({
         url: [
           options.prefix,
@@ -49964,10 +49973,12 @@ angular.module('pascalprecht.translate')
         method: 'GET',
         params: ''
       }, options.$http)).success(function (data) {
+          console.log(data);
         deferred.resolve(data);
       }).error(function (data) {
         deferred.reject(options.key);
       });
+     */
 
       return deferred.promise;
     };
