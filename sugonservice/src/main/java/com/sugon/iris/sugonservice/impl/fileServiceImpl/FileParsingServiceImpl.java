@@ -222,6 +222,13 @@ public class FileParsingServiceImpl implements FileParsingService {
                                mppMapper.mppSqlExec(sqlInsertExec);
                                 importRowCount++;
                            }
+                           //再次存入的话更改neo4j需同步状态
+                           if(importRowCount>0){
+                               FileTableEntity fileTableEntity = new FileTableEntity();
+                               fileTableEntity.setId(fileDetailEntityfSql.getFileTableId());
+                               fileTableEntity.setNeo4jInitFlag("0");
+                               fileTableMapper.updateFileTable(fileTableEntity);
+                           }
                         }
                         csvCount++;
                         //存入文件信息表
@@ -331,11 +338,11 @@ public class FileParsingServiceImpl implements FileParsingService {
             //组装建表和插入语句
             //表名="base_"+模板配置前缀+"_"+案件编号
             tableName = "base_" + fileTemplateEntityBean.getTablePrefix() + "_" + fileAttachmentEntity.getCaseId()+"_"+userId;
-            String sqlCreate =  "CREATE TABLE "+tableName+" ( ";
+            String sqlCreate =  "CREATE TABLE "+tableName+" ( id serial not null,";
             for(FileTemplateDetailEntity fileTemplateDetailEntityBean : fileTemplateDetailEntityList){
                  sqlCreate += fileTemplateDetailEntityBean.getFieldName() +" varchar NULL,";
             }
-            sqlCreate += "file_attachment_id  varchar NULL );";
+            sqlCreate += "file_attachment_id  varchar NULL);";
             mppMapper.mppSqlExec(sqlCreate);
 
             FileTableEntity fileTableEntity = new FileTableEntity();

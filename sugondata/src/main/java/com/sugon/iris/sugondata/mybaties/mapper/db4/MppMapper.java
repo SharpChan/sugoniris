@@ -8,5 +8,4 @@ public interface MppMapper {
     Integer mppSqlExec(String sql);
 
     List<String> mppSqlExecForSearch(String sql);
-
 }

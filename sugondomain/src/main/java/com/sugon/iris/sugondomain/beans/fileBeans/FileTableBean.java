@@ -34,4 +34,9 @@ public class FileTableBean {
      */
     private Long userId;
 
+    /**
+     *0:同步未开启；1:有新的同步；2：同步结束
+     */
+    private String neo4jInitFlag;
+
 }

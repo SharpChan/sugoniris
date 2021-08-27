@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.Neo4jNodeInfoMapper" >
+
+    <!--结果集-->
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jNodeInfoEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="file_table_id" property="fileTableId" jdbcType="BIGINT" />
+        <result column="rownum" property="rownum" jdbcType="BIGINT" />
+        <result column="color" property="color" jdbcType="VARCHAR" />
+        <result column="size" property="size" jdbcType="VARCHAR" />
+        <result column="label" property="label" jdbcType="VARCHAR" />
+        <result column="form" property="form" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="BIGINT" />
+    </resultMap>
+
+    <!--基础字段-->
+    <sql id="Base_Column_List" >
+        id,file_table_id,rownum,color,size,label,form,user_id
+    </sql>
+
+    <!--表查询-->
+    <select id="getNeo4jNodeInfo" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jNodeInfoEntity" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            neo4j_node_info
+        where
+        1=1
+        <if test="id!=null">
+            and id = #{id}
+        </if >
+        <if test="fileTableId!=null">
+            and file_table_id =  #{fileTableId}
+        </if >
+        <if test="userId!=null">
+            and user_id = #{userId}
+        </if >
+    </select>
+
+
+    <!--插入-->
+    <insert id="saveNeo4jNodeInfo" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jNodeInfoEntity"  useGeneratedKeys="true" keyProperty="id">
+        insert into neo4j_node_info
+        (<include refid="Base_Column_List" />)
+        values
+             (
+             #{id,jdbcType=INTEGER},
+             #{fileTableId,jdbcType=INTEGER},
+             #{rownum,jdbcType=INTEGER},
+             #{color,jdbcType=VARCHAR},
+             #{size,jdbcType=VARCHAR},
+             #{label,jdbcType=VARCHAR},
+             #{form,jdbcType=VARCHAR},
+             #{userId,jdbcType=INTEGER}
+             )
+    </insert>
+
+    <!--更新-->
+    <update id="updateNeo4jNodeInfo">
+               update neo4j_node_info
+                <set>
+                    <if test="rownum!=null">
+                        rownum = #{rownum},
+                    </if>
+                    <if test="color!=null and color != ''">
+                        color = #{color},
+                    </if>
+                    <if test="size!=null and size != ''">
+                        size = #{size},
+                    </if>
+                    <if test="label!=null and label != ''">
+                        label = #{label},
+                    </if>
+                    <if test="form!=null and form != ''">
+                        form = #{form},
+                    </if>
+                </set>
+               where id = #{id}
+    </update>
+
+    <!--删除-->
+    <delete id="deleteNeo4jNodeInfos">
+            DELETE
+            FROM
+                 neo4j_node_info
+            <where>
+                id in (
+                <foreach collection="idArr" item="item" index="i" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </where>
+    </delete>
+</mapper>

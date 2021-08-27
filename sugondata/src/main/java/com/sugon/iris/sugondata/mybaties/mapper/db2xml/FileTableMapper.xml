@@ -10,11 +10,12 @@
         <result column="case_id" property="caseId" jdbcType="VARCHAR" />
         <result column="user_id" property="userId" jdbcType="BIGINT" />
         <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="neo4j_init_flag" property="neo4jInitFlag" jdbcType="VARCHAR" />
     </resultMap>
 
     <!--基础字段-->
     <sql id="Base_Column_List" >
-        id,table_name,file_template_id,case_id,user_id,title
+        id,table_name,file_template_id,case_id,user_id,title,neo4j_init_flag
     </sql>
 
 
@@ -64,7 +65,28 @@
          select * from file_table d where d.user_id = #{userId}
     </select>
 
+    <select id="findFileTablesWithCaseNameAndTemplateNameByUserId" resultMap="BaseResultMap">
+        select
+        a.id,
+        a.file_template_id,
+        a.neo4j_init_flag,
+        (select case_name from file_case c where c.id=a.case_id) caseName,
+        (select template_name from iris.file_template b where b.id= a.file_template_id) templateName,
+        table_name
+        from file_table a
+        where a.user_id = #{userId}
+    </select>
 
+    <!--更新-->
+    <update id="updateFileTable">
+               update file_table
+               <set>
+                      <if test="neo4jInitFlag!=null and neo4jInitFlag != ''">
+                          neo4j_init_flag = #{neo4jInitFlag},
+                      </if>
+               </set>
+               where id = #{id}
+    </update>
 
     <!--单个插入-->
     <insert id="saveFileTable" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTableEntity" useGeneratedKeys="true" keyProperty="id">

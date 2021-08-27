@@ -121,6 +121,13 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           cache: false,
           resolve: helper.resolveFor('cytoscape','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
+      .state('app.neo4jInitData', {
+          url: '/neo4jInitData',
+          title: 'Neo4jInitData',
+          templateUrl: helper.basepath('neo4j/neo4jInitData.html'),
+          cache: false,
+          resolve: helper.resolveFor('cytoscape','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
       .state('app.declaration.declar', {
           url: '/declarDetail/:status/:declarName',
           title: 'DeclarDetail',
@@ -1258,6 +1265,52 @@ App.service('myservice', function($window,$state,$http) {
             alert("会话已经断开或者检查网络是否正常！");
         });
     }
+
+});
+
+App.controller("neo4jInitDataController", function ($http,$timeout,$scope,
+                                                  myservice) {
+    $("#pleaseWait").hide();
+    //登录和锁定校验
+    myservice.loginLockCheck();
+
+    $scope.query = function () {
+        var url="/neo4jInitData/getFileTables";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj =myservice.setSerialNumber(temp.obj);
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    $scope.query();
+
+    $scope.initData  = function (item) {
+        var url = "/neo4jInitData/initData";
+        $http.post(url, item).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.setProgress = function (id,value) {
+        angular.forEach(
+            $scope.obj, function(item) {
+                if(item.id == id){
+                    item.progress = value;
+                }
+            }
+        );
+    }
+
 
 });
 
@@ -8549,7 +8602,7 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
            $scope.menuItems = temp.obj;
         })
 
-        /*
+              /*(
               var menuJson = 'server/sidebar-menu.json',
                   menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
               $http.get(menuURL)

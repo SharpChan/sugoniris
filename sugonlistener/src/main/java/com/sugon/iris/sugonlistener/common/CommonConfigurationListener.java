@@ -10,6 +10,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 import javax.sql.DataSource;
 import java.sql.DatabaseMetaData;
 import java.util.List;
@@ -17,14 +21,34 @@ import java.util.List;
 /**
  *
  */
+@WebListener
 @Configuration
 @EnableScheduling   // 2.开启定时任务
-public class CommonConfigurationListener {
+public class CommonConfigurationListener implements ServletContextListener {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private KafkaStartStopService kafkaStartStopService;
+
+
+    @Override
+    public void contextInitialized(ServletContextEvent servletContextEvent) {
+        WebApplicationContextUtils.getRequiredWebApplicationContext(servletContextEvent.getServletContext())
+                .getAutowireCapableBeanFactory().autowireBean(this);
+        try {
+            getConfigBean();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+        // TODO Auto-generated method stub
+
+    }
 
     @Scheduled(fixedRate=1000)
   public void getConfigBean() throws Exception{

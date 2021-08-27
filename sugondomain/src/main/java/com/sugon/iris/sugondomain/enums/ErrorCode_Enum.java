@@ -17,7 +17,8 @@ public enum ErrorCode_Enum {
     SUGON_01_003("SUGON-01-003","数据已经同步"),
     SUGON_01_004("SUGON-01-004","请配置模板组"),
     SUGON_01_005("SUGON-01-005","参数不能为空"),
-    SUGON_01_006("SUGON-01-006","还未上传数据表");
+    SUGON_01_006("SUGON-01-006","还未上传数据表"),
+    SUGON_01_007("SUGON-01-007","正常业务");
 
 
 

@@ -5,4 +5,14 @@ import lombok.Data;
 
 @Data
 public class FileTableEntity extends FileTableBean {
+
+    /**
+     * 案件名称
+     */
+    private String caseName;
+
+    /**
+     * 模板名称
+     */
+    private String templateName;
 }

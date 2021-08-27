@@ -41,7 +41,7 @@
     </select>
 
 
-    <!--批量插入-->
+    <!--插入-->
     <insert id="fileCaseInsert" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileCaseEntity"  useGeneratedKeys="true" keyProperty="id">
         insert into file_case
         (<include refid="Base_Column_List" />)

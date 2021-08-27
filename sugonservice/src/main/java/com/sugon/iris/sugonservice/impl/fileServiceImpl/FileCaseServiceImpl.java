@@ -1,6 +1,5 @@
 package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
-import com.ctc.wstx.util.StringUtil;
 import com.sugon.iris.sugoncommon.publicUtils.PublicRuleUtils;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.DeclarMapper;
@@ -19,7 +18,6 @@ import com.sugon.iris.sugonservice.service.FileService.FileCaseService;
 import com.sugon.iris.sugonservice.service.FileService.FolderService;
 import com.sugon.iris.sugonservice.service.declarService.DeclarService;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;

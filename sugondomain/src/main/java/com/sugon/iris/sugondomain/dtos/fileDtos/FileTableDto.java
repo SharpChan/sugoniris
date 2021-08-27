@@ -12,4 +12,8 @@ public class FileTableDto extends FileTableBean {
      * 如果在FileDataGroupTable表存在记录，则已经勾选
      */
     private boolean isChecked;
+
+    private String caseName;
+
+    private String templateName;
 }
