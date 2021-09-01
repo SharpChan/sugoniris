@@ -16,4 +16,19 @@ public class FileTableDto extends FileTableBean {
     private String caseName;
 
     private String templateName;
+
+    /**
+     * 大小
+     */
+    private String size;
+
+    /**
+     * 颜色
+     */
+    private String color;
+
+    /**
+     * 形状
+     */
+    private String sharp;
 }

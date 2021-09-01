@@ -3,7 +3,7 @@ package com.sugon.iris.sugondomain.beans.neo4jBeans;
 import lombok.Data;
 
 @Data
-public class Neo4jNodeInfoBean {
+public class Neo4jNodeAttributeBean {
 
     /**
      * 自增序列
@@ -11,14 +11,14 @@ public class Neo4jNodeInfoBean {
     private Long id;
 
     /**
-     * 表fileTable 序列
+     * 自增序列
      */
-    private Long fileTableId;
+    private String attributeName;
 
     /**
-     *已经初始化到neo4j数据库的行数
+     * 表节点信息序列
      */
-    private Long rownum;
+    private Long fileTableId;
 
     /**
      *显示颜色
@@ -35,10 +35,6 @@ public class Neo4jNodeInfoBean {
      */
     private Integer height;
 
-    /**
-     *标签用 . 号分割
-     */
-    private String label;
 
     /**
      *形状
@@ -46,7 +42,7 @@ public class Neo4jNodeInfoBean {
     private String shape;
 
     /**
-     * 创建人id
+     *显示内容
      */
-    private Long userId;
+    private String content;
 }

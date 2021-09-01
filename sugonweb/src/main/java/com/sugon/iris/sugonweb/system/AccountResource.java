@@ -63,8 +63,8 @@ public class AccountResource {
 
     @PostMapping("/account/login")
     @ResponseStatus(HttpStatus.CREATED)
-    public RestResult<Integer> login(@Valid @RequestBody UserDto userDto, HttpServletResponse response, HttpSession session) throws UnsupportedEncodingException {
-        RestResult<Integer> restResult = new RestResult<Integer>();
+    public RestResult<User> login(@Valid @RequestBody UserDto userDto, HttpServletResponse response, HttpSession session) throws UnsupportedEncodingException {
+        RestResult<User> restResult = new RestResult<User>();
         List<Error> errorList = new ArrayList<>();
         User user = null;
         try {
@@ -73,6 +73,7 @@ public class AccountResource {
             e.printStackTrace();
         }
         session .setAttribute("user",user);
+        restResult.setObj(user);
         Cookie cookie = new Cookie("jsessionid", session.getId());
         response.addCookie(cookie);
         //以秒为单位，即在没有活动120分钟后，session将失效

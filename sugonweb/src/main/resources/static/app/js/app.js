@@ -126,7 +126,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           title: 'Neo4jInitData',
           templateUrl: helper.basepath('neo4j/neo4jInitData.html'),
           cache: false,
-          resolve: helper.resolveFor('cytoscape','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+          resolve: helper.resolveFor('ngWebsocket','cytoscape','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
       .state('app.declaration.declar', {
           url: '/declarDetail/:status/:declarName',
@@ -1000,6 +1000,7 @@ App
     },
     // Angular based script (use the right module name)
     modules: [
+      {name: 'ngWebsocket',               files: ['vendor/ng-websocket/ng-websocket.js'] },
       {name: 'toaster',                   files: ['vendor/angularjs-toaster/toaster.js',
                                                  'vendor/angularjs-toaster/toaster.css']},
       {name: 'localytics.directives',     files: ['vendor/chosen_v1.2.0/chosen.jquery.min.js',
@@ -1269,11 +1270,14 @@ App.service('myservice', function($window,$state,$http) {
 });
 
 App.controller("neo4jInitDataController", function ($http,$timeout,$scope,
-                                                  myservice) {
+                                                  myservice,$websocket) {
     $("#pleaseWait").hide();
     //登录和锁定校验
     myservice.loginLockCheck();
-
+    myservice.dragFunc("cnDiv");
+    myservice.dragFunc("cnDivAttribute");
+    $("#cnDivAttribute").hide();
+    $("#cnDiv").hide();
     $scope.query = function () {
         var url="/neo4jInitData/getFileTables";
         $http.post(url).success(function(data)
@@ -1290,16 +1294,207 @@ App.controller("neo4jInitDataController", function ($http,$timeout,$scope,
     }
     $scope.query();
 
+    loadDictionarySize = function(){
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"neo4j_size";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.sitesSize = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    loadDictionaryColor = function(){
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"neo4j_color";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.sitesColor = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    loadDictionaryShape = function(){
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"neo4j_shape";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.sitesShape = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $(function () {
+        loadDictionarySize();
+        loadDictionaryColor();
+        loadDictionaryShape();
+    })
+
+    $scope.close = function(){
+        $("#cnDiv").hide();
+    }
+    $scope.closeAttribute = function(){
+        $("#cnDivAttribute").hide();
+    }
     $scope.initData  = function (item) {
         var url = "/neo4jInitData/initData";
         $http.post(url, item).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
+            $scope.query();
         }).error(function (data) {
             alert("请检查必填项是否填写！");
         });
     }
+
+    $scope.attribute = function(item){
+        $("#cnDivAttribute").show();
+        $scope.fileTableId = item.id;
+        $scope.getAttribute();
+        //获取表字段
+        url = "/fileTemplate/getFileTemplateDetails";
+        var params = {
+            templateId : item.fileTemplateId
+        }
+        $http.post(url,params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.sitesContent = temp.obj;
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.getAttribute   = function(){
+        var url = "/neo4jInitData/getAttribute?fileTableId="+$scope.fileTableId;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.attributes =myservice.setSerialNumber(temp.obj);
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.addAttribute = function(){
+        $("#cnDiv").show();
+        $scope.save = true;
+        $scope.update = false;
+        $scope.selectedOptionsWidth='';
+        $scope.selectedOptionsHeight='';
+        $scope.selectedOptionsColor='';
+        $scope.selectedOptionsShape='';
+        $scope.attributeName='';
+    }
+
+    $scope.updateAttribute = function(id){
+        $("#cnDiv").show();
+        $scope.AttributeId = id;
+        $scope.save = false;
+        $scope.update = true;
+        $scope.selectedOptionsWidth='';
+        $scope.selectedOptionsHeight='';
+        $scope.selectedOptionsColor='';
+        $scope.selectedOptionsShape='';
+        $scope.attributeName='';
+    }
+
+    $scope.attributeUpdate = function(id){
+        var url = "/neo4jInitData/attributeUpdate"
+        var params = {
+            id:$scope.AttributeId,
+            fileTableId:$scope.fileTableId,
+            attributeName:$scope.attributeName,
+            width: $scope.selectedOptionsWidth,
+            height: $scope.selectedOptionsHeight,
+            color: $scope.selectedOptionsColor,
+            shape: $scope.selectedOptionsShape,
+            content: $scope.selectedOptionsContent
+        }
+
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.getAttribute();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+        $("#cnDiv").hide();
+
+    }
+
+    $scope.deleteAttribute = function(id){
+        var url = "/neo4jInitData/attributeDelete?id="+id;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.getAttribute();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.attributeSave = function(){
+        var url = "/neo4jInitData/attributeSave";
+        if(myservice.isEmpty($scope.attributeName)){
+            alert("样式名称为必填项！");
+            return;
+        }
+        if(myservice.isEmpty($scope.selectedOptionsWidth)){
+            alert("宽度为必填项！");
+            return;
+        }
+        if(myservice.isEmpty($scope.selectedOptionsHeight)){
+            alert("高度为必填项！");
+            return;
+        }
+        if(myservice.isEmpty($scope.selectedOptionsShape)){
+            alert("形状为必填项！");
+            return;
+        }
+        if(myservice.isEmpty($scope.selectedOptionsContent)){
+            alert("显示名称为必填项！");
+            return;
+        }
+        var params = {
+            fileTableId:$scope.fileTableId,
+            attributeName:$scope.attributeName,
+            width: $scope.selectedOptionsWidth,
+            height: $scope.selectedOptionsHeight,
+            color: $scope.selectedOptionsColor,
+            shape: $scope.selectedOptionsShape,
+            content:  $scope.selectedOptionsContent
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.getAttribute();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+        $("#cnDiv").hide();
+
+    }
+
+
 
     $scope.setProgress = function (id,value) {
         angular.forEach(
@@ -1312,6 +1507,13 @@ App.controller("neo4jInitDataController", function ($http,$timeout,$scope,
     }
 
 
+    var websocket = null;
+    //判断当前浏览器是否支持WebSocket, 主要此处要更换为自己的地址
+    if ('WebSocket' in window) {
+        websocket = new WebSocket("ws://localhost:8090/websocket/one");
+    } else {
+        alert('Not support websocket')
+    }
 });
 
 App.controller("CytoscapeCtrl2", function ($http,$timeout,$scope,$state,$rootScope) {
@@ -3686,7 +3888,7 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,
         $scope.templateId = item.id;
         var url = "/fileTemplate/getFileTemplateDetails";
         var params = {
-            id: item.id
+            templateId: item.id
         }
         $http.post(url,params).success(function(data)
         {
@@ -4706,6 +4908,8 @@ App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore
                     }else{
                         myservice.setCookie("irisEmail",$scope.account.email);
                         $localStorage.userName=$scope.account.userName;
+                        $localStorage.userId = response.obj.id;
+                        console.log($localStorage.userId);
                         console.log($localStorage.userName);
                         $state.go('app.dashboard');
                     }
@@ -9804,7 +10008,7 @@ App.factory('cytoscapeAttrFactory',  function($http,$q) {
         colors_07: "#786799",
         colors_08: "#6B8299",
         colors_09: "#189911",
-        colors_10: "#999824"
+        colors_10: "#6d7577"
     }
 
     return {
@@ -9852,6 +10056,7 @@ App.directive('cytoscape2', ['$rootScope','cytoscapeAttrFactory',function($rootS
                     ],
                     edges: [
                         { data: { id: 'ab', source: 'a', target: 'b' , relationship: 'hhh'} },
+                        { data: { id: 'ac', source: 'a', target: 'b' , relationship: 'xxx'} },
                         { data: { id: 'ba', source: 'b', target: 'a' , relationship: 'kkk'} },
                         { data: { id: 'ca', source: 'b', target: 'a' , relationship: 'ccc'} }
                     ]
@@ -9884,10 +10089,10 @@ App.directive('cytoscape', ['$rootScope',function($rootScope) {
             // dictionary of colors by types. Just to show some design options
             scope.typeColors = {
                 'ellipse':'#992222',
-                'triangle':'#222299',
+                'triangle':'#0000ff',
                 'rectangle':'#661199',
                 'roundrectangle':'#772244',
-                'pentagon':'#990088',
+                'pentagon':'#808080',
                 'hexagon':'#229988',
                 'heptagon':'#118844',
                 'octagon':'#335577',

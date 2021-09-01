@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.Neo4jNodeAttributeMapper" >
+
+    <!--结果集-->
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jNodeAttributeEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="attribute_name" property="attributeName" jdbcType="VARCHAR" />
+        <result column="file_table_id" property="fileTableId" jdbcType="BIGINT" />
+        <result column="color" property="color" jdbcType="VARCHAR" />
+        <result column="width" property="width" jdbcType="INTEGER" />
+        <result column="height" property="height" jdbcType="INTEGER" />
+        <result column="shape" property="shape" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <!--基础字段-->
+    <sql id="Base_Column_List" >
+        id,attribute_name,file_table_id,color,width,height,shape,content
+    </sql>
+
+    <!--表查询-->
+    <select id="getNeo4jNodeAttributeLis" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jNodeAttributeEntity" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+        neo4j_node_attribute
+        where
+        1=1
+        <if test="id!=null">
+            and id = #{id}
+        </if >
+        <if test="fileTableId!=null">
+            and file_table_id =  #{fileTableId}
+        </if >
+        <if test="attributeName != null and attributeName != ''">
+            and attribute_name = #{attributeName}
+        </if>
+    </select>
+
+
+    <!--插入-->
+    <insert id="saveNeo4jNodeAttribute" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jNodeAttributeEntity"  useGeneratedKeys="true" keyProperty="id">
+        insert into neo4j_node_attribute
+        (<include refid="Base_Column_List" />)
+        values
+             (
+             #{id,jdbcType=INTEGER},
+             #{attributeName,jdbcType=VARCHAR},
+             #{fileTableId,jdbcType=INTEGER},
+             #{color,jdbcType=VARCHAR},
+             #{width,jdbcType=VARCHAR},
+             #{height,jdbcType=VARCHAR},
+             #{shape,jdbcType=VARCHAR},
+             #{content,jdbcType=VARCHAR}
+             )
+    </insert>
+
+    <!--更新-->
+    <update id="updateNeo4jNodeAttribute">
+               update neo4j_node_attribute
+                <set>
+                    <if test="attributeName!=null and attributeName != ''">
+                        attribute_name = #{attributeName},
+                    </if>
+                    <if test="color!=null and color != ''">
+                        color = #{color},
+                    </if>
+                    <if test="width!=null">
+                        width = #{width},
+                    </if>
+                    <if test="height!=null">
+                        height = #{height},
+                    </if>
+                    <if test="shape!=null and shape != ''">
+                        shape = #{shape},
+                    </if>
+                    <if test="content!=null and content != ''">
+                        content = #{content},
+                    </if>
+                </set>
+               where
+                1=1
+                <if test="id!=null">
+                    and id = #{id}
+                </if >
+                <if test="fileTableId!=null">
+                    and file_table_id =  #{fileTableId}
+                </if >
+    </update>
+
+    <!--删除-->
+    <delete id="deleteNeo4jNodeAttribute">
+            DELETE
+            FROM
+              neo4j_node_attribute
+            <where>
+                id = #{id}
+            </where>
+    </delete>
+</mapper>
