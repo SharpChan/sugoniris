@@ -94,7 +94,7 @@
     </div>
 
     <div id = "cnDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 500px; z-index: 9999">
-        <div class="panel-heading topnavbar">
+        <div id = "cnDivheader" class="panel-heading topnavbar">
             添加<input type="button" value="关闭" style="margin-left:220px" class="btn btn-default" ng-click="close();" >
         </div>
         <div class="panel-body">
@@ -124,7 +124,7 @@
 
     <input  type="hidden" class="form-control" type="text" ng-model="id_2" >
     <div id = "cnDivUpdate" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 500px; z-index: 9999">
-        <div class="panel-heading topnavbar">
+        <div id = "cnDivUpdateheader" class="panel-heading topnavbar">
             修改<input type="button" value="关闭" style="margin-left:220px" class="btn btn-default" ng-click="closeUpdate();" >
         </div>
         <div class="panel-body">
@@ -154,7 +154,7 @@
 
     <input  type="hidden" class="form-control" type="text" ng-model="item" >
     <div id = "cnDivDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 1050px; height: 500px; z-index: 9999;overflow-y:auto;">
-        <div class="panel-heading topnavbar">
+        <div id = "cnDivDetailheader" class="panel-heading topnavbar">
             <div align="left">
                 <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">模板名称:{{templateName_3}}</strong></label>
             </div>
@@ -204,7 +204,7 @@
     <input  type="hidden" class="form-control" type="text" ng-model="templateId" >
     <input  type="hidden" class="form-control" type="text" ng-model="flag" ><!--  区分是插入还是更新  0：新增；1：修改-->
     <div id = "cnDivDetailAddOrUpdate" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 580px; z-index: 9999;">
-        <div class="panel-heading topnavbar">
+        <div id = "cnDivDetailAddOrUpdateheader" class="panel-heading topnavbar">
             新增/修改<input type="button" value="关闭" style="margin-left:220px" class="btn btn-default" ng-click="closeUpdateDetailAddOrUpdate();" >
         </div>
         <div class="panel-body">

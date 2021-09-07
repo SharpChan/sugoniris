@@ -59,7 +59,7 @@ public class FileDataGroupTableServiceImpl implements FileDataGroupTableService 
                 if(fileTableEntityBean.getCaseId().equals(fileCaseEntityBean.getId())){
                     MenuDto menuDtoTable = new MenuDto();
                     submenu.add(menuDtoTable);
-                    menuDtoTable.setName(fileTableEntityBean.getTableName());
+                    menuDtoTable.setName(fileTableEntityBean.getTableName()+"["+fileTableEntityBean.getTitle().substring(fileTableEntityBean.getTitle().indexOf("_")+1)+"]");
                     menuDtoTable.setId(fileTableEntityBean.getId());
                     for(FileDataGroupTableEntity fileDataGroupTableEntityBean : fileUserTableEntityList){
                         if(fileDataGroupTableEntityBean.getTableId().equals(fileTableEntityBean.getId())){

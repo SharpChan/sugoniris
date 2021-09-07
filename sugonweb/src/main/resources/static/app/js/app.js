@@ -128,6 +128,13 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           cache: false,
           resolve: helper.resolveFor('ngWebsocket','cytoscape','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
+      .state('app.neo4jRelation', {
+          url: '/neo4jRelation',
+          title: 'Neo4jRelation',
+          templateUrl: helper.basepath('neo4j/neo4jRelation.html'),
+          cache: false,
+          resolve: helper.resolveFor('ngDraggable','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
       .state('app.declaration.declar', {
           url: '/declarDetail/:status/:declarName',
           title: 'DeclarDetail',
@@ -935,7 +942,9 @@ App
   .constant('APP_REQUIRES', {
     // jQuery based and standalone scripts
     scripts: {
+      'drag':               ['vendor/drag/angularDrag.js'],
       'cytoscape':          ['vendor/cytoscape/cytoscape.min.js'],
+      'ngDraggable':        ['vendor/ngDraggable/ngDraggable.js'],
       'whirl':              ['vendor/whirl/dist/whirl.css'],
       'classyloader':       ['vendor/jquery-classyloader/js/jquery.classyloader.min.js'],
       'animo':              ['vendor/animo.js/animo.js'],
@@ -1231,7 +1240,7 @@ App.service('myservice', function($window,$state,$http) {
         return obj;
     }
 
-    this.dragFunc = function(id) {
+    this.dragFuncAll = function(id) {
         var Drag = document.getElementById(id);
         Drag.onmousedown = function(event) {
             var ev = event || window.event;
@@ -1251,6 +1260,46 @@ App.service('myservice', function($window,$state,$http) {
         };
     }
 
+    this.dragFunc = function(id) {
+        var elmnt = document.getElementById((id));
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        if (document.getElementById(elmnt.id + "header")) {
+            /* if present, the header is where you move the DIV from:*/
+            document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+        } else {
+            /* otherwise, move the DIV from anywhere inside the DIV:*/
+            elmnt.onmousedown = dragMouseDown;
+        }
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            // get the mouse cursor position at startup:
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new position:
+            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        }
+
+        function closeDragElement() {
+            /* stop moving when mouse button is released:*/
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    }
+
     this.doPost = function(url,params,message){
         var that = this;
         $http.post(url,params).success(function(data)
@@ -1268,6 +1317,42 @@ App.service('myservice', function($window,$state,$http) {
     }
 
 });
+
+App.controller("neo4jRelationController", function ($http,$timeout,$scope,
+                                                    myservice,ngDraggable) {
+
+    var vm = this;
+
+    myservice.dragFunc("cnDiv");
+
+    $scope.initTree = function () {
+
+        var url = "/neo4jRelation/getNeo4jAttribute";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            vm.tree = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    $scope.initTree();
+
+    $scope.css = {
+
+    }
+
+    $scope.onDropComplete = function(index, obj, $event) {
+        $scope.css = {
+            border: '10px solid #f173ac'
+        }
+        console.log("index:"+index);
+        console.log("obj:"+obj.name);
+    }
+ })
 
 App.controller("neo4jInitDataController", function ($http,$timeout,$scope,
                                                   myservice,$websocket) {
@@ -1295,7 +1380,7 @@ App.controller("neo4jInitDataController", function ($http,$timeout,$scope,
     $scope.query();
 
     loadDictionarySize = function(){
-        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"neo4j_size";
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"neo4j_node_size";
         $http.post(url).success(function(data)
         {
             var jsonString = angular.toJson(data);
@@ -1309,7 +1394,7 @@ App.controller("neo4jInitDataController", function ($http,$timeout,$scope,
     }
 
     loadDictionaryColor = function(){
-        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"neo4j_color";
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"neo4j_node_color";
         $http.post(url).success(function(data)
         {
             var jsonString = angular.toJson(data);
@@ -1323,7 +1408,7 @@ App.controller("neo4jInitDataController", function ($http,$timeout,$scope,
     }
 
     loadDictionaryShape = function(){
-        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"neo4j_shape";
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"neo4j_node_shape";
         $http.post(url).success(function(data)
         {
             var jsonString = angular.toJson(data);
@@ -8806,7 +8891,7 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
            $scope.menuItems = temp.obj;
         })
 
-              /*(
+              /*
               var menuJson = 'server/sidebar-menu.json',
                   menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
               $http.get(menuURL)
@@ -10037,6 +10122,15 @@ App.directive('cytoscape2', ['$rootScope','cytoscapeAttrFactory',function($rootS
                             'content': 'data(id)'
                         }
                     },
+                    {
+                        selector: 'node[id = "a"]',
+                        style: {
+                            'background-color': cytoscapeAttrFactory.colors.colors_08,
+                            'text-valign': 'center',
+                            'content': 'data(id)'
+                        }
+                    },
+
 
                     {
                         selector: 'edge',
@@ -10050,11 +10144,13 @@ App.directive('cytoscape2', ['$rootScope','cytoscapeAttrFactory',function($rootS
                 elements: {
                     nodes: [
                         { data: { id: 'a' } },
+                        { data: { id: 'a' } },
                         { data: { id: 'b' } },
                         { data: { id: 'c' } },
                         { data: { id: 'd' } }
                     ],
                     edges: [
+                        { data: { id: 'aa', source: 'a', target: 'a' , relationship: 'bbb'} },
                         { data: { id: 'ab', source: 'a', target: 'b' , relationship: 'hhh'} },
                         { data: { id: 'ac', source: 'a', target: 'b' , relationship: 'xxx'} },
                         { data: { id: 'ba', source: 'b', target: 'a' , relationship: 'kkk'} },

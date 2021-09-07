@@ -155,14 +155,14 @@ public class Neo4jInitDatServiceImpl  implements Neo4jInitDatService {
         neo4jNodeAttributeEntity4Sql.setFileTableId(fileTableId);
         List<Neo4jNodeAttributeEntity> neo4jNodeAttributeEntityList = neo4jNodeAttributeMapper.getNeo4jNodeAttributeLis(neo4jNodeAttributeEntity4Sql);
 
-        String dicGroup = "neo4j_shape";
+        String dicGroup = "neo4j_node_shape";
         Map<String, String> map = new HashMap<>();
         List<SysDictionaryDto> sysDictionaryDtoList =  sysDictionaryServiceImpl.getSysDictionariesByDicGroup(dicGroup,errorList);
         for(SysDictionaryDto sysDictionaryDto : sysDictionaryDtoList) {
             map.put(sysDictionaryDto.getValue(),sysDictionaryDto.getDicShow());
         }
 
-        dicGroup = "neo4j_color";
+        dicGroup = "neo4j_node_color";
         sysDictionaryDtoList =  sysDictionaryServiceImpl.getSysDictionariesByDicGroup(dicGroup,errorList);
         for(SysDictionaryDto sysDictionaryDto : sysDictionaryDtoList) {
             map.put(sysDictionaryDto.getValue(),sysDictionaryDto.getDicShow());
