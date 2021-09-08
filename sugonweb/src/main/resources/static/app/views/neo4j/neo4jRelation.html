@@ -53,7 +53,7 @@
 
         <div class="form-inline">
             <!--左半部分-->
-             <div  align="left" style="width: 30%" class="input-group panel">
+             <div  align="left" style="width: 30%;vertical-align: top;" class="input-group panel">
                  <div style="margin-left:30px;">
                  <h4>节点拖拽选择</h4>
                  </div>
@@ -79,19 +79,37 @@
                         <thead>
                         <tr>
                             <th>序号</th>
-                            <th>类型</th>
-                            <th>业务编号</th>
-                            <th>申报内容</th>
-                            <th>申报时间</th>
+                            <th>关系名称</th>
+                            <th>源节点</th>
+                            <th>目标节点</th>
+                            <th>属性</th>
+                            <th>颜色</th>
+                            <th>形状</th>
+                            <th>算法URL</th>
+                            <th>初始化</th>
+                            <th>删除</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr ng-repeat="item in obj">
                             <td align="center" style="width:50px">{{item.no}}</td>
-                            <td align="left" style="width:150px">{{item.typeName}}</td>
-                            <td align="left" style="width:100px">{{item.businessId}}</td>
-                            <td align="left" style="width:300px">{{item.detail}}</td>
-                            <td align="left" style="width:300px">{{item.createTime}}</td>
+                            <td align="left" style="width:120px">{{item.relationship}}</td>
+                            <td align="left" style="width:180px">{{item.sourceAttributeName}}</td>
+                            <td align="left" style="width:180px">{{item.targetAttributeName}}</td>
+                            <td align="left" style="width:180px">{{item.differentiate}}</td>
+                            <td align="left" style="width:150px">{{item.color}}</td>
+                            <td align="left" style="width:150px">{{item.shape}}</td>
+                            <td contentEditable="true"><input type="text" readonly="readonly" ng-model="item.program" ></td>
+                            <td>
+                                <button type="button" ng-click="initRelation(item)" class="btn btn-sm btn-warning">
+                                    <em class="fa fa-upload"></em>
+                                </button>
+                            </td>
+                            <td>
+                                <button type="button" ng-click="deleteRelation(item.id)" class="btn btn-sm btn-danger">
+                                    <em class="fa fa-trash-o"></em>
+                                </button>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -100,23 +118,112 @@
         </div>
     </div>
 
-    <div  id = "cnDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 460px; z-index: 9999;overflow-y:auto;">
+    <div  id = "cnDiv"  class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 340px; height: 550px; z-index: 9999;overflow-y:auto;">
         <div id="cnDivheader" class="panel-heading topnavbar" style="cursor: move">
-            添加/修改<input type="button" value="关闭" style="margin-left:220px" class="btn btn-default" ng-click="close();" >
+            添加/修改<input type="button" value="关闭" style="margin-left:250px" class="btn btn-default" ng-click="close();" >
         </div>
         <div class="panel-body">
             <div  class="form-group" style="top: 20px;width: 250px" >
                 <span>请填写关系名称<input placeholder="必填" class="form-control" type="text" ng-model="relationship" ></span>
             </div>
             <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>请填写案件名称<input placeholder="必填" class="form-control" type="text" ng-model="caseName_1" ></span>
+                <span>请填写区分属性<input placeholder="必填" class="form-control" type="text" ng-model="differentiate" ></span>
+            </div>
+            <div ng-init="itemSource.flag=1;itemSource.name=''" ng-drop="true" ng-drop-success="onDropComplete(itemSource.flag, $data, $event)">
+                <div ng-drag="false"  ng-drag-data="{{itemSource}}" class="form-group" style="top: 20px;width: 250px" >
+                    <span>请拖拽源节点<input placeholder="必填" class="form-control" type="text" readonly="readonly" ng-model="itemSource.name" ></span>
+                </div>
+            </div>
+            <div ng-init="itemTarget.flag=2;itemTarget.name=''" ng-drop="true" ng-drop-success="onDropComplete(itemTarget.flag, $data, $event)">
+                <div ng-drag="false" class="form-group"  ng-drag-data="{{itemTarget}}" style="top: 20px;width: 250px" >
+                    <span>请拖拽目标节点<input placeholder="必填" class="form-control" type="text" readonly="readonly" ng-model="itemTarget.name" ></span>
+                </div>
             </div>
             <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>请填写案件信息<textarea rows="5" cols="30" ng-model="caseInfo_1"></textarea></span>
+                <div  class="form-group" style="top: 20px;width: 250px" >
+                    <span>请填写算法路径<input placeholder="必填" class="form-control" type="text" ng-model="program" ></span>
+                </div>
+            <!--
+              <span>上传关系算法
+                  <div ng-show="uploader.queue.length > 1"><span style="color: red">只许上传一个文件</span></div>
+                <div class="container-fluid" id="fileUpload">
+                    <div style="margin-bottom: 40px" class="col-md-9">
+                                <div ng-if="uploader.queue.length">
+                                    <table ng-if="uploader.queue.length" class="table">
+                                        <thead>
+                                        <tr>
+                                            <th width="50%">Name</th>
+                                            <th ng-show="uploader.isHTML5">Size</th>
+                                            <th ng-show="uploader.isHTML5">Progress</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="item in uploader.queue">
+                                            <td>
+                                                <strong>{{ item.file.name }}</strong>
+                                            </td>
+                                            <td ng-show="uploader.isHTML5" nowrap="">{{ item.file.size/1024/1024|number:2 }} MB</td>
+                                            <td ng-show="uploader.isHTML5">
+                                                <div style="margin-bottom: 0;" class="progress progress-xs">
+                                                    <div role="progressbar" ng-style="{ 'width': item.progress + '%' }" class="progress-bar"></div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                 <span ng-show="item.isSuccess">
+                                    <em class="fa fa-check fa-fw"></em>
+                                 </span>
+                                                <span ng-show="item.isCancel">
+                                    <em class="fa fa-ban-circle fa-fw"></em>
+                                 </span>
+                                                <span ng-show="item.isError">
+                                    <em class="fa fa-times fa-fw"></em>
+                                 </span>
+                                            </td>
+                                            <td nowrap="">
+                                                <button type="button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" class="btn btn-info btn-xs">
+                                                    <span class="icon-cloud-upload mr"></span>Upload</button>
+                                                <button type="button" ng-click="item.cancel()" ng-disabled="!item.isUploading" class="btn btn-warning btn-xs">
+                                                    <span class="icon-close mr"></span>Cancel</button>
+                                                <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs">
+                                                    <span class="icon-trash mr"></span>Remove</button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                        </div>
+                        <input filestyle="" type="file" data-button-text="批量选择程序" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" multiple="" class="form-control" />
+                    </div>
+                </div>
+              </span>-->
+            </div>
+
+
+            </div>
+            <div  class="form-group" style="top: 40px;width: 250px" >
+                <div class="input-group mb">
+                    <span class="input-group-addon">箭头颜色</span>
+                    <!-- this uses fixed width to avoid expand outside the group container-->
+                    <select  ng-model="selectedOptionsColor" width="'150px'" >
+                        <option  value="" >---请选择---</option>
+                        <option ng-repeat="site in sitesColor" value="{{site.value}}">{{site.dicShow}}</option>
+                    </select>
+                </div>
             </div>
             <div  class="form-group" style="top: 20px;width: 250px" >
+                <div class="input-group mb">
+                    <span class="input-group-addon">箭头形状</span>
+                    <!-- this uses fixed width to avoid expand outside the group container-->
+                    <select  ng-model="selectedOptionsShape" width="'150px'" >
+                        <option  value="" >---请选择---</option>
+                        <option ng-repeat="site in sitesShape" value="{{site.value}}">{{site.dicShow}}</option>
+                    </select>
+                </div>
+            </div>
+            <div  class="form-group" style="top: 20px;width: 310px" >
                 <div align="right" style="margin-top:10px">
-                    <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="saveOrUpdate();" >
+                    <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="save();" >
                 </div>
             </div>
         </div>

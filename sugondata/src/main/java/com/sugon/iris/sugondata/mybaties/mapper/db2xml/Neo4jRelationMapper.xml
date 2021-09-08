@@ -8,15 +8,24 @@
     <result column="target_attribute_id" jdbcType="BIGINT" property="targetAttributeId" />
     <result column="color" jdbcType="VARCHAR" property="color" />
     <result column="shape" jdbcType="VARCHAR" property="shape" />
+    <result column="program" jdbcType="VARCHAR" property="program" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="differentiate" jdbcType="VARCHAR" property="differentiate" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, relationship, source_attribute_id, target_attribute_id, color, shape
+    id, relationship, source_attribute_id, target_attribute_id, color, shape,program,user_id,differentiate
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from neo4j_relation
     where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectByUserId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from neo4j_relation
+    where user_id = #{user_id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from neo4j_relation
@@ -27,78 +36,8 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into neo4j_relation (relationship, source_attribute_id, target_attribute_id, 
-      color, shape)
+      color, shape,program,user_id,differentiate)
     values (#{relationship,jdbcType=VARCHAR}, #{sourceAttributeId,jdbcType=BIGINT}, #{targetAttributeId,jdbcType=BIGINT}, 
-      #{color,jdbcType=VARCHAR}, #{shape,jdbcType=VARCHAR})
+      #{color,jdbcType=VARCHAR}, #{shape,jdbcType=VARCHAR}, #{program,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, #{differentiate,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jRelationEntity">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into neo4j_relation
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="relationship != null">
-        relationship,
-      </if>
-      <if test="sourceAttributeId != null">
-        source_attribute_id,
-      </if>
-      <if test="targetAttributeId != null">
-        target_attribute_id,
-      </if>
-      <if test="color != null">
-        color,
-      </if>
-      <if test="shape != null">
-        shape,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="relationship != null">
-        #{relationship,jdbcType=VARCHAR},
-      </if>
-      <if test="sourceAttributeId != null">
-        #{sourceAttributeId,jdbcType=BIGINT},
-      </if>
-      <if test="targetAttributeId != null">
-        #{targetAttributeId,jdbcType=BIGINT},
-      </if>
-      <if test="color != null">
-        #{color,jdbcType=VARCHAR},
-      </if>
-      <if test="shape != null">
-        #{shape,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jRelationEntity">
-    update neo4j_relation
-    <set>
-      <if test="relationship != null">
-        relationship = #{relationship,jdbcType=VARCHAR},
-      </if>
-      <if test="sourceAttributeId != null">
-        source_attribute_id = #{sourceAttributeId,jdbcType=BIGINT},
-      </if>
-      <if test="targetAttributeId != null">
-        target_attribute_id = #{targetAttributeId,jdbcType=BIGINT},
-      </if>
-      <if test="color != null">
-        color = #{color,jdbcType=VARCHAR},
-      </if>
-      <if test="shape != null">
-        shape = #{shape,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jRelationEntity">
-    update neo4j_relation
-    set relationship = #{relationship,jdbcType=VARCHAR},
-      source_attribute_id = #{sourceAttributeId,jdbcType=BIGINT},
-      target_attribute_id = #{targetAttributeId,jdbcType=BIGINT},
-      color = #{color,jdbcType=VARCHAR},
-      shape = #{shape,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
 </mapper>

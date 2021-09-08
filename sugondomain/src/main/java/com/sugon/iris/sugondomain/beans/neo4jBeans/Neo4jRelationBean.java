@@ -34,4 +34,18 @@ public class Neo4jRelationBean {
      */
     private String shape;
 
+    /**
+     * 自定义程序URL地址
+     */
+     private String program;
+
+    /**
+     *创建者id
+     */
+     private Long userId;
+
+    /**
+     *同名区分字段，用于关系的属性
+     */
+    private String differentiate;
 }

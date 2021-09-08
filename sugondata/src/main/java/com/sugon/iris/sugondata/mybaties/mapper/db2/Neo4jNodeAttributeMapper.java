@@ -11,6 +11,8 @@ public interface Neo4jNodeAttributeMapper {
 
   List<Neo4jNodeAttributeEntity> getNeo4jNodeAttributeLis(Neo4jNodeAttributeEntity neo4jNodeAttributeEntity4Sql);
 
+  Neo4jNodeAttributeEntity selectByPrimaryKey(Long id);
+
   int  updateNeo4jNodeAttribute(Neo4jNodeAttributeEntity neo4jNodeAttributeEntity4Sql);
 
   int  deleteNeo4jNodeAttribute(Long id);

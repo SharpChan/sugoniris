@@ -133,7 +133,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           title: 'Neo4jRelation',
           templateUrl: helper.basepath('neo4j/neo4jRelation.html'),
           cache: false,
-          resolve: helper.resolveFor('ngDraggable','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+          resolve: helper.resolveFor('ngDraggable','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular','angularFileUpload', 'filestyle')
       })
       .state('app.declaration.declar', {
           url: '/declarDetail/:status/:declarName',
@@ -1318,9 +1318,9 @@ App.service('myservice', function($window,$state,$http) {
 
 });
 
-App.controller("neo4jRelationController", function ($http,$timeout,$scope,
+App.controller("neo4jRelationController", function ($http,FileUploader,$timeout,$scope,
                                                     myservice,ngDraggable) {
-
+    $("#cnDiv").hide();
     var vm = this;
 
     myservice.dragFunc("cnDiv");
@@ -1341,18 +1341,126 @@ App.controller("neo4jRelationController", function ($http,$timeout,$scope,
     }
     $scope.initTree();
 
-    $scope.css = {
 
-    }
-
-    $scope.onDropComplete = function(index, obj, $event) {
-        $scope.css = {
-            border: '10px solid #f173ac'
+    $scope.onDropComplete = function(flag, obj, $event) {
+        if(flag == 1){
+            $scope.itemSource.name = obj.name;
+            $scope.itemSource.id = obj.id;
         }
-        console.log("index:"+index);
-        console.log("obj:"+obj.name);
+        if(flag == 2){
+            $scope.itemTarget.name = obj.name;
+            $scope.itemTarget.id = obj.id;
+        }
     }
- })
+    
+    $scope.add = function () {
+        $("#cnDiv").show();
+    }
+
+
+    loadDictionaryColor = function(){
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"neo4j_relation_color";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.sitesColor = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    loadDictionaryShape = function(){
+        var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"neo4j_relation_shape";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.sitesShape = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $(function () {
+        loadDictionaryColor();
+        loadDictionaryShape();
+    })
+
+    $scope.close = function () {
+        /**
+        if($scope.uploader.queue.length > 0){
+            angular.forEach($scope.uploader.queue, function(item) {
+                item.remove();
+            });
+        }*/
+        $("#cnDiv").hide();
+         $scope.relationship = "";
+         $scope.itemSource.name = "";
+         $scope.itemTarget.name = "";
+         $scope.selectedOptionsColor = "";
+         $scope.selectedOptionsShape = "";
+         $scope.program = "";
+    }
+
+    $scope.queryRelation = function () {
+         var url = "/neo4jRelation/getRelations";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj =myservice.setSerialNumber(temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    $scope.queryRelation();
+    $scope.save = function () {
+        var url="/neo4jRelation/saveRelation";
+        var params = {
+            relationship : $scope.relationship,
+            differentiate: $scope.differentiate,
+            sourceAttributeId: $scope.itemSource.id,
+            targetAttributeId: $scope.itemTarget.id,
+            color: $scope.selectedOptionsColor,
+            shape: $scope.selectedOptionsShape,
+            program: $scope.program
+        }
+
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.close();
+            $scope.queryRelation();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    
+    $scope.initRelation = function (item) {
+
+        var url="/neo4jRelation/initRelation";
+
+        $http.post(url,item).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+})
 
 App.controller("neo4jInitDataController", function ($http,$timeout,$scope,
                                                   myservice,$websocket) {

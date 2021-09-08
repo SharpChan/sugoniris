@@ -1,20 +1,27 @@
 package com.sugon.iris.sugonservice.impl.neo4jServiceImpl;
 
-import com.sugon.iris.sugondata.mybaties.mapper.db2.FileCaseMapper;
-import com.sugon.iris.sugondata.mybaties.mapper.db2.FileDataGroupTableMapper;
-import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTableMapper;
-import com.sugon.iris.sugondata.mybaties.mapper.db2.Neo4jNodeAttributeMapper;
+import com.alibaba.fastjson.JSONArray;
+import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.*;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;
+import com.sugon.iris.sugondomain.dtos.configDtos.SysDictionaryDto;
+import com.sugon.iris.sugondomain.dtos.neo4jDtos.Neo4jRelationDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileCaseEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTableEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jNodeAttributeEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jRelationEntity;
+import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
+import com.sugon.iris.sugonservice.impl.websocketServiceImpl.WebSocketClient;
+import com.sugon.iris.sugonservice.service.configService.SysDictionaryService;
 import com.sugon.iris.sugonservice.service.neo4jService.Neo4jRelationService;
 import org.springframework.stereotype.Service;
+import javax.websocket.ContainerProvider;
+import javax.websocket.WebSocketContainer;
+import java.net.URI;
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class Neo4jRelationServiceImpl implements Neo4jRelationService {
@@ -23,13 +30,16 @@ public class Neo4jRelationServiceImpl implements Neo4jRelationService {
     private FileTableMapper fileTableMapper;
 
     @Resource
-    private FileDataGroupTableMapper fileDataGroupTableMapper;
-
-    @Resource
     private FileCaseMapper fileCaseMapper;
 
     @Resource
     private Neo4jNodeAttributeMapper neo4jNodeAttributeMapper;
+
+    @Resource
+    private Neo4jRelationMapper neo4jRelationMapper;
+
+    @Resource
+    private SysDictionaryService sysDictionaryServiceImpl;
 
 
     @Override
@@ -71,5 +81,69 @@ public class Neo4jRelationServiceImpl implements Neo4jRelationService {
             }
         }
         return menuDtoList;
+    }
+
+    @Override
+    public Integer saveRelation(User user, Neo4jRelationDto neo4jRelationDto, List<Error> errorList) throws Exception {
+        Neo4jRelationEntity record = new Neo4jRelationEntity();
+        PublicUtils.trans(neo4jRelationDto,record);
+        record.setUserId(user.getId());
+        return neo4jRelationMapper.insert(record);
+    }
+
+    @Override
+    public List<Neo4jRelationDto> getRelations(User user, List<Error> errorList) throws IllegalAccessException {
+        List<Neo4jRelationDto> neo4jRelationDtoList = new ArrayList<>();
+        List<Neo4jRelationEntity> neo4jRelationEntityList = null;
+        try {
+             neo4jRelationEntityList = neo4jRelationMapper.selectByUserId(user.getId());
+        }catch (Exception e){
+
+        }
+
+        String dicGroup = "neo4j_relation_color";
+        Map<String, String> map = new HashMap<>();
+        List<SysDictionaryDto> sysDictionaryDtoList =  sysDictionaryServiceImpl.getSysDictionariesByDicGroup(dicGroup,errorList);
+        for(SysDictionaryDto sysDictionaryDto : sysDictionaryDtoList) {
+            map.put(sysDictionaryDto.getValue(),sysDictionaryDto.getDicShow());
+        }
+
+        dicGroup = "neo4j_relation_shape";
+        sysDictionaryDtoList =  sysDictionaryServiceImpl.getSysDictionariesByDicGroup(dicGroup,errorList);
+        for(SysDictionaryDto sysDictionaryDto : sysDictionaryDtoList) {
+            map.put(sysDictionaryDto.getValue(),sysDictionaryDto.getDicShow());
+        }
+
+        for(Neo4jRelationEntity neo4jRelationEntity : neo4jRelationEntityList){
+            //通过节点样式id获取样式名称
+            Neo4jNodeAttributeEntity neo4jdNoeSourceAttributeEntity = neo4jNodeAttributeMapper.selectByPrimaryKey(neo4jRelationEntity.getSourceAttributeId());
+            Neo4jNodeAttributeEntity neo4jdNoeTargetAttributeEntity = neo4jNodeAttributeMapper.selectByPrimaryKey(neo4jRelationEntity.getTargetAttributeId());
+            Neo4jRelationDto neo4jRelationDto = new Neo4jRelationDto();
+            PublicUtils.trans(neo4jRelationEntity,neo4jRelationDto);
+            neo4jRelationDto.setSourceAttributeName(neo4jdNoeSourceAttributeEntity.getAttributeName());
+            neo4jRelationDto.setTargetAttributeName(neo4jdNoeSourceAttributeEntity.getAttributeName());
+            neo4jRelationDto.setColor(map.get(neo4jRelationDto.getColor()));
+            neo4jRelationDto.setShape(map.get(neo4jRelationDto.getShape()));
+            neo4jRelationDtoList.add(neo4jRelationDto);
+        }
+        return neo4jRelationDtoList;
+    }
+
+    @Override
+    public Integer initRelation(User user, Neo4jRelationDto neo4jRelationDto, List<Error> errorList) {
+        Integer result = 1;
+        WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+        WebSocketClient client = new WebSocketClient();
+        String URI = neo4jRelationDto.getProgram()+"/"+user.getId();
+        try {
+            container.connectToServer(client, new URI(URI));
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SUGON_02_009.getCode(),ErrorCode_Enum.SUGON_02_009.getMessage(),e.toString()));
+        }
+        Object obj = JSONArray.toJSON(neo4jRelationDto);
+        String json = obj.toString();
+        client.send(json);
+        return result;
     }
 }
