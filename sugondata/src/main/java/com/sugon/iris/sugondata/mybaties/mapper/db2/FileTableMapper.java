@@ -18,4 +18,6 @@ public interface FileTableMapper {
     List<FileTableEntity> findFileTablesWithCaseNameAndTemplateNameByUserId(Long userId);
 
     Integer updateFileTable(FileTableEntity fileTableEntity);
+
+    FileTableEntity findFileTableByRelationAttributeId(Long relationId);
 }

@@ -118,7 +118,7 @@
         </div>
     </div>
 
-    <div  id = "cnDiv"  class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 340px; height: 550px; z-index: 9999;overflow-y:auto;">
+    <div  id = "cnDiv"  class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 340px; height: 600px; z-index: 9999;overflow-y:auto;">
         <div id="cnDivheader" class="panel-heading topnavbar" style="cursor: move">
             添加/修改<input type="button" value="关闭" style="margin-left:250px" class="btn btn-default" ng-click="close();" >
         </div>
@@ -127,7 +127,7 @@
                 <span>请填写关系名称<input placeholder="必填" class="form-control" type="text" ng-model="relationship" ></span>
             </div>
             <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>请填写区分属性<input placeholder="必填" class="form-control" type="text" ng-model="differentiate" ></span>
+                <span>请填写自定义参数<input placeholder="必填" class="form-control" type="text" ng-model="differentiate" ></span>
             </div>
             <div ng-init="itemSource.flag=1;itemSource.name=''" ng-drop="true" ng-drop-success="onDropComplete(itemSource.flag, $data, $event)">
                 <div ng-drag="false"  ng-drag-data="{{itemSource}}" class="form-group" style="top: 20px;width: 250px" >

@@ -10,4 +10,8 @@
     <select id="mppSqlExecForSearch" parameterType="String" resultType="String">
          ${sql}
     </select>
+
+    <select id="mppSqlExecForSearchRtMapList" parameterType="String" resultType="java.util.HashMap">
+         ${sql}
+    </select>
 </mapper>

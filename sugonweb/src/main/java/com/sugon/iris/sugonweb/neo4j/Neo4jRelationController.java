@@ -11,10 +11,12 @@ import com.sugon.iris.sugonservice.service.neo4jService.Neo4jRelationService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/neo4jRelation")
@@ -102,6 +104,26 @@ public class Neo4jRelationController {
         List<Error> errorList = new ArrayList<>();
         try{
             restResult.setObj(neo4jRelationServiceImpl.initRelation(user,neo4jRelationDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @RequestMapping("/getNeo4jRelations")
+    public RestResult<Map<?,?>> getNeo4jRelations(@RequestParam(value = "relationship") String  relationship,@RequestParam(value = "relationshipAttribute") String  relationshipAttribute,
+                                                  @RequestParam(value = "relationId") String  relationId){
+        RestResult<Map<?,?>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(neo4jRelationServiceImpl.getNeo4jRelations( relationship,  relationshipAttribute, relationId, errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

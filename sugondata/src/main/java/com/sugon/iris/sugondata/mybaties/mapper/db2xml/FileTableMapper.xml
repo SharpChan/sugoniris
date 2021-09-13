@@ -59,6 +59,16 @@
         </if >
     </select>
 
+    <select id="findFileTableByRelationAttributeId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        file_table
+        where
+        id =
+        (select file_table_id from neo4j_node_attribute where  id = #{id})
+    </select>
+
     <select id="findAllFileTablesByUserId" resultMap="BaseResultMap">
         select c.* from
                 (file_data_group_detail a inner join file_data_group_table b on a.file_data_group_id = b.data_group_id)

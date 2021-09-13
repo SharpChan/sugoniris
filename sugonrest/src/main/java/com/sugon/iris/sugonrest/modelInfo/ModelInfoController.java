@@ -21,7 +21,7 @@ public class ModelInfoController {
 
     private static final String FAILED = "FAILED";
 
-    private static final String SUCCESS = "FAILED";
+    private static final String SUCCESS = "SUCCESS";
 
     private static final String MESSAGE_01 = "[通过警号和模型id查询模型信息接口失败]";
 

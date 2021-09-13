@@ -7,6 +7,7 @@ import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface Neo4jRelationService {
 
@@ -16,5 +17,8 @@ public interface Neo4jRelationService {
 
     List<Neo4jRelationDto> getRelations(User user, List<Error> errorList) throws IllegalAccessException;
 
-    Integer initRelation(User user, Neo4jRelationDto neo4jRelationDto, List<Error> errorList);
+    Integer initRelation(User user, Neo4jRelationDto neo4jRelationDto, List<Error> errorList) throws IllegalAccessException;
+
+    Map<?,?>  getNeo4jRelations(String relationship, String relationshipAttribute,
+                                String relationId, List<Error> errorList);
 }

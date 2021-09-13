@@ -8,6 +8,8 @@ public class FileTableDto extends FileTableBean {
 
     private FileDataGroupTableDto fileDataGroupTableDto;
 
+    private FileTemplateDto fileTemplateDto;
+
     /**
      * 如果在FileDataGroupTable表存在记录，则已经勾选
      */

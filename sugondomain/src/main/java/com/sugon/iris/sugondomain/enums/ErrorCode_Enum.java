@@ -5,6 +5,7 @@ public enum ErrorCode_Enum {
     SYS_01_000("SYS-01-000","用户被锁定"),
     SYS_02_000("SYS-02-000","用户未注册"),
     SYS_DB_001("SYS-DB-001","数据表操作出错"),
+    SYS_NEO4J_001("SYS-NEO4J-001","图数据库操作出错"),
     SYS_STORE_001("SYS-STORE-001","数据存入本地硬盘出错"),
     IRIS_00_002("IRIS-00-002","文件格式不满足要求"),
     IRIS_00_003("IRIS-00-003","密码错误"),

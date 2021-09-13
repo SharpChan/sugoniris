@@ -229,7 +229,7 @@ public class Neo4jInitDatServiceImpl  implements Neo4jInitDatService {
                     property += ",";
                 }
             }
-            neo4jDaoImpl.addStar(label,property);
+            neo4jDaoImpl.addNode(label,property);
         }
 
         return  strList.size();

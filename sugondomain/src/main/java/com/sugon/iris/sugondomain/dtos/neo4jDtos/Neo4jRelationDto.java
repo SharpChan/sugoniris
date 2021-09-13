@@ -12,7 +12,7 @@ public class Neo4jRelationDto extends Neo4jRelationBean {
     private String sourceAttributeName;
 
     /**
-     * 目标样式id（neo4j_node_attribute的id）
+     * 目标样式名称
      */
     private String targetAttributeName;
 }

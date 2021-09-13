@@ -2,8 +2,9 @@ package com.sugon.iris.sugonservice.impl.websocketServiceImpl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.sugon.iris.sugondomain.dtos.neo4jDtos.Neo4jRelationDto;
-import lombok.extern.slf4j.Slf4j;
+import com.sugon.iris.sugoncommon.baseConfig.SpringUtil;
+import com.sugon.iris.sugondomain.beans.webSocket.WebSocketRequest;
+import com.sugon.iris.sugonservice.service.relationService.RelationCreateService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,10 +28,17 @@ public class WebSocketServer {
 
     private String userId = "";
 
+    private static RelationCreateService relationCreateServicesImpl;
+
     /**
      * 连接建立成功调用的方法*/
     @OnOpen
     public void onOpen(@PathParam(value = "userId") String userId, Session session) {
+
+        if(this.relationCreateServicesImpl == null){
+            this.relationCreateServicesImpl = (RelationCreateService) SpringUtil.getBean("relationCreateServiceImpl");
+        }
+
         this.session = session;
         this.userId = userId;//接收到发送消息的人员编号
         if(webSocketMap.containsKey(userId)){
@@ -61,20 +69,18 @@ public class WebSocketServer {
      * @param message 客户端发送过来的消息*/
     @OnMessage
     public void onMessage(String message, Session session) {
-        log.info("用户消息:"+userId+",报文:"+message);
         //可以群发消息
         //消息保存到数据库、redis
         if(StringUtils.isNotBlank(message)){
             try {
                 //解析发送的报文
                 JSONObject jsonObject = JSON.parseObject(message);
-                Neo4jRelationDto neo4jRelationDto = JSON.toJavaObject(jsonObject,Neo4jRelationDto.class);
+                WebSocketRequest webSocketRequest = JSON.toJavaObject(jsonObject, WebSocketRequest.class);
+                //进行业务处理
+                relationCreateServicesImpl.test1(webSocketRequest);
                 //传送给对应toUserId用户的websocket
-                if(webSocketMap.containsKey(String.valueOf(neo4jRelationDto.getUserId()))){
-                    webSocketMap.get(String.valueOf(neo4jRelationDto.getUserId())).sendMessage(jsonObject.toJSONString());
-                }else{
-                    log.error("请求的userId:"+neo4jRelationDto.getUserId()+"不在该服务器上");
-                    //否则不在这个服务器上，发送到mysql或者redis
+                if(!webSocketMap.containsKey(String.valueOf(webSocketRequest.getUserId()))){
+                    webSocketMap.get(String.valueOf(webSocketRequest.getUserId())).sendMessage("请求的userId:"+webSocketRequest.getUserId()+"不在该服务器上");
                 }
             }catch (Exception e){
                 e.printStackTrace();

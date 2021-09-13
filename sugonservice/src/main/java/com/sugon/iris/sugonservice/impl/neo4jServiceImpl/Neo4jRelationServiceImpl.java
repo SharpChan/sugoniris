@@ -3,15 +3,17 @@ package com.sugon.iris.sugonservice.impl.neo4jServiceImpl;
 import com.alibaba.fastjson.JSONArray;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.*;
+import com.sugon.iris.sugondata.neo4j.intf.Neo4jDao;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;
+import com.sugon.iris.sugondomain.beans.webSocket.WebSocketRequest;
 import com.sugon.iris.sugondomain.dtos.configDtos.SysDictionaryDto;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileTableDto;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.dtos.neo4jDtos.Neo4jRelationDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
-import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileCaseEntity;
-import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTableEntity;
-import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jNodeAttributeEntity;
-import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jRelationEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.*;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.impl.websocketServiceImpl.WebSocketClient;
 import com.sugon.iris.sugonservice.service.configService.SysDictionaryService;
@@ -40,6 +42,15 @@ public class Neo4jRelationServiceImpl implements Neo4jRelationService {
 
     @Resource
     private SysDictionaryService sysDictionaryServiceImpl;
+
+    @Resource
+    private FileTemplateMapper fileTemplateMapper;
+
+    @Resource
+    private FileTemplateDetailMapper fileTemplateDetailMapper;
+
+    @Resource
+    private Neo4jDao neo4jDaoImpl;
 
 
     @Override
@@ -130,7 +141,7 @@ public class Neo4jRelationServiceImpl implements Neo4jRelationService {
     }
 
     @Override
-    public Integer initRelation(User user, Neo4jRelationDto neo4jRelationDto, List<Error> errorList) {
+    public Integer initRelation(User user, Neo4jRelationDto neo4jRelationDto, List<Error> errorList) throws IllegalAccessException {
         Integer result = 1;
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         WebSocketClient client = new WebSocketClient();
@@ -141,9 +152,65 @@ public class Neo4jRelationServiceImpl implements Neo4jRelationService {
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SUGON_02_009.getCode(),ErrorCode_Enum.SUGON_02_009.getMessage(),e.toString()));
         }
-        Object obj = JSONArray.toJSON(neo4jRelationDto);
+
+        WebSocketRequest webSocketRequest = new WebSocketRequest();
+        webSocketRequest.setNeo4jRelationDto(neo4jRelationDto);
+        //获取源数据的表信息
+        FileTableEntity sourceFileTableEntity = fileTableMapper.findFileTableByRelationAttributeId(neo4jRelationDto.getSourceAttributeId());
+        //获取目标数据的表信息
+        FileTableEntity targetFileTableEntity = fileTableMapper.findFileTableByRelationAttributeId(neo4jRelationDto.getTargetAttributeId());
+
+        FileTableDto sourceFileTableDto = new FileTableDto();
+        PublicUtils.trans(sourceFileTableEntity,sourceFileTableDto);
+
+        FileTableDto targetFileTableDto = new FileTableDto();
+        PublicUtils.trans(targetFileTableEntity,targetFileTableDto);
+
+        FileTemplateDto sourceFileTemplateDto = getFileTemplateDto(sourceFileTableEntity);
+        FileTemplateDto targetFileTemplateDto = getFileTemplateDto(targetFileTableEntity);
+        sourceFileTableDto.setFileTemplateDto(sourceFileTemplateDto);
+        targetFileTableDto.setFileTemplateDto(targetFileTemplateDto);
+
+        webSocketRequest.setSourceFileTableDto(sourceFileTableDto);
+        webSocketRequest.setTargetFileTableDto(targetFileTableDto);
+
+        webSocketRequest.setUserId(neo4jRelationDto.getUserId());
+        Object obj = JSONArray.toJSON(webSocketRequest);
         String json = obj.toString();
         client.send(json);
         return result;
     }
+
+    @Override
+    public Map<?, ?> getNeo4jRelations(String relationship, String relationshipAttribute, String relationId, List<Error> errorList) {
+
+        relationship ="www";
+        relationshipAttribute = "hhh";
+        relationId = "1";
+        neo4jDaoImpl.getRelations(relationship,relationshipAttribute,relationId);
+        return null;
+    }
+
+    private FileTemplateDto getFileTemplateDto(FileTableEntity sourceFileTableEntity) throws IllegalAccessException {
+        //获取源模板
+        FileTemplateEntity fileTemplateEntity4Sql = new FileTemplateEntity();
+        fileTemplateEntity4Sql.setId(sourceFileTableEntity.getFileTemplateId());
+        FileTemplateEntity fileTemplateEntity =  fileTemplateMapper.selectFileTemplateList(fileTemplateEntity4Sql).get(0);
+        FileTemplateDto fileTemplateDto = new FileTemplateDto();
+        PublicUtils.trans(fileTemplateEntity,fileTemplateDto);
+        //获取源模板字段
+        FileTemplateDetailEntity fileTemplateDetailEntity4Sql = new FileTemplateDetailEntity();
+        fileTemplateDetailEntity4Sql.setTemplateId(sourceFileTableEntity.getFileTemplateId());
+        List<FileTemplateDetailEntity> fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntity4Sql);
+        List<FileTemplateDetailDto> fileTemplateDetailDtoList = new ArrayList<>();
+        for(FileTemplateDetailEntity fileTemplateDetailEntity : fileTemplateDetailEntityList){
+            FileTemplateDetailDto fileTemplateDetailDto = new FileTemplateDetailDto();
+            PublicUtils.trans(fileTemplateDetailEntity,fileTemplateDetailDto);
+            fileTemplateDetailDtoList.add(fileTemplateDetailDto);
+        }
+        fileTemplateDto.setFileTemplateDetailDtoList(fileTemplateDetailDtoList);
+        return fileTemplateDto;
+    }
+
+
 }
