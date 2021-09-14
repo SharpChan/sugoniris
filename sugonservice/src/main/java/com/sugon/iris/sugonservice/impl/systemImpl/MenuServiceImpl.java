@@ -246,6 +246,12 @@ public class MenuServiceImpl implements MenuService {
         if(!menuDto.getTranslate().equals(menuServiceDaoImpl.getMenuInfos(menuEntity,errorList).get(0).getTranslate())){
             translateServiceImpl.updateTranslate(menuDto.getTranslate(),menuDto.getId(),"zh_cn",menuDto.getName(),errorList);
         }
+        //查看名称是否发生改变
+        MenuEntity menuEntityOld = menuServiceDaoImpl.getMenuInfos(menuEntity,errorList).get(0);
+        if(!menuEntityOld.getName().equals(menuEntity)){
+            //修改翻译表的中文翻译
+            translateServiceImpl.updateTranslate(menuDto.getTranslate(),menuDto.getId(),"zh_cn",menuDto.getName(),errorList);
+        }
         return menuServiceDaoImpl.updateMenu(menuEntity,errorList);
     }
 
