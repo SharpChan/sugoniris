@@ -13,6 +13,7 @@ import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.configDtos.SysDictionaryDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTableDto;
 import com.sugon.iris.sugondomain.dtos.neo4jDtos.Neo4jNodeAttributeDto;
+import com.sugon.iris.sugondomain.dtos.neo4jDtos.Neo4jNodeInfoDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTableEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jNodeAttributeEntity;
@@ -22,6 +23,8 @@ import com.sugon.iris.sugonservice.service.configService.SysDictionaryService;
 import com.sugon.iris.sugonservice.service.neo4jService.Neo4jInitDatService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -31,6 +34,8 @@ public class Neo4jInitDatServiceImpl  implements Neo4jInitDatService {
     private static final String MESSAGE_01 = "[查询表file_table出错]";
 
     private static final String MESSAGE_02 = "[不存在需要初始的数据]";
+
+    private static final String MESSAGE_03 = "[更新表neo4j_node_info出错]";
 
     @Resource
     private FileTableMapper fileTableMapper;
@@ -91,13 +96,29 @@ public class Neo4jInitDatServiceImpl  implements Neo4jInitDatService {
         FileTemplateDetailEntity fileTemplateDetailEntity4Sql = new FileTemplateDetailEntity();
         fileTemplateDetailEntity4Sql.setTemplateId(fileTableDto.getFileTemplateId());
         List<FileTemplateDetailEntity> fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntity4Sql);
+        FileTemplateDetailEntity fileTemplateDetailEntityId = new FileTemplateDetailEntity();
+        fileTemplateDetailEntityId.setFieldName("id");
+        fileTemplateDetailEntityId.setSortNo("0");
+        fileTemplateDetailEntityList.add(fileTemplateDetailEntityId);
         //排序
         fileTemplateDetailEntityListSort(fileTemplateDetailEntityList);
         FileTemplateDetailEntity fileTemplateDetailEntity = new FileTemplateDetailEntity();
         fileTemplateDetailEntity.setFieldName("file_attachment_id");
         fileTemplateDetailEntityList.add(fileTemplateDetailEntity);
         //组装cql  label
+        //获取标签信息
+        Neo4jNodeInfoEntity neo4jNodeInfoEntity4QueryLabel = new Neo4jNodeInfoEntity();
+        neo4jNodeInfoEntity4QueryLabel.setFileTableId(fileTableDto.getId());
+        String nodeLables = neo4jNodeInfoMapper.getNeo4jNodeInfo(neo4jNodeInfoEntity4QueryLabel).getLabel();
+        String[] nodeLabelArr = null;
+        if(!StringUtils.isEmpty(nodeLables) && !nodeLables.contains("\\.")){
+            nodeLabelArr = nodeLables.split("\\.");
+        }
         String label = "a:"+fileTableDto.getCaseName()+":"+fileTableDto.getTemplateName()+":"+fileTableDto.getTableName();
+        for(String str : nodeLabelArr){
+            label += ":"+ str;
+        }
+
         //组装property
         String sql = "select result,id from (select id, concat('{',";
         for(int i = 0 ;i<fileTemplateDetailEntityList.size();i++){
@@ -106,7 +127,7 @@ public class Neo4jInitDatServiceImpl  implements Neo4jInitDatService {
                 sql += ",',',";
             }
         }
-        sql += ",',','\"','file_attachment_id','\":','\"',a.file_attachment_id,'\"','}') as result from "+fileTableDto.getTableName()+" a ) b";
+        sql += ",',','\"','id','\":','\"',a.id,'\"','}') as result from "+fileTableDto.getTableName()+" a ) b";
         //获取mpp数据库数据表总数量
         String sqlCount = "select max(id) from "+fileTableDto.getTableName();
         List<String> strListCount = mppMapper.mppSqlExecForSearch(sqlCount);
@@ -130,10 +151,6 @@ public class Neo4jInitDatServiceImpl  implements Neo4jInitDatService {
         neo4jNodeInfoEntity4Sql.setRownum(count.longValue());
         neo4jNodeInfoEntity4Sql.setFileTableId(fileTableEntity.getId());
         neo4jNodeInfoEntity4Sql.setUserId(user.getId());
-        neo4jNodeInfoEntity4Sql.setWidth(50);
-        neo4jNodeInfoEntity4Sql.setHeight(50);
-        neo4jNodeInfoEntity4Sql.setColor("#808080");
-        neo4jNodeInfoEntity4Sql.setShape("ellipse");
         //设置默认属性
         neo4jNodeInfoMapper.saveNeo4jNodeInfo(neo4jNodeInfoEntity4Sql);
         return result;
@@ -203,6 +220,19 @@ public class Neo4jInitDatServiceImpl  implements Neo4jInitDatService {
     @Override
     public Integer deleteAttribute(Long id, List<Error> errorList) {
         return neo4jNodeAttributeMapper.deleteNeo4jNodeAttribute(id);
+    }
+
+    @Override
+    public Integer modifyNodeInfo(User user, Neo4jNodeInfoDto neo4jNodeInfoDto, List<Error> errorList) throws IllegalAccessException {
+        int result = 0;
+        Neo4jNodeInfoEntity neo4jNodeInfoEntity4Sql = new Neo4jNodeInfoEntity();
+        PublicUtils.trans(neo4jNodeInfoDto,neo4jNodeInfoEntity4Sql);
+        try {
+            neo4jNodeInfoMapper.updateNeo4jNodeInfo(neo4jNodeInfoEntity4Sql);
+        }catch (Exception e){
+            Error error = new Error(ErrorCode_Enum.SYS_DB_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage()+MESSAGE_03,e.toString());
+        }
+        return result;
     }
 
     private boolean checkAttributeNmae(Neo4jNodeAttributeDto neo4jNodeAttributeDto, List<Error> errorList) {

@@ -4,6 +4,7 @@ import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
 import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
+import com.sugon.iris.sugondomain.beans.neo4jBeans.Elements;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.neo4jDtos.Neo4jRelationDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
@@ -118,12 +119,12 @@ public class Neo4jRelationController {
     }
 
     @RequestMapping("/getNeo4jRelations")
-    public RestResult<Map<?,?>> getNeo4jRelations(@RequestParam(value = "relationship") String  relationship,@RequestParam(value = "relationshipAttribute") String  relationshipAttribute,
+    public RestResult<Elements> getNeo4jRelations(@RequestParam(value = "relationship") String  relationship,
                                                   @RequestParam(value = "relationId") String  relationId){
-        RestResult<Map<?,?>> restResult = new RestResult();
+        RestResult<Elements> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
-            restResult.setObj(neo4jRelationServiceImpl.getNeo4jRelations( relationship,  relationshipAttribute, relationId, errorList));
+            restResult.setObj(neo4jRelationServiceImpl.getNeo4jRelations( relationship, relationId, errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

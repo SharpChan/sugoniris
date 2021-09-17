@@ -9,7 +9,6 @@ public interface Neo4jBaseService {
     int addRelationBatch(String sourceTableName,
                          String targetTableName,
                          String relationship,
-                         String relationshipAttribute,
                          String sourceFiled,
                          String targetFiled,
                          String sourceValue,
@@ -22,7 +21,6 @@ public interface Neo4jBaseService {
                     String sourceId,
                     String targetId,
                     String relationship,
-                    String relationshipAttribute,
                     String relationId,
                         List<Error> errorList);
 }

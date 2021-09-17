@@ -5,6 +5,7 @@ import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.*;
 import com.sugon.iris.sugondata.neo4j.intf.Neo4jDao;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
+import com.sugon.iris.sugondomain.beans.neo4jBeans.Elements;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.beans.webSocket.WebSocketRequest;
 import com.sugon.iris.sugondomain.dtos.configDtos.SysDictionaryDto;
@@ -182,13 +183,31 @@ public class Neo4jRelationServiceImpl implements Neo4jRelationService {
     }
 
     @Override
-    public Map<?, ?> getNeo4jRelations(String relationship, String relationshipAttribute, String relationId, List<Error> errorList) {
+    public Elements getNeo4jRelations(String relationship, String relationId, List<Error> errorList) {
+        //通过relationId 获取源节点目标节点，和关系的样式
+        Neo4jRelationEntity neo4jRelationEntity = neo4jRelationMapper.selectByPrimaryKey(Long.parseLong(relationId) );
+        //获取源节点样式
+        Neo4jNodeAttributeEntity sourceNeo4jNodeAttributeEntity = neo4jNodeAttributeMapper.selectByPrimaryKey(neo4jRelationEntity.getSourceAttributeId());
+        //获取目标节点样式
+        Neo4jNodeAttributeEntity targetNeo4jNodeAttributeEntity = neo4jNodeAttributeMapper.selectByPrimaryKey(neo4jRelationEntity.getTargetAttributeId());
 
-        relationship ="www";
-        relationshipAttribute = "hhh";
-        relationId = "1";
-        neo4jDaoImpl.getRelations(relationship,relationshipAttribute,relationId);
-        return null;
+        Map<String,String> map = new HashMap<>();
+        map.put("sourceNodeWidth",sourceNeo4jNodeAttributeEntity.getWidth()+"");
+        map.put("sourceNodeHeight",sourceNeo4jNodeAttributeEntity.getHeight()+"");
+        map.put("sourceNodeColor",sourceNeo4jNodeAttributeEntity.getColor());
+        map.put("sourceNodeContent",sourceNeo4jNodeAttributeEntity.getContent());
+        map.put("sourceNodeShape",sourceNeo4jNodeAttributeEntity.getShape());
+
+        map.put("targetNodeWidth",targetNeo4jNodeAttributeEntity.getWidth()+"");
+        map.put("targetNodeHeight",targetNeo4jNodeAttributeEntity.getHeight()+"");
+        map.put("targetNodeColor",targetNeo4jNodeAttributeEntity.getColor());
+        map.put("targetNodeContent",targetNeo4jNodeAttributeEntity.getContent());
+        map.put("targetNodeShape",targetNeo4jNodeAttributeEntity.getShape());
+
+        map.put("relationShipColor",neo4jRelationEntity.getColor());
+        map.put("relationShipShape",neo4jRelationEntity.getShape());
+
+        return neo4jDaoImpl.getRelations(relationship,relationId,map);
     }
 
     private FileTemplateDto getFileTemplateDto(FileTableEntity sourceFileTableEntity) throws IllegalAccessException {

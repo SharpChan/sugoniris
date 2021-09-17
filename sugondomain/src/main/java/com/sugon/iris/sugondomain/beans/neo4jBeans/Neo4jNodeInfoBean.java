@@ -21,29 +21,9 @@ public class Neo4jNodeInfoBean {
     private Long rownum;
 
     /**
-     *显示颜色
-     */
-    private String color;
-
-    /**
-     *宽度
-     */
-    private Integer width;
-
-    /**
-     *高度
-     */
-    private Integer height;
-
-    /**
      *标签用 . 号分割
      */
     private String label;
-
-    /**
-     *形状
-     */
-    private String shape;
 
     /**
      * 创建人id

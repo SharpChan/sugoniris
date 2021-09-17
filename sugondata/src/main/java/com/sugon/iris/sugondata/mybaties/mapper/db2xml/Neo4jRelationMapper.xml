@@ -27,6 +27,19 @@
     from neo4j_relation
     where user_id = #{user_id,jdbcType=BIGINT}
   </select>
+  <select id="findRelations" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jRelationEntity"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from neo4j_relation
+    where
+    1=1
+    <if test="sourceAttributeId!=null">
+      and source_attribute_id = #{sourceAttributeId}
+    </if >
+    <if test="targetAttributeId!=null">
+      and target_attribute_id = #{targetAttributeId}
+    </if >
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from neo4j_relation
     where id = #{id,jdbcType=BIGINT}

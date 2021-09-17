@@ -22,4 +22,6 @@ public interface Neo4jInitDatService {
       Integer attributeUpdate(Neo4jNodeAttributeDto neo4jNodeAttributeDto,List<Error> errorList) throws IllegalAccessException;
 
       Integer deleteAttribute(Long  id,List<Error> errorList);
+
+      Integer modifyNodeInfo(User user,Neo4jNodeInfoDto neo4jNodeInfoDto,List<Error> errorList) throws IllegalAccessException;
 }

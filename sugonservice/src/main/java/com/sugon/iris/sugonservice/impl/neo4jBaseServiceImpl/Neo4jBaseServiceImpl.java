@@ -18,7 +18,6 @@ public class Neo4jBaseServiceImpl implements Neo4jBaseService {
     public int addRelationBatch(String sourceTableName,
                                 String targetTableName,
                                 String relationship,
-                                String relationshipAttribute,
                                 String sourceFiled,
                                 String targetFiled,
                                 String sourceValue,
@@ -27,7 +26,7 @@ public class Neo4jBaseServiceImpl implements Neo4jBaseService {
                                 List<Error> errorList) {
         int i = 0;
         try {
-            i = (int) neo4jDaoImpl.addRelationBatch(sourceTableName, targetTableName, relationship, relationshipAttribute, sourceFiled, targetFiled, sourceValue, targetValue, relationId).get("count");
+            i = (int) neo4jDaoImpl.addRelationBatch(sourceTableName, targetTableName, relationship, sourceFiled, targetFiled, sourceValue, targetValue, relationId).get("count");
         }catch (Exception e){
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_NEO4J_001.getCode(), ErrorCode_Enum.SYS_NEO4J_001.getMessage()));
@@ -41,13 +40,12 @@ public class Neo4jBaseServiceImpl implements Neo4jBaseService {
                                String sourceId,
                                String targetId,
                                String relationship,
-                               String relationshipAttribute,
                                String relationId,
                                List<Error> errorList) {
 
         int i = 0;
         try {
-            i = (int)neo4jDaoImpl.addRelationById(sourceLable,targetLable,sourceId,targetId,relationship,relationshipAttribute,relationId).get("count");
+            i = (int)neo4jDaoImpl.addRelationById(sourceLable,targetLable,sourceId,targetId,relationship,relationId).get("count");
         }catch (Exception e){
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_NEO4J_001.getCode(), ErrorCode_Enum.SYS_NEO4J_001.getMessage()));

@@ -1,6 +1,7 @@
 package com.sugon.iris.sugonservice.service.neo4jService;
 
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
+import com.sugon.iris.sugondomain.beans.neo4jBeans.Elements;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.neo4jDtos.Neo4jRelationDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
@@ -19,6 +20,6 @@ public interface Neo4jRelationService {
 
     Integer initRelation(User user, Neo4jRelationDto neo4jRelationDto, List<Error> errorList) throws IllegalAccessException;
 
-    Map<?,?>  getNeo4jRelations(String relationship, String relationshipAttribute,
-                                String relationId, List<Error> errorList);
+    Elements getNeo4jRelations(String relationship,
+                               String relationId, List<Error> errorList);
 }

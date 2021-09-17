@@ -38,14 +38,13 @@ public class RelationCreateServiceImpl implements RelationCreateService {
         //获取源数据的数目。进行分批数据关系操作。
         Neo4jRelationDto neo4jRelationDto = webSocketRequest.getNeo4jRelationDto();
         String differentiate = neo4jRelationDto.getDifferentiate();
-        String[] arr = differentiate.split(";");
-        if(RelationType_Enum.RE_01.getCode().equals(arr[0])){
-            test01(webSocketRequest,arr);
+        if(RelationType_Enum.RE_01.getCode().equals(differentiate)){
+            test01(webSocketRequest);
         }
 
     }
 
-    private void test01(WebSocketRequest webSocketRequest,String[]  arry) throws IOException {
+    private void test01(WebSocketRequest webSocketRequest) throws IOException {
         //获取源数据总条数
         FileTableDto sourceFileTableDto =  webSocketRequest.getSourceFileTableDto();
         FileTableDto targetFileTableDto =  webSocketRequest.getTargetFileTableDto();
@@ -56,20 +55,20 @@ public class RelationCreateServiceImpl implements RelationCreateService {
         Integer batch = Integer.parseInt(PublicUtils.getConfigMap().get("neo4j_batch_quantity"));
         int divideCount = count /batch;
         if(divideCount == 0){
-            this.batch(0,divideCount,sourceFileTableDto,targetFileTableDto,arry[1],arry[2],webSocketRequest.getNeo4jRelationDto().getId()+"");
+            this.batch(0,divideCount,sourceFileTableDto,targetFileTableDto,webSocketRequest.getNeo4jRelationDto().getRelationship(),webSocketRequest.getNeo4jRelationDto().getId()+"");
 
         }else{
             for(int i = 0 ;i<divideCount;i++){
-                this.batch(batch*i,batch*(i+1),sourceFileTableDto,targetFileTableDto,arry[1],arry[2],webSocketRequest.getNeo4jRelationDto().getId()+"");
+                this.batch(batch*i,batch*(i+1),sourceFileTableDto,targetFileTableDto,webSocketRequest.getNeo4jRelationDto().getRelationship(),webSocketRequest.getNeo4jRelationDto().getId()+"");
                 WebSocketServer.sendInfo(webSocketRequest.getNeo4jRelationDto().getId()+";"+ Math.round(i/(divideCount+1)),String.valueOf(webSocketRequest.getUserId()));
             }
             //其余部分数据
-            this.batch(batch*divideCount,count,sourceFileTableDto,targetFileTableDto,arry[1],arry[2],webSocketRequest.getNeo4jRelationDto().getId()+"");
+            this.batch(batch*divideCount,count,sourceFileTableDto,targetFileTableDto,webSocketRequest.getNeo4jRelationDto().getRelationship(),webSocketRequest.getNeo4jRelationDto().getId()+"");
         }
         WebSocketServer.sendInfo(webSocketRequest.getNeo4jRelationDto().getId()+";"+"100",String.valueOf(webSocketRequest.getUserId()));
     }
 
-    private void batch(int start ,int end , FileTableDto sourceFileTableDto, FileTableDto targetFileTableDto ,String relationship,String relationshipAttribute,String relationId ){
+    private void batch(int start ,int end , FileTableDto sourceFileTableDto, FileTableDto targetFileTableDto ,String relationship,String relationId ){
 
         String sql = "SELECT a.* FROM " +
                      "(SELECT *,ROW_NUMBER() OVER() as rownm FROM "+sourceFileTableDto.getTableName()+") a  WHERE a.rownm>"+start+" and a.rownm<="+end;
@@ -87,7 +86,6 @@ public class RelationCreateServiceImpl implements RelationCreateService {
                           neo4jDaoImpl.addRelationBatch( sourceFileTableDto.getTableName(),
                                   targetFileTableDto.getTableName(),
                                   relationship,
-                                  relationshipAttribute,
                                   "zjhm",
                                   "zjhm",
                                   (String)sourceMap.get(sourceFileTemplateDetailDto.getFieldName()),

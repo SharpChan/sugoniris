@@ -31,7 +31,6 @@ public class Neo4jBaseRest {
     public RestResult<Integer> addRelationBatch(@RequestParam(name="sourceTableName") @NotBlank(message = "sourceTableName不为空") String sourceTableName,
                                                 @RequestParam(name="targetTableName") @NotBlank(message = "targetTableName不为空") String targetTableName,
                                                 @RequestParam(name="relationship") @NotBlank(message = "relationship不为空") String relationship,
-                                                @RequestParam(name="relationshipAttribute") @NotBlank(message = "relationshipAttribute不为空") String relationshipAttribute,
                                                 @RequestParam(name="sourceFiled") @NotBlank(message = "sourceFiled不为空") String sourceFiled,
                                                 @RequestParam(name="targetFiled") @NotBlank(message = "targetFiled不为空") String targetFiled,
                                                 @RequestParam(name="sourceValue") @NotBlank(message = "sourceValue不为空") String sourceValue,
@@ -43,7 +42,6 @@ public class Neo4jBaseRest {
            restResult.setObj(neo4jBaseServiceImpl.addRelationBatch( sourceTableName,
                     targetTableName,
                     relationship,
-                    relationshipAttribute,
                     sourceFiled,
                     targetFiled,
                     sourceValue,
@@ -71,7 +69,6 @@ public class Neo4jBaseRest {
                                                 @RequestParam(name="sourceId") @NotBlank(message = "sourceId不为空") String sourceId,
                                                 @RequestParam(name="targetId") @NotBlank(message = "targetId不为空") String targetId,
                                                 @RequestParam(name="relationship") @NotBlank(message = "relationship不为空") String relationship,
-                                                @RequestParam(name="relationshipAttribute") @NotBlank(message = "relationshipAttribute不为空") String relationshipAttribute,
                                                 @RequestParam(name="relationId") @NotBlank(message = "relationId不为空") String relationId) throws IllegalAccessException{
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -81,7 +78,6 @@ public class Neo4jBaseRest {
                      sourceId,
                      targetId,
                      relationship,
-                     relationshipAttribute,
                      relationId,
                      errorList));
         }catch (Exception e){

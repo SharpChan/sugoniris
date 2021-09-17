@@ -107,10 +107,10 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           cache: false,
           resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
-      .state('app.neo4jModel1', {
-          url: '/neo4jModel1',
-          title: 'Neo4jModel1',
-          templateUrl: helper.basepath('neo4j/neo4jModel1.html'),
+      .state('app.neo4jModelOne', {
+          url: '/neo4jModelOne',
+          title: 'Neo4jModelOne',
+          templateUrl: helper.basepath('neo4j/neo4jModelOne.html'),
           cache: false,
           resolve: helper.resolveFor('cytoscape','flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
@@ -1469,8 +1469,10 @@ App.controller("neo4jInitDataController", function ($http,$timeout,$scope,
     myservice.loginLockCheck();
     myservice.dragFunc("cnDiv");
     myservice.dragFunc("cnDivAttribute");
+    myservice.dragFunc("cnDivLabel");
     $("#cnDivAttribute").hide();
     $("#cnDiv").hide();
+    $("#cnDivLabel").hide();
     $scope.query = function () {
         var url="/neo4jInitData/getFileTables";
         $http.post(url).success(function(data)
@@ -1687,7 +1689,36 @@ App.controller("neo4jInitDataController", function ($http,$timeout,$scope,
 
     }
 
+    $scope.updateLable = function(item){
+        $("#cnDivLabel").show();
 
+        //获取标签
+        $scope.label = item.label;
+
+        $scope.item4Label = item;
+    }
+
+    $scope.closeLabel = function(){
+        $scope.label = "";
+        $("#cnDivLabel").hide();
+    }
+
+    $scope.saveLabel = function(){
+       var url  = "/neo4jInitData/modifyNodeInfo";
+        var params = {
+            fileTableId:$scope.item4Label.fileTableId,
+            label:$scope.label
+        }
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.query();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+        $scope.closeLabel();
+    }
 
     $scope.setProgress = function (id,value) {
         angular.forEach(
@@ -1713,16 +1744,94 @@ App.controller("CytoscapeCtrl2", function ($http,$timeout,$scope,$state,$rootSco
 
 })
 
-App.controller("Neo4jModelOneController", function ($http,$timeout,$scope,$state,$rootScope,myservice) {
+App.controller("Neo4jModelOneController", function ($http,$timeout,$scope,$state,$rootScope,myservice,$q) {
 
     //登录和锁定校验
     myservice.loginLockCheck();
 
-    //获取所有的Node Labels
+    myservice.dragFunc("cnDivNeo");
 
+    $("#cnDivNeo").hide();
+    $("#pleaseWait").hide();
+    //获取所有的图谱信息
+    
+   $scope.query = function () {
+       $("#pleaseWait").show();
+       var url = "/neo4jModelOne/getAllNeo4jInfos";
+       $http.post(url).success(function(data)
+       {
+           var jsonString = angular.toJson(data);
+           var temp = angular.fromJson(jsonString);
+           myservice.errors(temp);
+           $scope.obj =myservice.setSerialNumber(temp.obj);
+           $("#pleaseWait").hide();
+       }).error(function(data)
+       {
+           alert("会话已经断开或者检查网络是否正常！");
+       });
+   }
+    $scope.query();
 
-    //获取所有的关系
+   $scope.cnDivNeoClose = function(){
+       $("#cnDivNeo").hide();
+   }
 
+    $scope.selectNeo4jRelation = function (relation) {
+        $("#cnDivNeo").show();
+        var url = "/neo4jRelation/getNeo4jRelations?relationship="+relation.relationship+"&relationId="+relation.id;
+        $http.post(url).success(function(data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            $scope.eles = temp.obj;
+            var cy = window.cy = cytoscape({
+                container: document.getElementById('cy'),
+                boxSelectionEnabled: true,
+                style: [
+                    {
+                        selector: 'node[type="source"]',
+                        style: {
+                            'background-color': 'data(sourceNodeColor)',
+                            'text-valign': 'center',
+                            'content': 'data(sourceNodeContent)',
+                            "height": 'data(sourceNodeHeight)',
+                            "width": 'data(sourceNodeWidth)',
+                            'shape': 'data(sourceNodeShape)'
+                        }
+                    },
+                    {
+                        selector: 'node[type="target"]',
+                        style: {
+                            'background-color': 'data(targetNodeColor)',
+                            'text-valign': 'center',
+                            'content': 'data(targetNodeContent)',
+                            "height": 'data(targetNodeHeight)',
+                            "width": 'data(targetNodeWidth)',
+                            'shape': 'data(targetNodeShape)'
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'content': 'data(relationship)',
+                            'curve-style': 'bezier',
+                            'target-arrow-shape': 'data(shape)',
+                            'target-arrow-color': 'data(color)',
+                            'line-color': '#ccc',
+                            'width': 1
+                        }
+                    }
+                ],
+                elements: $scope.eles,
+                layout: {
+                    name: 'circle',
+                    fit: true,
+                    //name: 'grid',
+                    padding: 5
+                }
+            })
+        })
+    }
+    
 
 });
 
@@ -10167,14 +10276,145 @@ App.factory('cytoscapeAttrFactory',  function($http,$q) {
 
 });
 
+App.service('cytoscapeAttrService',  function($http,$q,myservice) {
+
+    this.getElements = function () {
+
+        var promise =   $http
+            .post('/neo4jRelation/getNeo4jRelations?relationship=sss&relationId=1');
+        promise.then(function(data) {
+
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                return temp.obj;
+            })
+
+       }
+});
+
+
+App.directive('cytoscape3', ['$rootScope','cytoscapeAttrService',function($rootScope,cytoscapeAttrService) {
+
+    return {
+        restrict: 'E',
+        template: '<div id="cy"></div>',
+        replace: true,
+        scope: {
+            myData: '=',
+            cyClick:'&'
+        },
+        link: function (scope, element, attrs, fn) {
+            scope.doCy = function(){
+                $('#cy').cytoscape({
+                    layout: {
+                            name: 'concentric',
+                            fit:true,
+                            padding: 30,
+                            startAngle:4/ 2 * Math.PI,
+                            sweep: undefined,
+                            clockwise: true,
+                            equidistant: false,
+                            minNodeSpacing: 100
+                        },
+                    style: cytoscape.stylesheet()
+                        .selector('node')//节点样式
+                        .css({
+                            'content': 'data(name)',
+                            'text-valign': 'center',
+                            'color': 'white',
+                            "height": 60,
+                            "width": 60,
+
+                            'text-outline-width': 2,
+                            'text-outline-color': '#316383',//颜色设置
+                            "background-color": "#316383",
+                            "label": "data(label)"
+                        })
+                        .selector('edge')//边线样式
+                        .css({
+                            'curve-style': 'bezier',
+                            "label": "data(label)",
+                            'target-arrow-shape': 'triangle',
+                            'target-arrow-color': 'black',
+                            'line-color': '#ccc',
+                            'width': 1
+                        })
+                        .selector(':selected')
+                        .css({
+                            'content': 'data(value)',
+                            'background-color': 'red',
+                            'line-color': 'red',
+                            'target-arrow-color': 'red',
+                            'source-arrow-color': 'red'
+                        })
+                        .selector('.background')
+                        .css({
+                            "text-background-opacity": 1,
+                            "text-background-color": "#ccc",
+                            "text-background-shape": "roundrectangle",
+                            "text-border-color": "#000",
+                            "text-border-width": 1,
+                            "text-border-opacity": 1
+                        })
+                        .selector('node[label="main"]')//主节点样式设置
+                        .css({
+                            "background-color": '#d0413e',
+                            'text-outline-width': 2,
+                            'text-outline-color': '#d0413e',
+
+                        })
+                        .selector('.faded')
+                        .css({
+                            'opacity': 0.25,
+                            'text-opacity': 0
+                        }),
+
+                    ready: function(){
+                        var aa = this;
+
+                        // giddy up...
+                        aa.elements().unselectify();
+
+                        // Event listeners
+                        // with sample calling to the controller function as passed as an attribute
+                        aa.on('tap', 'node', function(e){
+
+                            var evtTarget = e.cyTarget;
+                            var nodeId = evtTarget.id();
+                            scope.cyClick({value:nodeId});
+                        });
+
+
+                        aa.load(scope.myData);
+                    }
+
+                });
+            };
+
+
+
+            $rootScope.$on('showNeo4j', function(){
+                scope.doCy();
+            });
+
+
+        }
+
+}}])
+
 App.directive('cytoscape2', ['$rootScope','cytoscapeAttrFactory',function($rootScope,cytoscapeAttrFactory) {
 
     return {
         restrict: 'E',
         template: '<div id="cy"></div>',
         replace: true,
-        scope: {},
+        scope: {
+            neo4jStyle: '@',
+            neo4jElement: '@'
+        },
         link: function (scope, element, attrs, fn) {
+
+            $scope.ele = cytoscapeAttrService.getElements();
             var cy = window.cy = cytoscape({
                 container: document.getElementById('cy'),
                 boxSelectionEnabled: true,
@@ -10206,6 +10446,8 @@ App.directive('cytoscape2', ['$rootScope','cytoscapeAttrFactory',function($rootS
                         }
                     }
                 ],
+                elements: $scope.ele,
+                /*
                 elements: {
                     nodes: [
                         { data: { id: 'a' } },
@@ -10221,7 +10463,7 @@ App.directive('cytoscape2', ['$rootScope','cytoscapeAttrFactory',function($rootS
                         { data: { id: 'ba', source: 'b', target: 'a' , relationship: 'kkk'} },
                         { data: { id: 'ca', source: 'b', target: 'a' , relationship: 'ccc'} }
                     ]
-                },
+                },*/
                 layout: {
                     name: 'circle',
                     fit: true,

@@ -3,7 +3,6 @@ package com.sugon.iris.sugondomain.dtos.fileDtos;
 import com.sugon.iris.sugondomain.beans.fileBeans.FileCaseBean;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 

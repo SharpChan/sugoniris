@@ -41,8 +41,10 @@
                         <th>案件名称</th>
                         <th>模板名称</th>
                         <th>表名</th>
+                        <th>标签</th>
                         <th>初始化</th>
                         <th>属性配置</th>
+                        <th>修改标签</th>
                         <!--<th>进度</th>-->
                     </tr>
                     </thead>
@@ -52,6 +54,7 @@
                         <td align="left">{{item.caseName}}</td>
                         <td align="left">{{item.templateName}}</td>
                         <td align="left">{{item.tableName}}</td>
+                        <td align="left">{{item.label}}</td>
                         <td align="left">
                             <button ng-show="item.neo4jInitFlag == 0 && lock" ng-init="lock = true" type="button" ng-click="initData(item);lock = !lock" class="btn btn-sm btn-warning">
                                 <em class="fa fa-upload"></em>
@@ -65,6 +68,11 @@
                         </td>-->
                         <td align="left">
                             <button ng-show="item.neo4jInitFlag == 2" type="button" ng-click="attribute(item)" class="btn btn-sm btn-danger">
+                                <em class="fa fa-plus"></em>
+                            </button>
+                        </td>
+                        <td align="left">
+                            <button ng-show="item.neo4jInitFlag == 0 || item.neo4jInitFlag == 1" type="button" ng-click="updateLable(item)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-plus"></em>
                             </button>
                         </td>
@@ -187,6 +195,22 @@
                 <div ng-show="update" ng-init="update=false"  align="right" style="margin-top:10px">
                     <input type="button" value="修改"  class="btn btn-primary topnavbar" ng-click="attributeUpdate();">
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div  id = "cnDivLabel"  class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 600px; height: 220px; z-index: 9999;overflow-y:auto;">
+        <div id="cnDivLabelheader" class="panel-heading topnavbar" style="cursor: move">
+            标签<input type="button" value="关闭" style="margin-left:480px" class="btn btn-default" ng-click="closeLabel();" >
+        </div>
+        <div class="panel-body">
+            <div  class="form-group" style="top: 20px;width: 550px" >
+                <span>标签<input placeholder="用 . 分隔" class="form-control" type="text" ng-model="label" ></span>
+            </div>
+        </div>
+        <div  class="form-group" style="top: 20px;width: 550px" >
+            <div align="right" style="margin-top:10px">
+                <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="saveLabel();" >
             </div>
         </div>
     </div>

@@ -15,4 +15,9 @@ public class FileTableEntity extends FileTableBean {
      * 模板名称
      */
     private String templateName;
+
+    /**
+     * 标签
+     */
+    private String label;
 }

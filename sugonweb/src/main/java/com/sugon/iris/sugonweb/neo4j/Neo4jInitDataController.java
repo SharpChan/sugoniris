@@ -7,6 +7,7 @@ import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTableDto;
 import com.sugon.iris.sugondomain.dtos.neo4jDtos.Neo4jNodeAttributeDto;
+import com.sugon.iris.sugondomain.dtos.neo4jDtos.Neo4jNodeInfoDto;
 import com.sugon.iris.sugonservice.service.neo4jService.Neo4jInitDatService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +55,26 @@ public class Neo4jInitDataController {
         List<Error> errorList = new ArrayList<>();
         try{
             restResult.setObj(neo4jInitDatServiceImpl.initData(user,fileTableDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/modifyNodeInfo")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> modifyLabel(@CurrentUser User user, @RequestBody Neo4jNodeInfoDto neo4jNodeInfoDto){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(neo4jInitDatServiceImpl.modifyNodeInfo(user,neo4jNodeInfoDto,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

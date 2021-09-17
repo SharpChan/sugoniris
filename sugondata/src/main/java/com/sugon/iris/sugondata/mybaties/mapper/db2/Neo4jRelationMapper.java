@@ -14,4 +14,6 @@ public interface Neo4jRelationMapper {
 
     List<Neo4jRelationEntity> selectByUserId(Long id);
 
+    List<Neo4jRelationEntity> findRelations(Neo4jRelationEntity neo4jRelationEntity4Sql);
+
 }
