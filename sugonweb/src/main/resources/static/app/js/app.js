@@ -99,6 +99,14 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         controller: 'AppController',
         resolve: helper.resolveFor('fastclick', 'modernizr', 'icons', 'screenfull', 'animo', 'sparklines', 'slimscroll', 'classyloader', 'toaster', 'whirl')
     })
+      .state('app.fileRinseField', {
+          url: '/fileRinseField',
+          title: 'FileRinseField',
+          templateUrl: helper.basepath('file/fileRinseField.html'),
+          controller:'declarationController',
+          cache: false,
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+      })
       .state('app.declaration', {
           url: '/declaration',
           title: 'Declaration',
@@ -1317,6 +1325,54 @@ App.service('myservice', function($window,$state,$http) {
     }
 
 });
+
+App.controller("fileRinseController", function ($http,$timeout,$scope,
+                                                    myservice) {
+    $("#pleaseWait").hide();
+    //登录和锁定校验
+    myservice.loginLockCheck();
+    myservice.dragFunc("cnDivAdd");
+    myservice.dragFunc("cnDivUpdate");
+    myservice.dragFunc("cnDivDetail");
+    myservice.dragFunc("cnDivDetailAdd");
+    myservice.dragFunc("cnDivDetailUpdate");
+
+    $("#cnDivAdd").hide();
+    $("#cnDivUpdate").hide();
+    $("#cnDivDetail").hide();
+    $("#cnDivDetailAdd").hide();
+    $("#cnDivDetailUpdate").hide();
+
+    $scope.query = function(){
+        
+    }
+
+    $scope.add = function () {
+
+        $("#cnDivAdd").show();
+        $scope.rinseName = "";
+        $scope.rinseName = "";
+        $scope.websocketUrl = "";
+        $scope.comment = "";
+    }
+    
+    $scope.save = function () {
+
+        var url = "";
+        var params = {
+            templateId : item.fileTemplateId
+        }
+        $http.post(url,params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj =myservice.setSerialNumber(temp.obj);
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+        
+    }
+  })
 
 App.controller("neo4jRelationController", function ($http,FileUploader,$timeout,$scope,
                                                     myservice,ngDraggable) {
