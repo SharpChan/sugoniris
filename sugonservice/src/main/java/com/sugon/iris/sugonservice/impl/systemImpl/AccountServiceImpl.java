@@ -2,7 +2,9 @@ package com.sugon.iris.sugonservice.impl.systemImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.AccountServiceDao;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.RoleServiceDao;
 import com.sugon.iris.sugondomain.dtos.systemDtos.UserDto;
+import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.RoleEntity;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.systemService.AccountService;
@@ -19,6 +21,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Resource
     private AccountServiceDao accountServiceDaoImpl;
+
+    @Resource
+    private RoleServiceDao roleServiceDaoImpl;
 
 
   public int saveAccount(UserDto userDto, List<Error> errorList){
@@ -55,6 +60,24 @@ public class AccountServiceImpl implements AccountService {
         }
         User user = new User();
         PublicUtils.trans(userEntityList_02.get(0), user);
+
+        //获取该用户加入的用户组
+        List<RoleEntity> roleEntityList =  roleServiceDaoImpl.getRolesByUserId(user.getId(),errorList);
+        int i = 0;
+        for(RoleEntity roleEntity : roleEntityList){
+              if(roleEntity.getId().equals("1")){
+                  user.setSystemUser(true);
+                  i ++;
+              }
+            if(roleEntity.getId().equals("2")){
+                user.setEconomicUser(true);
+                 i ++;
+            }
+            if(i == 2){
+                break;
+            }
+        }
+
         return user;
     }
     public int updateUser(UserDto userDto, List<Error> errorList) throws IllegalAccessException {

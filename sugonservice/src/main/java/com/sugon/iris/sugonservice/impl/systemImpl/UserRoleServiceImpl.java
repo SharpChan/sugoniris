@@ -48,6 +48,11 @@ public class UserRoleServiceImpl implements UserRoleService {
 
     @Override
     public Integer deleteRole(Long id, List<Error> errorList) {
+
+        //管理员角色和经侦角色无法删除
+        if(id == 1 || id ==2){
+           return 0;
+        }
         return roleServiceDaoImpl.deleteRole(id,errorList);
     }
 }

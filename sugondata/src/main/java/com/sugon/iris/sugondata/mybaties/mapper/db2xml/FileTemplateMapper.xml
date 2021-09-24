@@ -42,6 +42,7 @@
         </if >
         <if test="userId!=null">
             and user_id = #{userId}
+            or user_id = 1000000001
         </if >
     </select>
 

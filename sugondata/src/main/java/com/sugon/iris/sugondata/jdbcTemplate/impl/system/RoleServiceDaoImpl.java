@@ -48,6 +48,25 @@ public class RoleServiceDaoImpl implements RoleServiceDao {
     }
 
     @Override
+    public List<RoleEntity> getRolesByUserId(Long  userId, List<Error> errorList) {
+        List<RoleEntity>  roleEntityList = null;
+        String sql = "select c.* from sys_group_role a ," +
+                "                sys_user_group_detail b ," +
+                "                iris.sys_role c " +
+                "        where a.group_id=b.user_group_id " +
+                "          and a.role_id = c.id" +
+                "          and b.user_id = '"+userId+"' " +
+                "          group by c.id";
+        try{
+            roleEntityList = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(RoleEntity.class));
+        }catch(Exception e){
+            LOGGER.info("{}-{}","查询表sys_role失败",e);
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询sys_role表出错",e.toString()));
+        }
+        return  roleEntityList;
+    }
+
+    @Override
     public Integer saveRole(RoleEntity roleEntity, List<Error> errorList) {
         int result=0;
         if(null == roleEntity){
@@ -120,4 +139,6 @@ public class RoleServiceDaoImpl implements RoleServiceDao {
         }
         return result;
     }
+
+
 }

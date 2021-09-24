@@ -8,6 +8,8 @@ public interface RoleServiceDao {
 
     List<RoleEntity> getRoles(RoleEntity roleEntity, List<Error> errorList);
 
+    List<RoleEntity> getRolesByUserId(Long  userId, List<Error> errorList);
+
     Integer saveRole(RoleEntity roleEntity, List<Error> errorList);
 
     Integer updateRole(RoleEntity roleEntity, List<Error> errorList);

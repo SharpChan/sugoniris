@@ -33,7 +33,7 @@
                 <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
                     <thead>
                     <tr>
-                        <th><input type="checkbox" ng-model="checked" ng-change="selectAll(checked)" />选择</th>
+                        <th><input  type="checkbox" ng-model="checked" ng-change="selectAll(checked)" />选择</th>
                         <th>序号</th>
                         <th>名称</th>
                         <th>模板</th>
@@ -44,14 +44,14 @@
                     <tbody>
                     <tr ng-repeat="cell in obj">
                         <td align="left">
-                            <input type="checkbox" ng-model="cell.checked" ng-change="selectOne(cell)" />
+                            <input ng-show="cell.groupId != '1'" type="checkbox" ng-model="cell.checked" ng-change="selectOne(cell)" />
                         </td>
                         <td align="left">{{cell.no}}</td>
                         <td align="left">{{cell.groupName}}</td>
                         <td align="left"><textarea>{{cell.selectedCategories}}</textarea></td>
                         <td align="left">{{cell.comment}}</td>
                         <td align="left">
-                            <button type="button" ng-click="deleteOne(cell.groupId)" class="btn btn-sm btn-danger">
+                            <button ng-show="cell.groupId != '1'" type="button" ng-click="deleteOne(cell.groupId)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-trash-o"></em>
                             </button>
                         </td>

@@ -56,7 +56,7 @@
         type="XMLMAPPER",生成SQLMap XML文件和独立的Mapper接口
         -->
         <javaClientGenerator type="XMLMAPPER"
-                             targetPackage="com.sugon.iris.sugondata.mybaties.mapper.db2"
+                             targetPackage="com.anson.dao"
                              targetProject=".\src\main\java">
             <property name="enableSubPackages" value="true" />
         </javaClientGenerator>
@@ -64,8 +64,8 @@
 
         <!-- 6-1、单个表生成策略  -->
         <!--生成对应表及类名-->
-        <table tableName="neo4j_relation"
-               domainObjectName="Neo4jRelation"
+        <table tableName="regular_group"
+               domainObjectName="RegularGroup"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"

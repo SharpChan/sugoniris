@@ -57,4 +57,14 @@ public class User implements Serializable {
 
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss.SSSSSS",timezone="GMT+8")
     private Date updateTime = new Date();
+
+    /**
+     * 是系统管理员角色
+     */
+    private boolean isSystemUser;
+
+    /**
+     *
+     */
+    private boolean isEconomicUser;
 }

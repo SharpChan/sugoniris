@@ -7,6 +7,7 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateGroupDto;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateGroupEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.FileService.FileTemplateGroupService;
@@ -62,6 +63,8 @@ public class FileTemplateGroupServiceImpl implements FileTemplateGroupService {
             fileTemplateGroupDtoList.add(fileTemplateGroupDtoBean);
         }
 
+        this.fileTemplateGroupDtoListSort(fileTemplateGroupDtoList);
+
         return fileTemplateGroupDtoList;
     }
 
@@ -102,4 +105,23 @@ public class FileTemplateGroupServiceImpl implements FileTemplateGroupService {
         }
         return count;
     }
+
+    //给模板字段排序
+    private void fileTemplateGroupDtoListSort(List<FileTemplateGroupDto> fileTemplateGroupDtoList) {
+        //用排序字段对字段列表进行排序
+        Collections.sort(fileTemplateGroupDtoList, new Comparator<FileTemplateGroupDto>() {
+            @Override
+            public int compare(FileTemplateGroupDto bean1, FileTemplateGroupDto bean2) {
+                long diff = bean1.getGroupId() - bean2.getGroupId();
+                if (diff > 0) {
+                    return 1;
+                }else if (diff < 0) {
+                    return -1;
+                }
+                return 0; //相等为0
+            }
+        });
+    }
 }
+
+

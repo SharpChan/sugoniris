@@ -63,7 +63,7 @@ public class MenuServiceDaoImpl implements MenuServiceDao {
                 "           where a.id = b.menu_id" +
                 "            and  b.role_id=c.role_id" +
                 "            and  c.group_id = d.user_group_id" +
-                "            and  d.user_id="+userId;
+                "            and  d.user_id="+userId +" group by a.id";
         try{
             menuEntityList = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(MenuEntity.class));
         }catch(Exception e){

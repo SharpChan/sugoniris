@@ -41,6 +41,7 @@
         <if test="userId!=null">
             and user_id = #{userId}
         </if >
+        order by b.group_id asc
     </select>
 
 

@@ -49957,7 +49957,6 @@ angular.module('pascalprecht.translate')
         {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
-            console.log(temp.obj);
             deferred.resolve(temp.obj);
         }).error(function(data)
         {

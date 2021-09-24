@@ -62,7 +62,7 @@
                     <tbody>
                     <tr ng-repeat="item in obj">
                         <td align="center">
-                            <input type="checkbox" ng-model="item.checked" ng-change="selectOne(item)" />
+                            <input ng-show="item.userId != 1000000001 || userId == 1000000001" type="checkbox" ng-model="item.checked" ng-change="selectOne(item)" />
                         </td>
                         <td align="center">{{item.no}}</td>
                         <td align="center">{{item.templateName}}</td>
@@ -71,12 +71,12 @@
                         <td align="center">{{item.exclude}}</td>
                         <td align="center">{{item.comment}}</td>
                         <td align="center">
-                            <button type="button" ng-click="update(item)" class="btn btn-sm btn-warning">
+                            <button  ng-show="item.userId != 1000000001 || userId == 1000000001"  type="button" ng-click="update(item)" class="btn btn-sm btn-warning">
                                 <em class="fa fa-upload"></em>
                             </button>
                         </td>
                         <td align="center">
-                            <button type="button" ng-click="deleteOne(item.id)" class="btn btn-sm btn-danger">
+                            <button  ng-show="item.userId != 1000000001 || userId == 1000000001" type="button" ng-click="deleteOne(item.id)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-trash-o"></em>
                             </button>
                         </td>

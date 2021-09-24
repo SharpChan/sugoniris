@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.RegularGroupMapper">
+  <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RegularGroupEntity">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="group_name" jdbcType="VARCHAR" property="groupName" />
+    <result column="comment" jdbcType="VARCHAR" property="comment" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, group_name, comment, sort, user_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from regular_group
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectGroupList"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from regular_group
+    where user_id = #{userId,jdbcType=BIGINT}
+    or    user_id = 1000000001
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from regular_group
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RegularGroupEntity">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into regular_group (group_name, comment, sort,user_id
+      )
+    values (#{groupName,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER},#{userId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RegularGroupEntity">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into regular_group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="groupName != null and groupName != ''">
+        group_name,
+      </if>
+      <if test="comment != null and comment != ''">
+        comment,
+      </if>
+      <if test="sort != null">
+        sort,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="groupName != null and groupName != ''">
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null and comment != ''">
+        #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null">
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RegularGroupEntity">
+    update regular_group
+    <set>
+      <if test="groupName != null">
+        group_name = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null">
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null">
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -65,6 +65,7 @@ App.run(["$rootScope", "$state", "$stateParams",  '$window', '$templateCache','$
   };
   $rootScope.user = {
     name:     $localStorage.userName,
+      id:     $localStorage.userId,
     job:      'ng-developer',
     picture:  'app/img/user/02.jpg'
   };
@@ -99,13 +100,17 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
         controller: 'AppController',
         resolve: helper.resolveFor('fastclick', 'modernizr', 'icons', 'screenfull', 'animo', 'sparklines', 'slimscroll', 'classyloader', 'toaster', 'whirl')
     })
+      .state('app.regularGroup', {
+          url: '/regularGroup',
+          title: 'RegularGroup',
+          templateUrl: helper.basepath('regular/regularGroup.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
       .state('app.fileRinseField', {
           url: '/fileRinseField',
           title: 'FileRinseField',
           templateUrl: helper.basepath('file/fileRinseField.html'),
-          controller:'declarationController',
-          cache: false,
-          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
       })
       .state('app.declaration', {
           url: '/declaration',
@@ -1342,27 +1347,9 @@ App.controller("fileRinseController", function ($http,$timeout,$scope,
     $("#cnDivDetail").hide();
     $("#cnDivDetailAdd").hide();
     $("#cnDivDetailUpdate").hide();
-
     $scope.query = function(){
-        
-    }
-
-    $scope.add = function () {
-
-        $("#cnDivAdd").show();
-        $scope.rinseName = "";
-        $scope.rinseName = "";
-        $scope.websocketUrl = "";
-        $scope.comment = "";
-    }
-    
-    $scope.save = function () {
-
-        var url = "";
-        var params = {
-            templateId : item.fileTemplateId
-        }
-        $http.post(url,params).success(function (data) {
+        var url = "/fileRinse/getFileRinses";
+        $http.post(url).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
@@ -1370,9 +1357,275 @@ App.controller("fileRinseController", function ($http,$timeout,$scope,
         }).error(function (data) {
             alert("请检查必填项是否填写！");
         });
-        
+    }
+
+    $scope.query();
+    
+    $scope.add = function () {
+        $("#cnDivAdd").show();
+        $scope.rinseName = "";
+        $scope.websocketUrl = "";
+        $scope.comment = "";
+    }
+
+    $scope.close =  function(){
+        $("#cnDivAdd").hide();
+    }
+
+    $scope.save = function () {
+        var url = "/fileRinse/addFileRinse";
+        var params = {
+            fileRinseName: $scope.rinseNameAdd,
+            comment: $scope.commentAdd,
+            websocketUrl: $scope.websocketUrlAdd
+        }
+        $http.post(url,params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $("#cnDivAdd").hide();
+            $scope.query();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+    
+    $scope.update = function (item) {
+        $("#cnDivUpdate").show();
+        $scope.rinseId = item.id;
+        $scope.rinseNameUpdate = item.fileRinseName;
+        $scope.commentUpdate = item.comment;
+        $scope.websocketUrlUpdate = item.websocketUrl;
+    }
+
+    $scope.closeUpdate = function () {
+        $("#cnDivUpdate").hide();
+    }
+
+    $scope.updateSave = function(){
+        var url = "/fileRinse/modifyFileRinse";
+        var params = {
+            id: $scope.rinseId,
+            fileRinseName : $scope.rinseNameUpdate,
+            comment: $scope.commentUpdate,
+            websocketUrl: $scope.websocketUrlUpdate
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $("#cnDivUpdate").hide();
+            $scope.query();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.deleteOne = function (id) {
+        var url = "/fileRinse/deleteFileRinse?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.query();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
     }
   })
+
+App.controller("regularGroupController", function ($http,$timeout,$scope,$localStorage,
+                                                    myservice) {
+
+    $("#pleaseWait").hide();
+    $scope.userId = $localStorage.userId;
+    //登录和锁定校验
+    myservice.loginLockCheck();
+    myservice.dragFunc("cnDivGroupAdd");
+    myservice.dragFunc("cnDivDetailList");
+    myservice.dragFunc("cnDivDetailAdd");
+    myservice.dragFunc("cnDivGroupUpdate");
+    $("#cnDivGroupAdd").hide();
+    $("#cnDivDetailList").hide();
+    $("#cnDivDetailAdd").hide();
+    $("#cnDivGroupUpdate").hide();
+
+    $scope.queryGroup = function(){
+        var url = "/regular/getGroups";
+        $http.post(url).success(function(data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj = myservice.setSerialNumber(temp.obj)
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    $scope.queryGroup();
+    $scope.addGroup = function () {
+        $scope.groupNameAdd = "";
+        $scope.groupCommentAdd = "";
+        $scope.commentAdd = "";
+        $scope.sort = "";
+        $("#cnDivGroupAdd").show();
+    }
+
+    $scope.closeGroupAdd = function(){
+        $("#cnDivGroupAdd").hide();
+    }
+    
+    $scope.saveGroup = function () {
+
+        var reg=/^\d+$/;
+        if(!reg.test($scope.groupSort)){
+          alert("排序必须为数字！");
+          return;
+        }
+
+        var url = "/regular/groupAdd";
+        var params = {
+            groupName: $scope.groupNameAdd,
+            comment: $scope.groupCommentAdd,
+            sort: $scope.groupSort
+        }
+
+        $http.post(url,params).success(function(data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.queryGroup();
+            $("#cnDivGroupAdd").hide();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.updateGroup = function(item){
+        $("#cnDivGroupUpdate").show();
+        $scope.groupNameUpdate = item.groupName;
+        $scope.groupCommentUpdate = item.comment;
+        $scope.groupSortUpdate = item.sort;
+        $scope.groupId = item.id;
+    }
+
+    $scope.closeGroupUpdate = function(){
+        $("#cnDivGroupUpdate").hide();
+    }
+
+    $scope.updateGroupSave = function(){
+        var reg=/^\d+$/;
+        if(!reg.test($scope.groupSortUpdate)){
+            alert("排序必须为数字！");
+            return;
+        }
+        if(myservice.isEmpty($scope.groupNameUpdate)){
+            alert("名称不能为空！");
+            return;
+        }
+
+        var url = "/regular/updateGroupByPrimaryKey";
+        var params={
+            groupName: $scope.groupNameUpdate,
+            comment: $scope.groupCommentUpdate,
+            sort: $scope.groupSortUpdate,
+            id: $scope.groupId
+        }
+        $http.post(url,params).success(function(data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $("#cnDivGroupUpdate").hide();
+            $scope.queryGroup();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.detail = function (item) {
+        $("#cnDivDetailList").show();
+        $scope.groupId = item.id;
+
+    }
+
+    $scope.closeDetailList = function () {
+        $("#cnDivDetailList").hide();
+    }
+    
+    $scope.addDetail = function () {
+        $("#cnDivDetailAdd").show();
+        $scope.regular_name = "";
+        $scope.format = "";
+        $scope.regularValue = "";
+        $scope.sort = "";
+        $scope.comment = "";
+    }
+
+
+    $scope.queryDetail = function(item){
+        var url = "/regular/getRegularDetails?regularGroupId="+item.id;
+        $http.post(url).success(function(data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.details = myservice.setSerialNumber(temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.saveDetail = function(){
+        if(myservice.isEmpty($scope.regularName)){
+            alert("名称不能为空！");
+            return;
+        }
+        if(myservice.isEmpty($scope.regularValue)){
+            alert("表达式不能为空！");
+            return;
+        }
+        if(myservice.isEmpty($scope.sort)){
+            alert("表达式不能为空！");
+            return;
+        }
+        var reg=/^[0-9]{1,3}$/;
+        if(!reg.test($scope.sort)){
+            alert("排序为1-3位数字！");
+            return;
+        }
+        var url = "/regular/addRegularDetails";
+        var params = {
+            regularName: $scope.regularName,
+            format: $scope.format,
+            regularValue: $scope.regularValue,
+            sort: $scope.sort,
+            regularValue: $scope.regularValue,
+            comment: $scope.comment
+        }
+
+        $http.post(url,params).success(function(data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.queryDetail();
+            $("#cnDivDetailAdd").hide();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.closeDetailAdd = function () {
+        $("#cnDivDetailAdd").hide();
+    }
+})
+
 
 App.controller("neo4jRelationController", function ($http,FileUploader,$timeout,$scope,
                                                     myservice,ngDraggable) {
@@ -2582,7 +2835,14 @@ App.controller("userRoleController", function ($http,$timeout,$scope,$state,
     $scope.getUserRole();
 
     $scope.removeUserRole = function () {
-
+        if(id == 1){
+            alert("管理员角色无法删除！");
+            return;
+        }
+        if(id == 2){
+            alert("经侦角色无法删除！");
+            return;
+        }
         if(myservice.isEmpty($scope.id)){
             return;
         }
@@ -2645,6 +2905,14 @@ App.controller('userRoleAddOrModifyController', ['$http','$timeout','$state','$s
     }
 
     $scope.update = function () {
+        if($scope.id == 1){
+            alert("管理员角色无法修改！");
+            return;
+        }
+        if($scope.id == 2){
+            alert("经侦角色无法修改！");
+            return;
+        }
         if(myservice.isEmpty($scope.roleName)){
             alert("请填写角色名称！")
             return;
@@ -3820,7 +4088,9 @@ App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
         if(checked){
             angular.forEach($scope.obj,function(e){
                 e.checked = true;
-                $scope.selected.push(e.groupId);
+                if(e.groupId != 1){
+                    $scope.selected.push(e.groupId);
+                }
             })
         }else{
             angular.forEach($scope.obj,function(e){
@@ -3994,9 +4264,10 @@ App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
 
 });
 
-App.controller("fileTemplateController", function ($http,$timeout,$scope,
+App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootScope,
                                                   myservice,$modal){
     $("#pleaseWait").hide();
+    $scope.userId = $rootScope.user.id;
     myservice.loginLockCheck();
     //已选择的文件
     $scope.selected = [];
@@ -5224,8 +5495,6 @@ App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore
                         myservice.setCookie("irisEmail",$scope.account.email);
                         $localStorage.userName=$scope.account.userName;
                         $localStorage.userId = response.obj.id;
-                        console.log($localStorage.userId);
-                        console.log($localStorage.userName);
                         $state.go('app.dashboard');
                     }
                 }, function(x) {
