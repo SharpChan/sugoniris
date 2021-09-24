@@ -5,7 +5,6 @@
     }
 </style>
 
-
 <div ng-controller="fileRinseController">
     <div align="center" class="panel panel-primary" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
         <div class="topnavbar" style="height: 50px;">
@@ -58,7 +57,7 @@
                             </button>
                         </td>
                         <td align="center">
-                            <button type="button" ng-click="detail(item)" class="btn btn-sm btn-danger">
+                            <button type="button" ng-click="detail(item.id)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-plus"></em>
                             </button>
                         </td>
@@ -70,7 +69,7 @@
     </div>
 
     <div id = "cnDivGroupAdd" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 400px; z-index: 9999">
-        <div id = "cnDivheader" class="panel-heading topnavbar">
+        <div id = "cnDivGroupAddheader" class="panel-heading topnavbar">
             添加清洗字段类型组<input type="button" value="关闭" style="margin-left:220px" class="btn btn-default" ng-click="close();" >
         </div>
         <div class="panel-body">
@@ -163,7 +162,7 @@
     </div>
 
     <div id = "cnDivDetailAdd" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 350px; z-index: 9999;">
-        <div id = "cnDivDetailAddOrUpdateheader" class="panel-heading topnavbar">
+        <div id = "cnDivDetailAddheader" class="panel-heading topnavbar">
             新增字段类型<input type="button" value="关闭" style="margin-left:220px" class="btn btn-default" ng-click="rinseFieldAddClose();" >
         </div>
         <div class="panel-body">

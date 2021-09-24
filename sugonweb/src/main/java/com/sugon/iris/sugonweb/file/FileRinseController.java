@@ -5,7 +5,7 @@ import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
-import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseDto;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseGroupDto;
 import com.sugon.iris.sugonservice.service.FileService.FileRinseService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +26,7 @@ public class FileRinseController {
 
     @RequestMapping("/addFileRinse")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<Integer> addFileRinse(@CurrentUser User user, @RequestBody FileRinseDto fileRinseDto) {
+    public RestResult<Integer> addFileRinse(@CurrentUser User user, @RequestBody FileRinseGroupDto fileRinseDto) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         fileRinseDto.setUserId(user.getId());
@@ -47,8 +47,8 @@ public class FileRinseController {
 
     @RequestMapping("/getFileRinses")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<List<FileRinseDto>> getFileRinses(@CurrentUser User user) {
-        RestResult<List<FileRinseDto>> restResult = new RestResult();
+    public RestResult<List<FileRinseGroupDto>> getFileRinses(@CurrentUser User user) {
+        RestResult<List<FileRinseGroupDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
             restResult.setObj(FileRinseServiceImpl.findFileRinseByUserId(user.getId(),errorList));
@@ -67,7 +67,7 @@ public class FileRinseController {
 
     @RequestMapping("/modifyFileRinse")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<Integer> modifyFileRinse(@CurrentUser User user, @RequestBody FileRinseDto fileRinseDto) {
+    public RestResult<Integer> modifyFileRinse(@CurrentUser User user, @RequestBody FileRinseGroupDto fileRinseDto) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         fileRinseDto.setUserId(user.getId());

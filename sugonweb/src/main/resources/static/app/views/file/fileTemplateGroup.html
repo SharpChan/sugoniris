@@ -48,7 +48,12 @@
                         </td>
                         <td align="left">{{cell.no}}</td>
                         <td align="left">{{cell.groupName}}</td>
-                        <td align="left"><textarea>{{cell.selectedCategories}}</textarea></td>
+                        <!--<td align="left"><textarea>{{cell.selectedCategories}}</textarea></td>-->
+                        <td align="left">
+                            <ul  ng-repeat="template in cell.selectedCategories">
+                              <li>{{template}}</li>
+                            </ul>
+                        </td>
                         <td align="left">{{cell.comment}}</td>
                         <td align="left">
                             <button ng-show="cell.groupId != '1'" type="button" ng-click="deleteOne(cell.groupId)" class="btn btn-sm btn-danger">

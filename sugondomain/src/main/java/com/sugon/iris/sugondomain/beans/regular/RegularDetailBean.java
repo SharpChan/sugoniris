@@ -15,6 +15,11 @@ public class RegularDetailBean {
     private String regularName;
 
     /**
+     * 格式
+     */
+    private String format;
+
+    /**
      * 正则表达式
      */
     private String regularValue;

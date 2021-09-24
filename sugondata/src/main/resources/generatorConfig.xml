@@ -64,8 +64,8 @@
 
         <!-- 6-1、单个表生成策略  -->
         <!--生成对应表及类名-->
-        <table tableName="regular_group"
-               domainObjectName="RegularGroup"
+        <table tableName="file_rinse_detail"
+               domainObjectName="FileRinseDetail"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"

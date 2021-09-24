@@ -1336,13 +1336,13 @@ App.controller("fileRinseController", function ($http,$timeout,$scope,
     $("#pleaseWait").hide();
     //登录和锁定校验
     myservice.loginLockCheck();
-    myservice.dragFunc("cnDivAdd");
+    myservice.dragFunc("cnDivGroupAdd");
     myservice.dragFunc("cnDivUpdate");
     myservice.dragFunc("cnDivDetail");
     myservice.dragFunc("cnDivDetailAdd");
     myservice.dragFunc("cnDivDetailUpdate");
 
-    $("#cnDivAdd").hide();
+    $("#cnDivGroupAdd").hide();
     $("#cnDivUpdate").hide();
     $("#cnDivDetail").hide();
     $("#cnDivDetailAdd").hide();
@@ -1362,17 +1362,22 @@ App.controller("fileRinseController", function ($http,$timeout,$scope,
     $scope.query();
     
     $scope.add = function () {
-        $("#cnDivAdd").show();
+        $("#cnDivGroupAdd").show();
         $scope.rinseName = "";
         $scope.websocketUrl = "";
         $scope.comment = "";
     }
 
     $scope.close =  function(){
-        $("#cnDivAdd").hide();
+        $("#cnDivGroupAdd").hide();
     }
 
     $scope.save = function () {
+        if(myservice.isEmpty($scope.rinseNameAdd)){
+            alert("名称不能为空！");
+            return;
+        }
+
         var url = "/fileRinse/addFileRinse";
         var params = {
             fileRinseName: $scope.rinseNameAdd,
@@ -1383,7 +1388,7 @@ App.controller("fileRinseController", function ($http,$timeout,$scope,
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
-            $("#cnDivAdd").hide();
+            $("#cnDivGroupAdd").hide();
             $scope.query();
         }).error(function (data) {
             alert("请检查必填项是否填写！");
@@ -1403,6 +1408,10 @@ App.controller("fileRinseController", function ($http,$timeout,$scope,
     }
 
     $scope.updateSave = function(){
+        if(myservice.isEmpty($scope.rinseNameUpdate)){
+            alert("名称不能为空！");
+            return;
+        }
         var url = "/fileRinse/modifyFileRinse";
         var params = {
             id: $scope.rinseId,
@@ -1436,11 +1445,17 @@ App.controller("fileRinseController", function ($http,$timeout,$scope,
             alert("会话已经断开或者检查网络是否正常！");
         });
     }
+    
+    $scope.detail = function (id) {
+        $("#cnDivDetail").show();
+        var url = ""+id;
+    }
+
   })
 
 App.controller("regularGroupController", function ($http,$timeout,$scope,$localStorage,
                                                     myservice) {
-
+    var msg = "您真的确定要删除吗？\n\n请确认！";
     $("#pleaseWait").hide();
     $scope.userId = $localStorage.userId;
     //登录和锁定校验
@@ -1449,10 +1464,12 @@ App.controller("regularGroupController", function ($http,$timeout,$scope,$localS
     myservice.dragFunc("cnDivDetailList");
     myservice.dragFunc("cnDivDetailAdd");
     myservice.dragFunc("cnDivGroupUpdate");
+    myservice.dragFunc("cnDivDetailUpdate");
     $("#cnDivGroupAdd").hide();
     $("#cnDivDetailList").hide();
     $("#cnDivDetailAdd").hide();
     $("#cnDivGroupUpdate").hide();
+    $("#cnDivDetailUpdate").hide();
 
     $scope.queryGroup = function(){
         var url = "/regular/getGroups";
@@ -1471,7 +1488,7 @@ App.controller("regularGroupController", function ($http,$timeout,$scope,$localS
         $scope.groupNameAdd = "";
         $scope.groupCommentAdd = "";
         $scope.commentAdd = "";
-        $scope.sort = "";
+        $scope.groupSort = "";
         $("#cnDivGroupAdd").show();
     }
 
@@ -1551,13 +1568,40 @@ App.controller("regularGroupController", function ($http,$timeout,$scope,$localS
     $scope.detail = function (item) {
         $("#cnDivDetailList").show();
         $scope.groupId = item.id;
-
+        $scope.queryDetail();
     }
 
-    $scope.closeDetailList = function () {
+    $scope.closeDetailList = function(){
         $("#cnDivDetailList").hide();
     }
-    
+
+
+    $scope.checkSort=function(sort,field){
+        var reg=/^\d+$/;
+        if(!reg.test(sort)){
+            alert("排序必须为数字！");
+            $scope[field] = "";
+            return;
+        }
+    }
+
+    $scope.deleteGroup = function (id){
+
+        if (confirm(msg)!=true){
+            return;
+        }
+        var url = "/regular/groupRemoveByPrimaryKey?id="+id;
+        $http.post(url).success(function(data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.queryGroup();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
     $scope.addDetail = function () {
         $("#cnDivDetailAdd").show();
         $scope.regular_name = "";
@@ -1568,8 +1612,8 @@ App.controller("regularGroupController", function ($http,$timeout,$scope,$localS
     }
 
 
-    $scope.queryDetail = function(item){
-        var url = "/regular/getRegularDetails?regularGroupId="+item.id;
+    $scope.queryDetail = function(){
+        var url = "/regular/getRegularDetails?regularGroupId="+$scope.groupId;
         $http.post(url).success(function(data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
@@ -1605,9 +1649,9 @@ App.controller("regularGroupController", function ($http,$timeout,$scope,$localS
             format: $scope.format,
             regularValue: $scope.regularValue,
             sort: $scope.sort,
-            regularValue: $scope.regularValue,
-            comment: $scope.comment
-        }
+            comment: $scope.comment,
+            regularGroupId: $scope.groupId
+    }
 
         $http.post(url,params).success(function(data) {
             var jsonString = angular.toJson(data);
@@ -1623,6 +1667,71 @@ App.controller("regularGroupController", function ($http,$timeout,$scope,$localS
 
     $scope.closeDetailAdd = function () {
         $("#cnDivDetailAdd").hide();
+    }
+    
+    $scope.updateDetail = function (item) {
+        $("#cnDivDetailUpdate").show();
+        $scope.updateDetailId  = item.id;
+        $scope.regularNameUpdate = item.regularName;
+        $scope.formatUpdate = item.format;
+        $scope.regularValueUpdate = item.regularValue;
+        $scope.sortUpdate = item.sort;
+        $scope.commentUpdate = item.comment;
+    }
+    
+    $scope.updateDetailSave = function () {
+        if(myservice.isEmpty($scope.regularNameUpdate)){
+            alert("名称不能为空！");
+            return;
+        }
+        if(myservice.isEmpty($scope.regularValueUpdate)){
+            alert("正则表达式不能为空！");
+            return;
+        }
+        if(myservice.isEmpty($scope.sortUpdate)){
+            alert("排序不能为空！");
+            return;
+        }
+        var url = "/regular/modifyRegularDetails";
+        var params = {
+            id: $scope.updateDetailId,
+            regularName: $scope.regularNameUpdate,
+            format: $scope.formatUpdate,
+            regularValue: $scope.regularValueUpdate,
+            sort: $scope.sortUpdate,
+            comment: $scope.commentUpdate,
+            regularGroupId: $scope.groupId
+        }
+        $http.post(url,params).success(function(data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.queryDetail();
+            $("#cnDivDetailUpdate").hide();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.closeDetailUpdate = function () {
+        $("#cnDivDetailUpdate").hide();
+    }
+    
+    $scope.deleteOneDetail = function (id) {
+        if (confirm(msg)!=true){
+            return;
+        }
+        var url = "/regular/removeRegularDetailByPrimaryKey?id="+id;
+        $http.post(url).success(function(data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.queryDetail();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
     }
 })
 

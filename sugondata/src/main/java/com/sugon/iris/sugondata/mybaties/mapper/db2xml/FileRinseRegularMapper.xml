@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.anson.dao.FileRinseRegularMapper">
+  <resultMap id="BaseResultMap" type="com.anson.model.FileRinseRegularBean">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="file_rinse_detail_id" jdbcType="BIGINT" property="fileRinseDetailId" />
+    <result column="regular_detail_id" jdbcType="VARCHAR" property="regularDetailId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, file_rinse_detail_id, regular_detail_id, user_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from file_rinse_regular
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from file_rinse_regular
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.anson.model.FileRinseRegularBean">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into file_rinse_regular (file_rinse_detail_id, regular_detail_id, 
+      user_id)
+    values (#{fileRinseDetailId,jdbcType=BIGINT}, #{regularDetailId,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.anson.model.FileRinseRegularBean">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into file_rinse_regular
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fileRinseDetailId != null">
+        file_rinse_detail_id,
+      </if>
+      <if test="regularDetailId != null">
+        regular_detail_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fileRinseDetailId != null">
+        #{fileRinseDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="regularDetailId != null">
+        #{regularDetailId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.anson.model.FileRinseRegularBean">
+    update file_rinse_regular
+    <set>
+      <if test="fileRinseDetailId != null">
+        file_rinse_detail_id = #{fileRinseDetailId,jdbcType=BIGINT},
+      </if>
+      <if test="regularDetailId != null">
+        regular_detail_id = #{regularDetailId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.anson.model.FileRinseRegularBean">
+    update file_rinse_regular
+    set file_rinse_detail_id = #{fileRinseDetailId,jdbcType=BIGINT},
+      regular_detail_id = #{regularDetailId,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

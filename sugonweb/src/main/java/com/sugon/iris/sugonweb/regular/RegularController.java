@@ -35,8 +35,29 @@ public class RegularController {
     public RestResult<Integer> groupAdd(@CurrentUser User user, @RequestBody RegularGroupDto regularGroupDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
+        regularGroupDto.setUserId(user.getId());
         try{
             restResult.setObj(regularServiceImpl.addGroup(regularGroupDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/groupRemoveByPrimaryKey")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> groupRemoveByPrimaryKey(@CurrentUser User user,Long id){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(regularServiceImpl.deleteGroupByPrimaryKey(id,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -135,8 +156,50 @@ public class RegularController {
     public RestResult<Integer> addRegularDetails(@CurrentUser User user, @RequestBody  RegularDetailDto regularDetailDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
+        regularDetailDto.setUserId(user.getId());
         try{
             restResult.setObj(regularDetailServiceImpl.addDetail(regularDetailDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/modifyRegularDetails")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> modifyRegularDetails(@CurrentUser User user, @RequestBody  RegularDetailDto regularDetailDto){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        regularDetailDto.setUserId(user.getId());
+        try{
+            restResult.setObj(regularDetailServiceImpl.modifyDetailByPrimaryKey(regularDetailDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/removeRegularDetailByPrimaryKey")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Integer> removeRegularDetailByPrimaryKey(@CurrentUser User user,Long id){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(regularDetailServiceImpl.deleteDetailByPrimaryKey(id,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

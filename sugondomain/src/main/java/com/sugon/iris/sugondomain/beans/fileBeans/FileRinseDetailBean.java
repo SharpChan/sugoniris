@@ -3,7 +3,7 @@ package com.sugon.iris.sugondomain.beans.fileBeans;
 import lombok.Data;
 
 @Data
-public class FileRinseBean {
+public class FileRinseDetailBean{
 
     /**
      * 自增序列
@@ -11,19 +11,19 @@ public class FileRinseBean {
     private Long id;
 
     /**
-     * 清洗字段类型组名称
+     * 清洗组id
      */
-    private String fileRinseName;
+    private Long fileRinseGroupId;
+
+    /**
+     * 类型名称
+     */
+    private String typeName;
 
     /**
      * 备注
      */
     private String comment;
-
-    /**
-     * websocket地址
-     */
-    private String websocketUrl;
 
     /**
      * 创建者id
