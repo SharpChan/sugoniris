@@ -63,11 +63,11 @@
         values
         <foreach collection="fileDataGroupDetailEntityList" item="item" index="i" separator=",">
              (
-             #{item.id,jdbcType=INTEGER},
-             #{item.userId,jdbcType=INTEGER},
-             #{item.fileDataGroupId,jdbcType=INTEGER},
+             #{item.id,jdbcType=BIGINT},
+             #{item.userId,jdbcType=BIGINT},
+             #{item.fileDataGroupId,jdbcType=BIGINT},
              #{item.createTime,jdbcType=TIMESTAMP},
-             #{item.createUserId,jdbcType=INTEGER}
+             #{item.createUserId,jdbcType=BIGINT}
              )
         </foreach>
     </insert>

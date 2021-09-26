@@ -1,10 +1,12 @@
 package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.FileRinseDetailMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateDetailMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.FileService.FileTemplateDetailService;
@@ -21,6 +23,9 @@ public class FileTemplateDetailServiceImpl implements FileTemplateDetailService 
     @Resource
     private FileTemplateDetailMapper fileTemplateDetailMapper;
 
+    @Resource
+    private FileRinseDetailMapper fileRinseDetailMapper;
+
     @Override
     public List<FileTemplateDetailDto> getFileTemplateDetailDtoList(User user, FileTemplateDetailDto fileTemplateDetailDto, List<Error> errorList) throws IllegalAccessException {
         List<FileTemplateDetailEntity> fileTemplateDetailEntityList = null;
@@ -36,8 +41,11 @@ public class FileTemplateDetailServiceImpl implements FileTemplateDetailService 
         }
        if(!CollectionUtils.isEmpty(fileTemplateDetailEntityList)){
            for(FileTemplateDetailEntity fileTemplateDetailEntityBean : fileTemplateDetailEntityList){
+               //通过清洗类型的id获取清洗类型信息
+               FileRinseDetailEntity fileRinseDetailEntity = fileRinseDetailMapper.selectByPrimaryKey(fileTemplateDetailEntityBean.getFileRinseDetailId());
                FileTemplateDetailDto fileTemplateDetailDtoBean = new FileTemplateDetailDto();
                PublicUtils.trans(fileTemplateDetailEntityBean,fileTemplateDetailDtoBean);
+               fileTemplateDetailDtoBean.setFileRinseDetailTypeName(fileRinseDetailEntity.getTypeName());
                fileTemplateDetailDtoList.add(fileTemplateDetailDtoBean);
            }
        }
@@ -92,6 +100,18 @@ public class FileTemplateDetailServiceImpl implements FileTemplateDetailService 
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"修改表file_template_detail出错",e.toString()));
         }
         return i;
+    }
+
+    @Override
+    public int removeBoundByTemplateId(Long templateId, List<Error> errorList) {
+        int result =0;
+        try{
+            result = fileTemplateDetailMapper.updateByTemplateIdSelective(templateId);
+        }catch (Exception e){
+        e.printStackTrace();
+        errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"修改表file_template_detail出错",e.toString()));
+        }
+        return result;
     }
 
     private boolean checkSortNo(List<Error> errorList, FileTemplateDetailEntity fileTemplateDetailEntity) {

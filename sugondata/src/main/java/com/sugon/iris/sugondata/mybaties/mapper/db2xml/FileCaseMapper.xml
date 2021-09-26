@@ -47,11 +47,11 @@
         (<include refid="Base_Column_List" />)
         values
              (
-             #{id,jdbcType=INTEGER},
+             #{id,jdbcType=BIGINT},
              #{caseNo,jdbcType=VARCHAR},
              #{caseName,jdbcType=VARCHAR},
              #{caseInfo,jdbcType=VARCHAR},
-             #{userId,jdbcType=INTEGER},
+             #{userId,jdbcType=BIGINT},
              #{createTime,jdbcType=TIMESTAMP},
              #{updateTime,jdbcType=TIMESTAMP}
              )

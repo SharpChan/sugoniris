@@ -52,9 +52,9 @@
         (<include refid="Base_Column_List" />)
         values
              (
-             #{id,jdbcType=INTEGER},
+             #{id,jdbcType=BIGINT},
              #{attributeName,jdbcType=VARCHAR},
-             #{fileTableId,jdbcType=INTEGER},
+             #{fileTableId,jdbcType=BIGINT},
              #{color,jdbcType=VARCHAR},
              #{width,jdbcType=VARCHAR},
              #{height,jdbcType=VARCHAR},

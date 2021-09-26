@@ -11,6 +11,11 @@ import java.util.List;
 public class FileTemplateDto extends FileTemplateBean {
 
     /**
+     *清洗字段类型组名称
+     */
+    private String fileRinseName;
+
+    /**
      * 模板的字段信息
      */
     private List<FileTemplateDetailDto> fileTemplateDetailDtoList;

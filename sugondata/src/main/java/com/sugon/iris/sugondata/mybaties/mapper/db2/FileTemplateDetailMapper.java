@@ -10,6 +10,8 @@ public interface FileTemplateDetailMapper {
 
     int updateFileTemplateDetail(FileTemplateDetailEntity fileTemplateDetailEntity);
 
+    int updateByTemplateIdSelective(Long templateId);
+
     int deleteFileTemplateDetailById(String[] idArr);
 
     int deleteFileTemplateDetailByTemplatId(String[] templatIdArr);

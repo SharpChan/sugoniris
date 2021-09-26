@@ -1,7 +1,7 @@
 package com.sugon.iris.sugondomain.dtos.fileDtos;
 
 import com.sugon.iris.sugondomain.beans.fileBeans.FileRinseDetailBean;
-import com.sugon.iris.sugondomain.dtos.regularDtos.RegularDetailDto;
+import com.sugon.iris.sugondomain.dtos.regularDtos.RegularShowDto;
 import lombok.Data;
 
 import java.util.List;
@@ -12,10 +12,10 @@ public class FileRinseDetailDto extends FileRinseDetailBean {
     /**
      * 配置的多个正则表达式
      */
-    List<RegularDetailDto>  regularDetailDtorListY;
+    List<RegularShowDto>  regularShowDtoListY;
 
     /**
      * 正则排除
      */
-    List<RegularDetailDto>  regularDetailDtorListN;
+    List<RegularShowDto>  regularShowDtoListN;
 }

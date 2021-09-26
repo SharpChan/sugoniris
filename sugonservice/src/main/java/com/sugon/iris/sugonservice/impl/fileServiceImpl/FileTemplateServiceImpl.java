@@ -1,11 +1,13 @@
 package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.FileRinseGroupMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateDetailMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseGroupEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.FileService.FileTemplateService;
@@ -24,6 +26,9 @@ public class FileTemplateServiceImpl implements FileTemplateService {
     @Resource
     private FileTemplateDetailMapper fileTemplateDetailMapper;
 
+    @Resource
+    private FileRinseGroupMapper fileRinseGroupMapper;
+
 
     @Override
     public List<FileTemplateDto> getFileTemplateDtoList(User user, FileTemplateDto fileTemplateDto, List<Error> errorList) throws IllegalAccessException {
@@ -40,8 +45,11 @@ public class FileTemplateServiceImpl implements FileTemplateService {
         }
         if(!CollectionUtils.isEmpty(fileTemplateEntityList)){
             for(FileTemplateEntity fileTemplateEntityBean : fileTemplateEntityList){
+                //通过清洗字段组id获取字段组信息
+                FileRinseGroupEntity fileRinseGroupEntity = fileRinseGroupMapper.selectByPrimaryKey(fileTemplateEntityBean.getFileRinseGroupId());
                 FileTemplateDto fileTemplateDtoBean = new FileTemplateDto();
                 PublicUtils.trans(fileTemplateEntityBean,fileTemplateDtoBean);
+                fileTemplateDtoBean.setFileRinseName(fileRinseGroupEntity.getFileRinseName());
                 fileTemplateDtoList.add(fileTemplateDtoBean);
             }
         }

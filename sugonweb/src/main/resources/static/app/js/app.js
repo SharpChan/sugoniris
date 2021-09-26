@@ -4526,6 +4526,22 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
     $("#cnDivDetail").hide();
     $("#cnDivDetailAddOrUpdate").hide();
 
+    loadDictionary1 = function(){
+        var url = "/fileRinse/getFileRinses";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.sites1 = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    loadDictionary1();
 
     $scope.add = function(){
         $("#cnDiv").show();
@@ -4538,12 +4554,15 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
 
     $scope.update = function(item){
         $("#cnDivUpdate").show();
+        $scope.reBound = false;
         $scope.id_2 = item.id;
+        $scope.selectedOptions2 = item.fileRinseGroupId;
         $scope.templateName_2 = item.templateName;
         $scope.tablePrefix_2 = item.tablePrefix;
         $scope.templateKey_2 = item.templateKey;
         $scope.exclude_2 = item.exclude;
         $scope.comment_2 = item.comment;
+        $scope.templateId = item.id;
 
     }
 
@@ -4555,10 +4574,26 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             tablePrefix: $scope.tablePrefix_2,
             templateKey: $scope.templateKey_2,
             exclude: $scope.exclude_2,
-            comment: $scope.comment_2
+            comment: $scope.comment_2,
+            fileRinseGroupId: $scope.selectedOptions2
         }
-        $http.post(url,params).success(function (data)
+        $http.post(url,params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.query();
+            $scope.removeDetailBoundByTemplateId($scope.templateId );
+        }).error(function(data)
         {
+            alert("请检查必填项是否填写！");
+        });
+        $("#cnDivUpdate").hide();
+    }
+
+    //模板下的字段与清洗字段进行解绑
+    $scope.removeDetailBoundByTemplateId = function(templateId){
+           var url = "/fileTemplate/removeBoundByTemplateId?templateId="+templateId;
+           $http.post(url).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
@@ -4567,7 +4602,6 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         {
             alert("请检查必填项是否填写！");
         });
-        $("#cnDivUpdate").hide();
     }
 
     $scope.query = function () {
@@ -4584,6 +4618,9 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
             $scope.obj = myservice.setSerialNumber (temp.obj);
+            angular.forEach($scope.obj,function (e) {
+               $scope[e.fileRinseGroupId] = e.fileRinseGroupId;
+            });
             $("#pleaseWait").hide();
         }).error(function(data)
         {
@@ -4592,6 +4629,8 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         $("#cnDiv").hide();
     }
 
+    $scope.query();
+
     $scope.save = function () {
         var url = "/fileTemplate/fileTemplateInsert";
         var params = {
@@ -4599,7 +4638,8 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             tablePrefix: $scope.tablePrefix_1,
             templateKey: $scope.templateKey_1,
             exclude: $scope.exclude_1,
-            comment: $scope.comment_1
+            comment: $scope.comment_1,
+            fileRinseGroupId: $scope.selectedOptions1
         }
         $http.post(url,params).success(function (data)
         {
@@ -4691,6 +4731,7 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
    
     $scope.detail = function (item) {
         $("#cnDivDetail").show();
+        $scope.fileRinseGroupId = item.fileRinseGroupId;
         $scope.item = item;
         $scope.templateName_3 = item.templateName;
         $scope.templateId = item.id;
@@ -4705,21 +4746,26 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             if(temp.flag == "FAILED"){
                 myservice.errors(temp);
             }
-            $scope.details = myservice.setSerialNumber (temp.obj);
+            $scope.details = myservice.setSerialNumber(temp.obj);
+            $scope.getFileRinseDetailByGroupId();
         }).error(function(data)
         {
             alert("会话已经断开或者检查网络是否正常！");
         });
     }
 
-    $scope.updateDetail = function(item){
-        $scope.flag = 1;
-        $scope.fieldName = item.fieldName;
-        $scope.fieldKey = item.fieldKey;
-        $scope.regular = item.regular;
-        $scope.exclude = item.exclude;
-        $scope.sortNo = item.sortNo;
-        $scope.comment = item.comment;
+    $scope.getFileRinseDetailByGroupId = function(){
+        var url = "/fileRinse/getFileRinseDetailsByGroupId?groupId="+$scope.fileRinseGroupId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.sites2 = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
     }
 
     $scope.closeUpdateDetail = function () {
@@ -4748,6 +4794,7 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         $scope.exclude = item.exclude;
         $scope.sortNo = item.sortNo;
         $scope.comment = item.comment;
+        $scope.selectedOptions3 = item.fileRinseDetailId;
     }
 
     $scope.closeUpdateDetailAddOrUpdate= function(){
@@ -4784,7 +4831,8 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             regular: $scope.regular,
             exclude: $scope.exclude,
             sortNo: $scope.sortNo,
-            comment:$scope.comment
+            comment:$scope.comment,
+            fileRinseDetailId: $scope.selectedOptions3
         }
 
         $http.post(url,params).success(function (data)
@@ -4798,7 +4846,6 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         {
             alert("请检查必填项是否填写！");
         });
-        
     }
     $scope.sortNoChange = function () {
         var reg=/^[0-9]{1,3}$/;
@@ -4808,7 +4855,7 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
        }
     }
 
-    $scope.deleteOneDetail = function (id) {
+    $scope.deleteOneDetail = function (id){
         var url = "/fileTemplate/removeFileTemplateDetails?selected="+id+",";
         $http.post(url).success(function(data)
         {
@@ -4824,6 +4871,16 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             alert("会话已经断开或者检查网络是否正常！");
         });
 
+    }
+
+
+    
+    $scope.selectOneChange=function () {
+        var msg = "您真的确定要修改吗？\n\n修改后字段绑定的清洗字段需要全部再次绑定！\n\n请确认！";
+        if (confirm(msg)==false) {
+            return;
+        }
+        $scope.reBound = true;
     }
 
 });

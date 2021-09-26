@@ -42,11 +42,11 @@
         (<include refid="Base_Column_List" />)
         values
              (
-             #{id,jdbcType=INTEGER},
-             #{fileTableId,jdbcType=INTEGER},
+             #{id,jdbcType=BIGINT},
+             #{fileTableId,jdbcType=BIGINT},
              #{rownum,jdbcType=INTEGER},
              #{label,jdbcType=VARCHAR},
-             #{userId,jdbcType=INTEGER}
+             #{userId,jdbcType=BIGINT}
              )
     </insert>
 

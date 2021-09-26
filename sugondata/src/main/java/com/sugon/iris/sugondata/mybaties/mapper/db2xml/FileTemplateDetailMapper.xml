@@ -15,11 +15,12 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
         <result column="user_id" property="userId" jdbcType="BIGINT" />
         <result column="exclude" property="exclude" jdbcType="VARCHAR" />
+        <result column="file_rinse_detail_id" property="fileRinseDetailId" jdbcType="BIGINT" />
     </resultMap>
 
     <!--基础字段-->
     <sql id="Base_Column_List" >
-        id,template_id,field_name,field_key,regular,create_time,update_time,sort_no,comment,user_id,exclude
+        id,template_id,field_name,field_key,regular,create_time,update_time,sort_no,comment,user_id,exclude,file_rinse_detail_id
     </sql>
 
     <!--表查询-->
@@ -57,8 +58,8 @@
         (<include refid="Base_Column_List" />)
         values
              (
-             #{id,jdbcType=INTEGER},
-             #{templateId,jdbcType=INTEGER},
+             #{id,jdbcType=BIGINT},
+             #{templateId,jdbcType=BIGINT},
              #{fieldName,jdbcType=VARCHAR},
              #{fieldKey,jdbcType=VARCHAR},
              #{regular,jdbcType=VARCHAR},
@@ -66,8 +67,9 @@
              #{updateTime,jdbcType=TIMESTAMP},
              #{sortNo,jdbcType=VARCHAR},
              #{comment,jdbcType=VARCHAR},
-             #{userId,jdbcType=INTEGER},
-             #{exclude,jdbcType=VARCHAR}
+             #{userId,jdbcType=BIGINT},
+             #{exclude,jdbcType=VARCHAR},
+             #{fileRinseDetailId,jdbcType=BIGINT}
              )
     </insert>
 
@@ -79,8 +81,17 @@
                           regular = #{regular},
                           sort_no = #{sortNo},
                           comment = #{comment},
-                          exclude = #{exclude}
+                          exclude = #{exclude},
+                          file_rinse_detail_id = #{fileRinseDetailId}
                where id = #{id}
+    </update>
+
+    <update id="updateByTemplateIdSelective">
+        update file_template_detail
+        <set>
+            file_rinse_detail_id = null
+        </set>
+        where template_id = #{templateId,jdbcType=BIGINT}
     </update>
 
     <!--通过id删除-->

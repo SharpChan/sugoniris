@@ -58,4 +58,9 @@ public class FileTemplateBean {
      */
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date updateTime = new Date();
+
+    /**
+     * 清洗字段组id
+     */
+    private Long fileRinseGroupId;
 }

@@ -64,4 +64,9 @@ public class FileTemplateDetailBean {
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date updateTime = new Date();
 
+    /**
+     *清洗类型字段id
+     */
+    private Long fileRinseDetailId;
+
 }

@@ -116,14 +116,14 @@
         values
         <foreach collection="declarationDetailEntityList" item="item" index="i" separator=",">
              (
-             #{item.id,jdbcType=INTEGER},
+             #{item.id,jdbcType=BIGINT},
              #{item.type,jdbcType=VARCHAR},
              #{item.detail,jdbcType=VARCHAR},
-             #{item.ownerUserId,jdbcType=INTEGER},
+             #{item.ownerUserId,jdbcType=BIGINT},
              #{item.status,jdbcType=VARCHAR},
-             #{item.checkUserId,jdbcType=INTEGER},
+             #{item.checkUserId,jdbcType=BIGINT},
              #{item.createTime,jdbcType=TIMESTAMP},
-             #{item.businessId,jdbcType=INTEGER}
+             #{item.businessId,jdbcType=BIGINT}
              )
         </foreach>
     </insert>

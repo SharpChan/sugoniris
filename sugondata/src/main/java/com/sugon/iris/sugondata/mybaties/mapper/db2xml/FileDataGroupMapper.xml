@@ -44,12 +44,12 @@
         (<include refid="Base_Column_List" />)
         values
              (
-             #{id,jdbcType=INTEGER},
+             #{id,jdbcType=BIGINT},
              #{groupName,jdbcType=VARCHAR},
              #{description,jdbcType=VARCHAR},
              #{createTime,jdbcType=TIMESTAMP},
              #{updateTime,jdbcType=TIMESTAMP},
-             #{userId,jdbcType=INTEGER}
+             #{userId,jdbcType=BIGINT}
              )
     </insert>
 

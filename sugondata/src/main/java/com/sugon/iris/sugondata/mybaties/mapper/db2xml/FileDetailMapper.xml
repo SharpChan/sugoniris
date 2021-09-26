@@ -90,17 +90,17 @@
         (<include refid="Base_Column_List" />)
         values
              (
-             #{id,jdbcType=INTEGER},
-             #{fileAttachmentId,jdbcType=INTEGER},
+             #{id,jdbcType=BIGINT},
+             #{fileAttachmentId,jdbcType=BIGINT},
              #{fileType,jdbcType=VARCHAR},
              #{fileName,jdbcType=VARCHAR},
              #{filePath,jdbcType=VARCHAR},
-             #{fileTemplateId,jdbcType=INTEGER},
+             #{fileTemplateId,jdbcType=BIGINT},
              #{rowCount,jdbcType=INTEGER},
              #{importRowCount,jdbcType=INTEGER},
              #{caseId,jdbcType=INTEGER},
              #{tableName,jdbcType=VARCHAR},
-             #{userId,jdbcType=INTEGER},
+             #{userId,jdbcType=BIGINT},
              #{createTime,jdbcType=TIMESTAMP},
              #{updateTime,jdbcType=TIMESTAMP},
              #{hasImport,jdbcType=TINYINT},

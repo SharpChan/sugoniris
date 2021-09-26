@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.RegularShowMapper">
+  <select id="getRegularShowsByFileRinseDetailId" parameterType="java.lang.Long"  resultType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RegularShowEntity">
+     select c.group_name groupName,b.regular_name  regularName,b.format format,a.type type from file_rinse_regular a,
+                       regular_detail b,
+                       regular_group c
+                       where a.regular_detail_id=b.id
+                         and c.id=b.regular_group_id
+                         and a.file_rinse_detail_id = #{fileRinseDetailId,jdbcType=BIGINT}
+  </select>
+</mapper>

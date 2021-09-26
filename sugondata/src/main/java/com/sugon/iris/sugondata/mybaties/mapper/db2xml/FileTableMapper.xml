@@ -109,11 +109,11 @@
         (<include refid="Base_Column_List" />)
         values
              (
-             #{id,jdbcType=INTEGER},
+             #{id,jdbcType=BIGINT},
              #{tableName,jdbcType=VARCHAR},
-             #{fileTemplateId,jdbcType=INTEGER},
-             #{caseId,jdbcType=INTEGER},
-             #{userId,jdbcType=INTEGER},
+             #{fileTemplateId,jdbcType=BIGINT},
+             #{caseId,jdbcType=BIGINT},
+             #{userId,jdbcType=BIGINT},
              #{title,jdbcType=VARCHAR}
              )
     </insert>

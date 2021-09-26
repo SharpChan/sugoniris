@@ -74,17 +74,17 @@
         values
         <foreach collection="fileAttachmentEntityList" item="item" index="i" separator=",">
              (
-             #{item.id,jdbcType=INTEGER},
+             #{item.id,jdbcType=BIGINT},
              #{item.fileName,jdbcType=VARCHAR},
              #{item.fileType,jdbcType=VARCHAR},
              #{item.fileSize,jdbcType=VARCHAR},
              #{item.attachment,jdbcType=VARCHAR},
              #{item.hasDecompress,jdbcType=TINYINT},
              #{item.createTime,jdbcType=TIMESTAMP},
-             #{item.userId,jdbcType=INTEGER},
+             #{item.userId,jdbcType=BIGINT},
              #{item.hasImport,jdbcType=TINYINT},
-             #{item.caseId,jdbcType=INTEGER},
-             #{item.templateGroupId,jdbcType=INTEGER},
+             #{item.caseId,jdbcType=BIGINT},
+             #{item.templateGroupId,jdbcType=BIGINT},
              #{item.templateGroupName,jdbcType=VARCHAR}
              )
         </foreach>

@@ -13,5 +13,7 @@ public interface FileTemplateDetailService {
 
     int updateFileTemplateDetail(User user, FileTemplateDetailDto fileTemplateDetailDto, List<Error> errorList) throws IllegalAccessException;
 
+    int removeBoundByTemplateId(Long templateId,List<Error> errorList);
+
     int deleteFileTemplateDetail(String[] idArr, List<Error> errorList);
 }

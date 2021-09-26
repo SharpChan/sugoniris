@@ -32,9 +32,9 @@
                     <thead>
                     <tr>
                         <th>序号</th>
-                        <th>名称</th>
+                        <th>组名称</th>
                         <th>备注</th>
-                        <th>websocket地址</th>
+                        <th>URL(websocket/http)</th>
                         <th>修改</th>
                         <th>删除</th>
                         <th>字段配置</th>
@@ -141,10 +141,19 @@
                 <tr ng-repeat="item in details">
                     <td>{{item.no}}</td>
                     <td>{{item.typeName}}</td>
-                    <td>{{item.regularDetailDtorListY}}</td>
-                    <td>{{item.regularDetailDtorListN}}</td>
-                    <td>{{item.comment}}</td>
                     <td>
+                        <ul ng-repeat="regularShow in item.regularShowDtoListY">
+                            <li>{{ regularShow.groupName +"::"+regularShow.regularName+"::"+regularShow.format}}</li>
+                        </ul>
+                    </td>
+
+                    <td align="left">
+                        <ul ng-repeat="regularShow in item.regularShowDtoListY">
+                            <li>{{ regularShow.groupName +"::"+regularShow.regularName+"::"+regularShow.format}}</li>
+                        </ul>
+                    </td>
+                    <td>{{item.comment}}</td>
+                    <td align="left">
                         <button type="button" ng-click="deleteOneDetail(item.id)" class="btn btn-sm btn-danger">
                             <em class="fa fa-trash-o"></em>
                         </button>

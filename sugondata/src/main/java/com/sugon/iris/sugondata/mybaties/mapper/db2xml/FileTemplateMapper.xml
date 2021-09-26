@@ -13,11 +13,12 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
         <result column="user_id" property="userId" jdbcType="BIGINT" />
         <result column="exclude" property="exclude" jdbcType="VARCHAR" />
+        <result column="file_rinse_group_id" property="fileRinseGroupId" jdbcType="BIGINT" />
     </resultMap>
 
     <!--基础字段-->
     <sql id="Base_Column_List" >
-        id,template_name,table_prefix,template_key,create_time,update_time,comment,user_id,exclude
+        id,template_name,table_prefix,template_key,create_time,update_time,comment,user_id,exclude,file_rinse_group_id
     </sql>
 
     <!--表查询-->
@@ -52,15 +53,16 @@
         (<include refid="Base_Column_List" />)
         values
              (
-             #{id,jdbcType=INTEGER},
+             #{id,jdbcType=BIGINT},
              #{templateName,jdbcType=VARCHAR},
              #{tablePrefix,jdbcType=VARCHAR},
              #{templateKey,jdbcType=VARCHAR},
              #{createTime,jdbcType=TIMESTAMP},
              #{updateTime,jdbcType=TIMESTAMP},
              #{comment,jdbcType=VARCHAR},
-             #{userId,jdbcType=INTEGER},
-             #{exclude,jdbcType=VARCHAR}
+             #{userId,jdbcType=BIGINT},
+             #{exclude,jdbcType=VARCHAR},
+             #{fileRinseGroupId,jdbcType=BIGINT}
              )
     </insert>
 
@@ -71,7 +73,8 @@
                           table_prefix = #{tablePrefix},
                           template_key = #{templateKey},
                           comment = #{comment},
-                          exclude = #{exclude}
+                          exclude = #{exclude},
+                          file_rinse_group_id = #{fileRinseGroupId}
                where id = #{id}
     </update>
 

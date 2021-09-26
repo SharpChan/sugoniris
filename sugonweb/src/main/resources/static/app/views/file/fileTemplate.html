@@ -53,6 +53,7 @@
                         <th>表前缀</th>
                         <th>关键字</th>
                         <th>排除字段</th>
+                        <th>清洗组</th>
                         <th>备注</th>
                         <th>修改</th>
                         <th>删除</th>
@@ -64,23 +65,24 @@
                         <td align="center">
                             <input ng-show="item.userId != 1000000001 || userId == 1000000001" type="checkbox" ng-model="item.checked" ng-change="selectOne(item)" />
                         </td>
-                        <td align="center">{{item.no}}</td>
-                        <td align="center">{{item.templateName}}</td>
-                        <td align="center">{{item.tablePrefix}}</td>
-                        <td align="center">{{item.templateKey}}</td>
-                        <td align="center">{{item.exclude}}</td>
-                        <td align="center">{{item.comment}}</td>
-                        <td align="center">
+                        <td align="left">{{item.no}}</td>
+                        <td align="left">{{item.templateName}}</td>
+                        <td align="left">{{item.tablePrefix}}</td>
+                        <td align="left">{{item.templateKey}}</td>
+                        <td align="left">{{item.exclude}}</td>
+                        <td align="left">{{item.fileRinseName}}</td>
+                        <td align="left">{{item.comment}}</td>
+                        <td align="left">
                             <button  ng-show="item.userId != 1000000001 || userId == 1000000001"  type="button" ng-click="update(item)" class="btn btn-sm btn-warning">
                                 <em class="fa fa-upload"></em>
                             </button>
                         </td>
-                        <td align="center">
+                        <td align="left">
                             <button  ng-show="item.userId != 1000000001 || userId == 1000000001" type="button" ng-click="deleteOne(item.id)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-trash-o"></em>
                             </button>
                         </td>
-                        <td align="center">
+                        <td align="left">
                             <button type="button" ng-click="detail(item)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-plus"></em>
                             </button>
@@ -92,11 +94,28 @@
         </div>
     </div>
 
-    <div id = "cnDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 500px; z-index: 9999">
+    <div id = "cnDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 580px; z-index: 9999">
         <div id = "cnDivheader" class="panel-heading topnavbar">
             添加<input type="button" value="关闭" style="margin-left:220px" class="btn btn-default" ng-click="close();" >
         </div>
         <div class="panel-body">
+            <div  class="form-group" style="top: 20px;width: 250px" >
+                <div class="input-group" align="left"  style=" z-index: 9999">
+                    <!--<input type="text" placeholder="是否解压" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control" ng-model="hasDecompress">-->
+                    <div class="form-group mb">
+                        <div class="col-sm-4">
+                            <div class="input-group mb">
+                                <span class="input-group-addon">选择清洗组</span>
+                                <!-- this uses fixed width to avoid expand outside the group container-->
+                                <select ng-change="selectOneChange()" ng-model="selectedOptions1" width="'150px'">
+                                    <option  value="" >---请选择---</option>
+                                    <option ng-repeat="site in sites1" value="{{site.id}}">{{site.fileRinseName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div  class="form-group" style="top: 20px;width: 250px" >
                 <span>请填写模板名称<input placeholder="必填" class="form-control" type="text" ng-model="templateName_1" ></span>
             </div>
@@ -122,11 +141,29 @@
 
 
     <input  type="hidden" class="form-control" type="text" ng-model="id_2" >
-    <div id = "cnDivUpdate" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 500px; z-index: 9999">
+    <div id = "cnDivUpdate" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 580px; z-index: 9999">
         <div id = "cnDivUpdateheader" class="panel-heading topnavbar">
             修改<input type="button" value="关闭" style="margin-left:220px" class="btn btn-default" ng-click="closeUpdate();" >
         </div>
         <div class="panel-body">
+            <div  class="form-group" style="top: 20px;width: 250px" >
+                <div class="input-group" align="left"  style=" z-index: 9999">
+                    <!--<input type="text" placeholder="是否解压" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control" ng-model="hasDecompress">-->
+                    <div class="form-group mb">
+                        <div class="col-sm-4">
+                            <div class="input-group mb">
+                                <span class="input-group-addon">选择清洗组</span>
+                                <!-- this uses fixed width to avoid expand outside the group container-->
+                                <!---->
+                                <select  ng-model="selectedOptions2" width="'150px'" ng-change="selectOneChange()">
+                                    <option  value="" >---请选择---</option>
+                                    <option ng-repeat="site in sites1" value="{{site.id}}">{{site.fileRinseName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div  class="form-group" style="top: 20px;width: 250px" >
                 <span>请填写模板名称<input placeholder="必填" class="form-control" type="text" ng-model="templateName_2" ></span>
             </div>
@@ -170,7 +207,9 @@
                     <th>字段名称</th>
                     <th>关键字</th>
                     <th>正则表达式</th>
+                    <th>绑定清洗类型</th>
                     <th>排除字段</th>
+                    <th>排序</th>
                     <th>备注</th>
                     <th>修改</th>
                     <th>删除</th>
@@ -182,7 +221,9 @@
                     <td align="center">{{item.fieldName}}</td>
                     <td align="center">{{item.fieldKey}}</td>
                     <td align="center">{{item.regular}}</td>
+                    <td align="center">{{item.fileRinseDetailTypeName}}</td>
                     <td align="center">{{item.exclude}}</td>
+                    <td align="center">{{item.sortNo}}</td>
                     <td align="center">{{item.comment}}</td>
                     <td align="center">
                         <button type="button" ng-click="updateDetail(item)" class="btn btn-sm btn-warning">
@@ -202,30 +243,47 @@
 
     <input  type="hidden" class="form-control" type="text" ng-model="templateId" >
     <input  type="hidden" class="form-control" type="text" ng-model="flag" ><!--  区分是插入还是更新  0：新增；1：修改-->
-    <div id = "cnDivDetailAddOrUpdate" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 580px; z-index: 9999;">
+    <div id = "cnDivDetailAddOrUpdate" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 350px; height: 650px; z-index: 9999;">
         <div id = "cnDivDetailAddOrUpdateheader" class="panel-heading topnavbar">
-            新增/修改<input type="button" value="关闭" style="margin-left:220px" class="btn btn-default" ng-click="closeUpdateDetailAddOrUpdate();" >
+            新增/修改<input type="button" value="关闭" style="margin-left:250px" class="btn btn-default" ng-click="closeUpdateDetailAddOrUpdate();" >
         </div>
         <div class="panel-body">
-            <div  class="form-group" style="top: 20px;width: 250px" >
+            <div  class="form-group" style="top: 20px;width: 300px" >
                 <span>字段名称:字母开头，只允许字母数字下划线<input placeholder="必填" class="form-control" type="text" ng-model="fieldName" ></span>
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
+            <div  class="form-group" style="top: 20px;width: 300px" >
                 <span>请填写字段关键字<input placeholder="必填，以&&分隔" class="form-control" type="text" ng-model="fieldKey" ></span>
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
+            <div  class="form-group" style="top: 20px;width: 300px" >
+                <div class="input-group" align="left"  style=" z-index: 9999">
+                    <!--<input type="text" placeholder="是否解压" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control" ng-model="hasDecompress">-->
+                    <div class="form-group mb">
+                        <div class="col-sm-5">
+                            <div class="input-group mb">
+                                <span class="input-group-addon">选择清洗类型</span>
+                                <!-- this uses fixed width to avoid expand outside the group container-->
+                                <select  ng-model="selectedOptions3" width="'150px'" >
+                                    <option  value="" >---请选择---</option>
+                                    <option ng-repeat="site in sites2" value="{{site.id}}">{{site.typeName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div  class="form-group" style="top: 20px;width: 300px" >
                 <span>请填写正则表达式<input placeholder="以&&分隔" class="form-control" type="text" ng-model="regular" ></span>
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
+            <div  class="form-group" style="top: 20px;width: 300px" >
                 <span>请填写排除字段<input placeholder="以&&分隔" class="form-control" type="text" ng-model="exclude" ></span>
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
+            <div  class="form-group" style="top: 20px;width: 300px" >
                 <span>请填写排序编号<input placeholder="必填，请输入整数0-999" class="form-control" type="text" ng-change="sortNoChange();" ng-model="sortNo" ></span>
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
+            <div  class="form-group" style="top: 20px;width: 300px" >
                 <span>请填写备注<input placeholder="请输入备注" class="form-control" type="text" ng-model="comment" ></span>
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
+            <div  class="form-group" style="top: 20px;width: 300px" >
                 <div align="right" style="margin-top:10px">
                     <input type="button" value="保存/修改"  class="btn btn-primary topnavbar" ng-click="detailAddOrUpdate();">
                 </div>
