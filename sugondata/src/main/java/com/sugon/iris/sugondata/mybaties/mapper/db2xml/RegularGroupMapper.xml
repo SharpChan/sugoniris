@@ -16,6 +16,7 @@
     <include refid="Base_Column_List" />
     from regular_group
     where id = #{id,jdbcType=BIGINT}
+    order by sort
   </select>
   <select id="selectGroupList"  resultMap="BaseResultMap">
     select
@@ -23,6 +24,7 @@
     from regular_group
     where user_id = #{userId,jdbcType=BIGINT}
     or    user_id = 1000000001
+    order by sort
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from regular_group

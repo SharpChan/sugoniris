@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface FileRinseDetailService {
 
-     Integer add(FileRinseDetailDto fileRinseDetailDto, List<Error> errorList) throws IllegalAccessException;
+     Long add(FileRinseDetailDto fileRinseDetailDto, List<Error> errorList) throws IllegalAccessException;
 
      List<FileRinseDetailDto>   findFileRinseDetailByGroupId(Long groupId, List<Error> errorList) throws IllegalAccessException;
 
      Integer modifyFileRinse(FileRinseDetailDto fileRinseDetailDto, List<Error> errorList) throws IllegalAccessException;
 
-     Integer deleteFileRinse(long id, List<Error> errorList) throws IllegalAccessException;
+     Integer deleteFileRinse(Long id, List<Error> errorList) throws IllegalAccessException;
 }

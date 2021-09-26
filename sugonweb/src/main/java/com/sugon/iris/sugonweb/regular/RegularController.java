@@ -131,13 +131,33 @@ public class RegularController {
         return restResult;
     }
 
-    @PostMapping("/getRegularDetails")
+    @PostMapping("/getRegularDetailsByGroupId")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<List<RegularDetailDto>> getRegularDetails(@CurrentUser User user, Long regularGroupId){
         RestResult<List<RegularDetailDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
            restResult.setObj(regularDetailServiceImpl.findRegularDetailsByGroupId(regularGroupId,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/getRegularDetailsByUserId")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<List<String>> getRegularDetailsByUserId(@CurrentUser User user){
+        RestResult<List<String>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(regularDetailServiceImpl.findRegularDetailsByUserId(user.getId(),errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

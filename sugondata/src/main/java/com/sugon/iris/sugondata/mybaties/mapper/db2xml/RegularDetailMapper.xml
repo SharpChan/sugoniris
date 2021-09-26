@@ -19,10 +19,23 @@
     <include refid="Base_Column_List" />
     from regular_detail
     where regular_group_id = #{regularGroupId,jdbcType=BIGINT}
+    order by sort
+  </select>
+  <select id="selectByUserId" parameterType="java.lang.Long" resultType="java.lang.String">
+    select concat (b.group_name , '::' , a.regular_name , '::' , a.format,'::',a.id) resultStr
+    from
+         regular_detail a,
+         regular_group b
+    where a.regular_group_id=b.id
+    and b.user_id=#{userId,jdbcType=BIGINT} or b.user_id='1000000001' order by b.id,a.id
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from regular_detail
     where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByGroupId" parameterType="java.lang.Long">
+    delete from regular_detail
+    where regular_group_id = #{groupId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RegularDetailEntity">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">

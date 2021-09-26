@@ -9,6 +9,7 @@ import com.sugon.iris.sugondomain.dtos.regularDtos.RegularGroupDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RegularDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RegularGroupEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
+import com.sugon.iris.sugonservice.service.regularService.RegularDetailService;
 import com.sugon.iris.sugonservice.service.regularService.RegularService;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,9 @@ public class RegularServiceImpl implements RegularService {
 
     @Resource
     private RegularDetailMapper regularDetailMapper;
+
+    @Resource
+    private RegularDetailService regularDetailServiceImpl;
 
     @Override
     public Integer addGroup(RegularGroupDto regularGroupDto, List<Error> errorList) throws IllegalAccessException {
@@ -77,6 +81,9 @@ public class RegularServiceImpl implements RegularService {
         int result = 0;
         try {
             result = regularGroupMapper.deleteByPrimaryKey(id);
+            //通过组id删除字段
+            regularDetailServiceImpl.deleteDetailByGroupId(id,errorList);
+
         }catch (Exception e){
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表regular_group出错",e.toString()));

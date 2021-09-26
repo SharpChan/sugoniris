@@ -110,7 +110,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           url: '/fileRinseField',
           title: 'FileRinseField',
           templateUrl: helper.basepath('file/fileRinseField.html'),
-          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
       .state('app.declaration', {
           url: '/declaration',
@@ -1340,13 +1340,11 @@ App.controller("fileRinseController", function ($http,$timeout,$scope,
     myservice.dragFunc("cnDivUpdate");
     myservice.dragFunc("cnDivDetail");
     myservice.dragFunc("cnDivDetailAdd");
-    myservice.dragFunc("cnDivDetailUpdate");
 
     $("#cnDivGroupAdd").hide();
     $("#cnDivUpdate").hide();
     $("#cnDivDetail").hide();
     $("#cnDivDetailAdd").hide();
-    $("#cnDivDetailUpdate").hide();
     $scope.query = function(){
         var url = "/fileRinse/getFileRinses";
         $http.post(url).success(function (data) {
@@ -1433,7 +1431,7 @@ App.controller("fileRinseController", function ($http,$timeout,$scope,
     }
 
     $scope.deleteOne = function (id) {
-        var url = "/fileRinse/deleteFileRinse?id="+id;
+        var url = "/fileRinse/deleteFileRinseGroup?id="+id;
         $http.post(url).success(function(data)
         {
             var jsonString = angular.toJson(data);
@@ -1445,10 +1443,124 @@ App.controller("fileRinseController", function ($http,$timeout,$scope,
             alert("会话已经断开或者检查网络是否正常！");
         });
     }
+
+    $scope.closeAddDetail = function(){
+        cnDivDetail
+        $("#cnDivDetail").hide();
+    }
     
     $scope.detail = function (id) {
+        $scope.fileRinseGroupId = id;
         $("#cnDivDetail").show();
-        var url = ""+id;
+        var url = "/fileRinse/getFileRinseDetailsByGroupId?groupId="+id;
+        $http.post(url).success(function(data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.details = myservice.setSerialNumber(temp.obj)
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.template = {};
+    $scope.addDetail = function(){
+        $("#cnDivDetailAdd").show();
+        $scope.rinseFieldTypeAdd = "";
+        $scope.regularAdd = "";
+        $scope.commentAdd = "";
+        $scope.template.categories1 = [];
+        $scope.template.categories2 = [];
+    }
+    
+    $scope.rinseFieldAddClose = function () {
+        $("#cnDivDetailAdd").hide();
+    }
+
+    $scope.detailAdd = function () {
+        console.log($scope.template.categories1);
+        if(myservice.isEmpty($scope.rinseFieldTypeAdd)){
+            alert("名称不能为空！");
+            return;
+        }
+        var url = "/fileRinse/addFileRinseDetail";
+        var params = {
+            fileRinseGroupId: $scope.fileRinseGroupId,
+            typeName : $scope.rinseFieldTypeAdd,
+            comment: $scope.commentAdd
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $("#cnDivDetailAdd").hide();
+            $scope.detail($scope.fileRinseGroupId);
+            console.log($scope.template.categories1);
+            angular.forEach($scope.template.categories1,function (e) {
+                $scope.saveRinseRegular(temp.obj,e.substring(e.lastIndexOf("::")+2),"1");
+            });
+
+            angular.forEach($scope.template.categories2,function (e) {
+                $scope.saveRinseRegular(temp.obj,e.substring(e.lastIndexOf("::")+2),"2");
+            });
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.saveRinseRegular = function (rinseDetailId,regularId,type) {
+        var url = "/fileRinse/saveFileRinseRegular";
+        var params = {
+            fileRinseDetailId: rinseDetailId,
+            regularDetailId: regularId,
+            type: type
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    //获取正则列表
+    var availableCategories = [];
+    $scope.getRegular = function(){
+       var url = "/regular/getRegularDetailsByUserId";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            angular.forEach(temp.obj,function (e) {
+                availableCategories.push(e);
+            })
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    $scope.getRegular();
+    $scope.availableCategories = availableCategories;
+
+    $scope.deleteOneDetail = function (id) {
+        var url = "/fileRinse/deleteFileRinse?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.detail($scope.fileRinseGroupId);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
     }
 
   })
@@ -1604,7 +1716,7 @@ App.controller("regularGroupController", function ($http,$timeout,$scope,$localS
 
     $scope.addDetail = function () {
         $("#cnDivDetailAdd").show();
-        $scope.regular_name = "";
+        $scope.regularName = "";
         $scope.format = "";
         $scope.regularValue = "";
         $scope.sort = "";
@@ -1613,7 +1725,7 @@ App.controller("regularGroupController", function ($http,$timeout,$scope,$localS
 
 
     $scope.queryDetail = function(){
-        var url = "/regular/getRegularDetails?regularGroupId="+$scope.groupId;
+        var url = "/regular/getRegularDetailsByGroupId?regularGroupId="+$scope.groupId;
         $http.post(url).success(function(data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
@@ -4294,6 +4406,7 @@ App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
             myservice.errors(temp);
             if(!myservice.isEmpty(temp.obj)){
                 alert("模板组名称已经存在！");
+                return;
             }
         }).error(function(data)
         {

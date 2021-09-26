@@ -48,6 +48,7 @@
         <if test="userId!=null">
             and user_id = #{userId}
         </if >
+        order by sort_no
     </select>
 
     <!--插入-->

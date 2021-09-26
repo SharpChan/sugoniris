@@ -12,5 +12,10 @@ public class FileRinseDetailDto extends FileRinseDetailBean {
     /**
      * 配置的多个正则表达式
      */
-    List<RegularDetailDto>  regularDetailDtorList;
+    List<RegularDetailDto>  regularDetailDtorListY;
+
+    /**
+     * 正则排除
+     */
+    List<RegularDetailDto>  regularDetailDtorListN;
 }

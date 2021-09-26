@@ -7,6 +7,7 @@ import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseDetailDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseDetailEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.FileService.FileRinseDetailService;
+import com.sugon.iris.sugonservice.service.FileService.FileRinseRegularService;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -18,8 +19,11 @@ public class FileRinseDetailServiceImpl implements FileRinseDetailService {
     @Resource
     private FileRinseDetailMapper fileRinseDetailMapper;
 
+    @Resource
+    private FileRinseRegularService fileRinseRegularServiceImpl;
+
     @Override
-    public Integer add(FileRinseDetailDto fileRinseDetailDto, List<Error> errorList) throws IllegalAccessException {
+    public Long add(FileRinseDetailDto fileRinseDetailDto, List<Error> errorList) throws IllegalAccessException {
         int result = 0;
         FileRinseDetailEntity fileRinseDetailEntity = new FileRinseDetailEntity();
         PublicUtils.trans(fileRinseDetailDto,fileRinseDetailEntity);
@@ -29,15 +33,15 @@ public class FileRinseDetailServiceImpl implements FileRinseDetailService {
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"插入表file_rinse_detail出错",e.toString()));
         }
-        return result;
+        return fileRinseDetailEntity.getId();
     }
 
     @Override
-    public List<FileRinseDetailDto> findFileRinseDetailByGroupId(Long groupId, List<Error> errorList) throws IllegalAccessException {
+    public List<FileRinseDetailDto> findFileRinseDetailByGroupId(Long fileRinseGroupId, List<Error> errorList) throws IllegalAccessException {
         List<FileRinseDetailEntity> fileRinseDetailEntityList = null;
         List<FileRinseDetailDto> fileRinseDetailDtoList = new ArrayList<>();
         try {
-            fileRinseDetailEntityList = fileRinseDetailMapper.selectByGroupId(groupId);
+            fileRinseDetailEntityList = fileRinseDetailMapper.selectByGroupId(fileRinseGroupId);
         }catch (Exception e){
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表file_rinse_detail出错",e.toString()));
@@ -65,10 +69,11 @@ public class FileRinseDetailServiceImpl implements FileRinseDetailService {
     }
 
     @Override
-    public Integer deleteFileRinse(long id, List<Error> errorList) throws IllegalAccessException {
+    public Integer deleteFileRinse(Long id, List<Error> errorList) throws IllegalAccessException {
         int result = 0;
         try {
             result = fileRinseDetailMapper.deleteByPrimaryKey(id);
+            fileRinseRegularServiceImpl.deleteByFileRinseDetailId(id,errorList);
         }catch (Exception e){
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表file_rinse_detail出错",e.toString()));

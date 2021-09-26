@@ -122,7 +122,7 @@
             </div>
             <div align="right" style="margin-top:-30px;">
                 <input type="button" value="新增字段" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="addDetail();" />
-                <input type="button" value="关闭" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="closeUpdateDetail();" />
+                <input type="button" value="关闭" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="closeAddDetail();" />
             </div>
         </div>
         <div class="panel-body">
@@ -131,25 +131,19 @@
                 <tr>
                     <th>序号</th>
                     <th>类型名称</th>
-                    <th>类型编号</th>
-                    <th>正则表达式</th>
+                    <th>正则匹配</th>
+                    <th>正则排除</th>
                     <th>备注</th>
-                    <th>修改</th>
                     <th>删除</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="item in details">
                     <td>{{item.no}}</td>
-                    <td>{{item.rinseFieldType}}</td>
-                    <td>{{item.rinseFieldId}}</td>
-                    <td>{{item.regular}}</td>
+                    <td>{{item.typeName}}</td>
+                    <td>{{item.regularDetailDtorListY}}</td>
+                    <td>{{item.regularDetailDtorListN}}</td>
                     <td>{{item.comment}}</td>
-                    <td>
-                        <button type="button" ng-click="updateOneDetail(item)" class="btn btn-sm btn-warning">
-                            <em class="fa fa-upload"></em>
-                        </button>
-                    </td>
                     <td>
                         <button type="button" ng-click="deleteOneDetail(item.id)" class="btn btn-sm btn-danger">
                             <em class="fa fa-trash-o"></em>
@@ -161,44 +155,31 @@
         </div>
     </div>
 
-    <div id = "cnDivDetailAdd" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 350px; z-index: 9999;">
-        <div id = "cnDivDetailAddheader" class="panel-heading topnavbar">
-            新增字段类型<input type="button" value="关闭" style="margin-left:220px" class="btn btn-default" ng-click="rinseFieldAddClose();" >
+    <div id = "cnDivDetailAdd" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 600px; height: 450px; z-index: 9999;overflow-y:auto;">
+        <div id = "cnDivDetaiAdd1header" class="panel-heading topnavbar">
+            新增字段类型<input type="button" value="关闭" style="margin-left:480px" class="btn btn-default" ng-click="rinseFieldAddClose();" >
         </div>
         <div class="panel-body">
-            <div  class="form-group" style="top: 20px;width: 250px" >
+            <div  class="form-group" style="top: 20px;width: 500px" >
                 <span>字段类型<input placeholder="必填" class="form-control" type="text" ng-model="rinseFieldTypeAdd" ></span>
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>请填写正则表达式<input placeholder="选择" class="form-control" type="text" ng-model="regularAdd" ></span>
+            <div  class="form-group" style="top: 20px;width: 500px" >
+                <ui-select multiple="" ng-model="template.categories1" theme="bootstrap" ng-disabled="disabled" class="mb-lg">
+                    <ui-select-match placeholder="选择匹配表达式">{{$item.substring(0,$item.lastIndexOf("::"))}}</ui-select-match>
+                    <ui-select-choices repeat="cell in availableCategories">{{ cell.substring(0,cell.lastIndexOf("::"))}}</ui-select-choices>
+                </ui-select>
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
+           <div  class="form-group" style="top: 20px;width: 500px" >
+                    <ui-select multiple="" ng-model="template.categories2" theme="bootstrap" ng-disabled="disabled" class="mb-lg">
+                        <ui-select-match placeholder="选择排除表达式">{{$item.substring(0,$item.lastIndexOf("::"))}}</ui-select-match>
+                        <ui-select-choices repeat="cell in availableCategories">{{cell.substring(0,cell.lastIndexOf("::"))}}</ui-select-choices>
+                    </ui-select>
+            </div>
+            <div  class="form-group" style="top: 20px;width: 500px" >
                 <span>请填写备注<input placeholder="请输入备注" class="form-control" type="text" ng-model="commentAdd" ></span>
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
-                <div align="right" style="margin-top:10px">
-                    <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="detailAdd();">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id = "cnDivDetailUpdate" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 350px; z-index: 9999;">
-        <div id = "cnDivDetailUpdateheader" class="panel-heading topnavbar">
-            修改字段类型<input type="button" value="关闭" style="margin-left:220px" class="btn btn-default" ng-click="rinseFieldAddClose();" >
-        </div>
-        <div class="panel-body">
-            <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>字段类型<input placeholder="必填" class="form-control" type="text" ng-model="rinseFieldTypeAdd" ></span>
-            </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>请填写正则表达式<input placeholder="选择" class="form-control" type="text" ng-model="regularAdd" ></span>
-            </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>请填写备注<input placeholder="请输入备注" class="form-control" type="text" ng-model="commentAdd" ></span>
-            </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
-                <div align="right" style="margin-top:10px">
+            <div  class="form-group" style="top: 20px;width: 530px" >
+                <div align="right" style="margin-top:30px">
                     <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="detailAdd();">
                 </div>
             </div>

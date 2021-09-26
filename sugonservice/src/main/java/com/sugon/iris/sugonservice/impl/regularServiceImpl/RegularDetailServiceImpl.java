@@ -50,10 +50,35 @@ public class RegularDetailServiceImpl implements RegularDetailService {
     }
 
     @Override
+    public List<String> findRegularDetailsByUserId(Long userId, List<Error> errorList) throws IllegalAccessException {
+        List<String> regularDetails = null;
+        try {
+            regularDetails = regularDetailMapper.selectByUserId(userId);
+        }catch(Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表regular_detail出错",e.toString()));
+        }
+        return regularDetails;
+    }
+
+
+    @Override
     public Integer deleteDetailByPrimaryKey(Long id, List<Error> errorList) {
         int result = 0;
         try {
             result =  regularDetailMapper.deleteByPrimaryKey(id);
+        }catch(Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表regular_detail出错",e.toString()));
+        }
+        return result;
+    }
+
+    @Override
+    public Integer deleteDetailByGroupId(Long groupId, List<Error> errorList) {
+        int result = 0;
+        try {
+            result =  regularDetailMapper.deleteByGroupId(groupId);
         }catch(Exception e){
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表regular_detail出错",e.toString()));
