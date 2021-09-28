@@ -4597,7 +4597,6 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
-            $scope.query();
         }).error(function(data)
         {
             alert("请检查必填项是否填写！");
@@ -4967,6 +4966,8 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
             alert("会话已经断开或者检查网络是否正常！");
         });
     }
+
+    $scope.query();
 
     //获取勾选数组
     $scope.selectOne = function (item) {

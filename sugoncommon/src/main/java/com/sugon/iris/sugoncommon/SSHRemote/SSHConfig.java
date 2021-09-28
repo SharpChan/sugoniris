@@ -34,6 +34,24 @@ public class SSHConfig {
        this.session = session ;
     }
 
+    public SSHConfig(String userName,String password,String ipAddress,int port) throws Exception{
+        JSch jSch = new JSch();
+        Session session = null;
+        try {
+            session = jSch.getSession(userName, ipAddress, port);
+            session.setPassword(password);
+            Properties config = new Properties();
+            config.put("StrictHostKeyChecking", "no");
+            session.setConfig(config);// 为Session对象设置properties
+            session.setTimeout(300000);// 设置超时
+            session.connect();//// 通过Session建立连接
+        }catch (JSchException e){
+            throw new Exception(
+                    "主机登录失败, IP = " + ipAddress + ", USERNAME = " + userName + ", Exception:" + e.getMessage());
+        }
+        this.session = session ;
+    }
+
     public Session getSession() {
         return session;
     }

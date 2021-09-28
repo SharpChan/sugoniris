@@ -5,5 +5,11 @@ spring:
     password: root
     port: 6379
 
+  data:
+    neo4j:
+      uri: bolt://192.168.217.137:7687
+      username: neo4j
+      password: neo4j
+
 server:
   port: 8091

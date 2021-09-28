@@ -11,6 +11,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
                                   "com.sugon.iris.sugondata",
                                   "com.sugon.iris.sugonannotation",
                                   "com.sugon.iris.sugoncommon",
+                                  "com.sugon.iris.sugonlistener",
                                   "com.sugon.iris.sugonrest"})
 public class SugonrestApplication {
 

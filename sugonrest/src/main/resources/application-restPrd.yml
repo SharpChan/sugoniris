@@ -1,9 +1,15 @@
 spring:
   redis:
     database: 0
-    host: 192.168.217.142
-    password: root
+    host: 50.73.71.248
+    password: E9T9E9TPU5
     port: 6379
 
+  data:
+    neo4j:
+      uri: bolt://192.168.217.137:7687
+      username: neo4j
+      password: neo4j
+
 server:
-  port: 8091
+  port: 8092

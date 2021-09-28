@@ -6,6 +6,7 @@ import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.Neo4jRelationEntit
 import java.util.List;
 
 public interface Neo4jRelationMapper {
+
     int deleteByPrimaryKey(Long id);
 
     int insert(Neo4jRelationEntity record);

@@ -1,21 +1,25 @@
 package com.sugon.iris.sugonrest.kettle;
 
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.sugon.iris.sugoncommon.kettle.KettleService;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
 
 @RestController
 @RequestMapping("/kettle")
 public class KettleController {
 
+    @Autowired
     private KettleService kettleService;
 
     private static final String MESSAGE_01 = "[通过kettle执行ktr文件失败]";
@@ -73,6 +77,23 @@ public class KettleController {
             restResult.setFlag(SUCCESS);
             restResult.setMessage(SUCCESS_MESSAGE);
         }
+        return restResult;
+
+    }
+
+    @PostMapping("createKettle")
+    public RestResult<Boolean> createKettle (@RequestBody String param) {
+        RestResult<Boolean> restResult = new RestResult<Boolean>();
+        try {
+            String ss =  URLDecoder.decode(param,"UTF-8");
+            JSONObject requestJson = JSONObject.parseObject(ss);
+            Map<String,String> map = JSONObject.parseObject(requestJson.toJSONString(),new TypeReference<Map<String,String>>(){});
+            kettleService.createKtrAndUploadToServer(map);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        restResult.setFlag(FAILED);
+        restResult.setMessage(FAILED_MESSAGE);
         return restResult;
 
     }

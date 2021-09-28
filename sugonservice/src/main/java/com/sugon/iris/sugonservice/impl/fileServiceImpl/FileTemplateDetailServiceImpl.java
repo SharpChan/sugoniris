@@ -40,12 +40,17 @@ public class FileTemplateDetailServiceImpl implements FileTemplateDetailService 
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表file_template_detail出错",e.toString()));
         }
        if(!CollectionUtils.isEmpty(fileTemplateDetailEntityList)){
-           for(FileTemplateDetailEntity fileTemplateDetailEntityBean : fileTemplateDetailEntityList){
+           for(FileTemplateDetailEntity fileTemplateDetailEntityBean : fileTemplateDetailEntityList) {
                //通过清洗类型的id获取清洗类型信息
-               FileRinseDetailEntity fileRinseDetailEntity = fileRinseDetailMapper.selectByPrimaryKey(fileTemplateDetailEntityBean.getFileRinseDetailId());
+               FileRinseDetailEntity fileRinseDetailEntity = null;
+               if(null != fileTemplateDetailEntityBean.getFileRinseDetailId()) {
+                   fileRinseDetailEntity = fileRinseDetailMapper.selectByPrimaryKey(fileTemplateDetailEntityBean.getFileRinseDetailId());
+               }
                FileTemplateDetailDto fileTemplateDetailDtoBean = new FileTemplateDetailDto();
-               PublicUtils.trans(fileTemplateDetailEntityBean,fileTemplateDetailDtoBean);
-               fileTemplateDetailDtoBean.setFileRinseDetailTypeName(fileRinseDetailEntity.getTypeName());
+               PublicUtils.trans(fileTemplateDetailEntityBean, fileTemplateDetailDtoBean);
+               if (null != fileRinseDetailEntity){
+                    fileTemplateDetailDtoBean.setFileRinseDetailTypeName(fileRinseDetailEntity.getTypeName());
+               }
                fileTemplateDetailDtoList.add(fileTemplateDetailDtoBean);
            }
        }

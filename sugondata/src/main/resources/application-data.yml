@@ -3,7 +3,8 @@ spring:
   datasource:
     ds1: #数据源1 jdbcTemplate
       driver-class-name: com.mysql.cj.jdbc.Driver # mysql的驱动你可以配置别的关系型数据库
-      url: jdbc:mysql://192.168.217.140:3306/iris?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true #数据源地址
+      #url: jdbc:mysql://192.168.217.140:3306/iris?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true #数据源地址
+      url: jdbc:mysql://192.168.217.140:3306/iris?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT
       username: root
       password: root
 

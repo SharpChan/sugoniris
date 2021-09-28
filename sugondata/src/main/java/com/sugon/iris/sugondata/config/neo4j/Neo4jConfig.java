@@ -1,6 +1,7 @@
 package com.sugon.iris.sugondata.config.neo4j;
 
 
+import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,12 +13,15 @@ import org.springframework.data.neo4j.transaction.Neo4jTransactionManager;
 @EnableNeo4jRepositories("com.sugon.iris.sugondata.neo4j") // 声明neo4j repository存放地址
 public class Neo4jConfig {
 
-    @Value("${spring.data.neo4j.uri}")
     private String uri;
-    @Value("${spring.data.neo4j.username}")
     private String userName;
-    @Value("${spring.data.neo4j.password}")
     private String password;
+
+    public Neo4jConfig(){
+        this.uri = PublicUtils.getConfigMap().get("neo4j_url");
+        this.userName = PublicUtils.getConfigMap().get("neo4j_username");
+        this.password = PublicUtils.getConfigMap().get("password");
+    }
 
     @Bean
     public org.neo4j.ogm.config.Configuration getConfiguration() {

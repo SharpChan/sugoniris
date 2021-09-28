@@ -1,7 +1,6 @@
 package com.sugon.iris.sugondata.mybaties.mapper.db1;
 
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db1.ModelEntity;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 
 import java.util.List;
 

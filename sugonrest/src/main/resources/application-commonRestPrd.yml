@@ -1,4 +1,4 @@
 
 kettle:
   script:
-    path: /home/kettle_test/
+    path: /home/kettle/

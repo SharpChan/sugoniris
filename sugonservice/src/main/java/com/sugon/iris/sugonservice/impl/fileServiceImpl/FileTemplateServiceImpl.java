@@ -46,10 +46,15 @@ public class FileTemplateServiceImpl implements FileTemplateService {
         if(!CollectionUtils.isEmpty(fileTemplateEntityList)){
             for(FileTemplateEntity fileTemplateEntityBean : fileTemplateEntityList){
                 //通过清洗字段组id获取字段组信息
-                FileRinseGroupEntity fileRinseGroupEntity = fileRinseGroupMapper.selectByPrimaryKey(fileTemplateEntityBean.getFileRinseGroupId());
+                FileRinseGroupEntity fileRinseGroupEntity = null;
+                if(null != fileTemplateEntityBean.getFileRinseGroupId()) {
+                    fileRinseGroupEntity = fileRinseGroupMapper.selectByPrimaryKey(fileTemplateEntityBean.getFileRinseGroupId());
+                }
                 FileTemplateDto fileTemplateDtoBean = new FileTemplateDto();
                 PublicUtils.trans(fileTemplateEntityBean,fileTemplateDtoBean);
-                fileTemplateDtoBean.setFileRinseName(fileRinseGroupEntity.getFileRinseName());
+                if(null != fileRinseGroupEntity) {
+                    fileTemplateDtoBean.setFileRinseName(fileRinseGroupEntity.getFileRinseName());
+                }
                 fileTemplateDtoList.add(fileTemplateDtoBean);
             }
         }

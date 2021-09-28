@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.neo4j.driver.*;
 
 @Configuration
+
 public class neo4jSession {
 
     private String url;
