@@ -82,6 +82,7 @@ public class KettleController {
     }
 
     @PostMapping("createKettle")
+    @CrossOrigin
     public RestResult<Boolean> createKettle (@RequestBody String param) {
         RestResult<Boolean> restResult = new RestResult<Boolean>();
         try {

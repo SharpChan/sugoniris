@@ -161,8 +161,14 @@ public class KettleService {
         };
         log.info("XML"+databasesXML.toString());
         TransMeta transMeta = null;
-        String ktrName = simpleDateFormat.format(new Date())+"-"+target+"-trans.ktr";
-        String transName = "/usr/local/kettle/ktr/"+ktrName;
+        String ktrName = target+"-trans.ktr";
+        String transName = "";
+        if(System.getProperty("os.name").toLowerCase().contains("win")){
+            transName = "E:\\ktr\\"+ktrName;
+        }
+        else {
+            transName = "/usr/local/kettle/ktr/" + ktrName;
+        }
         try {
             KettleEnvironment.init();
             transMeta  = generateTrans(databasesXML,original,target,columns);
@@ -184,9 +190,19 @@ public class KettleService {
         int kettlePort =Integer.parseInt(PublicUtils.getConfigMap().get("kettle.linux.port"));
         try {
             session = new SSHConfig(kettleUserName,kettlePassword,kettleIpAddress,kettlePort).getSession();
-            SSHServiceBs sSHServiceBs = new SSHServiceBs(session);
-            sSHServiceBs.execCommand("sh /usr/local/kettle/data-integration/pan.sh -file=/usr/local/kettle/ktr/"+ktrName);
-
+            if(System.getProperty("os.name").toLowerCase().contains("win")) {
+                String strCmd = "E:\\data-integration\\Pan.bat /file E:\\ktr\\"+ktrName;
+                Runtime runtime = Runtime.getRuntime();
+                try {
+                      runtime.exec(strCmd);
+                    } catch (Exception e) {
+                    e.printStackTrace();
+                  System.out.println("Error!");
+                 }
+            }else{
+                SSHServiceBs sSHServiceBs = new SSHServiceBs(session);
+                sSHServiceBs.execCommand("sh /usr/local/kettle/data-integration/pan.sh -file=/usr/local/kettle/ktr/" + ktrName);
+            }
         }catch (Exception e){
             e.printStackTrace();
             return false;
@@ -194,7 +210,9 @@ public class KettleService {
         return true;
     }
 
+    public static void main(String[] args) {
 
+    }
 
     /**
      * 生成一个转化,把一个数据库中的数据转移到另一个数据库中,只有两个步骤,第一个是表输入,第二个是表插入与更新操作
