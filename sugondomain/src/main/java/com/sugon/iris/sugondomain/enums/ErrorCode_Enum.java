@@ -21,7 +21,9 @@ public enum ErrorCode_Enum {
     SUGON_01_006("SUGON-01-006","还未上传数据表"),
     SUGON_01_007("SUGON-01-007","正常业务"),
     SUGON_01_008("SUGON-01-008","样式名称重复"),
-    SUGON_02_009("SUGON-02-009","与websocket通信失败")
+    SUGON_02_009("SUGON-02-009","与websocket通信失败"),
+    FILE_01_001("FILE-01-001","文件不存在"),
+    FILE_01_002("FILE-01-002","模板不存在")
     ;
 
 

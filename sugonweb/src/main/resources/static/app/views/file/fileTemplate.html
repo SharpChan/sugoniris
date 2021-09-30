@@ -126,7 +126,7 @@
                 <span>请填写关键字<input placeholder="必填，以&&分隔" class="form-control" type="text" ng-model="templateKey_1" ></span>
             </div>
             <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>请填写排除字段<input  class="form-control" type="text" ng-model="exclude_1" ></span>
+                <span>请填写排除字段<input placeholder="以&&分隔" class="form-control" type="text" ng-model="exclude_1" ></span>
             </div>
             <div  class="form-group" style="top: 20px;width: 250px" >
                 <span>请填写备注<input  class="form-control" type="text" ng-model="comment_1" ></span>
@@ -206,9 +206,9 @@
                     <th>序号</th>
                     <th>字段名称</th>
                     <th>关键字</th>
-                    <th>正则表达式</th>
+                    <th>关键字排除</th>
+                    <!--<th>正则表达式</th>-->
                     <th>绑定清洗类型</th>
-                    <th>排除字段</th>
                     <th>排序</th>
                     <th>备注</th>
                     <th>修改</th>
@@ -220,9 +220,9 @@
                     <td align="center">{{item.no}}</td>
                     <td align="center">{{item.fieldName}}</td>
                     <td align="center">{{item.fieldKey}}</td>
-                    <td align="center">{{item.regular}}</td>
-                    <td align="center">{{item.fileRinseDetailTypeName}}</td>
                     <td align="center">{{item.exclude}}</td>
+                    <!--<td align="center">{{item.regular}}</td>-->
+                    <td align="center">{{item.fileRinseDetailTypeName}}</td>
                     <td align="center">{{item.sortNo}}</td>
                     <td align="center">{{item.comment}}</td>
                     <td align="center">
@@ -255,6 +255,9 @@
                 <span>请填写字段关键字<input placeholder="必填，以&&分隔" class="form-control" type="text" ng-model="fieldKey" ></span>
             </div>
             <div  class="form-group" style="top: 20px;width: 300px" >
+                <span>关键字排除字段<input placeholder="以&&分隔" class="form-control" type="text" ng-model="exclude" ></span>
+            </div>
+            <div  class="form-group" style="top: 20px;width: 300px" >
                 <div class="input-group" align="left"  style=" z-index: 9999">
                     <!--<input type="text" placeholder="是否解压" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control" ng-model="hasDecompress">-->
                     <div class="form-group mb">
@@ -271,12 +274,12 @@
                     </div>
                 </div>
             </div>
+
+            <!--
             <div  class="form-group" style="top: 20px;width: 300px" >
                 <span>请填写正则表达式<input placeholder="以&&分隔" class="form-control" type="text" ng-model="regular" ></span>
-            </div>
-            <div  class="form-group" style="top: 20px;width: 300px" >
-                <span>请填写排除字段<input placeholder="以&&分隔" class="form-control" type="text" ng-model="exclude" ></span>
-            </div>
+            </div>-->
+
             <div  class="form-group" style="top: 20px;width: 300px" >
                 <span>请填写排序编号<input placeholder="必填，请输入整数0-999" class="form-control" type="text" ng-change="sortNoChange();" ng-model="sortNo" ></span>
             </div>

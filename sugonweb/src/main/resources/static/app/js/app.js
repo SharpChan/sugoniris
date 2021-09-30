@@ -4822,6 +4822,8 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         }else if($scope.flag == 1){   //修改
             url = "/fileTemplate/updateFileTemplateDetails";
         }
+        console.log( $scope.flag);
+        console.log($scope.id);
         var params = {
             id: $scope.flag == 1?$scope.id : "",
             templateId: $scope.templateId,

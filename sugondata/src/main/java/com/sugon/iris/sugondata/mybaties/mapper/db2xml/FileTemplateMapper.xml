@@ -21,6 +21,13 @@
         id,template_name,table_prefix,template_key,create_time,update_time,comment,user_id,exclude,file_rinse_group_id
     </sql>
 
+    <select id="selectFileTemplateByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from file_template
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
     <!--表查询-->
     <select id="selectFileTemplateList" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateEntity" resultMap="BaseResultMap"  >
         SELECT

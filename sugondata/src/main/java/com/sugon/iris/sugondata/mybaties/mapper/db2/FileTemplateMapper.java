@@ -11,4 +11,6 @@ public interface FileTemplateMapper {
     int updateFileTemplate(FileTemplateEntity fileTemplateEntity);
 
     int deleteFileTemplateById(String[] idArr);
+
+    FileTemplateEntity selectFileTemplateByPrimaryKey(Long id);
 }

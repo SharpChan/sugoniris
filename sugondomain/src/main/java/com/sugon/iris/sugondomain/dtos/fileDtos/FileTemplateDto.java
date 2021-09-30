@@ -16,6 +16,11 @@ public class FileTemplateDto extends FileTemplateBean {
     private String fileRinseName;
 
     /**
+     * 清洗字段组
+     */
+    private FileRinseGroupDto fileRinseGroupDto;
+
+    /**
      * 模板的字段信息
      */
     private List<FileTemplateDetailDto> fileTemplateDetailDtoList;

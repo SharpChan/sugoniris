@@ -11,4 +11,9 @@ public class FileTemplateDetailDto extends FileTemplateDetailBean {
      */
     private String fileRinseDetailTypeName;
 
+    /**
+     *
+     */
+    private  FileRinseDetailDto fileRinseDetailDto;
+
 }

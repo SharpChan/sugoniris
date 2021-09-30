@@ -4,7 +4,7 @@ import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetail
 import java.util.List;
 
 public interface FileTemplateDetailMapper {
-    List<FileTemplateDetailEntity> selectFileTemplateDetailList(FileTemplateDetailEntity fileTemplateDetailEntity);
+    List<FileTemplateDetailEntity> selectFileTemplateDetailList(FileTemplateDetailEntity fileTemplateDetailEntity4Sql);
 
     int fileTemplateDetailInsert(FileTemplateDetailEntity fileTemplateDetailEntity);
 

@@ -16,4 +16,6 @@ public interface FileAttachmentMapper {
     int deleteFileAttachmentById(FileAttachmentEntity fileAttachmentEntity);
 
     List<String>  getFileAttachmentIds(String caseId);
+
+    FileAttachmentEntity selectFileAttachmentByPrimaryKey(Long id);
 }

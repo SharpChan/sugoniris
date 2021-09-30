@@ -54,6 +54,13 @@
         </if >
     </select>
 
+    <select id="selectFileAttachmentByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <include refid="Base_Column_List" />
+        FROM
+        file_attachment
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
     <!--表查询-->
     <select id="getFileAttachmentIds" resultType="java.lang.String">
         <if test="caseId!=null">

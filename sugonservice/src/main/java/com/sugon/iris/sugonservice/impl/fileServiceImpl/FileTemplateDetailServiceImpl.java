@@ -87,6 +87,7 @@ public class FileTemplateDetailServiceImpl implements FileTemplateDetailService 
         //判断sort_no是否在一个模板内重复
         //通过模板号查询出所有的字段
         FileTemplateDetailEntity fileTemplateDetailEntityBean = new FileTemplateDetailEntity();
+        fileTemplateDetailEntityBean.setTemplateId(fileTemplateDetailDto.getTemplateId());
         List<FileTemplateDetailEntity> fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntityBean);
         for(FileTemplateDetailEntity fileTemplateDetail : fileTemplateDetailEntityList){
             if(!fileTemplateDetail.getId().equals(fileTemplateDetailDto.getId())){

@@ -43,7 +43,7 @@ public class FileTemplateBean {
     private Long userId;
 
     /**
-     * 关键字排除
+     * 关键字排除以&&分隔
      */
     private String exclude;
 
