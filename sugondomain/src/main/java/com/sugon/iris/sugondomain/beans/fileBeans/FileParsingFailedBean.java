@@ -22,9 +22,15 @@ public class FileParsingFailedBean {
     private Long fileDetailId;
 
     /**
-     *行号
+     *文件行号
      */
     private String rowNumber;
+
+
+    /**
+     * 通过mpp的error_seq序列获取
+     */
+    private Long mppId2ErrorId;
 
     /**
      *数据内容

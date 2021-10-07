@@ -55,6 +55,7 @@
     </select>
 
     <select id="selectFileAttachmentByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
         <include refid="Base_Column_List" />
         FROM
         file_attachment

@@ -23,7 +23,8 @@ public enum ErrorCode_Enum {
     SUGON_01_008("SUGON-01-008","样式名称重复"),
     SUGON_02_009("SUGON-02-009","与websocket通信失败"),
     FILE_01_001("FILE-01-001","文件不存在"),
-    FILE_01_002("FILE-01-002","模板不存在")
+    FILE_01_002("FILE-01-002","模板不存在"),
+    FILE_01_003("FILE-01-003","excel文件不存在")
     ;
 
 

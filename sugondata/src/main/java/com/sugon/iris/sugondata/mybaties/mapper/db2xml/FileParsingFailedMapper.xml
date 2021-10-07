@@ -16,11 +16,12 @@
         <result column="file_template_id" property="fileTemplateId" jdbcType="BIGINT" />
         <result column="file_template_detail_id" property="fileTemplateDetailId" jdbcType="BIGINT" />
         <result column="mark" property="mark" jdbcType="TINYINT" />
+        <result column="mppid2errorid" property="mppId2ErrorId" jdbcType="BIGINT" />
     </resultMap>
 
     <!--基础字段-->
     <sql id="Base_Column_List" >
-        id,file_detail_id,row_number,content,case_id,table_name,user_id,create_time,update_time,file_template_id,file_template_detail_id,mark
+        id,file_detail_id,row_number,content,case_id,table_name,user_id,create_time,update_time,file_template_id,file_template_detail_id,mark,mppid2errorid
     </sql>
 
     <!--表查询-->
@@ -43,6 +44,9 @@
         <if test="mark!=null">
             and mark = #{mark}
         </if >
+        <if test="mppId2ErrorId!=null">
+            and mppid2errorid = #{mppId2ErrorId}
+        </if >
     </select>
 
 
@@ -54,18 +58,19 @@
         values
           <foreach collection="fileParsingFailedEntityList" item="item" index="i" separator=",">
              (
-             #{item.id,jdbcType=INTEGER},
-             #{item.fileDetailId,jdbcType=INTEGER},
+             #{item.id,jdbcType=BIGINT},
+             #{item.fileDetailId,jdbcType=BIGINT},
              #{item.rowNumber,jdbcType=VARCHAR},
              #{item.content,jdbcType=VARCHAR},
-             #{item.caseId,jdbcType=INTEGER},
+             #{item.caseId,jdbcType=BIGINT},
              #{item.tableName,jdbcType=VARCHAR},
-             #{item.userId,jdbcType=INTEGER},
+             #{item.userId,jdbcType=BIGINT},
              #{item.createTime,jdbcType=TIMESTAMP},
              #{item.updateTime,jdbcType=TIMESTAMP},
-             #{item.fileTemplateId,jdbcType=INTEGER},
-             #{item.fileTemplateDetailId,jdbcType=INTEGER},
-             #{item.mark,jdbcType=TINYINT}
+             #{item.fileTemplateId,jdbcType=BIGINT},
+             #{item.fileTemplateDetailId,jdbcType=BIGINT},
+             #{item.mark,jdbcType=TINYINT},
+             #{item.mppId2ErrorId,jdbcType=BIGINT}
              )
           </foreach>
     </insert>

@@ -63,6 +63,12 @@
         </if >
     </select>
 
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from file_detail
+        where id = #{id,jdbcType=BIGINT}
+    </select>
 
     <select id="selectTableName" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity" resultType="java.lang.String"  >
         SELECT

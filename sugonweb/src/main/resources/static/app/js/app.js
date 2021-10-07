@@ -1747,7 +1747,7 @@ App.controller("regularGroupController", function ($http,$timeout,$scope,$localS
             return;
         }
         if(myservice.isEmpty($scope.sort)){
-            alert("表达式不能为空！");
+            alert("排序不能为空！");
             return;
         }
         var reg=/^[0-9]{1,3}$/;
@@ -2717,6 +2717,23 @@ App.controller("fileImportCountController", function ($http,$timeout,$scope,$sta
         });
     }
 
+    $scope.export = function (fileDetailId){
+
+        var url="/fileImportCount/getErrorsExcel?fileDetailId="+fileDetailId;
+
+        $http({
+            url: url,
+            responseType: 'arraybuffer'
+        }).success(function (data) {
+            //var blob = new Blob([data], {type: "application/vnd.ms-excel"});
+            var blob = new Blob([data], {type: "application/x-zip-compressed"});
+            var objectUrl = URL.createObjectURL(blob);
+            var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href",objectUrl);
+            $("body").append(aForExcel);
+            $(".forExcel").click();
+            aForExcel.remove();
+        });
+    }
 
 });
 
@@ -9663,8 +9680,7 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
 
     $scope.loadSidebarMenu = function() {
 
-
-        var menuURL="/menu/getSiderBarMenu";
+      var menuURL="/menu/getSiderBarMenu";
       $http.post(menuURL)
         .success(function(data) {
             var jsonString = angular.toJson(data);
@@ -9672,13 +9688,14 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
            $scope.menuItems = temp.obj;
         })
 
-              /*
+               /*
               var menuJson = 'server/sidebar-menu.json',
                   menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
               $http.get(menuURL)
                   .success(function(items) {
                       $scope.menuItems = items;
                   })*/
+
 
         .error(function(data, status, headers, config) {
           alert('Failure loading menu');

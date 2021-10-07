@@ -1,6 +1,8 @@
 package com.sugon.iris.sugoncommon.publicUtils;
 
 import com.google.common.collect.Lists;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -83,10 +85,32 @@ public  class PublicUtils {
             if(file.isDirectory()){
                 getAllFile(file,list);
             }else{
-                list.add(file);
+                if(file.isFile() && file.exists()) {
+                    list.add(file);
+                }
             }
         }
         return list;
+    }
+
+    /**
+     * 对模板字段进行排序
+     * @param fileTemplateDetailEntityList
+     */
+    public static void fileTemplateDetailEntityListSort(List<FileTemplateDetailEntity> fileTemplateDetailEntityList) {
+        //用排序字段对字段列表进行排序
+        Collections.sort(fileTemplateDetailEntityList, new Comparator<FileTemplateDetailEntity>() {
+            @Override
+            public int compare(FileTemplateDetailEntity bean1, FileTemplateDetailEntity bean2) {
+                int diff = Integer.parseInt(bean1.getSortNo()) - Integer.parseInt(bean2.getSortNo());
+                if (diff > 0) {
+                    return 1;
+                }else if (diff < 0) {
+                    return -1;
+                }
+                return 0; //相等为0
+            }
+        });
     }
 
     private static Field[] getAllFields(Object object){

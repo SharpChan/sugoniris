@@ -123,7 +123,7 @@ public class FileParsingServiceImpl implements FileParsingService {
             }
 
             //对模板字段按排序字段进行排序
-            fileTemplateDetailEntityListSort(fileTemplateDetailEntityList);
+            PublicUtils.fileTemplateDetailEntityListSort(fileTemplateDetailEntityList);
 
             //用该模板解析对应的文件
             breakFor:  for(File file : fileList){
@@ -305,22 +305,7 @@ public class FileParsingServiceImpl implements FileParsingService {
         return fileTemplateEntityList.get(0);
     }
 
-    //给模板字段排序
-    private void fileTemplateDetailEntityListSort(List<FileTemplateDetailEntity> fileTemplateDetailEntityList) {
-        //用排序字段对字段列表进行排序
-        Collections.sort(fileTemplateDetailEntityList, new Comparator<FileTemplateDetailEntity>() {
-         @Override
-        public int compare(FileTemplateDetailEntity bean1, FileTemplateDetailEntity bean2) {
-             int diff = Integer.parseInt(bean1.getSortNo()) - Integer.parseInt(bean2.getSortNo());
-            if (diff > 0) {
-                        return 1;
-            }else if (diff < 0) {
-                        return -1;
-            }
-            return 0; //相等为0
-            }
-        });
-    }
+
 
     //如果之前已经存库则获取表名
     private String getMppTableName(Long userId, FileAttachmentEntity fileAttachmentEntity, FileTemplateGroupEntity fileTemplateGroupEntityBean) {

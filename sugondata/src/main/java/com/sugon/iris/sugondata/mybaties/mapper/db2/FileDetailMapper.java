@@ -15,4 +15,6 @@ public interface FileDetailMapper {
 
     String selectTableName(FileDetailEntity fileDetailEntity);
 
+    FileDetailEntity selectByPrimaryKey(Long id);
+
 }

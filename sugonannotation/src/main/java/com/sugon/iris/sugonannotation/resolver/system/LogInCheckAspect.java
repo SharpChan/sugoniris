@@ -17,7 +17,9 @@ import com.sugon.iris.sugondomain.beans.system.User;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Aspect
 @Component
@@ -43,7 +45,6 @@ public class LogInCheckAspect {
     /**
      * 前置通知：在目标方法执行前调用
      */
-    //@Around("cutMethod()")
     @Around(value = "@annotation(com.sugon.iris.sugonannotation.annotation.system.LogInCheck) && @annotation(logInCheck)")
     public RestResult<Object> begin(ProceedingJoinPoint pjp, LogInCheck logInCheck) throws Throwable {
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
@@ -51,20 +52,23 @@ public class LogInCheckAspect {
         HttpSession session =request.getSession();
         User obj = (User)session.getAttribute("user");
         RestResult<Object> restResult = new RestResult();
+        Set<Error> errorSet = new HashSet<>();
         List<Error> errorList = new ArrayList<>();
         restResult.setErrorList(errorList);
 
         Object[] args = pjp.getArgs();
         if(null == obj){
              restResult.setFlag("FAILED");
-             errorList.add(new Error(ErrorCode_Enum.SYS_00_000.getCode(),ErrorCode_Enum.SYS_00_000.getMessage()));
+            errorSet.add(new Error(ErrorCode_Enum.SYS_00_000.getCode(),ErrorCode_Enum.SYS_00_000.getMessage()));
         }else if(obj.isLocked() && logInCheck.doLock()){
             restResult.setFlag("FAILED");
-            errorList.add(new Error(ErrorCode_Enum.SYS_01_000.getCode(),ErrorCode_Enum.SYS_01_000.getMessage()));
+            errorSet.add(new Error(ErrorCode_Enum.SYS_01_000.getCode(),ErrorCode_Enum.SYS_01_000.getMessage()));
         }
+
         else if(logInCheck.doProcess()){
             restResult = (RestResult<Object>) pjp.proceed(args);
         }
+        errorList.addAll(errorSet);
         return restResult;
     }
 }

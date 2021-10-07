@@ -101,7 +101,7 @@ public class Neo4jInitDatServiceImpl  implements Neo4jInitDatService {
         fileTemplateDetailEntityId.setSortNo("0");
         fileTemplateDetailEntityList.add(fileTemplateDetailEntityId);
         //排序
-        fileTemplateDetailEntityListSort(fileTemplateDetailEntityList);
+        PublicUtils.fileTemplateDetailEntityListSort(fileTemplateDetailEntityList);
         FileTemplateDetailEntity fileTemplateDetailEntity = new FileTemplateDetailEntity();
         fileTemplateDetailEntity.setFieldName("file_attachment_id");
         fileTemplateDetailEntityList.add(fileTemplateDetailEntity);
@@ -263,24 +263,5 @@ public class Neo4jInitDatServiceImpl  implements Neo4jInitDatService {
         }
 
         return  strList.size();
-    }
-
-
-
-    //给模板字段排序
-    private void fileTemplateDetailEntityListSort(List<FileTemplateDetailEntity> fileTemplateDetailEntityList) {
-        //用排序字段对字段列表进行排序
-        Collections.sort(fileTemplateDetailEntityList, new Comparator<FileTemplateDetailEntity>() {
-            @Override
-            public int compare(FileTemplateDetailEntity bean1, FileTemplateDetailEntity bean2) {
-                int diff = Integer.parseInt(bean1.getSortNo()) - Integer.parseInt(bean2.getSortNo());
-                if (diff > 0) {
-                    return 1;
-                }else if (diff < 0) {
-                    return -1;
-                }
-                return 0; //相等为0
-            }
-        });
     }
 }

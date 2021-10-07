@@ -19,4 +19,7 @@ public interface RegularDetailMapper {
 
     int updateByPrimaryKeySelective(RegularDetailEntity regularDetailEntity4Sql);
 
+    List<RegularDetailEntity> select4FileRinseDetail(Long fileRinseDetail);
+
+    RegularDetailEntity  selectByPrimaryKey(Long id);
 }

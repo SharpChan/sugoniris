@@ -24,7 +24,7 @@ datasource:
       type: com.alibaba.druid.pool.DruidDataSource
       initialSize: 2
       minIdle: 2
-      maxActive: 10
+      maxActive: 20
       validationQuery: SELECT 1 from dual
       testWhileIdle: true
       testOnBorrow: true
@@ -39,7 +39,7 @@ datasource:
       type: com.alibaba.druid.pool.DruidDataSource
       initialSize: 2
       minIdle: 2
-      maxActive: 10
+      maxActive: 20
       validationQuery: SELECT 1 from dual
       testWhileIdle: true
       testOnBorrow: true
@@ -56,7 +56,7 @@ datasource:
       type: com.alibaba.druid.pool.DruidDataSource
       initialSize: 2
       minIdle: 2
-      maxActive: 10
+      maxActive: 20
       validationQuery: SELECT 1 from dual
       testWhileIdle: true
       testOnBorrow: true
@@ -72,10 +72,10 @@ datasource:
       type: com.alibaba.druid.pool.DruidDataSource
       initialSize: 2
       minIdle: 2
-      maxActive: 10
+      maxActive: 200
       validationQuery: SELECT 1 as a
       testWhileIdle: true
       testOnBorrow: true
       testOnReturn: false
-      maxWait: 6000
+      maxWait: 6000000
       filters: stat,slf4j #wall,

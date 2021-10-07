@@ -47,7 +47,7 @@ public class FileCaseDto extends FileCaseBean {
         for(FileAttachmentDto fileAttachmentDto : fileAttachmentDtoList){
             fileAttachmentDto.setRowCount();
             caseImportRowCount += fileAttachmentDto.getAttachmentImportRowCount();
-            caseRowCount +=  fileAttachmentDto.getAttachmentImportRowCount();
+            caseRowCount +=  fileAttachmentDto.getAttachmentRowCount();
         }
     }
 }

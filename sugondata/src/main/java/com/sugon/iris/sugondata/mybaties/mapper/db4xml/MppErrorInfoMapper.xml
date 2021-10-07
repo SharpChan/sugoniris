@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db4.MppErrorInfoMapper" >
+    <!--结果集-->
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.MppErrorInfoEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="file_attachment_id" property="fileAttachmentId" jdbcType="BIGINT" />
+        <result column="file_detail_id" property="fileDetailId" jdbcType="BIGINT" />
+        <result column="mppid2errorid" property="mppid2errorid" jdbcType="BIGINT" />
+        <result column="file_rinse_detail_id" property="fileRinseDetailId" jdbcType="BIGINT" />
+        <result column="file_case_id" property="fileCaseId" jdbcType="BIGINT" />
+    </resultMap>
+
+    <!--基础字段-->
+    <sql id="Base_Column_List" >
+        id,file_attachment_id,file_detail_id,mppid2errorid,file_rinse_detail_id,file_case_id
+    </sql>
+
+    <!--基础字段-->
+    <sql id="Base_Column_ListInsert" >
+        file_attachment_id,file_detail_id,mppid2errorid,file_rinse_detail_id,file_case_id
+    </sql>
+
+
+    <!--批量插入-->
+    <insert id="errorInfoListInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into error_info
+        (<include refid="Base_Column_ListInsert" />)
+        values
+        <foreach collection="mppErrorInfoEntityList" item="item" index="i" separator=",">
+            (
+            #{item.fileAttachmentId,jdbcType=BIGINT},
+            #{item.fileDetailId,jdbcType=BIGINT},
+            #{item.mppid2errorid,jdbcType=BIGINT},
+            #{item.fileRinseDetailId,jdbcType=BIGINT},
+            #{item.fileCaseId,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+</mapper>

@@ -114,7 +114,8 @@
              #{fileTemplateId,jdbcType=BIGINT},
              #{caseId,jdbcType=BIGINT},
              #{userId,jdbcType=BIGINT},
-             #{title,jdbcType=VARCHAR}
+             #{title,jdbcType=VARCHAR},
+             #{neo4jInitFlag,jdbcType=VARCHAR}
              )
     </insert>
 
