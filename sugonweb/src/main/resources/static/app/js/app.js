@@ -106,6 +106,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('regular/regularGroup.html'),
           resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
       })
+      .state('app.dataMerge', {
+          url: '/dataMerge',
+          title: 'DataMerge',
+          templateUrl: helper.basepath('file/dataMerge.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
       .state('app.fileRinseField', {
           url: '/fileRinseField',
           title: 'FileRinseField',
@@ -178,7 +184,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           url: '/importCount',
           title: 'ImportCount',
           templateUrl: helper.basepath('file/fileImportCount.html'),
-          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'taginput','inputmask','localytics.directives','codemirror', 'moment', 'ui.bootstrap-slider', 'ngWig')
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'taginput','inputmask','localytics.directives','codemirror', 'moment', 'ui.bootstrap-slider', 'ngWig','angularFileUpload', 'filestyle')
       })
       .state('app.userRole.AddOrModify', {
           url: '/userRoleAddOrModify/:active/:id',
@@ -1329,6 +1335,176 @@ App.service('myservice', function($window,$state,$http) {
         });
     }
 
+});
+
+App.controller("dataMergeController", function ($http,$timeout,$scope,
+                                                myservice) {
+
+    $("#pleaseWait").hide();
+    //登录和锁定校验
+    myservice.loginLockCheck();
+    myservice.dragFunc("cnDivDetail");
+    myservice.dragFunc("recordCnDivDetail");
+    myservice.dragFunc("checkFieldCnDivDetail");
+
+    $("#cnDivDetail").hide();
+    $("#recordCnDivDetail").hide();
+    $("#checkFieldCnDivDetail").hide();
+
+
+    //获取案件信息
+    $scope.query = function () {
+        $("#pleaseWait").show();
+        var url = "/dataMerge/getCases";
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj = myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.query();
+    
+    $scope.detail = function (caseName,fileTableDtoList) {
+           $("#cnDivDetail").show();
+           $scope.caseName_div = caseName;
+           $scope.tables  = myservice.setSerialNumber(fileTableDtoList);
+    }
+    $scope.closeDetail = function (){
+          $("#cnDivDetail").hide();
+    }
+
+    var checkFields = [];
+    $scope.itemsPerPage = 15;
+    $scope.offset = 0;
+
+    $scope.tableDetail = function (item){
+        $scope.caseName_record = $scope.caseName_div;
+        $scope.templateName_record = item.fileTemplateDto.templateName;
+        $scope.item_01 = item;
+        $("#checkFieldCnDivDetail").show();
+        checkFields = [];
+        $scope.tableInfo = item;
+        $scope.getFileRinseDetailsByGroupId(item.fileTemplateDto.fileRinseGroupId);
+        $scope.getQuantity(item);
+        $scope.getTableRecord(item);
+    }
+
+    $scope.tableDetail_01 = function (item){
+        $scope.getQuantity(item);
+        $scope.getTableRecord(item);
+    }
+
+    $scope.getQuantity = function(item){
+        var url = "/dataMerge/getTableRecordQuantity";
+        var params = {
+            tableName: item.tableName,
+            checkFields: checkFields
+        }
+        $http.post(url,params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.bigTotalItems = temp.obj;
+            $("#pleaseWait").hide();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.closeRecordDetail = function () {
+        $("#recordCnDivDetail").hide();
+        $("#checkFieldCnDivDetail").hide();
+    }
+
+    $scope.getTableRecord = function(item){
+        $("#recordCnDivDetail").show();
+        var url = "/dataMerge/getTableRecord";
+        var params = {
+            tableName: item.tableName,
+            fileTemlateId : item.fileTemplateDto.id,
+            perSize: $scope.itemsPerPage,
+            offset: $scope.offset,
+            checkFields: checkFields
+        }
+        $http.post(url,params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.mppTableDto = temp.obj;
+            $("#pleaseWait").hide();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.changePage = function (pageNo) {
+        $scope.offset = ( pageNo -1 )* $scope.itemsPerPage;
+        $scope.getTableRecord($scope.tableInfo);
+    }
+    
+    $scope.getFileRinseDetailsByGroupId = function (rinseGroupId) {
+
+        var url = "/fileRinse/getFileRinseDetailsByGroupId?groupId="+rinseGroupId;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.fileRinseDetails = temp.obj;
+            $("#pleaseWait").hide();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+
+    $scope.zoomIn = function () {
+        $scope.zoomHeight = $scope.fileRinseDetails.length*55+"px";
+    }
+    
+    $scope.selectLabel = function (label) {
+        console.log(label.checked);
+        if(label.checked){
+            checkFields.push(label.id);
+        }else{
+            checkFields.splice(checkFields.indexOf(label.id),1);
+        }
+        //重新计算总数
+        $scope.tableDetail_01($scope.item_01);
+    }
+    
+    $scope.saveRecordDetail = function () {
+        var url = "/dataMerge/getCsv";
+        var params = {
+            tableName: $scope.item_01.tableName,
+            fileTemlateId : $scope.item_01.fileTemplateDto.id,
+            caseName : $scope.caseName_div,
+            templateName: $scope.item_01.fileTemplateDto.templateName,
+            checkFields: checkFields
+        }
+        $http({
+            url: url,
+            data: params,
+            method: 'POST',
+            responseType: 'arraybuffer'
+        }).success(function (data) {
+            var blob = new Blob([data], {type: 'text/csv,charset=UTF-8'});
+            //var blob = new Blob([data], {type: "application/x-zip-compressed"});
+            var objectUrl = URL.createObjectURL(blob);
+            //var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href",objectUrl);
+            //$("body").append(aForExcel);
+            //$(".forExcel").click();
+            //aForExcel.remove();
+            var fileName = $scope.caseName_record +'_'+$scope.templateName_record;
+            var link = document.createElement('a');
+            link.download = fileName+".csv"; //文件名字
+            link.href = objectUrl;
+            link.click();
+        });
+    }
 });
 
 App.controller("fileRinseController", function ($http,$timeout,$scope,
@@ -2637,7 +2813,7 @@ App.controller("infoSearchController", function ($http,$timeout,$scope,$rootScop
 
 });
 
-App.controller("fileImportCountController", function ($http,$timeout,$scope,$state,
+App.controller("fileImportCountController", function ($http,$timeout,$scope,$state,FileUploader,
                                                 myservice) {
     $("#pleaseWait").hide();
     //登录和锁定校验
@@ -2646,10 +2822,12 @@ App.controller("fileImportCountController", function ($http,$timeout,$scope,$sta
     myservice.dragFunc("importDetailDiv");
     myservice.dragFunc("importFailedFileDiv");
     myservice.dragFunc("importFailedDetailDiv");
+    myservice.dragFunc("fileUploadDiv");
 
     $("#importDetailDiv").hide();
     $("#importFailedFileDiv").hide();
     $("#importFailedDetailDiv").hide();
+    $("#fileUploadDiv").hide();
 
     $scope.query = function () {
         $("#pleaseWait").show();
@@ -2710,30 +2888,103 @@ App.controller("fileImportCountController", function ($http,$timeout,$scope,$sta
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
-            $scope.failedDetails = temp.obj;
+            $scope.failedDetails = myservice.setSerialNumber(temp.obj);
         }).error(function(data)
         {
             alert("会话已经断开或者检查网络是否正常！");
         });
     }
 
-    $scope.export = function (fileDetailId){
-
-        var url="/fileImportCount/getErrorsExcel?fileDetailId="+fileDetailId;
-
+    $scope.export = function (item){
+        var url="/fileImportCount/getExcel?fileDetailId="+item.id;
+        var fileName = item.fileName.substring(0,item.fileName.lastIndexOf("."))+"_校验不通过";
         $http({
             url: url,
             responseType: 'arraybuffer'
         }).success(function (data) {
-            //var blob = new Blob([data], {type: "application/vnd.ms-excel"});
-            var blob = new Blob([data], {type: "application/x-zip-compressed"});
+            var blob = new Blob([data], {type: "application/vnd.ms-excel"});
+            //var blob = new Blob([data], {type: "application/x-zip-compressed"});
             var objectUrl = URL.createObjectURL(blob);
-            var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href",objectUrl);
-            $("body").append(aForExcel);
-            $(".forExcel").click();
-            aForExcel.remove();
+            //var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href",objectUrl);
+            //$("body").append(aForExcel);
+            //$(".forExcel").click();
+            //aForExcel.remove();
+            var link = document.createElement('a');
+            link.download = fileName+".xls"; //文件名字
+            link.href = objectUrl;
+            link.click();
         });
     }
+
+    $scope.importFile = function (fileDetailId){
+
+         $("#fileUploadDiv").show();
+         $scope.fileDetailId = fileDetailId;
+         if($scope.uploader.queue.length > 0){
+            angular.forEach($scope.uploader.queue, function(item) {
+                item.remove();
+            });
+        }
+    }
+
+    $scope.closeUploadFile = function(){
+        $("#fileUploadDiv").hide();
+    }
+
+
+    var uploader = $scope.uploader = new FileUploader({
+        url: '/fileImportCount/dataAmendment'
+    });
+
+    // FILTERS
+
+    uploader.filters.push({
+        name: 'customFilter',
+        fn: function(item /*{File|FileLikeObject}*/, options) {
+            return this.queue.length < 1;
+        }
+    });
+
+    // CALLBACKS
+
+    uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
+        console.info('onWhenAddingFileFailed', item, filter, options);
+    };
+    uploader.onAfterAddingFile = function(fileItem) {
+        console.info('onAfterAddingFile', fileItem);
+    };
+    uploader.onAfterAddingAll = function(addedFileItems) {
+        console.info('onAfterAddingAll', addedFileItems);
+    };
+    uploader.onBeforeUploadItem = function(item) {
+        item.url += "?fileDetailId="+$scope.fileDetailId;
+        console.info('onBeforeUploadItem', item);
+    };
+    uploader.onProgressItem = function(fileItem, progress) {
+        console.info('onProgressItem', fileItem, progress);
+    };
+    uploader.onProgressAll = function(progress) {
+        console.info('onProgressAll', progress);
+    };
+    uploader.onSuccessItem = function(fileItem, response, status, headers) {
+        $("#importDetailDiv").hide();
+        $("#fileUploadDiv").hide();
+        $scope.query();
+        myservice.errors(response);
+        //console.info('onSuccessItem', fileItem, response, status, headers);
+    };
+    uploader.onErrorItem = function(fileItem, response, status, headers) {
+        console.info('onErrorItem', fileItem, response, status, headers);
+    };
+    uploader.onCancelItem = function(fileItem, response, status, headers) {
+        console.info('onCancelItem', fileItem, response, status, headers);
+    };
+    uploader.onCompleteItem = function(fileItem, response, status, headers) {
+        //console.info('onCompleteItem', fileItem, response, status, headers);
+    };
+    uploader.onCompleteAll = function() {
+        console.info('onCompleteAll');
+    };
 
 });
 
@@ -7543,8 +7794,9 @@ App.controller('PaginationDemoCtrl', ['$scope', function ($scope) {
     console.log('Page changed to: ' + $scope.currentPage);
   };
 
-  $scope.maxSize = 5;
-  $scope.bigTotalItems = 175;
+  $scope.itemsPerPage=20;
+  $scope.maxSize = 10;
+  $scope.bigTotalItems = 300;
   $scope.bigCurrentPage = 1;
 }]);
 /**=========================================================
@@ -9688,7 +9940,7 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
            $scope.menuItems = temp.obj;
         })
 
-               /*
+             /*
               var menuJson = 'server/sidebar-menu.json',
                   menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
               $http.get(menuURL)

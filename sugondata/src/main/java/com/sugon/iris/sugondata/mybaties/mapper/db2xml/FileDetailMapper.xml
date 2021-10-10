@@ -88,7 +88,13 @@
         </if >
     </select>
 
-
+    <update id="updateByPrimaryKey" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity">
+        update file_detail
+        <set>
+            import_row_count = #{importRowCount},
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 
     <!--单个插入-->
     <insert id="fileDetailInsert" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity" useGeneratedKeys="true" keyProperty="id">

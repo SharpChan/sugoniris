@@ -116,12 +116,12 @@
 						</button>
 					</td>
 					<td align="center">
-						<button ng-show="item.importRowCount != item.rowCount" type="button" ng-click="export(item.id)" class="btn btn-sm btn-warning">
+						<button ng-show="item.importRowCount != item.rowCount" type="button" ng-click="export(item)" class="btn btn-sm btn-warning">
 							<em class="fa fa-download"></em>
 						</button>
 					</td>
 					<td align="center">
-						<button ng-show="item.importRowCount != item.rowCount" type="button" ng-click="importClass()" class="btn btn-sm btn-warning">
+						<button ng-show="item.importRowCount != item.rowCount" type="button" ng-click="importFile(item.id)" class="btn btn-sm btn-warning">
 							<em class="fa fa-wrench"></em>
 						</button>
 					</td>
@@ -158,7 +158,7 @@
 		</div>
 	</div>
 
-	<div id = "importFailedDetailDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 550px; height: 500px; z-index: 9999;overflow-y:auto;">
+	<div id = "importFailedDetailDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 800px; height: 500px; z-index: 9999;overflow-y:auto;">
 		<div id = "importFailedDetailDivheader" class="panel-heading topnavbar">
 			<div align="left">
 				<label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">错误行明细</strong></label>
@@ -171,7 +171,9 @@
 			<table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
 				<thead>
 				<tr>
+					<th>序号</th>
 					<th>行号</th>
+                    <th>mppid2errorid</th>
 					<th>表名</th>
 					<th>模板id</th>
 					<th>字段id</th>
@@ -180,7 +182,9 @@
 				</thead>
 				<tbody>
 				<tr ng-repeat="item in failedDetails">
+					<td align="left">{{item.no}}</td>
 					<td align="left">{{item.rowNumber}}</td>
+                    <td align="left">{{item.mppId2ErrorId}}</td>
 					<td align="left">{{item.tableName}}</td>
 					<td align="left">{{item.fileTemplateId}}</td>
 					<td align="left">{{item.fileTemplateDetailId}}</td>
@@ -188,6 +192,70 @@
 				</tr>
 				</tbody>
 			</table>
+		</div>
+	</div>
+
+
+	<div id = "fileUploadDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 750px; height: 500px; z-index: 9999;overflow-y:auto;">
+		<div id = "fileUploadDivheader" class="panel-heading topnavbar">
+			<div align="left">
+				<label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">上传修改文件</strong></label>
+			</div>
+			<div align="right" style="margin-top:-30px;">
+				<input type="button" value="关闭" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="closeUploadFile();" />
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="container-fluid" id="fileUpload">
+				<div style="margin-bottom: 40px" class="col-md-9">
+					<div ng-if="uploader.queue.length">
+						<table ng-if="uploader.queue.length" class="table">
+							<thead>
+							<tr>
+								<th width="50%">文件名</th>
+								<th ng-show="uploader.isHTML5">大小</th>
+								<th ng-show="uploader.isHTML5">进度</th>
+								<th>状态</th>
+								<th>动作</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr ng-repeat="item in uploader.queue">
+								<td>
+									<strong>{{ item.file.name }}</strong>
+								</td>
+								<td ng-show="uploader.isHTML5" nowrap="">{{ item.file.size/1024/1024|number:2 }} MB</td>
+								<td ng-show="uploader.isHTML5">
+									<div style="margin-bottom: 0;" class="progress progress-xs">
+										<div role="progressbar" ng-style="{ 'width': item.progress + '%' }" class="progress-bar"></div>
+									</div>
+								</td>
+								<td class="text-center">
+                                 <span ng-show="item.isSuccess">
+                                    <em class="fa fa-check fa-fw"></em>
+                                 </span>
+									<span ng-show="item.isCancel">
+                                    <em class="fa fa-ban-circle fa-fw"></em>
+                                 </span>
+									<span ng-show="item.isError">
+                                    <em class="fa fa-times fa-fw"></em>
+                                 </span>
+								</td>
+								<td nowrap="">
+									<button type="button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" class="btn btn-info btn-xs">
+										<span class="icon-cloud-upload mr"></span>Upload</button>
+									<button type="button" ng-click="item.cancel()" ng-disabled="!item.isUploading" class="btn btn-warning btn-xs">
+										<span class="icon-close mr"></span>Cancel</button>
+									<button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs">
+										<span class="icon-trash mr"></span>Remove</button>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+					<input filestyle="" type="file" data-button-text="选择导入Excel文件" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" multiple="" class="form-control" />
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

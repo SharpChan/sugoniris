@@ -23,7 +23,8 @@ public class ExcelRow {
 
     public List<String> getFields(){
         if(CollectionUtils.isEmpty(fields)){
-             return new ArrayList<String>();
+            fields = new ArrayList<String>();
+            return fields;
         }
         return fields;
     }

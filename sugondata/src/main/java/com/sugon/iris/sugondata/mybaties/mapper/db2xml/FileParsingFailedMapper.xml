@@ -101,4 +101,13 @@
             )
         </where>
     </delete>
+
+    <delete id="deleteFileParsingFailedByMppid2errorid">
+        DELETE
+        FROM
+        file_parsing_failed
+        <where>
+            mppid2errorid = #{mppid2errorid}
+        </where>
+    </delete>
 </mapper>

@@ -23,10 +23,7 @@ import de.siegmar.fastcsv.reader.CsvRow;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -34,6 +31,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -116,7 +114,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         int k = 0;
         for(int i=1;i<rows.size();i++){
             if (!CollectionUtils.isEmpty(feildRefIndexMap)) {
-                boolean mppId2ErrorId_flag = false;
+                boolean mppId2ErrorId_flag = true;
                 String sqlInsertExec = insertSql;
                 for (Map.Entry<Long, Integer> entry : feildRefIndexMap.entrySet()) {
                     FileRinseDetailDto fileRinseDetailDto  =  regularMap.get(entry.getKey());
@@ -138,33 +136,47 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                      * 这样csv的单元格数据与正则表达式进行对应
                      */
                     boolean checkRegular = false;
-                    if(CollectionUtils.isEmpty(regularDetailDtoListY) && CollectionUtils.isEmpty(regularDetailDtoListN)){
-                        checkRegular = true;
-                    }
+                    boolean checkRegularY = false;
                     if(!CollectionUtils.isEmpty(regularDetailDtoListY)){
                         for(RegularDetailDto regularDetailDto : regularDetailDtoListY){
                             if (rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
-                                checkRegular = true;
+                                checkRegularY = true;
                                 break;//只要匹配一个就跳出
                             }
                         }
+                    }else{
+                        checkRegularY = true;
                     }
+
+                    boolean checkRegularN = true;
                     if(!CollectionUtils.isEmpty(regularDetailDtoListN)){
                         for (RegularDetailDto regularDetailDto : regularDetailDtoListN) {
                             if (rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
-                                checkRegular = false;
+                                checkRegularN = false;
                                 break;//只要匹配一个就跳出
                             }
                         }
                     }
-                    mppId2ErrorId_flag = checkRegular;
+                    checkRegular = checkRegularY && checkRegularN;
+                    mppId2ErrorId_flag = checkRegular && mppId2ErrorId_flag;
 
                     //基础sql
                     sqlInsertExec = sqlInsertExec.replace("&&"+entry.getKey()+"&&",entry.getValue() == null?"": rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
 
                     //校验不通过
                    if(!checkRegular){
-                        Long seq = mppErrorInfoMapper.selectErrorSeq();
+                       //检查excel的行号是否已经有了，有了用之前的mppid2errorid
+                       Long seq = 0L;
+                       if(CollectionUtils.isEmpty(fileParsingFailedEntityListSql)){
+                           seq = mppErrorInfoMapper.selectErrorSeq();
+                       }
+                       for(FileParsingFailedEntity fileParsingFailedEntityBean : fileParsingFailedEntityListSql){
+                           if(!fileParsingFailedEntityBean.getRowNumber().equals(String.valueOf(i))){
+                               seq = mppErrorInfoMapper.selectErrorSeq();
+                           }else{
+                               seq = fileParsingFailedEntityBean.getMppId2ErrorId();
+                           }
+                       }
                         FileParsingFailedEntity fileParsingFailedEntitySql = new FileParsingFailedEntity();
                         fileParsingFailedEntitySql.setRowNumber(String.valueOf(i));
                         fileParsingFailedEntitySql.setFileDetailId(fileSeq);
@@ -222,14 +234,11 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         }
 
         //没有不满足的行，则返回
-        if(CollectionUtils.isEmpty(fileParsingFailedEntityListSql)){
-            return;
+        if(!CollectionUtils.isEmpty(fileParsingFailedEntityListSql)){
+            dealWithfailed(fileParsingFailedEntityListSql, mppErrorInfoEntityList);
         }
-
         //处理校验不满足数据
-        dealWithfailed(fileParsingFailedEntityListSql, mppErrorInfoEntityList);
         saveFileDetail(userId, caeId, fileTemplateDto, file, tableInfos, fileSeq, fileAttachmentId, hasImport, fileType, rowCount, importRowCount);
-
     }
 
     /**
@@ -273,6 +282,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         int lastRowIndex = sheet.getLastRowNum()+1;
         int firstCellIndex = rowHead.getFirstCellNum();
         int lastCellIndex = rowHead.getLastCellNum();
+        rowCount = sheet.getLastRowNum();
         for(int i = firstCellIndex;i<lastCellIndex;i++){
             Cell cell = rowHead.getCell(i);
             headList.add(cell.getStringCellValue().replaceAll("\\s*", ""));
@@ -291,7 +301,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         List<ExcelRow> excelRowList = null;
         for(int i = firstRowIndex;i<lastRowIndex;i++){
             if (!CollectionUtils.isEmpty(feildRefIndexMap)) {
-                boolean mppId2ErrorId_flag = false;
+                boolean mppId2ErrorId_flag = true;
                 String sqlInsertExec = insertSql;
                 for (Map.Entry<Long, Integer> entry : feildRefIndexMap.entrySet()) {
                     FileRinseDetailDto fileRinseDetailDto  =  regularMap.get(entry.getKey());
@@ -313,37 +323,51 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                      * 这样csv的单元格数据与正则表达式进行对应
                      */
                     boolean checkRegular = false;
-                    if(CollectionUtils.isEmpty(regularDetailDtoListY) && CollectionUtils.isEmpty(regularDetailDtoListN)){
-                        checkRegular = true;
-                    }
-
                     //把所有的单元格变为string类型
                     sheet.getRow(i).getCell(entry.getValue()).setCellType(Cell.CELL_TYPE_STRING);
+                    boolean checkRegularY = false;
                     if(!CollectionUtils.isEmpty(regularDetailDtoListY)){
                         for(RegularDetailDto regularDetailDto : regularDetailDtoListY){
 
                             if (sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
-                                checkRegular = true;
+                                checkRegularY = true;
                                 break;//只要匹配一个就跳出
                             }
                         }
+                    }else{
+                        checkRegularY = true;
                     }
+
+                    boolean checkRegularN = true;
                     if(!CollectionUtils.isEmpty(regularDetailDtoListN)){
                         for (RegularDetailDto regularDetailDto : regularDetailDtoListN) {
                             if (sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
-                                checkRegular = false;
+                                checkRegularN = false;
                                 break;//只要匹配一个就跳出
                             }
                         }
                     }
-                    mppId2ErrorId_flag = checkRegular;
+                    checkRegular = checkRegularY && checkRegularN;
+                    mppId2ErrorId_flag = checkRegular && mppId2ErrorId_flag;
 
                     //基础sql
                     sqlInsertExec = sqlInsertExec.replace("&&"+entry.getKey()+"&&",entry.getValue() == null?"": sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", ""));
 
                     //校验不通过
                     if(!checkRegular){
-                        Long seq = mppErrorInfoMapper.selectErrorSeq();
+
+                        //检查excel的行号是否已经有了，有了用之前的mppid2errorid
+                        Long seq = 0L;
+                        if(CollectionUtils.isEmpty(fileParsingFailedEntityListSql)){
+                            seq = mppErrorInfoMapper.selectErrorSeq();
+                        }
+                        for(FileParsingFailedEntity fileParsingFailedEntityBean : fileParsingFailedEntityListSql){
+                            if(!fileParsingFailedEntityBean.getRowNumber().equals(String.valueOf(i))){
+                                seq = mppErrorInfoMapper.selectErrorSeq();
+                            }else{
+                                seq = fileParsingFailedEntityBean.getMppId2ErrorId();
+                            }
+                        }
                         FileParsingFailedEntity fileParsingFailedEntitySql = new FileParsingFailedEntity();
                         fileParsingFailedEntitySql.setRowNumber(String.valueOf(i));
                         fileParsingFailedEntitySql.setFileDetailId(fileSeq);
@@ -385,12 +409,10 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         }
 
         //没有不满足的行，则返回
-        if(CollectionUtils.isEmpty(fileParsingFailedEntityListSql)){
-            return;
+        if(!CollectionUtils.isEmpty(fileParsingFailedEntityListSql)){
+            //处理校验不满足数据
+            dealWithfailed(fileParsingFailedEntityListSql, mppErrorInfoEntityList);
         }
-
-        //处理校验不满足数据
-        dealWithfailed(fileParsingFailedEntityListSql, mppErrorInfoEntityList);
         //保存文件信息
         saveFileDetail(userId, caeId, fileTemplateDto, file, tableInfos, fileSeq, fileAttachmentId, hasImport, fileType, rowCount, importRowCount);
     }

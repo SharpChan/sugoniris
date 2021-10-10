@@ -24,11 +24,14 @@ public enum ErrorCode_Enum {
     SUGON_02_009("SUGON-02-009","与websocket通信失败"),
     FILE_01_001("FILE-01-001","文件不存在"),
     FILE_01_002("FILE-01-002","模板不存在"),
-    FILE_01_003("FILE-01-003","excel文件不存在")
+    FILE_01_003("FILE-01-003","excel文件不存在"),
+    FILE_01_004("FILE-01-004","excel文件sheet名称不存在"),
+    FILE_01_005("FILE-01-005","excel文件sheet名称不满足格式要求"),
+    FILE_01_006("FILE-01-006","excel文件修改数据不存在"),
+    FILE_01_007("FILE-01-007","模板字段不存在"),
+    FILE_01_008("FILE-01-008","导入文件不匹配"),
+    FILE_01_009("FILE-01-009","字段不匹配")
     ;
-
-
-
 
     private String code;
     private String message;

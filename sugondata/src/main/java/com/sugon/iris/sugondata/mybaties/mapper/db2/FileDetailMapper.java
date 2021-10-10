@@ -17,4 +17,6 @@ public interface FileDetailMapper {
 
     FileDetailEntity selectByPrimaryKey(Long id);
 
+    int updateByPrimaryKey(FileDetailEntity fileDetailEntity);
+
 }

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ExcelService {
 
-    HSSFWorkbook getNewExcel(Long templateId, List<ExcelRow> excelRowList);
+    HSSFWorkbook getNewExcel(String id, List<ExcelRow> excelRowList);
 }

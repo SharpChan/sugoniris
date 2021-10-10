@@ -127,7 +127,7 @@ public class FileParsingServiceCsvImpl implements FileParsingServiceCsv {
             List<File> fileList4Template = entry.getValue();
             //index[0] :tableName ;index[01: tableId
             Object[] tableInfos = createMppTable(userId,fileAttachmentEntity,fileTemplateDto);
-            String insertSql = getInsertSql(fileAttachmentEntity.getCaseId(),fileTemplateDto.getFileTemplateDetailDtoList(),(String) tableInfos[0]);
+            String insertSql = getInsertSql(fileAttachmentEntity.getId(),fileAttachmentEntity.getCaseId(),fileTemplateDto.getFileTemplateDetailDtoList(),(String) tableInfos[0],fileTemplateDto.getId());
 
 
             //key:模板字段id编号；value：正则表达式列表；用于导入前数据校验
@@ -200,7 +200,7 @@ public class FileParsingServiceCsvImpl implements FileParsingServiceCsv {
     }
 
     //组装插入数据语句
-    private String getInsertSql(Long caseId,List<FileTemplateDetailDto> fileTemplateDetailDtoList, String tableName) {
+    private String getInsertSql(Long fileAttachmentId ,Long caseId,List<FileTemplateDetailDto> fileTemplateDetailDtoList, String tableName,Long fileTemplateId) {
         //组装insertSql语句
         String sqlInsert = "insert into "+tableName+"(";
         String  sqlValues = "";
@@ -208,8 +208,8 @@ public class FileParsingServiceCsvImpl implements FileParsingServiceCsv {
             sqlInsert += fileTemplateDetailDto.getFieldName()+",";
             sqlValues += "'&&"+fileTemplateDetailDto.getId()+"&&',";
         }
-        sqlInsert += "file_attachment_id,file_detail_id,mppId2ErrorId";
-        sqlValues += "'"+caseId+"',"+"'&&xx_file_detail_id_xx&&',"+"'&&xx_mppId2ErrorId_xx&&'";
+        sqlInsert += "file_template_id,case_id,file_attachment_id,file_detail_id,mppId2ErrorId";
+        sqlValues += "'"+fileTemplateId+"','"+caseId+"','"+fileAttachmentId+"','&&xx_file_detail_id_xx&&',"+"'&&xx_mppId2ErrorId_xx&&'";
         sqlInsert +=") values(" +sqlValues+");";
         return sqlInsert;
     }
@@ -231,12 +231,17 @@ public class FileParsingServiceCsvImpl implements FileParsingServiceCsv {
             //表名="base_"+模板配置前缀+"_"+案件编号
             String tableName = "base_" + fileTemplateDto.getTablePrefix() + "_" + fileAttachmentEntity.getCaseId()+"_"+userId;
             tableInfos[0] = tableName;
-            String sqlCreate =  "CREATE TABLE "+tableName+" ( id serial not null,"+" mppId2ErrorId int8 NULL,"+" file_detail_id int4 NULL,";
+            String sqlCreate =  "CREATE TABLE "+tableName+" ( id serial not null,"+" mppId2ErrorId int8 NULL,"+" file_detail_id int4 NULL,"+" file_template_id int4 NULL,";
             for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDto.getFileTemplateDetailDtoList()){
                 sqlCreate += fileTemplateDetailDto.getFieldName() +" varchar NULL,";
             }
-            sqlCreate += "file_attachment_id  varchar NULL);";
+            sqlCreate += "file_attachment_id  varchar NULL,case_id varchar NULL);";
+
+            String index_file_template_id = "CREATE INDEX "+tableName+"_mppid2errorid_idx ON "+tableName+" USING btree (file_template_id);";
+            String index_file_detail_id = "CREATE INDEX "+tableName+"_file_detail_id ON "+tableName+" USING btree (file_detail_id);";
             mppMapper.mppSqlExec(sqlCreate);
+            mppMapper.mppSqlExec(index_file_template_id);
+            mppMapper.mppSqlExec(index_file_detail_id);
 
             FileTableEntity fileTableEntity4Sql = new FileTableEntity();
             fileTableEntity4Sql.setCaseId(fileAttachmentEntity.getCaseId());

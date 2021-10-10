@@ -11,11 +11,11 @@ public class ExcelServiceImpl implements ExcelService {
 
 
     @Override
-    public  HSSFWorkbook getNewExcel(Long templateId, List<ExcelRow> excelRowList) {
+    public  HSSFWorkbook getNewExcel(String id, List<ExcelRow> excelRowList) {
         //新建excel对象
         HSSFWorkbook workbook = new HSSFWorkbook();
         //新建工作表
-        HSSFSheet sheet = workbook.createSheet(String.valueOf(templateId));
+        HSSFSheet sheet = workbook.createSheet(id);
         // 设置表格默认列宽度为20个字节
         sheet.setDefaultColumnWidth((short) 20);
         // 生成一个样式
