@@ -1505,6 +1505,22 @@ App.controller("dataMergeController", function ($http,$timeout,$scope,
             link.click();
         });
     }
+    
+    $scope.mergeExport = function (caseId) {
+        var url = "/dataMerge/mergeExport?caseId="+caseId;
+        $http({
+            url: url,
+            method: 'GET',
+            responseType: 'arraybuffer'
+        }).success(function (data) {
+            var blob = new Blob([data], {type: "application/x-zip-compressed"});
+            var objectUrl = URL.createObjectURL(blob);
+            var aForZip = $("<a><span class='forExcel'>下载zip</span></a>").attr("href",objectUrl);
+            $("body").append(aForZip);
+            $(".forExcel").click();
+            aForZip.remove();
+        });
+    }
 });
 
 App.controller("fileRinseController", function ($http,$timeout,$scope,

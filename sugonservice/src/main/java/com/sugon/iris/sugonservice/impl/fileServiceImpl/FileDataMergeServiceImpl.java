@@ -185,46 +185,56 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
             fileTemplateDetailEntity4Sql.setTemplateId(fileTableEntityBean.getFileTemplateId());
             List<FileTemplateDetailEntity> fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntity4Sql);
             PublicUtils.fileTemplateDetailEntityListSort(fileTemplateDetailEntityList);
-            List<ExcelRow> excelRowList = new ArrayList<>();
-            //设置表头,并组装查询sql
-            ExcelRow excelRowHead = new ExcelRow();
-            excelRowList.add(excelRowHead);
-            String sql = "select  ";
-            List<String> fieldNameList = new ArrayList<>();
-            int i = 0;
-            for(FileTemplateDetailEntity fileTemplateDetailEntity : fileTemplateDetailEntityList){
-                //设置表头
-                excelRowHead.getFields().add(fileTemplateDetailEntity.getFieldKey());
-                //获取值的顺序
-                fieldNameList.add(fileTemplateDetailEntity.getFieldName());
-                //组装sql
-                if(i < fileTemplateDetailEntityList.size()-1) {
-                    sql += fileTemplateDetailEntity.getFieldName() + ", ";
-                }else{
-                    sql += fileTemplateDetailEntity.getFieldName();
-                }
-                i++;
+            //获取总数据量
+            String sqlCount = "select count(*)  "+" from "+fileTableEntityBean.getTableName() + " where mppid2errorid = '0'";
+            int count = Integer.parseInt(mppMapper.mppSqlExecForSearch(sqlCount).get(0));
+            int perSize = Integer.parseInt(PublicUtils.getConfigMap().get("mergeExport").replaceAll("\\s*",""));
+            int times = count/perSize;
+            if(count % perSize >0){
+                times++;
             }
-            sql += " from "+fileTableEntityBean.getTableName() + " where mppid2errorid != '0'";
-            //2.通过文件id获取失败信息
-            List<Map<String,Object>>  records = mppMapper.mppSqlExecForSearchRtMapList(sql);
-            for(Map map : records){
-                ExcelRow excelRow = new ExcelRow();
-                for(String str : fieldNameList){
-                    excelRow.getFields().add(map.get(str)+"");
+            for(int j =0;j< times;j++) {
+                int offSet = j*perSize;
+                List<ExcelRow> excelRowList = new ArrayList<>();
+                //设置表头,并组装查询sql
+                ExcelRow excelRowHead = new ExcelRow();
+                excelRowList.add(excelRowHead);
+                String sql = "select  ";
+                List<String> fieldNameList = new ArrayList<>();
+                int i = 0;
+                for (FileTemplateDetailEntity fileTemplateDetailEntity : fileTemplateDetailEntityList) {
+                    //设置表头
+                    excelRowHead.getFields().add(fileTemplateDetailEntity.getFieldKey());
+                    //获取值的顺序
+                    fieldNameList.add(fileTemplateDetailEntity.getFieldName());
+                    //组装sql
+                    if (i < fileTemplateDetailEntityList.size() - 1) {
+                        sql += fileTemplateDetailEntity.getFieldName() + ", ";
+                    } else {
+                        sql += fileTemplateDetailEntity.getFieldName();
+                    }
+                    i++;
                 }
-                excelRowList.add(excelRow);
+                sql += " from " + fileTableEntityBean.getTableName() + " where mppid2errorid = '0' "+" LIMIT " + perSize + " OFFSET " + offSet;
+                //2.通过文件id获取数据
+                List<Map<String, Object>> records = mppMapper.mppSqlExecForSearchRtMapList(sql);
+                for (Map map : records) {
+                    ExcelRow excelRow = new ExcelRow();
+                    for (String str : fieldNameList) {
+                        excelRow.getFields().add(map.get(str) + "");
+                    }
+                    excelRowList.add(excelRow);
+                }
+                //3.组装excel
+                HSSFWorkbook workbook = excelServiceImpl.getNewExcel(fileTableEntityBean.getTitle(), excelRowList);
+                ByteOutputStream byteOutputStream = new ByteOutputStream();
+                workbook.write(byteOutputStream);
+                ZipEntry entry = new ZipEntry(fileTableEntityBean.getTitle()+"_"+(j+1)+ ".xlsx");
+                zipOutputStream.putNextEntry(entry);
+                byteOutputStream.writeTo(zipOutputStream);
+                byteOutputStream.close();
+                zipOutputStream.closeEntry();
             }
-
-            //3.组装excel
-            HSSFWorkbook workbook = excelServiceImpl.getNewExcel(fileTableEntityBean.getTitle(),excelRowList);
-            ByteOutputStream byteOutputStream = new ByteOutputStream();
-            workbook.write(byteOutputStream);
-            ZipEntry entry = new ZipEntry(fileTableEntityBean.getTitle()+".xls");
-            zipOutputStream.putNextEntry(entry);
-            byteOutputStream.writeTo(zipOutputStream);
-            byteOutputStream.close();
-            zipOutputStream.closeEntry();
         }
         zipOutputStream.close();
     }
