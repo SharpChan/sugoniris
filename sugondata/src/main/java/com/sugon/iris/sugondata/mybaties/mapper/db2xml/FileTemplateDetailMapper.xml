@@ -49,7 +49,7 @@
         <if test="userId!=null">
             and user_id = #{userId}
         </if >
-        order by sort_no
+        order by cast(sort_no as SIGNED)
     </select>
 
     <!--插入-->

@@ -19,6 +19,7 @@ import com.sugon.iris.sugonservice.service.FileService.FileDataMergeService;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -226,7 +227,7 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
                     excelRowList.add(excelRow);
                 }
                 //3.组装excel
-                HSSFWorkbook workbook = excelServiceImpl.getNewExcel(fileTableEntityBean.getTitle(), excelRowList);
+                XSSFWorkbook workbook = excelServiceImpl.getNewExcelX(fileTableEntityBean.getTitle(), excelRowList);
                 ByteOutputStream byteOutputStream = new ByteOutputStream();
                 workbook.write(byteOutputStream);
                 ZipEntry entry = new ZipEntry(fileTableEntityBean.getTitle()+"_"+(j+1)+ ".xlsx");

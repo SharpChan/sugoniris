@@ -47,6 +47,9 @@ public class FileRinseDetailServiceImpl implements FileRinseDetailService {
     public List<FileRinseDetailDto> findFileRinseDetailByGroupId(Long fileRinseGroupId, List<Error> errorList) throws IllegalAccessException {
         List<FileRinseDetailEntity> fileRinseDetailEntityList = null;
         List<FileRinseDetailDto> fileRinseDetailDtoList = new ArrayList<>();
+        FileRinseDetailDto FileRinseDetailDto_Blank = new FileRinseDetailDto();
+        FileRinseDetailDto_Blank.setTypeName("置空");
+        fileRinseDetailDtoList.add(FileRinseDetailDto_Blank);
         try {
             fileRinseDetailEntityList = fileRinseDetailMapper.selectByGroupId(fileRinseGroupId);
 

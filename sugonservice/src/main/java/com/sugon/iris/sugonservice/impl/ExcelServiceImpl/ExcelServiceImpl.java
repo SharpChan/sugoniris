@@ -3,6 +3,7 @@ package com.sugon.iris.sugonservice.impl.ExcelServiceImpl;
 import com.sugon.iris.sugondomain.beans.fileBeans.ExcelRow;
 import com.sugon.iris.sugonservice.service.ExcelService.ExcelService;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -28,6 +29,32 @@ public class ExcelServiceImpl implements ExcelService {
         //创建表格行
         for(int i =0 ; i < excelRowList.size();i++) {
             HSSFRow row = sheet.createRow(i);
+            List<String> fields = excelRowList.get(i).getFields();
+            for(int j = 0;j < fields.size(); j++){
+                row.createCell(j).setCellValue(fields.get(j));
+            }
+        }
+        return workbook;
+    }
+
+    @Override
+    public XSSFWorkbook getNewExcelX(String id, List<ExcelRow> excelRowList) {
+        //新建excel对象
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        //新建工作表
+        XSSFSheet sheet = workbook.createSheet(id);
+        // 设置表格默认列宽度为20个字节
+        sheet.setDefaultColumnWidth((short) 20);
+        // 生成一个样式
+        XSSFCellStyle style = workbook.createCellStyle();
+        // 生成一个字体
+        XSSFFont font = workbook.createFont();
+        font.setFontHeightInPoints((short) 12);
+        //字体应用到当前样式
+        style.setFont(font);
+        //创建表格行
+        for(int i =0 ; i < excelRowList.size();i++) {
+            XSSFRow row = sheet.createRow(i);
             List<String> fields = excelRowList.get(i).getFields();
             for(int j = 0;j < fields.size(); j++){
                 row.createCell(j).setCellValue(fields.get(j));

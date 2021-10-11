@@ -48,7 +48,7 @@ public class FileTemplateDetailBean {
     private Long userId;
 
     /**
-     * 关键字排除
+     * 关键字排除&&进行分割
      */
     private String exclude;
 

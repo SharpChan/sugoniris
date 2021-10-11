@@ -189,7 +189,7 @@
 
 
     <input  type="hidden" class="form-control" type="text" ng-model="item" >
-    <div id = "cnDivDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 1050px; height: 500px; z-index: 9999;overflow-y:auto;">
+    <div id = "cnDivDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 1050px; height: 700px; z-index: 9999;overflow-y:auto;">
         <div id = "cnDivDetailheader" class="panel-heading topnavbar">
             <div align="left">
                 <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">模板名称:{{templateName_3}}</strong></label>
@@ -217,15 +217,15 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="item in details">
-                    <td align="center">{{item.no}}</td>
-                    <td align="center">{{item.fieldName}}</td>
-                    <td align="center">{{item.fieldKey}}</td>
-                    <td align="center">{{item.exclude}}</td>
+                    <td align="left">{{item.no}}</td>
+                    <td align="left">{{item.fieldName}}</td>
+                    <td align="left">{{item.fieldKey}}</td>
+                    <td align="left">{{item.exclude}}</td>
                     <!--<td align="center">{{item.regular}}</td>-->
-                    <td align="center">{{item.fileRinseDetailTypeName}}</td>
-                    <td align="center">{{item.sortNo}}</td>
-                    <td align="center">{{item.comment}}</td>
-                    <td align="center">
+                    <td align="left">{{item.fileRinseDetailTypeName}}</td>
+                    <td align="left">{{item.sortNo}}</td>
+                    <td align="left">{{item.comment}}</td>
+                    <td align="left">
                         <button type="button" ng-click="updateDetail(item)" class="btn btn-sm btn-warning">
                             <em class="fa fa-upload"></em>
                         </button>
@@ -243,7 +243,7 @@
 
     <input  type="hidden" class="form-control" type="text" ng-model="templateId" >
     <input  type="hidden" class="form-control" type="text" ng-model="flag" ><!--  区分是插入还是更新  0：新增；1：修改-->
-    <div id = "cnDivDetailAddOrUpdate" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 350px; height: 650px; z-index: 9999;">
+    <div id = "cnDivDetailAddOrUpdate" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 350px; height: 550px; z-index: 9999;">
         <div id = "cnDivDetailAddOrUpdateheader" class="panel-heading topnavbar">
             新增/修改<input type="button" value="关闭" style="margin-left:250px" class="btn btn-default" ng-click="closeUpdateDetailAddOrUpdate();" >
         </div>

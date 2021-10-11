@@ -5037,6 +5037,31 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         });
     }
 
+    $scope.detail2 = function (item) {
+        $("#cnDivDetail").show();
+        $scope.fileRinseGroupId = item.fileRinseGroupId;
+        $scope.item = item;
+        $scope.templateName_3 = item.templateName;
+        $scope.templateId = item.id;
+        var url = "/fileTemplate/getFileTemplateDetails";
+        var params = {
+            templateId: item.id
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.details = myservice.setSerialNumber(temp.obj);
+            //$scope.getFileRinseDetailByGroupId();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
     $scope.getFileRinseDetailByGroupId = function(){
         var url = "/fileRinse/getFileRinseDetailsByGroupId?groupId="+$scope.fileRinseGroupId;
         $http.post(url).success(function(data)
@@ -5065,6 +5090,7 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         $scope.exclude = "";
         $scope.sortNo = "";
         $scope.comment = "";
+        $scope.selectedOptions3 = "";
     }
 
     $scope.updateDetail = function(item){
@@ -5106,8 +5132,6 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         }else if($scope.flag == 1){   //修改
             url = "/fileTemplate/updateFileTemplateDetails";
         }
-        console.log( $scope.flag);
-        console.log($scope.id);
         var params = {
             id: $scope.flag == 1?$scope.id : "",
             templateId: $scope.templateId,
@@ -5126,7 +5150,8 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
             $("#cnDivDetailAddOrUpdate").hide();
-            $scope.detail($scope.item);
+            console.log($scope.item)
+            $scope.detail2($scope.item);
         }).error(function(data)
         {
             alert("请检查必填项是否填写！");

@@ -115,7 +115,7 @@
     </div>
 
 
-    <div id = "cnDivDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 1050px; height: 500px; z-index: 9999;overflow-y:auto;">
+    <div id = "cnDivDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 1050px; height: 700px; z-index: 9999;overflow-y:auto;">
         <div id = "cnDivDetailheader" class="panel-heading topnavbar">
             <div align="left">
                 <label  style="margin-left:10px;margin-top:10px;">清洗类型列表<strong style="color: #FFF"></strong></label>
@@ -141,18 +141,18 @@
                 <tr ng-repeat="item in details">
                     <td>{{item.no}}</td>
                     <td>{{item.typeName}}</td>
-                    <td>
+                    <td align="left">
                         <ul ng-repeat="regularShow in item.regularShowDtoListY">
                             <li>{{ regularShow.groupName +"::"+regularShow.regularName+"::"+regularShow.format}}</li>
                         </ul>
                     </td>
 
                     <td align="left">
-                        <ul ng-repeat="regularShow in item.regularShowDtoListY">
+                        <ul ng-repeat="regularShow in item.regularShowDtoListN">
                             <li>{{ regularShow.groupName +"::"+regularShow.regularName+"::"+regularShow.format}}</li>
                         </ul>
                     </td>
-                    <td>{{item.comment}}</td>
+                    <td align="left">{{item.comment}}</td>
                     <td align="left">
                         <button type="button" ng-click="deleteOneDetail(item.id)" class="btn btn-sm btn-danger">
                             <em class="fa fa-trash-o"></em>

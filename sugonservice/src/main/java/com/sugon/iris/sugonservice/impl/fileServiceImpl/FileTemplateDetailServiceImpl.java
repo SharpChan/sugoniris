@@ -12,9 +12,11 @@ import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.FileService.FileTemplateDetailService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -61,6 +63,8 @@ public class FileTemplateDetailServiceImpl implements FileTemplateDetailService 
     @Override
     public int fileTemplateDetailInsert(User user, FileTemplateDetailDto fileTemplateDetailDto, List<Error> errorList) throws IllegalAccessException {
         int i = 0;
+        if (checkRepet(user, fileTemplateDetailDto, errorList)) return 0;
+
         FileTemplateDetailEntity fileTemplateDetailEntity = new FileTemplateDetailEntity();
         PublicUtils.trans(fileTemplateDetailDto,fileTemplateDetailEntity);
         fileTemplateDetailEntity.setUserId(user.getId());
@@ -77,9 +81,13 @@ public class FileTemplateDetailServiceImpl implements FileTemplateDetailService 
         return i;
     }
 
+
     @Override
     public int updateFileTemplateDetail(User user, FileTemplateDetailDto fileTemplateDetailDto, List<Error> errorList) throws IllegalAccessException {
         int i = 0;
+
+        if (checkRepet(user, fileTemplateDetailDto, errorList)) return 0;
+
         FileTemplateDetailEntity fileTemplateDetailEntity = new FileTemplateDetailEntity();
         PublicUtils.trans(fileTemplateDetailDto,fileTemplateDetailEntity);
         fileTemplateDetailEntity.setUserId(user.getId());
@@ -149,4 +157,80 @@ public class FileTemplateDetailServiceImpl implements FileTemplateDetailService 
         }
         return count;
     }
+
+    private boolean checkRepet(User user, FileTemplateDetailDto fileTemplateDetailDto, List<Error> errorList) throws IllegalAccessException {
+        //校验字段名称格式是否正确
+        if(!fileTemplateDetailDto.getFieldName().matches("^[a-zA-Z][a-zA-Z0-9_]*$")){
+            errorList.add(new Error(ErrorCode_Enum.SUGON_01_011.getCode(), ErrorCode_Enum.SUGON_01_011.getMessage()));
+            return true;
+        }
+
+        //获取所有的字段，判断关键字有没有重复
+        List<String> keyList_template = new ArrayList<>();
+        List<String> nameList_template = new ArrayList<>();
+        List<FileTemplateDetailDto>  fileTemplateDetailDtoList = this.getFileTemplateDetailDtoList(user,fileTemplateDetailDto,errorList);
+        for(FileTemplateDetailDto fileTemplateDetailDtoBean : fileTemplateDetailDtoList){
+            if(!(fileTemplateDetailDtoBean.getId().equals(fileTemplateDetailDto.getId()))) {
+                keyList_template.addAll(Arrays.asList(fileTemplateDetailDtoBean.getFieldKey().split("&&")));
+                fileTemplateDetailDtoBean.getFieldKeyList().addAll(Arrays.asList(fileTemplateDetailDtoBean.getFieldKey().split("&&")));
+                fileTemplateDetailDtoBean.getExcludeList().addAll(Arrays.asList(fileTemplateDetailDtoBean.getExclude().split("&&")));
+                nameList_template.add(fileTemplateDetailDtoBean.getFieldName());
+            }
+        }
+        List<String> keyList_templateDetail = Arrays.asList(fileTemplateDetailDto.getFieldKey().split("&&"));
+        List<String> excludeList__templateDetail = new ArrayList<>();
+        if(!StringUtils.isEmpty(fileTemplateDetailDto.getExclude())) {
+            excludeList__templateDetail.addAll(Arrays.asList(fileTemplateDetailDto.getExclude().split("&&"))) ;
+        }
+        for(String str : keyList_templateDetail){
+            for(String keyStr : keyList_template){
+                if(keyStr.contains(str)){
+                    boolean flag = true;
+                    for(String str_exclude: excludeList__templateDetail){
+                        if(!StringUtils.isEmpty(str_exclude)) {
+                            if (keyStr.contains(str_exclude)) {
+                                flag = false;
+                                break;
+                            }
+                        }
+                    }
+                    //关键字包含，又没有设置排除
+                    if(flag) {
+                        errorList.add(new Error(ErrorCode_Enum.SUGON_01_009.getCode(), ErrorCode_Enum.SUGON_01_009.getMessage()));
+                        return true;
+                    }
+                }
+            }
+        }
+        //判断之前的字段有没有被现在的字段包含
+        for (FileTemplateDetailDto fileTemplateDetailDtoBean: fileTemplateDetailDtoList){
+            for(String  fieldKeyStr:fileTemplateDetailDtoBean.getFieldKeyList()){
+                //如果之前的字段关键字被现在的字段包含，且之前的字段配置的排除字段不被现在的关键字段包含
+                if(fileTemplateDetailDto.getFieldKey().contains(fieldKeyStr)){
+                    boolean flag = true;
+                    if(!CollectionUtils.isEmpty(fileTemplateDetailDtoBean.getExcludeList())) {
+                        for (String str_exclude : fileTemplateDetailDtoBean.getExcludeList()) {
+                            if(!StringUtils.isEmpty(str_exclude)) {
+                                if (fileTemplateDetailDto.getFieldKey().contains(str_exclude)) {
+                                    flag = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if(flag){
+                        errorList.add(new Error(ErrorCode_Enum.SUGON_01_009.getCode(), ErrorCode_Enum.SUGON_01_009.getMessage()));
+                        return true;
+                    }
+                }
+            }
+        }
+        //判断字段名称有没有重复
+        if(nameList_template.contains(fileTemplateDetailDto.getFieldName())){
+            errorList.add(new Error(ErrorCode_Enum.SUGON_01_010.getCode(),ErrorCode_Enum.SUGON_01_010.getMessage()));
+            return true;
+        }
+        return false;
+    }
+
 }
