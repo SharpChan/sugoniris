@@ -7,8 +7,13 @@ import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
-import com.sugon.iris.sugonservice.service.FileService.FileTemplateDetailService;
-import com.sugon.iris.sugonservice.service.FileService.FileTemplateService;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessNullDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessRepeatDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessReplaceDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessSuffixDto;
+import com.sugon.iris.sugonservice.service.fileService.FileTemplateDetailService;
+import com.sugon.iris.sugonservice.service.fileService.FileTemplateService;
+import com.sugon.iris.sugonservice.service.rinseBusinessService.RinseBusinessService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +34,10 @@ public class FileTemplateController {
 
     @Resource
     private FileTemplateDetailService fileTemplateDetailServiceImpl;
+
+    @Resource
+    private RinseBusinessService rinseBusinessService;
+
 
     /**
      * 查询模板信息
@@ -220,6 +229,305 @@ public class FileTemplateController {
         List<Error> errorList = new ArrayList<>();
         try {
             restResult.setObj(fileTemplateDetailServiceImpl.removeBoundByTemplateId(templateId,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 获取拼音
+     */
+    @RequestMapping("/getPinyin")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<String>   getPinyin(@RequestBody String  chinese){
+        RestResult<String> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(fileTemplateDetailServiceImpl.getPinyin(chinese,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 保存重复校验字段
+     */
+    @RequestMapping("/saveRepetBuss")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<Integer>   saveRepetBuss( @RequestBody RinseBusinessRepeatDto rinseBusinessRepeatDto){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+           restResult.setObj(rinseBusinessService.saveRinseBusinessRepeat(rinseBusinessRepeatDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 保存null替换
+     */
+    @RequestMapping("/saveNullBuss")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<Integer>   saveNullBuss( @RequestBody RinseBusinessNullDto rinseBusinessNullDto){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.saveRinseBusinessNull(rinseBusinessNullDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 保存字段关键字进行替换
+     */
+    @RequestMapping("/saveReplaceBuss")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<Integer>   saveReplaceBuss( @RequestBody RinseBusinessReplaceDto rinseBusinessReplaceDto){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.saveRinseBusinessReplace(rinseBusinessReplaceDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 查询重复校验字段
+     */
+    @RequestMapping("/getRepetBussList")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<List<RinseBusinessRepeatDto>>   getRepetBussList(@RequestParam(value = "fileTemplateId") Long  fileTemplateId){
+        RestResult<List<RinseBusinessRepeatDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.getRepetBussList(fileTemplateId,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 查询null值替换
+     */
+    @RequestMapping("/getNullBussList")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<List<RinseBusinessNullDto>>   getNullBussList(@RequestParam(value = "fileTemplateId") Long  fileTemplateId){
+        RestResult<List<RinseBusinessNullDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.getNullBussList(fileTemplateId,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 查询关键字替换
+     */
+    @RequestMapping("/getReplaceBussList")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<List<RinseBusinessReplaceDto>>   getReplaceBussList(@RequestParam(value = "fileTemplateId") Long  fileTemplateId){
+        RestResult<List<RinseBusinessReplaceDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.getReplaceBussList(fileTemplateId,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 查询关键字替换
+     */
+    @RequestMapping("/getSuffixBussList")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<List<RinseBusinessSuffixDto>>   getSuffixBussList(@RequestParam(value = "fileTemplateId") Long  fileTemplateId){
+        RestResult<List<RinseBusinessSuffixDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.getSuffixBussList(fileTemplateId,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 保存字段关键字进行替换
+     */
+    @RequestMapping("/saveSuffixBuss")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<Integer>   saveSuffixBuss( @RequestBody RinseBusinessSuffixDto rinseBusinessSuffixDto){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.saveRinseBusinessSuffix(rinseBusinessSuffixDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 删除去重
+     */
+    @RequestMapping("/deleteRepetById")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<Integer>   deleteRepetById( @RequestParam(value = "id") Long  id ){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.deleteRinseBusinessRepeatById(id,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 删除关键字替换
+     */
+    @RequestMapping("/deleteReplaceById")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<Integer>   deleteReplaceById( @RequestParam(value = "id") Long  id ){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.deleteRinseBusinessReplaceById(id,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 删除null替换
+     */
+    @RequestMapping("/deleteNullById")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<Integer>   deleteNullById( @RequestParam(value = "id") Long  id ){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.deleteRinseBusinessNullById(id,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 删除去除后缀
+     */
+    @RequestMapping("/deleteSuffixById")
+    @LogInCheck(doLock = true,doProcess = true)
+    public   RestResult<Integer>   deleteSuffixById( @RequestParam(value = "id") Long  id ){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.deleteRinseBusinessSuffixById(id,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

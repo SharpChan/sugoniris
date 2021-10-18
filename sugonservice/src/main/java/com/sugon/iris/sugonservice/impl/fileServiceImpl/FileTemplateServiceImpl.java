@@ -10,7 +10,7 @@ import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseGroupEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
-import com.sugon.iris.sugonservice.service.FileService.FileTemplateService;
+import com.sugon.iris.sugonservice.service.fileService.FileTemplateService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;

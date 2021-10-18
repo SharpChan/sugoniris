@@ -6,7 +6,7 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileDataGroupDto;
-import com.sugon.iris.sugonservice.service.FileService.FileDataGroupService;
+import com.sugon.iris.sugonservice.service.fileService.FileDataGroupService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -7,7 +7,7 @@ import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.OwnerMenuDto;
-import com.sugon.iris.sugonservice.service.FileService.FileDataGroupTableService;
+import com.sugon.iris.sugonservice.service.fileService.FileDataGroupTableService;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -7,7 +7,7 @@ import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.NginxServiceDao;
 import com.sugon.iris.sugondomain.dtos.securityModuleDtos.WhiteIpDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.securityModuleEntities.WhiteIpEntity;
-import com.sugon.iris.sugonservice.service.FileService.TxtFileService;
+import com.sugon.iris.sugonservice.service.fileService.TxtFileService;
 import com.sugon.iris.sugonservice.service.securityModuleService.WhiteIpService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -52,6 +52,16 @@
         order by cast(sort_no as SIGNED)
     </select>
 
+    <!--表查询-->
+    <select id="selectFileTemplateDetailByPrimary" resultMap="BaseResultMap"  >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        file_template_detail
+        where
+             id = #{id}
+    </select>
+
     <!--插入-->
     <insert id="fileTemplateDetailInsert" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="id">
         insert into file_template_detail

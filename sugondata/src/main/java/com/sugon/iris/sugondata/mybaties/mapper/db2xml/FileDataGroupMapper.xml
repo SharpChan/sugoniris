@@ -38,19 +38,19 @@
 
 
 
-    <!--批量插入-->
-    <insert id="saveUserFromDataGroupDetail"  useGeneratedKeys="true" keyProperty="id">
-        insert into file_data_group_detail
+    <!--单条插入-->
+    <insert id="saveFileDataGroup"  useGeneratedKeys="true" keyProperty="id">
+        insert into file_data_group
         (<include refid="Base_Column_List" />)
         values
-             (
-             #{id,jdbcType=BIGINT},
-             #{groupName,jdbcType=VARCHAR},
-             #{description,jdbcType=VARCHAR},
-             #{createTime,jdbcType=TIMESTAMP},
-             #{updateTime,jdbcType=TIMESTAMP},
-             #{userId,jdbcType=BIGINT}
-             )
+        (
+        #{id,jdbcType=BIGINT},
+        #{groupName,jdbcType=VARCHAR},
+        #{description,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{updateTime,jdbcType=TIMESTAMP},
+        #{userId,jdbcType=BIGINT}
+        )
     </insert>
 
     <!--更新-->

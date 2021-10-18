@@ -15,8 +15,8 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
-@ServerEndpoint(value = "/websocket/{userId}")
+//@Component
+//@ServerEndpoint(value = "/websocket/{userId}")
 public class WebSocketServer {
 
     private static Logger log = LogManager.getLogger(WebSocketServer.class);

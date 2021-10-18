@@ -8,6 +8,8 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.enums.DBType_Enum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
@@ -33,10 +35,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Service
 @Component
 public class KettleService {
+
+    private static final Logger LOGGER = LogManager.getLogger(KettleService.class);
 
     @Value("${kettle.script.path}")
     private String dirPath;
@@ -159,7 +162,7 @@ public class KettleService {
                         "<password>"+mpppassword+"</password>" +
                         "</connection>"
         };
-        log.info("XML"+databasesXML.toString());
+        LOGGER.info("XML"+databasesXML.toString());
         TransMeta transMeta = null;
         String ktrName = target+"-trans.ktr";
         String transName = "";

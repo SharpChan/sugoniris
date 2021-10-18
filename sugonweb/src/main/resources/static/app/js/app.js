@@ -106,6 +106,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('regular/regularGroup.html'),
           resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
       })
+      .state('app.mcgc', {
+          url: '/mcgc',
+          title: 'Mcgc',
+          templateUrl: helper.basepath('actualCenter/mcgc.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
       .state('app.dataMerge', {
           url: '/dataMerge',
           title: 'DataMerge',
@@ -276,7 +282,7 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           url: '/fileTemplate',
           title: 'FileTemplate',
           templateUrl: helper.basepath('file/fileTemplate.html'),
-          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'textAngular')
       })
       .state('app.fileUpload', {
       url: '/fileUpload',
@@ -1337,6 +1343,26 @@ App.service('myservice', function($window,$state,$http) {
 
 });
 
+App.controller("mcgcController", function ($http,$timeout,$scope,$sce,
+                                                myservice) {
+
+    var url = '/actualCenter/getMcgcUrl';
+    $scope.skip = function(){
+        $('.hide').removeClass('hide'); // 打开模态框
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            var dataSrc = data.obj;
+            dataSrc =  $sce.trustAsResourceUrl(dataSrc);
+            $('#ruleModalIfram').attr('src',dataSrc);
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+    $scope.skip();
+})
+
 App.controller("dataMergeController", function ($http,$timeout,$scope,
                                                 myservice) {
 
@@ -1379,7 +1405,7 @@ App.controller("dataMergeController", function ($http,$timeout,$scope,
     }
 
     var checkFields = [];
-    $scope.itemsPerPage = 15;
+    $scope.itemsPerPage = 20000;
     $scope.offset = 0;
 
     $scope.tableDetail = function (item){
@@ -1671,7 +1697,6 @@ App.controller("fileRinseController", function ($http,$timeout,$scope,
     }
 
     $scope.detailAdd = function () {
-        console.log($scope.template.categories1);
         if(myservice.isEmpty($scope.rinseFieldTypeAdd)){
             alert("名称不能为空！");
             return;
@@ -1689,7 +1714,6 @@ App.controller("fileRinseController", function ($http,$timeout,$scope,
             myservice.errors(temp);
             $("#cnDivDetailAdd").hide();
             $scope.detail($scope.fileRinseGroupId);
-            console.log($scope.template.categories1);
             angular.forEach($scope.template.categories1,function (e) {
                 $scope.saveRinseRegular(temp.obj,e.substring(e.lastIndexOf("::")+2),"1");
             });
@@ -4514,6 +4538,7 @@ App.controller("caseManagerController", function ($http,$timeout,$scope,
             alert("请检查必填项是否填写！");
         });
     }
+    $scope.query();
 
     $scope.updateDetail = function (item) {
         $("#cnDiv").show();
@@ -4657,7 +4682,7 @@ App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
             alert("请检查必填项是否填写！");
         });
     }
-
+    $scope.query();
     $scope.close = function(){
         $("#cnDiv").hide();
     }
@@ -4805,10 +4830,20 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
     myservice.dragFunc("cnDivUpdate");
     myservice.dragFunc("cnDivDetail");
     myservice.dragFunc("cnDivDetailAddOrUpdate");
+    myservice.dragFunc("cnDivRinseBusiness");
+    myservice.dragFunc("cnRepetBussDivDetail");
+    myservice.dragFunc("cnNullBussDivDetail");
+    myservice.dragFunc("cnReplaceBussDivDetail");
+    myservice.dragFunc("cnSuffixBussDivDetail");
     $("#cnDiv").hide();
     $("#cnDivUpdate").hide();
     $("#cnDivDetail").hide();
     $("#cnDivDetailAddOrUpdate").hide();
+    $("#cnDivRinseBusiness").hide();
+    $("#cnRepetBussDivDetail").hide();
+    $("#cnNullBussDivDetail").hide();
+    $("#cnReplaceBussDivDetail").hide();
+    $("#cnSuffixBussDivDetail").hide();
 
     loadDictionary1 = function(){
         var url = "/fileRinse/getFileRinses";
@@ -5191,6 +5226,355 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             return;
         }
         $scope.reBound = true;
+    }
+
+    $scope.getPinyin = function (fieldKey) {
+        var url = "/fileTemplate/getPinyin";
+        if(myservice.isEmpty(fieldKey)){
+            fieldKey = ' ';
+        }
+        $http.post(url,fieldKey).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.fieldName = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+
+    //清洗配置
+    $scope.rinseBusiness = function (item) {
+        $scope.fileTemplateId = item.id;
+        $("#cnDivRinseBusiness").show();
+        $scope.detailForRinseBusiness(item);
+        $scope.getRepetBussDivDetailList();
+        $scope.getNullBussDivDetailList();
+        $scope.getReplaceBussDivDetailList();
+        $scope.getSuffixBussDivDetailList();
+
+    }
+    $scope.closeCnDivRinseBusiness = function(){
+        $("#cnDivRinseBusiness").hide();
+        $("#cnRepetBussDivDetail").hide();
+        $("#cnReplaceBussDivDetail").hide();
+        $("#cnNullBussDivDetail").hide();
+        $("#cnSuffixBussDivDetail").hide();
+    }
+    $scope.template = {};
+    $scope.detailForRinseBusiness = function (item) {
+        var url = "/fileTemplate/getFileTemplateDetails";
+        var params = {
+            templateId: item.id
+        }
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            angular.forEach(temp.obj,function(e){
+                var cell = e.fieldKey+"::"+e.id;
+                $scope.availableCategories.push(cell);
+            })
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    
+    $scope.addRepetBuss = function () {
+        $("#cnRepetBussDivDetail").show();
+        $scope.template.categoriesRepet = [];
+    }
+
+    $scope.addNullBuss = function () {
+        $("#cnNullBussDivDetail").show();
+        $scope.template.categoriesNull = [];
+        $scope.value = "";
+    }
+
+    $scope.addReplaceBuss = function () {
+        $("#cnReplaceBussDivDetail").show();
+        $scope.template.categoriesReplace = [];
+        $scope.value = "";
+        $scope.key = "";
+    }
+
+    $scope.addSuffixBuss = function () {
+        $("#cnSuffixBussDivDetail").show();
+        $scope.template.categoriesSuffix = [];
+        $scope.suffix = "";
+    }
+
+    $scope.closeRepetBussDivDetail = function () {
+        $("#cnRepetBussDivDetail").hide();
+    }
+
+    $scope.closeNullBussDivDetail = function () {
+        $("#cnNullBussDivDetail").hide();
+    }
+
+    $scope.closeReplaceBussDivDetail = function () {
+        $("#cnReplaceBussDivDetail").hide();
+    }
+
+    $scope.closeSuffixBussDivDetail = function () {
+        $("#cnSuffixBussDivDetail").hide();
+    }
+
+
+    $scope.saveRepetBussDivDetail = function (){
+        if(myservice.isEmpty($scope.template.categoriesRepet)){
+            alert("请先选择字段！");
+            return;
+        }
+        var fields = "";
+        angular.forEach($scope.template.categoriesRepet,function (e) {
+            fields += e.substring(e.lastIndexOf("::")+2)+',';
+        });
+       var url = "/fileTemplate/saveRepetBuss";
+       var params = {
+           fileTemplateId : $scope.fileTemplateId,
+           fields : fields
+       }
+
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $("#cnRepetBussDivDetail").hide();
+            $scope.getRepetBussDivDetailList();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.saveNullBussDivDetail = function (){
+        if(myservice.isEmpty($scope.template.categoriesNull)){
+            alert("请先选择字段！");
+            return;
+        }
+        if(myservice.isEmpty($scope.value)){
+            alert("请填写要修改的值！");
+            return;
+        }
+        var url = "/fileTemplate/saveNullBuss";
+        angular.forEach($scope.template.categoriesNull,function (e) {
+            field = e.substring(e.lastIndexOf("::")+2);
+
+            var params = {
+                fileTemplateId : $scope.fileTemplateId,
+                fileTemplateDetailId : field,
+                value: $scope.value
+            }
+
+            $http.post(url,params).success(function(data)
+            {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+
+                $scope.getNullBussDivDetailList();
+            }).error(function(data)
+            {
+                alert("会话已经断开或者检查网络是否正常！");
+            });
+        });
+        $("#cnNullBussDivDetail").hide();
+
+    }
+
+    $scope.saveReplaceBussDivDetail = function (){
+        if(myservice.isEmpty($scope.template.categoriesReplace)){
+            alert("请先选择字段！");
+            return;
+        }
+        if(myservice.isEmpty($scope.value)){
+            alert("请填写要修改的值！");
+            return;
+        }
+        if(myservice.isEmpty($scope.key)){
+            alert("请填写要修改的原值！");
+            return;
+        }
+        var url = "/fileTemplate/saveReplaceBuss";
+        angular.forEach($scope.template.categoriesReplace,function (e) {
+            field = e.substring(e.lastIndexOf("::")+2);
+
+            var params = {
+                fileTemplateId : $scope.fileTemplateId,
+                fileTemplateDetailId : field,
+                key: $scope.key,
+                value: $scope.value
+            }
+
+            $http.post(url,params).success(function(data)
+            {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+
+                $scope.getReplaceBussDivDetailList();
+            }).error(function(data)
+            {
+                alert("会话已经断开或者检查网络是否正常！");
+            });
+        });
+        $("#cnReplaceBussDivDetail").hide();
+
+    }
+
+    $scope.saveSuffixBussDivDetail = function (){
+        if(myservice.isEmpty($scope.template.categoriesSuffix)){
+            alert("请先选择字段！");
+            return;
+        }
+        if(myservice.isEmpty($scope.suffix)){
+            alert("请填写要修改去除的后缀！");
+            return;
+        }
+        var url = "/fileTemplate/saveSuffixBuss";
+        angular.forEach($scope.template.categoriesSuffix,function (e) {
+            var field = e.substring(e.lastIndexOf("::")+2);
+            var params = {
+                fileTemplateId : $scope.fileTemplateId,
+                fileTemplateDetailId : field,
+                suffix: $scope.suffix
+            }
+
+            $http.post(url,params).success(function(data)
+            {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+
+                $scope.getSuffixBussDivDetailList();
+            }).error(function(data)
+            {
+                alert("会话已经断开或者检查网络是否正常！");
+            });
+        });
+        $("#cnSuffixBussDivDetail").hide();
+    }
+
+
+    $scope.getRepetBussDivDetailList = function(){
+        var url ="/fileTemplate/getRepetBussList?fileTemplateId="+$scope.fileTemplateId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.repetBusinessList = myservice.setSerialNumber(temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.getNullBussDivDetailList = function(){
+        var url ="/fileTemplate/getNullBussList?fileTemplateId="+$scope.fileTemplateId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.nullBusinessList = myservice.setSerialNumber(temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.getReplaceBussDivDetailList = function(){
+        var url ="/fileTemplate/getReplaceBussList?fileTemplateId="+$scope.fileTemplateId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.replaceBusinessList = myservice.setSerialNumber(temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.getSuffixBussDivDetailList = function () {
+        var url ="/fileTemplate/getSuffixBussList?fileTemplateId="+$scope.fileTemplateId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.suffixBusinessList = myservice.setSerialNumber(temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    
+    $scope.deleteRepet = function (id) {
+        var url = "/fileTemplate/deleteRepetById?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.getRepetBussDivDetailList();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.deleteReplace = function (id) {
+        var url = "/fileTemplate/deleteReplaceById?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.getReplaceBussDivDetailList();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.deleteNull = function (id) {
+        var url = "/fileTemplate/deleteNullById?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.getNullBussDivDetailList();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.deleteSuffix = function (id) {
+        var url = "/fileTemplate/deleteSuffixById?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.getSuffixBussDivDetailList();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
     }
 
 });

@@ -2,7 +2,6 @@ package com.sugon.iris.sugondata.mybaties.mapper.db4;
 
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.MppErrorInfoEntity;
 import org.apache.ibatis.annotations.*;
-
 import java.util.List;
 
 //@Mapper
@@ -17,9 +16,14 @@ public interface MppErrorInfoMapper {
 
 
 
-    //删除
+    //通过id删除
     @Delete("delete from error_info where id=#{id}")
     public int deleteMppErrorInfoById(Long id);
+
+    //通过mppid2errorid删除
+    @Delete("delete from error_info where mppid2errorid=#{mppid2errorid}")
+    public int deleteMppErrorInfoByMppid2errorid(Long mppid2errorid);
+
 
 
     //插入

@@ -4,20 +4,26 @@ import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.*;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseDetailDto;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseGroupDto;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
+import com.sugon.iris.sugondomain.dtos.regularDtos.RegularDetailDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.*;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
-import com.sugon.iris.sugonservice.service.FileService.FileParsingService;
-import de.siegmar.fastcsv.reader.CsvContainer;
-import de.siegmar.fastcsv.reader.CsvReader;
-import de.siegmar.fastcsv.reader.CsvRow;
-import org.apache.commons.lang.StringUtils;
+import com.sugon.iris.sugonservice.service.fileService.FileDoParsingService;
+import com.sugon.iris.sugonservice.service.fileService.FileParsingService;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class FileParsingServiceImpl implements FileParsingService {
@@ -44,364 +50,396 @@ public class FileParsingServiceImpl implements FileParsingService {
     private SequenceMapper sequenceMapper;
 
     @Resource
-    private FileParsingFailedMapper fileParsingFailedMapper;
+    private FileTableMapper fileTableMapper;
 
     @Resource
-    private FileTableMapper fileTableMapper;
+    private FileRinseGroupMapper fileRinseGroupMapper;
+
+    @Resource
+    private FileRinseDetailMapper fileRinseDetailMapper;
+
+    @Resource
+    private RegularDetailMapper regularDetailMapper;
+
+    @Resource
+    private FileRinseRegularMapper fileRinseRegularMapper;
+
+    @Resource
+    private FileDoParsingService fileDoParsingServiceImpl;
 
     /**
      * 解析csv文件并且写入mpp,并对文件和文件数据进行统计
-     *
      * @param userId
      * @param fileAttachmentId
+     * @param errorList
      */
     @Override
-    public boolean fileParsing(Long userId, Long fileAttachmentId, List<Error> errorList) throws IOException {
-        //解析次数
-        int xlsCount = 0;
-        //解析次数
-        int xlsxCount = 0;
-        //解析次数
-        int csvCount = 0;
+    public boolean fileParsing(Long userId, Long fileAttachmentId, List<Error> errorList) throws IOException, IllegalAccessException {
 
-        //获取原始文件的信息
-        List<FileAttachmentEntity> fileAttachmentEntityList = getFileAttachmentEntities(userId, fileAttachmentId, errorList);
+        boolean result = true;
+        //解析次数，线程安全
+        AtomicInteger xlsCount=new AtomicInteger(0) ;
+        //解析次数，线程安全
+        AtomicInteger xlsxCount = new AtomicInteger(0) ;
+        //解析次数，线程安全
+        AtomicInteger csvCount = new AtomicInteger(0);
 
-        FileAttachmentEntity fileAttachmentEntity = fileAttachmentEntityList.get(0);//原始文件信息，只有一条
-        //获取解压后的文件夹路径
-        String path = fileAttachmentEntity.getAttachment().substring(0,fileAttachmentEntityList.get(0).getAttachment().lastIndexOf("."));
-
+        FileAttachmentEntity fileAttachmentEntity = getFileAttachment(fileAttachmentId, errorList);
+        String path = fileAttachmentEntity.getAttachment().substring(0,fileAttachmentEntity.getAttachment().lastIndexOf("."));
         //获取解压文件夹内所有的文件
         List<File> fileList = new ArrayList<>();
         File baseFile = new File(path);
         PublicUtils.getAllFile(baseFile,fileList);
-
-        //通过模板组编号获取数据模板
-        Long fileTemplateGroupId = fileAttachmentEntityList.get(0).getTemplateGroupId();
-
         //通过fileTemplateGroupId获取模板组
-        List<FileTemplateGroupEntity> fileTemplateGroupEntityList = getFileTemplateGroupEntities(userId, fileTemplateGroupId);//没有对应关系表直接平铺
+        List<FileTemplateGroupEntity> fileTemplateGroupEntityList = getFileTemplateGroupEntities( fileAttachmentEntity.getTemplateGroupId(),errorList);
+        //获取模板，清洗字段组，清洗字段，树形结构
+        List<FileTemplateDto> fileTemplateDtoList = null;
+        if(!CollectionUtils.isEmpty(fileTemplateGroupEntityList)) {
+            fileTemplateDtoList=     getFileTemplateDtoList(fileTemplateGroupEntityList,errorList);
+        }
+
+        if(CollectionUtils.isEmpty(fileList)){
+            errorList.add(new Error(ErrorCode_Enum.FILE_01_001.getCode(),ErrorCode_Enum.FILE_01_001.getMessage()));
+            return false;
+        }
+
+        if(CollectionUtils.isEmpty(fileTemplateDtoList)){
+            errorList.add(new Error(ErrorCode_Enum.FILE_01_002.getCode(),ErrorCode_Enum.FILE_01_002.getMessage()));
+            return false;
+        }
 
 
-        List<FileParsingFailedEntity>  fileParsingFailedEntityListSql = new ArrayList<>();
+        List<File> fileListNew = new ArrayList<>();
+        fileListNew.addAll(fileList);
+        /*
+         *模板与文件进行配对map（key：模板，value：对应的文件列表）
+         */
+        Map<FileTemplateDto, List<File>> mapTemplate2File = template2Files(fileListNew, fileTemplateDtoList);
+        fileDetailFailedSave(userId, fileAttachmentEntity, fileListNew);
 
-        //通过模板id获取模板信息和模板字段信息，并用当前模板对文件依次进行解析
-        for(FileTemplateGroupEntity fileTemplateGroupEntityBean : fileTemplateGroupEntityList){
+        //创建多线程，一个模板创建一个线程,在子线程内分别入库
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
 
-            //获取模板基本信息
-            FileTemplateEntity fileTemplateEntityBean = getFileTemplateEntity(userId, fileTemplateGroupEntityBean);
-            String[] file_keyArr = {};
-            String[] file_excludeArr = {};
-            //文件名关键字
-            if(StringUtils.isNotEmpty(fileTemplateEntityBean.getTemplateKey())) {
-                file_keyArr = fileTemplateEntityBean.getTemplateKey().split("&&");
+        //进行文件读取
+        List<File> matchFileList = new ArrayList<>();
+        for(Map.Entry<FileTemplateDto, List<File>> entry : mapTemplate2File.entrySet()){
+            FileTemplateDto  fileTemplateDto = entry.getKey();
+            List<File> fileList4Template = entry.getValue();
+            //index[0] :tableName ;index[01: tableId
+            Object[] tableInfos = createMppTable(userId,fileAttachmentEntity,fileTemplateDto);
+            String insertSql = getInsertSql(fileAttachmentEntity.getId(),fileAttachmentEntity.getCaseId(),fileTemplateDto.getFileTemplateDetailDtoList(),(String) tableInfos[0],fileTemplateDto.getId());
+
+
+            //key:模板字段id编号；value：正则表达式列表；用于导入前数据校验
+            Map<Long,FileRinseDetailDto>  regularMap = new HashMap<>();
+            for(FileTemplateDetailDto fileTemplateDetailDtoBean : fileTemplateDto.getFileTemplateDetailDtoList()){
+                regularMap.put(fileTemplateDetailDtoBean.getId(),fileTemplateDetailDtoBean.getFileRinseDetailDto());
             }
-            //文件名关键字排除
-            if(StringUtils.isNotEmpty(fileTemplateEntityBean.getExclude())) {
-                file_excludeArr = fileTemplateEntityBean.getExclude().split("&&");
-            }
-            //获取该模板字段信息
-            FileTemplateDetailEntity fileTemplateDetailEntitySql = new FileTemplateDetailEntity();
-            fileTemplateDetailEntitySql.setUserId(userId);
-            fileTemplateDetailEntitySql.setTemplateId(fileTemplateGroupEntityBean.getTemplateId());
-            List<FileTemplateDetailEntity> fileTemplateDetailEntityList =  fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntitySql);
 
-            //该模板未配置字段直接跳到下一个模板
-            if(CollectionUtils.isEmpty(fileTemplateDetailEntityList)){
-                continue;
-            }
+            //多线程执行文件读取
+            executorService.execute(new Runnable() {
+                @SneakyThrows
+                @Override
+                public void run() {
+                    for(File file : fileList4Template){
+                        Long fileSeq = sequenceMapper.getSeq("file_detail");
+                        if(file.getName().contains(".csv")){
+                            csvCount.incrementAndGet();
+                            try {
+                                fileDoParsingServiceImpl.doParsingCsv(userId,fileAttachmentEntity.getCaseId(),
+                                                                      fileTemplateDto,file,tableInfos,insertSql,regularMap,fileSeq, fileAttachmentId, errorList);
 
-            //key:sort_no排序编号；value：正则表达式列表；用于导入前数据清洗
-            Map<String,List<String>>  regularMap = new HashMap<>();
-            for(FileTemplateDetailEntity fileTemplateDetailEntityBean : fileTemplateDetailEntityList){
-                List<String>  regularList = new ArrayList<>();
-               if(StringUtils.isNotEmpty(fileTemplateDetailEntityBean.getRegular())){
-                   String[] regulars = fileTemplateDetailEntityBean.getRegular().split("&&");
-                   regularList.addAll(Arrays.asList(regulars));
-               }
-               regularMap.put(fileTemplateDetailEntityBean.getSortNo(),regularList);
-            }
-
-            //对模板字段按排序字段进行排序
-            PublicUtils.fileTemplateDetailEntityListSort(fileTemplateDetailEntityList);
-
-            //用该模板解析对应的文件
-            breakFor:  for(File file : fileList){
-
-                boolean key_flag = false;
-
-                //判断文件名排除字段,优先级高，命中一个直接对下一个文件进行操作
-                for(String str : file_excludeArr){
-                    if(StringUtils.isNotEmpty(str) && file.getName().contains(str.trim())){
-                        break  breakFor;
-                    }
-                }
-                //判断文件名字段,都不满足continue
-                for(String str : file_keyArr){
-                    if(StringUtils.isNotEmpty(str) && file.getName().contains(str.trim())){
-                        key_flag = true;
-                    }
-                }
-
-                Long fileSeq = sequenceMapper.getSeq("file_detail");
-                FileDetailEntity fileDetailEntityfSql = new FileDetailEntity();
-                boolean hasImport = false;
-                //匹配到文件名则进行解析
-                if(key_flag){
-                    //数据总函数
-                    Integer rowCount = 0;
-                    Integer importRowCount = 0;
-
-                    //从文件信息表中获取已有存库的mpp表名
-                    String tableName = getMppTableName(userId, fileAttachmentEntity, fileTemplateGroupEntityBean);
-                    //先建表再存入数据库，数据库中没有，就是mppp没有创建表。则进行建表
-                    tableName = createMppTable(userId,fileDetailEntityfSql,fileAttachmentEntity, fileTemplateEntityBean, fileTemplateDetailEntityList, tableName);
-                    //组装insert语句
-                    String sqlInsert = getInsertSql(fileAttachmentEntity,fileTemplateDetailEntityList, tableName);
-
-                    //进行文件解析
-                    //获取文件编号
-                    String fileType = "";
-                    if(file.getName().contains(".csv")) {
-                        hasImport = true;
-                        fileType = ".csv";
-                        //文件列和表列进行匹配
-                        //获取文件列
-                        Map<String[],Integer> feildRefIndexMap = new HashMap();//key:表字段的排序编号，value:cav列索引
-                        CsvReader csvReader = new CsvReader();
-                        CsvContainer csvGbk = csvReader.read(file, Charset.forName("GBK"));
-                        List<CsvRow>  rows = csvGbk.getRows();
-                        rowCount = rows.size()-1;
-                        //获取csv和排序字段的对应关系
-                        getFeildRefIndex(fileTemplateDetailEntityList, feildRefIndexMap, rows);
-                        //如果没有匹配到数据,utf8-也解析一次。满足的情况下进行覆盖
-                        if(CollectionUtils.isEmpty(feildRefIndexMap)){
-                            rows = null;
-                            csvGbk = null;//让GC尽快销毁对象
-                            CsvContainer csvUtf8 = csvReader.read(file, Charset.forName("UTF-8"));
-                               rows = csvUtf8.getRows();
-                            getFeildRefIndex(fileTemplateDetailEntityList, feildRefIndexMap, rows);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
-                        //存在对应关系则进行解析，解析后组装成sql进行存库
 
-                        if(!CollectionUtils.isEmpty(feildRefIndexMap)){
-                            nextRow:  for(int i=1;i<rows.size();i++){
-                                String sqlInsertExec = sqlInsert;
-                                for (Map.Entry<String[], Integer> entry : feildRefIndexMap.entrySet()) {
-                                    //进行正则校验
-                                    boolean checkRegular = false;
-                                    List<String> regulars =  regularMap.get(entry.getKey()[0]);
-                                    //正则表达式不为空进行正则校验
-                                    if(!CollectionUtils.isEmpty(regulars)) {
-                                        for (String regular : regulars) {
-                                            if (rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "").matches(regular)) {
-                                                checkRegular = true;
-                                                break;//只要匹配一个就跳出
-                                            }
-                                        }
-                                        if (!checkRegular) {
-                                            //全都不匹配
-                                            //失败记录存入失败表
-                                            FileParsingFailedEntity fileParsingFailedEntitySql = new FileParsingFailedEntity();
-                                            fileParsingFailedEntitySql.setRowNumber(String.valueOf(i));
-                                            fileParsingFailedEntitySql.setFileDetailId(fileSeq);
-                                            fileParsingFailedEntitySql.setFileTemplateId(fileTemplateGroupEntityBean.getTemplateId());
-                                            fileParsingFailedEntitySql.setFileTemplateDetailId(Long.parseLong(entry.getKey()[1]));
-                                            fileParsingFailedEntitySql.setContent(rows.get(i).getField(entry.getValue()));
-                                            fileParsingFailedEntitySql.setCaseId(fileAttachmentEntity.getCaseId());
-                                            fileParsingFailedEntitySql.setTableName(tableName);
-                                            fileParsingFailedEntitySql.setUserId(userId);
-                                            fileParsingFailedEntitySql.setMark(false);
-                                            fileParsingFailedEntityListSql.add(fileParsingFailedEntitySql);
-                                            //调到下一行
-                                            continue nextRow;
-                                        }
-                                    }
-                                   sqlInsertExec = sqlInsertExec.replace("&&"+entry.getKey()[0]+"&&",entry.getValue() == null?"": rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
-                                }
-                               mppMapper.mppSqlExec(sqlInsertExec);
-                                importRowCount++;
-                           }
-                           //再次存入的话更改neo4j需同步状态
-                           if(importRowCount>0){
-                               FileTableEntity fileTableEntity = new FileTableEntity();
-                               fileTableEntity.setId(fileDetailEntityfSql.getFileTableId());
-                               fileTableEntity.setNeo4jInitFlag("0");
-                               fileTableMapper.updateFileTable(fileTableEntity);
-                           }
+                        if(file.getName().contains(".xls") || file.getName().contains(".xlsx")){
+                            xlsCount.incrementAndGet();
+                            try {
+                                fileDoParsingServiceImpl.doParsingExcel(userId, fileAttachmentEntity.getCaseId(),
+                                        fileTemplateDto, file, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId, errorList);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+
                         }
-                        csvCount++;
-                        //存入文件信息表
 
-                    }else if(file.getName().contains(".xls")){
-                        fileType = ".xls";
-                        hasImport = true;
-
-                    }else if(file.getName().contains(".xlsx")){
-                        fileType = ".xlsx";
-                        hasImport = true;
+                        //进行数据清洗
+                        fileDoParsingServiceImpl.doRinse(fileTemplateDto,tableInfos, fileSeq, errorList);
 
                     }
-                    //把文件信息存入文件信息表
-                    fileDetailEntityfSql.setId(fileSeq);
-                    fileDetailEntityfSql.setFileTemplateId(fileTemplateGroupEntityBean.getTemplateId());
-                    fileDetailEntityfSql.setUserId(userId);
-                    fileDetailEntityfSql.setCaseId(fileAttachmentEntity.getCaseId());
-                    fileDetailEntityfSql.setFileAttachmentId(fileAttachmentEntity.getId());
-                    fileDetailEntityfSql.setFileName(file.getName());
-                    fileDetailEntityfSql.setFilePath(file.getAbsolutePath());
-                    fileDetailEntityfSql.setFileType(fileType);
-                    fileDetailEntityfSql.setHasImport(hasImport);
-                    fileDetailEntityfSql.setImportRowCount(importRowCount);
-                    fileDetailEntityfSql.setRowCount(rowCount);
-                    fileDetailEntityfSql.setTableName(tableName);
-                    //把信息存入文件信息表
-                    fileDetailMapper.fileDetailInsert(fileDetailEntityfSql);
+
                 }
-                //把为不匹配的文件信息入库
-                else{
-                    fileDetailEntityfSql.setId(fileSeq);
-                    fileDetailEntityfSql.setUserId(userId);
-                    fileDetailEntityfSql.setCaseId(fileAttachmentEntity.getCaseId());
-                    fileDetailEntityfSql.setFileAttachmentId(fileAttachmentEntity.getId());
-                    fileDetailEntityfSql.setFileName(file.getName());
-                    fileDetailEntityfSql.setFilePath(file.getAbsolutePath());
-                    fileDetailEntityfSql.setHasImport(hasImport);
-                    //把信息存入文件信息表
-                    fileDetailMapper.fileDetailInsert(fileDetailEntityfSql);
-                }
+            });
+        }
+
+        //如果之前已经存库则获取表名
+        return result;
+    }
+
+    private void fileDetailFailedSave(Long userId, FileAttachmentEntity fileAttachmentEntity, List<File> fileListNew) {
+        //把为不匹配的文件信息入库
+        for(File fileFailed : fileListNew){
+            Long fileSeq = sequenceMapper.getSeq("file_detail");
+            FileDetailEntity fileDetailEntityfSql = new FileDetailEntity();
+            fileDetailEntityfSql.setId(fileSeq);
+            fileDetailEntityfSql.setUserId(userId);
+            fileDetailEntityfSql.setCaseId(fileAttachmentEntity.getCaseId());
+            if(fileFailed.getName().contains(".csv")) {
+                fileDetailEntityfSql.setFileType("csv");
+            } else if(fileFailed.getName().contains(".xls")){
+                fileDetailEntityfSql.setFileType("xls");
+            } else if(fileFailed.getName().contains(".xlsx")){
+                fileDetailEntityfSql.setFileType("xlsx");
+            } else{
+                fileDetailEntityfSql.setFileType("");
             }
+            fileDetailEntityfSql.setFileAttachmentId(fileAttachmentEntity.getId());
+            fileDetailEntityfSql.setFileName(fileFailed.getName());
+            fileDetailEntityfSql.setFilePath(fileFailed.getAbsolutePath());
+            fileDetailEntityfSql.setRowCount(0);
+            fileDetailEntityfSql.setHasImport(false);
+            //把信息存入文件信息表
+            fileDetailMapper.fileDetailInsert(fileDetailEntityfSql);
         }
-        //把不满足的信息入库
-        if(!CollectionUtils.isEmpty(fileParsingFailedEntityListSql)) {
-            fileParsingFailedMapper.fileParsingFailedInsert(fileParsingFailedEntityListSql);
-        }
-
-        return true;
-    }
-
-    //获取原始文件信息
-    private List<FileAttachmentEntity> getFileAttachmentEntities(Long userId, Long fileAttachmentId, List<Error> errorList) {
-        FileAttachmentEntity fleAttachmentEntitySql = new FileAttachmentEntity();
-        fleAttachmentEntitySql.setId(fileAttachmentId);
-        fleAttachmentEntitySql.setUserId(userId);
-        //从数据库获取文件路径
-        List<FileAttachmentEntity> fileAttachmentEntityList = null;
-        try {
-            fileAttachmentEntityList = fileAttachmentMapper.selectFileAttachmentList(fleAttachmentEntitySql);
-        }catch (Exception e){
-            e.printStackTrace();
-            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表file_attachment出错",e.toString()));
-        }
-        return fileAttachmentEntityList;
-    }
-
-    //获取模板信息
-    private FileTemplateEntity getFileTemplateEntity(Long userId, FileTemplateGroupEntity fileTemplateGroupEntityBean) {
-        FileTemplateEntity fileTemplateEntitySql = new FileTemplateEntity();
-        fileTemplateEntitySql.setUserId(userId);
-        fileTemplateEntitySql.setId(fileTemplateGroupEntityBean.getTemplateId());
-        List<FileTemplateEntity> fileTemplateEntityList = fileTemplateMapper.selectFileTemplateList(fileTemplateEntitySql);
-        return fileTemplateEntityList.get(0);
-    }
-
-
-
-    //如果之前已经存库则获取表名
-    private String getMppTableName(Long userId, FileAttachmentEntity fileAttachmentEntity, FileTemplateGroupEntity fileTemplateGroupEntityBean) {
-        //通过模板编号、案件编号、用户编号、查询表file_detail，查看有无生成mpp表名
-        FileDetailEntity fileDetailEntitySql = new FileDetailEntity();
-        fileDetailEntitySql.setFileTemplateId(fileTemplateGroupEntityBean.getTemplateId());//设置模板id
-        fileDetailEntitySql.setCaseId(fileAttachmentEntity.getCaseId());
-        fileDetailEntitySql.setUserId(userId);
-        return fileDetailMapper.selectTableName(fileDetailEntitySql);
-    }
-
-    //创建mpp数据表
-    private String createMppTable(Long userId,FileDetailEntity fileDetailEntityfSql,FileAttachmentEntity fileAttachmentEntity, FileTemplateEntity fileTemplateEntityBean, List<FileTemplateDetailEntity> fileTemplateDetailEntityList, String tableName) {
-        if(StringUtils.isEmpty(tableName)) {
-            //组装建表和插入语句
-            //表名="base_"+模板配置前缀+"_"+案件编号
-            tableName = "base_" + fileTemplateEntityBean.getTablePrefix() + "_" + fileAttachmentEntity.getCaseId()+"_"+userId;
-            String sqlCreate =  "CREATE TABLE "+tableName+" ( id serial not null,";
-            for(FileTemplateDetailEntity fileTemplateDetailEntityBean : fileTemplateDetailEntityList){
-                 sqlCreate += fileTemplateDetailEntityBean.getFieldName() +" varchar NULL,";
-            }
-            sqlCreate += "file_attachment_id  varchar NULL);";
-            mppMapper.mppSqlExec(sqlCreate);
-
-            FileTableEntity fileTableEntity = new FileTableEntity();
-            fileTableEntity.setCaseId(fileAttachmentEntity.getCaseId());
-            fileTableEntity.setFileTemplateId(fileTemplateEntityBean.getId());
-            fileTableEntity.setTableName(tableName);
-            fileTableEntity.setUserId(userId);
-            fileTableEntity.setTitle(fileAttachmentEntity.getCaseId()+"_"+fileTemplateEntityBean.getTemplateName());
-            fileTableMapper.saveFileTable(fileTableEntity);
-            fileDetailEntityfSql.setFileTableId(fileTableEntity.getId());
-        }else{
-            FileTableEntity fileTableEntity = new FileTableEntity();
-            fileTableEntity.setCaseId(fileAttachmentEntity.getCaseId());
-            fileTableEntity.setFileTemplateId(fileTemplateEntityBean.getId());
-            fileTableEntity.setUserId(userId);
-            fileTableEntity = fileTableMapper.findFileTableList(fileTableEntity).get(0);
-            fileDetailEntityfSql.setFileTableId(fileTableEntity.getId());
-        }
-        return tableName;
     }
 
     //组装插入数据语句
-    private String getInsertSql(FileAttachmentEntity fileAttachmentEntity,List<FileTemplateDetailEntity> fileTemplateDetailEntityList, String tableName) {
+    private String getInsertSql(Long fileAttachmentId ,Long caseId,List<FileTemplateDetailDto> fileTemplateDetailDtoList, String tableName,Long fileTemplateId) {
         //组装insertSql语句
         String sqlInsert = "insert into "+tableName+"(";
         String  sqlValues = "";
-        for(FileTemplateDetailEntity fileTemplateDetailEntityBean : fileTemplateDetailEntityList){
-            sqlInsert += fileTemplateDetailEntityBean.getFieldName()+",";
-            sqlValues += "'&&"+fileTemplateDetailEntityBean.getSortNo()+"&&',";
+        for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDetailDtoList){
+            sqlInsert += "`"+fileTemplateDetailDto.getFieldName()+"`,";
+            sqlValues += "'&&"+fileTemplateDetailDto.getId()+"&&',";
         }
-        sqlInsert += "file_attachment_id";
-        sqlValues += "'"+fileAttachmentEntity.getId()+"'";
+        sqlInsert += "file_template_id,case_id,file_attachment_id,file_detail_id,mppId2ErrorId";
+        sqlValues += "'"+fileTemplateId+"','"+caseId+"','"+fileAttachmentId+"','&&xx_file_detail_id_xx&&',"+"'&&xx_mppId2ErrorId_xx&&'";
         sqlInsert +=") values(" +sqlValues+");";
         return sqlInsert;
     }
 
-    //获取csv和排序字段的对应关系
-    private void getFeildRefIndex(List<FileTemplateDetailEntity> fileTemplateDetailEntityList, Map<String[], Integer> feildRefIndex, List<CsvRow> rows) {
-           if(!CollectionUtils.isEmpty(fileTemplateDetailEntityList) && !CollectionUtils.isEmpty(rows) ){
-               for(FileTemplateDetailEntity feild : fileTemplateDetailEntityList){
-                       String[] idAndSortNo = new String[2];
-                       idAndSortNo[0] = feild.getSortNo();
-                       idAndSortNo[1] = String.valueOf(feild.getId());
-                       feildRefIndex.put(idAndSortNo,null);//没有对应的表头也要保留到map中，为insertsql保留所有字段
-                       String[] excludeList =feild.getExclude().split("&&") ;
-                       String[] keyList = feild.getFieldKey().split("&&");
-                       CsvRow csvRowHead = rows.get(0);
-                       List<String> headList = csvRowHead.getFields();
-                       breakFor:  for(int i=0;i<headList.size();i++){
-                            if(null != excludeList && excludeList.length>0 ){
-                                  for(String exclude:excludeList){
-                                        if(StringUtils.isNotEmpty(exclude) && headList.get(i).contains(exclude.trim())){
-                                            break  breakFor;
-                                        }
-                                  }
-                            }
-                            if(null != keyList && keyList.length>0 ){
-                                  for(String key:keyList){
-                                      if(StringUtils.isNotEmpty(key) && headList.get(i).contains(key.trim())){
-                                          feildRefIndex.put(idAndSortNo,i);
-                                          break ;
-                                      }
-                                  }
-                            }
-                       }
-               }
-           }
+    /**
+     * 创建mpp数据表,获取表名和表id
+     * @param userId
+     * @param fileAttachmentEntity
+     * @param fileTemplateDto
+     * @return   index[0] :tableName ;index[01: tableId
+     */
+    private Object[] createMppTable(Long userId,FileAttachmentEntity fileAttachmentEntity, FileTemplateDto fileTemplateDto) {
+        Object[] tableInfos = new Object[2];
+        //如果之前已经存库则获取表名
+        FileTableEntity fileTableEntity = getMppTableName(fileAttachmentEntity.getCaseId(), fileTemplateDto.getId());
+        //之前没有创建表则新建
+        if(null == fileTableEntity) {
+            //组装建表和插入语句
+            //表名="base_"+模板配置前缀+"_"+案件编号
+            String tableName = "base_" + fileTemplateDto.getTablePrefix() + "_" + fileAttachmentEntity.getCaseId()+"_"+userId;
+            tableInfos[0] = tableName;
+            String sqlCreate =  "CREATE TABLE `"+tableName+"` ( id serial not null,"+" mppId2ErrorId int8 NULL,"+" file_detail_id int4 NULL,"+" file_template_id int4 NULL,";
+            for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDto.getFileTemplateDetailDtoList()){
+                sqlCreate += "`"+fileTemplateDetailDto.getFieldName() +"` varchar NULL,";
+            }
+            sqlCreate += "file_attachment_id  varchar NULL,case_id varchar NULL);";
+
+            String index_file_template_id = "CREATE INDEX "+tableName+"_mppid2errorid_idx ON "+tableName+" USING btree (file_template_id);";
+            String index_file_detail_id = "CREATE INDEX "+tableName+"_file_detail_id ON "+tableName+" USING btree (file_detail_id);";
+            mppMapper.mppSqlExec(sqlCreate);
+            mppMapper.mppSqlExec(index_file_template_id);
+            mppMapper.mppSqlExec(index_file_detail_id);
+
+            FileTableEntity fileTableEntity4Sql = new FileTableEntity();
+            fileTableEntity4Sql.setCaseId(fileAttachmentEntity.getCaseId());
+            fileTableEntity4Sql.setFileTemplateId(fileTemplateDto.getId());
+            fileTableEntity4Sql.setTableName(tableName);
+            fileTableEntity4Sql.setTitle(fileAttachmentEntity.getCaseId()+"_"+fileTemplateDto.getTemplateName());
+            fileTableEntity4Sql.setUserId(userId);
+            fileTableMapper.saveFileTable(fileTableEntity4Sql);
+            tableInfos[1] =  fileTableEntity4Sql.getId();
+        }else{
+            String tableName = fileTableEntity.getTableName();
+            tableInfos[0] = tableName;
+            tableInfos[1] = fileTableEntity.getId();
+        }
+        return tableInfos;
+    }
+
+    //模板与文件进行配对map（key：模板，value：对应的文件列表）
+    //把不满足的文件信息直接入库
+    private Map<FileTemplateDto, List<File>> template2Files(List<File> fileList, List<FileTemplateDto> fileTemplateDtoList) {
+        Map<FileTemplateDto, List<File>> mapTemplate2File = new HashMap<>();
+        for(FileTemplateDto fileTemplateDto : fileTemplateDtoList){
+            //获取关键字
+            String templateKeys = fileTemplateDto.getTemplateKey();
+            if(StringUtils.isEmpty(templateKeys)){
+                  continue;
+            }
+            List<String>  templateKeyList = Arrays.asList(templateKeys.split("&&"));
+            //获取关键字排除
+            String excludes = fileTemplateDto.getExclude();
+            List<String> excludeList = new ArrayList<>();
+            if(!StringUtils.isEmpty(excludes)){
+                excludeList = Arrays.asList(excludes.split("&&"));
+            }
+            List<File>  fileList4Template = new ArrayList<>();
+            for(Iterator<File> it = fileList.iterator(); it.hasNext();){
+                File file = it.next();
+                boolean flag1 = false;
+                boolean flag2 = true;
+                //满足关键字
+                for(String templateKey : templateKeyList){
+                    if(file.getName().contains(templateKey.trim())){
+                        flag1 = true;
+                        break;
+                    }
+                }
+                //不被排除字段进行排除
+                for(String exclude : excludeList){
+                   if(file.getName().contains(exclude.trim())){
+                       flag2 = false;
+                       break;
+                   }
+                }
+                if(flag1 && flag2){
+                    fileList4Template.add(file);
+                    //把有对应模板的文件进行删除，留下没有对应模板的进行存库
+                    it.remove();
+                }
+            }
+            if(!CollectionUtils.isEmpty(fileList4Template)){
+                mapTemplate2File.put(fileTemplateDto,fileList4Template);
+            }
+        }
+        return mapTemplate2File;
+    }
+
+    /**
+     * 如果之前已经存库则获取表名
+     * @param caseId:案件编号
+     * @param templateId：模板编号
+     * @return
+     */
+    private FileTableEntity getMppTableName( Long caseId, Long templateId) {
+        FileTableEntity fileTableEntity = new FileTableEntity();
+        fileTableEntity.setCaseId(caseId);
+        fileTableEntity.setFileTemplateId(templateId);
+        List<FileTableEntity> fileTableEntityList = fileTableMapper.findFileTableList(fileTableEntity);
+        if(CollectionUtils.isEmpty(fileTableEntityList)){
+            return null;
+        }
+        return fileTableEntityList.get(0);
+    }
+
+
+    //获取原始文件信息
+    private FileAttachmentEntity getFileAttachment(Long fileAttachmentId, List<Error> errorList){
+        //从数据库获取文件路径
+        FileAttachmentEntity fileAttachmentEntity = null;
+        try {
+            fileAttachmentEntity = fileAttachmentMapper.selectFileAttachmentByPrimaryKey(fileAttachmentId);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表file_attachment出错",e.toString()));
+        }
+        return fileAttachmentEntity;
     }
 
     //通过fileTemplateGroupId获取模板组
-    private List<FileTemplateGroupEntity> getFileTemplateGroupEntities(Long userId, Long fileTemplateGroupId) {
+    private List<FileTemplateGroupEntity> getFileTemplateGroupEntities( Long fileTemplateGroupId, List<Error> errorList) {
         FileTemplateGroupEntity fileTemplateGroupEntitySql = new FileTemplateGroupEntity();
-        fileTemplateGroupEntitySql.setUserId(userId);
         fileTemplateGroupEntitySql.setGroupId(fileTemplateGroupId);
-        return fileTemplateGroupMapper.selectFileTemplateGroupList(fileTemplateGroupEntitySql);
+        List<FileTemplateGroupEntity> fileTemplateGroupEntityList = new ArrayList<>();
+        try {
+            fileTemplateGroupEntityList = fileTemplateGroupMapper.selectFileTemplateGroupList(fileTemplateGroupEntitySql);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表file_template_group出错",e.toString()));
+        }
+        return fileTemplateGroupEntityList;
+    }
+
+    //获取模板，清洗字段组，清洗字段，树形结构
+   private List<FileTemplateDto>  getFileTemplateDtoList(List<FileTemplateGroupEntity> fileTemplateGroupEntityList ,List<Error> errorList) throws IllegalAccessException {
+       List<FileTemplateDto> fileTemplateDtoList = new ArrayList<>();
+       for (FileTemplateGroupEntity fileTemplateGroupEntity : fileTemplateGroupEntityList){
+           //获取模板基本信息
+           FileTemplateEntity fileTemplateEntity = getFileTemplateEntity( fileTemplateGroupEntity,errorList);
+           FileTemplateDto fileTemplateDto = new FileTemplateDto();
+           PublicUtils.trans(fileTemplateEntity,fileTemplateDto);
+
+           //获取清洗字段组
+           FileRinseGroupEntity fileRinseGroupEntity = fileRinseGroupMapper.selectByPrimaryKey(fileTemplateDto.getFileRinseGroupId());
+           FileRinseGroupDto fileRinseGroupDto = new FileRinseGroupDto();
+           PublicUtils.trans(fileRinseGroupEntity,fileRinseGroupDto);
+           fileTemplateDto.setFileRinseGroupDto(fileRinseGroupDto);
+
+           //获取该模板字段信息
+           List<FileTemplateDetailDto> fileTemplateDetailDtoList = new ArrayList<>();
+           fileTemplateDto.setFileTemplateDetailDtoList(fileTemplateDetailDtoList);
+           FileTemplateDetailEntity fileTemplateDetailEntity4Sql = new FileTemplateDetailEntity();
+           fileTemplateDetailEntity4Sql.setTemplateId(fileTemplateGroupEntity.getTemplateId());
+           List<FileTemplateDetailEntity> fileTemplateDetailEntityList =  fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntity4Sql);
+           if(CollectionUtils.isEmpty(fileTemplateDetailEntityList)){
+               continue;
+           }
+           //字段不为空的模板，才参与解析。
+           fileTemplateDtoList.add(fileTemplateDto);
+
+           for(FileTemplateDetailEntity fileTemplateDetailEntity : fileTemplateDetailEntityList){
+               FileTemplateDetailDto fileTemplateDetailDto = new FileTemplateDetailDto();
+               PublicUtils.trans(fileTemplateDetailEntity,fileTemplateDetailDto);
+               fileTemplateDetailDtoList.add(fileTemplateDetailDto);
+
+               //如果没有配置清洗字段则跳过
+               if(null == fileTemplateDetailDto.getFileRinseDetailId()){
+                     continue;
+               }
+
+               //获取清洗字段
+               FileRinseDetailEntity fileRinseDetailEntity = fileRinseDetailMapper.selectByPrimaryKey(fileTemplateDetailDto.getFileRinseDetailId());
+               FileRinseDetailDto fileRinseDetailDto = new FileRinseDetailDto();
+               PublicUtils.trans(fileRinseDetailEntity,fileRinseDetailDto);
+               fileTemplateDetailDto.setFileRinseDetailDto(fileRinseDetailDto);
+               //获取正则表达式
+               List<RegularDetailDto>  regularDetailDtoListY = new ArrayList<>();
+               List<RegularDetailDto>  regularDetailDtoListN = new ArrayList<>();
+               //获取正则表达式
+               //获取清洗字段与正则表达式的对应关系
+               List<FileRinseRegularEntity> fileRinseRegularEntityList = fileRinseRegularMapper.selectByFileRinseDetailId(fileRinseDetailEntity.getId());
+
+               if(!CollectionUtils.isEmpty(fileRinseRegularEntityList)) {
+                   for (FileRinseRegularEntity fileRinseRegularEntity : fileRinseRegularEntityList) {
+                       if ("1".equals(fileRinseRegularEntity.getType())) {
+                           RegularDetailEntity regularDetailEntityY = regularDetailMapper.selectByPrimaryKey(fileRinseRegularEntity.getRegularDetailId());
+                           RegularDetailDto regularDetailDtoY = new RegularDetailDto();
+                           PublicUtils.trans(regularDetailEntityY, regularDetailDtoY);
+                           regularDetailDtoListY.add(regularDetailDtoY);
+                       }
+                       if ("2".equals(fileRinseRegularEntity.getType())) {
+                           RegularDetailEntity regularDetailEntityN = regularDetailMapper.selectByPrimaryKey(fileRinseRegularEntity.getRegularDetailId());
+                           RegularDetailDto regularDetailDtoN = new RegularDetailDto();
+                           PublicUtils.trans(regularDetailEntityN, regularDetailDtoN);
+                           regularDetailDtoListY.add(regularDetailDtoN);
+                       }
+                   }
+                   fileRinseDetailDto.setRegularDetailDtoListY(regularDetailDtoListY);
+                   fileRinseDetailDto.setRegularDetailDtoListN(regularDetailDtoListN);
+               }
+           }
+       }
+       return fileTemplateDtoList;
+   }
+
+    //获取模板信息
+    private FileTemplateEntity getFileTemplateEntity( FileTemplateGroupEntity fileTemplateGroupEntityBean,List<Error> errorList) {
+        FileTemplateEntity fileTemplateEntity = null;
+        try {
+            fileTemplateEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(fileTemplateGroupEntityBean.getTemplateId());
+        }catch (Exception e){
+          e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表file_template出错",e.toString()));
+        }
+        return fileTemplateEntity;
     }
 }

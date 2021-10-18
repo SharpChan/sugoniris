@@ -6,7 +6,7 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseRegularDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseRegularEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
-import com.sugon.iris.sugonservice.service.FileService.FileRinseRegularService;
+import com.sugon.iris.sugonservice.service.fileService.FileRinseRegularService;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;

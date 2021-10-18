@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.RinseBusinessRepeatMapper" >
+
+    <!--结果集-->
+    <resultMap id="ResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RinseBusinessRepeatEntity" >
+        <result column="id" property="id" jdbcType="BIGINT" />
+        <result column="file_template_id" property="fileTemplateId" jdbcType="BIGINT" />
+        <result column="fields" property="fields" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List" >
+        id,file_template_id,fields
+    </sql>
+
+    <select id="getRinseBusinessRepeatListByTemplateId"  resultMap="ResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from rinse_business_repeat
+        where
+              file_template_id = #{fileTemplateId,jdbcType=BIGINT}
+    </select>
+
+    <!--单个插入-->
+    <insert id="saveRinseBusinessRepeat" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RinseBusinessRepeatEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into rinse_business_repeat
+        (<include refid="Base_Column_List" />)
+        values
+        (
+        #{id,jdbcType=BIGINT},
+        #{fileTemplateId,jdbcType=BIGINT},
+        #{fields,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <delete id="deleteByPrimaryKey">
+        delete from rinse_business_repeat
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+</mapper>

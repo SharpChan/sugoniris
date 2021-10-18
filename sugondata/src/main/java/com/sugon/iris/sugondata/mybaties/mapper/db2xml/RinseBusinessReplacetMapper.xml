@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.RinseBusinessReplaceMapper" >
+
+    <!--结果集-->
+    <resultMap id="ResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RinseBusinessReplaceEntity" >
+        <result column="id" property="id" jdbcType="BIGINT" />
+        <result column="file_template_id" property="fileTemplateId" jdbcType="BIGINT" />
+        <result column="file_template_detail_id" property="fileTemplateDetailId" jdbcType="BIGINT" />
+        <result column="key" property="key" jdbcType="VARCHAR" />
+        <result column="value" property="value" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List" >
+        id,file_template_id,file_template_detail_id,`key`,`value`
+    </sql>
+
+    <select id="getRinseBusinessReplaceListByTemplateId"  resultMap="ResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from rinse_business_replace
+        where
+              file_template_id = #{fileTemplateId,jdbcType=BIGINT}
+    </select>
+
+    <!--单个插入-->
+    <insert id="saveRinseBusinessReplace" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RinseBusinessReplaceEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into rinse_business_replace
+        (<include refid="Base_Column_List" />)
+        values
+        (
+        #{id,jdbcType=BIGINT},
+        #{fileTemplateId,jdbcType=BIGINT},
+        #{fileTemplateDetailId,jdbcType=BIGINT},
+        #{key,jdbcType=VARCHAR},
+        #{value,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <delete id="deleteByPrimaryKey">
+        delete from rinse_business_replace
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+</mapper>

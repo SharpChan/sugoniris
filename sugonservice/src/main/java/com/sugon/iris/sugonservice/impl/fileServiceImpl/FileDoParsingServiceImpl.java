@@ -3,6 +3,7 @@ package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileDetailMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileParsingFailedMapper;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateDetailMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppErrorInfoMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.TableMapper;
@@ -12,11 +13,17 @@ import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.dtos.regularDtos.RegularDetailDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessNullDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessRepeatDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessReplaceDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessSuffixDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileParsingFailedEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.MppErrorInfoEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
-import com.sugon.iris.sugonservice.service.FileService.FileDoParsingService;
+import com.sugon.iris.sugonservice.service.fileService.FileDoParsingService;
+import com.sugon.iris.sugonservice.service.rinseBusinessService.RinseBusinessService;
 import de.siegmar.fastcsv.reader.CsvContainer;
 import de.siegmar.fastcsv.reader.CsvReader;
 import de.siegmar.fastcsv.reader.CsvRow;
@@ -31,7 +38,6 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +64,12 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
 
     @Resource
     private FileDetailMapper fileDetailMapper;
+
+    @Resource
+    private RinseBusinessService rinseBusinessServiceImpl;
+
+    @Resource
+    private FileTemplateDetailMapper fileTemplateDetailMapper;
 
     /**
      *
@@ -415,6 +427,94 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         }
         //保存文件信息
         saveFileDetail(userId, caeId, fileTemplateDto, file, tableInfos, fileSeq, fileAttachmentId, hasImport, fileType, rowCount, importRowCount);
+    }
+
+
+    @Override
+    public void doRinse(FileTemplateDto fileTemplateDto, Object[] tableInfos , Long fileSeq , List<Error> errorList) throws IllegalAccessException {
+        //通过模板id获取清洗信息
+        List<RinseBusinessNullDto> rinseBusinessNullDtoList = rinseBusinessServiceImpl.getNullBussList(fileTemplateDto.getId(),errorList);
+        List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList = rinseBusinessServiceImpl.getRepetBussList(fileTemplateDto.getId(),errorList);
+        List<RinseBusinessReplaceDto> rinseBusinessReplaceDtoList = rinseBusinessServiceImpl.getReplaceBussList(fileTemplateDto.getId(),errorList);
+        List<RinseBusinessSuffixDto>  rinseBusinessSuffixDtoList = rinseBusinessServiceImpl.getSuffixBussList(fileTemplateDto.getId(),errorList);
+
+        //进行null替换
+        String sql = "update "+tableInfos[0] +" _&condition&_ ";
+        String nullSql = "";
+        String whereSql = "";
+        if(!CollectionUtils.isEmpty(rinseBusinessNullDtoList)){
+              for(int i =0 ;i< rinseBusinessNullDtoList.size();i++){
+                    //获取需要更新的字段
+                  FileTemplateDetailEntity fileTemplateDetailEntity =  fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessNullDtoList.get(i).getFileTemplateDetailId());
+                  nullSql = "set " + fileTemplateDetailEntity.getFieldName() + "='" + rinseBusinessNullDtoList.get(i).getValue() + "' ";
+                  whereSql  = fileTemplateDetailEntity.getFieldName() +" is null or "+
+                                  fileTemplateDetailEntity.getFieldName()+"= 'null' or  trim("+
+                                  fileTemplateDetailEntity.getFieldName()+")='' and  file_detail_id ="+fileSeq;
+                  sql = sql.replace("_&condition&_",nullSql + " where  "+whereSql);
+                  mppMapper.mppSqlExec(sql);
+              }
+        }
+
+        //去重
+        String repeatSql = "select id,mppid2errorid  from " +
+                "(select row_number() OVER(PARTITION BY _&condition&_) AS rownum,id,mppid2errorid " +
+                "  from "+tableInfos[0]+"  where file_detail_id = "+fileSeq+")a where a.rownum > 1";
+        String repeatCondition = "";
+        if(!CollectionUtils.isEmpty(rinseBusinessRepeatDtoList)){
+            for(RinseBusinessRepeatDto rinseBusinessRepeatDto : rinseBusinessRepeatDtoList) {
+                //通过id获取字段名
+                String fields = rinseBusinessRepeatDto.getFields();
+                String[] fieldArr = fields.split(",");
+                for(int i =0 ;i < fieldArr.length;i++) {
+                    //通过id获取字段名
+                    FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessNullDtoList.get(i).getFileTemplateDetailId());
+                    if(i < fieldArr.length -1) {
+                        repeatCondition += fileTemplateDetailEntity.getFieldName()+",";
+                    }else{
+                        repeatCondition += fileTemplateDetailEntity.getFieldName();
+                    }
+                }
+                repeatSql.replace("_&condition&_",repeatCondition);
+                List<Map<String,Object>> mapList =  mppMapper.mppSqlExecForSearchRtMapList(repeatSql);
+                if(!CollectionUtils.isEmpty(mapList)){
+                    for(Map map : mapList) {
+                        Long id = (Long)map.get("id");
+                        String deleteSql = "DELETE FROM "+tableInfos[0]+" WHERE id = "+id;
+                        mppMapper.mppSqlExec(deleteSql);
+                        Long mppid2errorid = (Long)map.get("mppid2errorid");
+                        if(null != mppid2errorid && mppid2errorid != 0){
+                            mppErrorInfoMapper.deleteMppErrorInfoByMppid2errorid(mppid2errorid);
+                            fileParsingFailedMapper.deleteFileParsingFailedByMppid2errorid(mppid2errorid);
+                        }
+                    }
+                }
+            }
+        }
+
+        //字段关键字进行替换
+        String replaceSql = "update "+tableInfos[0] +" set _&condition&_";
+        if(!CollectionUtils.isEmpty(rinseBusinessReplaceDtoList)){
+            for(RinseBusinessReplaceDto rinseBusinessReplaceDto : rinseBusinessReplaceDtoList){
+                FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessReplaceDto.getFileTemplateDetailId());
+                String condition = fileTemplateDetailEntity.getFieldName() + "=regexp_replace("+fileTemplateDetailEntity.getFieldName()+",'"+rinseBusinessReplaceDto.getKey()+"','"+rinseBusinessReplaceDto.getValue()+"')" +
+                                   "where "+fileTemplateDetailEntity.getFieldName()+" ~ '" +rinseBusinessReplaceDto.getKey()+"' and file_detail_id="+fileSeq;
+                replaceSql = replaceSql.replace("_&condition&_",condition);
+                mppMapper.mppSqlExec(replaceSql);
+            }
+        }
+
+        //去除后缀
+        String suffixSql = "update "+tableInfos[0] +" set _&condition&_";
+        if(!CollectionUtils.isEmpty(rinseBusinessSuffixDtoList)){
+            for(RinseBusinessSuffixDto rinseBusinessSuffixDto : rinseBusinessSuffixDtoList){
+                FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessSuffixDto.getFileTemplateDetailId());
+                String condition = fileTemplateDetailEntity.getFieldName() + "=  reverse(substr(reverse("+fileTemplateDetailEntity.getFieldName()+"),position('"+rinseBusinessSuffixDto.getSuffix()+"' in reverse("+fileTemplateDetailEntity.getFieldName()+"))+1))"+
+                                   " where "+fileTemplateDetailEntity.getFieldName()+" like '%" +rinseBusinessSuffixDto.getSuffix()+"%' and file_detail_id="+fileSeq;
+                replaceSql = replaceSql.replace("_&condition&_",condition);
+                mppMapper.mppSqlExec(replaceSql);
+            }
+        }
+
     }
 
     private void saveFileDetail(Long userId, Long caeId, FileTemplateDto fileTemplateDto, File file, Object[] tableInfos, Long fileSeq, Long fileAttachmentId, boolean hasImport, String fileType, Integer rowCount, Integer importRowCount) {

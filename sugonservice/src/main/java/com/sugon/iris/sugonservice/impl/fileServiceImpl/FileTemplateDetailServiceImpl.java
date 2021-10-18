@@ -1,15 +1,20 @@
 package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
+import com.rnkrsoft.bopomofo4j.Bopomofo4j;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileRinseDetailMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateDetailMapper;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.RinseBusinessNullMapper;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.RinseBusinessRepeatMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessRepeatDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RinseBusinessRepeatEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
-import com.sugon.iris.sugonservice.service.FileService.FileTemplateDetailService;
+import com.sugon.iris.sugonservice.service.fileService.FileTemplateDetailService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -27,6 +32,12 @@ public class FileTemplateDetailServiceImpl implements FileTemplateDetailService 
 
     @Resource
     private FileRinseDetailMapper fileRinseDetailMapper;
+
+    @Resource
+    private RinseBusinessNullMapper rinseBusinessNullMapper;
+
+    @Resource
+    private RinseBusinessRepeatMapper rinseBusinessRepeatMapper;
 
     @Override
     public List<FileTemplateDetailDto> getFileTemplateDetailDtoList(User user, FileTemplateDetailDto fileTemplateDetailDto, List<Error> errorList) throws IllegalAccessException {
@@ -156,6 +167,20 @@ public class FileTemplateDetailServiceImpl implements FileTemplateDetailService 
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表file_template_detail出错",e.toString()));
         }
         return count;
+    }
+
+    @Override
+    public String getPinyin(String chinese, List<Error> errorList) {
+        //汉语句子->无音调拼音
+        String pinyinStr = Bopomofo4j.pinyin(chinese,2, false, false, ",");
+        String[]  pinyinStrArr = pinyinStr.split(",");
+        String result = "";
+        for(String str : pinyinStrArr){
+            if(!StringUtils.isEmpty(str)){
+                result += str.substring(0, 1);
+            }
+        }
+        return result;
     }
 
     private boolean checkRepet(User user, FileTemplateDetailDto fileTemplateDetailDto, List<Error> errorList) throws IllegalAccessException {

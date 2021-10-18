@@ -1,6 +1,6 @@
 package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
-import com.sugon.iris.sugonservice.service.FileService.TxtFileService;
+import com.sugon.iris.sugonservice.service.fileService.TxtFileService;
 import org.springframework.stereotype.Service;
 
 import java.io.*;

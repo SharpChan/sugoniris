@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Service
 @Qualifier("relationCreateServiceImpl")
 public class RelationCreateServiceImpl implements RelationCreateService {
