@@ -75,6 +75,16 @@ public class FileParsingFailedBean {
     private Long fileTemplateDetailId;
 
     /**
+     * 模板名称
+     */
+    private String templateName;
+
+    /**
+     * 字段关键字
+     */
+    private String fieldKey;
+
+    /**
      *问题处理
      */
     private Boolean mark;

@@ -9,5 +9,6 @@ public class DataRinseServiceImpl implements DataRinseService {
     @Override
     public void completeRinse() {
 
+
     }
 }

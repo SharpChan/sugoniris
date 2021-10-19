@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface FileCaseMapper {
 
+    FileCaseEntity selectFileCaseByPrimaryKey(Long id);
+
     List<FileCaseEntity> selectFileCaseEntityList(FileCaseEntity fileCaseEntity);
 
     int fileCaseInsert(FileCaseEntity fileCaseEntity);

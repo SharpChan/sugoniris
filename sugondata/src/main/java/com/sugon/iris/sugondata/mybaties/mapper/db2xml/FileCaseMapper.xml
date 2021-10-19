@@ -20,6 +20,16 @@
     </sql>
 
     <!--表查询-->
+    <select id="selectFileCaseByPrimaryKey"  resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        file_case
+        where
+             id = #{id}
+    </select>
+
+    <!--表查询-->
     <select id="selectFileCaseEntityList" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileCaseEntity" resultMap="BaseResultMap">
         SELECT
             <include refid="Base_Column_List" />

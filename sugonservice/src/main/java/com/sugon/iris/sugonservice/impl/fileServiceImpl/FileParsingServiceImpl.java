@@ -4,6 +4,7 @@ import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.*;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
+import com.sugon.iris.sugondomain.beans.webSocket.WebSocketRequestDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseGroupDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
@@ -11,6 +12,8 @@ import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.dtos.regularDtos.RegularDetailDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.*;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
+import com.sugon.iris.sugondomain.enums.SZ_JZ_RinseType_Enum;
+import com.sugon.iris.sugonservice.impl.websocketServiceImpl.WebSocketClient;
 import com.sugon.iris.sugonservice.service.fileService.FileDoParsingService;
 import com.sugon.iris.sugonservice.service.fileService.FileParsingService;
 import lombok.SneakyThrows;
@@ -18,8 +21,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
+import javax.websocket.ContainerProvider;
+import javax.websocket.WebSocketContainer;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,6 +72,9 @@ public class FileParsingServiceImpl implements FileParsingService {
 
     @Resource
     private FileDoParsingService fileDoParsingServiceImpl;
+
+    @Resource
+    private FileCaseMapper fileCaseMapper;
 
     /**
      * 解析csv文件并且写入mpp,并对文件和文件数据进行统计
@@ -117,8 +126,7 @@ public class FileParsingServiceImpl implements FileParsingService {
         Map<FileTemplateDto, List<File>> mapTemplate2File = template2Files(fileListNew, fileTemplateDtoList);
         fileDetailFailedSave(userId, fileAttachmentEntity, fileListNew);
 
-        //创建多线程，一个模板创建一个线程,在子线程内分别入库
-        ExecutorService executorService = Executors.newFixedThreadPool(20);
+
 
         //进行文件读取
         List<File> matchFileList = new ArrayList<>();
@@ -136,9 +144,11 @@ public class FileParsingServiceImpl implements FileParsingService {
                 regularMap.put(fileTemplateDetailDtoBean.getId(),fileTemplateDetailDtoBean.getFileRinseDetailDto());
             }
 
+            //创建多线程，一个模板创建一个线程,在子线程内分别入库
+            ExecutorService executorService = Executors.newFixedThreadPool(20);
+
             //多线程执行文件读取
             executorService.execute(new Runnable() {
-                @SneakyThrows
                 @Override
                 public void run() {
                     for(File file : fileList4Template){
@@ -162,12 +172,17 @@ public class FileParsingServiceImpl implements FileParsingService {
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
-
                         }
 
-                        //进行数据清洗
-                        fileDoParsingServiceImpl.doRinse(fileTemplateDto,tableInfos, fileSeq, errorList);
-
+                        //进行可配置的数据清洗
+                        try {
+                            fileDoParsingServiceImpl.doRinse(fileTemplateDto, tableInfos, fileSeq, errorList);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        //进行外切http/websocket 数据清洗
+                        //通过caseId案件编号获取http/websocket地址
+                        doUserDefinedRinse(fileAttachmentEntity, userId, errorList);
                     }
 
                 }
@@ -176,6 +191,28 @@ public class FileParsingServiceImpl implements FileParsingService {
 
         //如果之前已经存库则获取表名
         return result;
+    }
+
+    private void doUserDefinedRinse(FileAttachmentEntity fileAttachmentEntity, Long userId, List<Error> errorList) {
+        FileCaseEntity fileCaseEntity =  fileCaseMapper.selectFileCaseByPrimaryKey(fileAttachmentEntity.getCaseId());
+        String rinseUrl = fileCaseEntity.getRinseUrl();
+        if(rinseUrl.contains("http")){
+
+        }else if(rinseUrl.contains("ws:")){
+            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+            WebSocketClient client = new WebSocketClient();
+            String URI = rinseUrl+"/"+userId;
+            try {
+                container.connectToServer(client, new URI(URI));
+            }catch (Exception e){
+                e.printStackTrace();
+                errorList.add(new Error(ErrorCode_Enum.SUGON_02_009.getCode(),ErrorCode_Enum.SUGON_02_009.getMessage(),e.toString()));
+            }
+
+            WebSocketRequestDto webSocketRequestDto = new WebSocketRequestDto();
+            //进行补全操作
+            webSocketRequestDto.setBusinessNo(SZ_JZ_RinseType_Enum.RINSE_01.getCode());
+        }
     }
 
     private void fileDetailFailedSave(Long userId, FileAttachmentEntity fileAttachmentEntity, List<File> fileListNew) {
@@ -211,7 +248,7 @@ public class FileParsingServiceImpl implements FileParsingService {
         String sqlInsert = "insert into "+tableName+"(";
         String  sqlValues = "";
         for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDetailDtoList){
-            sqlInsert += "`"+fileTemplateDetailDto.getFieldName()+"`,";
+            sqlInsert += fileTemplateDetailDto.getFieldName()+",";
             sqlValues += "'&&"+fileTemplateDetailDto.getId()+"&&',";
         }
         sqlInsert += "file_template_id,case_id,file_attachment_id,file_detail_id,mppId2ErrorId";
@@ -237,9 +274,9 @@ public class FileParsingServiceImpl implements FileParsingService {
             //表名="base_"+模板配置前缀+"_"+案件编号
             String tableName = "base_" + fileTemplateDto.getTablePrefix() + "_" + fileAttachmentEntity.getCaseId()+"_"+userId;
             tableInfos[0] = tableName;
-            String sqlCreate =  "CREATE TABLE `"+tableName+"` ( id serial not null,"+" mppId2ErrorId int8 NULL,"+" file_detail_id int4 NULL,"+" file_template_id int4 NULL,";
+            String sqlCreate =  "CREATE TABLE "+tableName+" ( id serial not null,"+" mppId2ErrorId int8 NULL,"+" file_detail_id int4 NULL,"+" file_template_id int4 NULL,";
             for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDto.getFileTemplateDetailDtoList()){
-                sqlCreate += "`"+fileTemplateDetailDto.getFieldName() +"` varchar NULL,";
+                sqlCreate += fileTemplateDetailDto.getFieldName() +" varchar NULL,";
             }
             sqlCreate += "file_attachment_id  varchar NULL,case_id varchar NULL);";
 

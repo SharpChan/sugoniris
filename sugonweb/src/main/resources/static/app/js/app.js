@@ -5661,7 +5661,7 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
         });
     }
 
-    $scope.query();
+
 
     //获取勾选数组
     $scope.selectOne = function (item) {
@@ -5818,6 +5818,8 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
         });
 
     }
+
+    $scope.query();
 });
 
 App.controller("myFileUploadController", ['$scope', 'FileUploader','$http','myservice', function($scope, FileUploader,$http,myservice) {

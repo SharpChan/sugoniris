@@ -51,10 +51,10 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
     @Resource
     private ExcelService excelServiceImpl;
 
-    private static final String baseSql_with_rinses = " (select distinct a.id,a.*,b.* from &&_tableName_&& a left join error_info b \n" +
-                 " on a.mppid2errorid = b.mppid2errorid) c where c.file_rinse_detail_id  not in(&&_rinses_&&) or c.file_rinse_detail_id is null";
+    private static final String baseSql_with_rinses = " (select row_number() OVER(PARTITION BY a.id ) AS rownum,a.*,b.*  from &&_tableName_&& a left join error_info b \n" +
+            " on a.mppid2errorid = b.mppid2errorid) c where c.rownum = 1 and c.file_rinse_detail_id  not in(&&_rinses_&&) or c.file_rinse_detail_id is null";
 
-    private static final String baseSql_without_rinses = " (select distinct a.id,a.*,b.* from &&_tableName_&& a left join error_info b \n" +
+    private static final String baseSql_without_rinses = " (select row_number() OVER(PARTITION BY a.id ) AS rownum,a.*,b.*  from &&_tableName_&& a left join error_info b \n" +
             " on a.mppid2errorid = b.mppid2errorid) c ";
 
     @Override
@@ -108,17 +108,16 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
         List<FileTemplateDetailEntity> fileTemplateDetailEntityList = getFileTemplateDetailEntities(mppSearchDto);
         //设置表头，组装sql语句
         String sqlSelect = getString(mppTableDto, fileTemplateDetailEntityList);
-
         String rinses = "";
         for(String str : mppSearchDto.getCheckFields()){
             rinses += str+",";
         }
         if(StringUtils.isNotEmpty(rinses)) {
             rinses = rinses.substring(0, rinses.length() - 1);
-            sqlSelect += " from " + baseSql_with_rinses + " LIMIT " + mppSearchDto.getPerSize() + " OFFSET " + mppSearchDto.getOffset();
+            sqlSelect += " from " + baseSql_with_rinses + "  LIMIT " + mppSearchDto.getPerSize() + " OFFSET " + mppSearchDto.getOffset();
             sqlSelect = sqlSelect.replace("&&_rinses_&&", rinses);
         }else{
-            sqlSelect += " from " + baseSql_without_rinses + " LIMIT " + mppSearchDto.getPerSize() + " OFFSET " + mppSearchDto.getOffset();
+            sqlSelect += " from " + baseSql_without_rinses + " where c.rownum = 1 LIMIT " + mppSearchDto.getPerSize() + " OFFSET " + mppSearchDto.getOffset();
         }
         sqlSelect = sqlSelect.replace("&&_tableName_&&",mppSearchDto.getTableName());
         List<Map<String,Object>> resultList =  mppMapper.mppSqlExecForSearchRtMapList(sqlSelect);
@@ -138,7 +137,7 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
             sql = "select count(*) from  " + baseSql_with_rinses;
             sql = sql.replace("&&_rinses_&&", rinses);
         }else{
-            sql = "select count(*) from  " + baseSql_without_rinses;
+            sql = "select count(*) from  " + baseSql_without_rinses +" where c.rownum =1";
         }
         sql = sql.replace("&&_tableName_&&",mppSearchDto.getTableName());
         String  res = mppMapper.mppSqlExecForSearch(sql).get(0);
@@ -160,7 +159,7 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
             sqlSelect += " from " + baseSql_with_rinses ;
             sqlSelect = sqlSelect.replace("&&_rinses_&&", rinses);
         }else{
-            sqlSelect += " from " + baseSql_without_rinses ;
+            sqlSelect += " from " + baseSql_without_rinses +" where c.rownum = 1 ";
         }
         sqlSelect = sqlSelect.replace("&&_tableName_&&",mppSearchDto.getTableName());
         List<Map<String,Object>> resultList =  mppMapper.mppSqlExecForSearchRtMapList(sqlSelect);

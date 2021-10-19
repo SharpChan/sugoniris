@@ -13,8 +13,6 @@
             </div>
             <div align="right" style="margin-top:-30px;">
                 <input type="button" value="查询" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="query();" />
-                <input type="button" value="删除模板" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="deleteSelected();" />
-                <input type="button" value="新增模板" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="add();" />
             </div>
         </div>
 
@@ -48,12 +46,12 @@
                         <td align="left">{{item.caseName}}</td>
                         <td align="left">{{item.caseNo}}</td>
                         <td align="left">
-                            <button type="button" ng-click="detail(item.caseName,item.fileTableDtoList)" class="btn btn-sm btn-danger">
+                            <button ng-show="item.fileTableDtoList.length()>0" type="button" ng-click="detail(item.caseName,item.fileTableDtoList)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-plus"></em>
                             </button>
                         </td>
                         <td align="left">
-                            <button  type="button" ng-click="mergeExport(item.id)" class="btn btn-sm btn-warning">
+                            <button ng-show="item.fileTableDtoList.length()>0" type="button" ng-click="mergeExport(item.id)" class="btn btn-sm btn-warning">
                                 <em class="fa fa-upload"></em>
                             </button>
                         </td>
@@ -102,7 +100,7 @@
     </div>
 
     <div id = "recordCnDivDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 1600px; height: 800px; z-index: 9999;overflow-y:auto;">
-        <div id = "recordCnDivDetailheader" class="panel-heading topnavbar">
+        <div id = "recordCnDivDetailheader" class="panel-heading topnavbar"  style="height: 50px;width: 1600px;position: fixed">
             <div align="left">
                 <label  style="margin-left:10px;margin-top:10px;" >{{caseName_record+'_'+templateName_record}}<strong style="color: #FFF"></strong></label>
             </div>

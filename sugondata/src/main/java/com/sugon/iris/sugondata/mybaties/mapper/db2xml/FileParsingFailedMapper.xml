@@ -17,6 +17,8 @@
         <result column="file_template_detail_id" property="fileTemplateDetailId" jdbcType="BIGINT" />
         <result column="mark" property="mark" jdbcType="TINYINT" />
         <result column="mppid2errorid" property="mppId2ErrorId" jdbcType="BIGINT" />
+        <result column="template_name" property="templateName" jdbcType="VARCHAR" />
+        <result column="field_key" property="fieldKey" jdbcType="VARCHAR" />
     </resultMap>
 
     <!--基础字段-->
@@ -27,25 +29,27 @@
     <!--表查询-->
     <select id="selectFileParsingFailedList" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileParsingFailedEntity" resultMap="BaseResultMap"  >
         SELECT
-            <include refid="Base_Column_List" />
+            <include refid="Base_Column_List" />,
+            (select template_name from file_template b where b.id = a.file_template_id) template_name,
+            (select field_key from file_template_detail c where c.id = a.file_template_detail_id) field_key
         FROM
-        file_parsing_failed
+        file_parsing_failed a
         where
         1=1
         <if test="id!=null">
-            and id = #{id}
+            and a.id = #{id}
         </if >
         <if test="fileDetailId!=null">
-            and file_detail_id = #{fileDetailId}
+            and a.file_detail_id = #{fileDetailId}
         </if >
         <if test="userId!=null">
-            and user_id = #{userId}
+            and a.user_id = #{userId}
         </if >
         <if test="mark!=null">
-            and mark = #{mark}
+            and a.mark = #{mark}
         </if >
         <if test="mppId2ErrorId!=null">
-            and mppid2errorid = #{mppId2ErrorId}
+            and a.mppid2errorid = #{mppId2ErrorId}
         </if >
     </select>
 
