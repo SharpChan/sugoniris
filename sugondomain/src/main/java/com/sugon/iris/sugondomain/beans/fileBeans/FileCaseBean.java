@@ -31,6 +31,11 @@ public class FileCaseBean {
     private Long userId;
 
     /**
+     * 清洗地址，http或者websocket
+     */
+    private String rinseUrl;
+
+    /**
      * 创建时间
      */
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")

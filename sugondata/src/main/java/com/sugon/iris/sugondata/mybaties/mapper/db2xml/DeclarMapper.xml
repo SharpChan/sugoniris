@@ -22,7 +22,7 @@
     </resultMap>
 
     <sql id="Declaration_Column_List" >
-        id,type,detail,owner_user_id,status,check_user_id,create_time,business_id
+        id,`type`,detail,owner_user_id,status,check_user_id,create_time,business_id
     </sql>
 
     <select id="getDeclarInfoByUserId"  resultMap="DeclarInfoResultMap" >

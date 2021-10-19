@@ -4493,6 +4493,7 @@ App.controller("caseManagerController", function ($http,$timeout,$scope,
         $scope.caseNo_1 = "";
         $scope.caseName_1 = "";
         $scope.caseInfo_1 = "";
+        $scope.rinseUrl_1 = "";
     }
 
     $scope.saveOrUpdate = function () {
@@ -4506,7 +4507,8 @@ App.controller("caseManagerController", function ($http,$timeout,$scope,
             id: $scope.id,
             caseNo: $scope.caseNo_1,
             caseName: $scope.caseName_1,
-            caseInfo: $scope.caseInfo_1
+            caseInfo: $scope.caseInfo_1,
+            rinseUrl: $scope.rinseUrl_1
         }
         $http.post(url, params).success(function (data) {
             var jsonString = angular.toJson(data);
@@ -4547,6 +4549,7 @@ App.controller("caseManagerController", function ($http,$timeout,$scope,
         $scope.caseNo_1 = item.caseNo;
         $scope.caseName_1 = item.caseName;
         $scope.caseInfo_1 = item.caseInfo;
+        $scope.rinseUrl_1 = item.rinseUrl;
     }
 
     $scope.deleteOne = function (id) {

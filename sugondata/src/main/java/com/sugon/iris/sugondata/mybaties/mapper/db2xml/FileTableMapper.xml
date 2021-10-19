@@ -132,4 +132,18 @@
                 )
             </where>
     </delete>
+
+    <!--通过caseId删除-->
+    <delete id="deleteFileTableByCaseId">
+        DELETE
+        FROM
+        file_table
+        <where>
+            case_id in (
+            <foreach collection="idArr" item="item" index="i" separator=",">
+                #{item}
+            </foreach>
+            )
+        </where>
+    </delete>
 </mapper>

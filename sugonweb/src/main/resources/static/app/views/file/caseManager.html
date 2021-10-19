@@ -46,6 +46,7 @@
                         <th>案件编号</th>
                         <th>案件名称</th>
                         <th>内部编号</th>
+                        <th>算法清洗地址http/websocket</th>
                         <th>案件描述</th>
                         <th>修改</th>
                         <th>删除案件</th>
@@ -60,6 +61,7 @@
                         <td align="left">{{item.caseNo}}</td>
                         <td align="left">{{item.caseName}}</td>
                         <td align="left">{{item.id}}</td>
+                        <td align="left">{{item.rinseUrl}}</td>
                         <td align="left"><textarea rows="3" cols="20" >{{item.caseInfo}}</textarea></td>
                         <td align="left">
                             <button type="button" ng-click="updateDetail(item)" class="btn btn-sm btn-warning">
@@ -83,9 +85,9 @@
 
     <input  type="hidden" class="form-control" type="text" ng-model="id" >
     <input  type="hidden" class="form-control" type="text" ng-model="flag" ><!--  区分是插入还是更新  0：新增；1：修改-->
-    <div id = "cnDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 350px; height: 500px; z-index: 9999;overflow-y:auto;">
+    <div id = "cnDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 350px; height: 520px; z-index: 9999;overflow-y:auto;">
         <div id = "cnDivheader" class="panel-heading topnavbar">
-            添加/修改<input type="button" value="关闭" style="margin-left:250px" class="btn btn-default" ng-click="close();" >
+            添加/修改<input type="button" value="关闭" style="margin-left:230px" class="btn btn-default" ng-click="close();" >
         </div>
         <div class="panel-body">
             <div  class="form-group" style="top: 20px;width: 250px" >
@@ -95,9 +97,12 @@
                 <span>请填写案件名称<input placeholder="必填" class="form-control" type="text" ng-model="caseName_1" ></span>
             </div>
             <div  class="form-group" style="top: 20px;width: 250px" >
+                <span>算法清洗地址http/websocket<input placeholder="" class="form-control" type="text" ng-model="rinseUrl_1" ></span>
+            </div>
+            <div  class="form-group" style="top: 20px;width: 250px" >
                 <span>请填写案件信息<textarea rows="5" cols="30" ng-model="caseInfo_1"></textarea></span>
             </div>
-            <div  class="form-group" style="top: 20px;width: 300px" >
+            <div  class="form-group" style="top: 20px;width: 280px" >
                 <div align="right" style="margin-top:10px">
                     <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="saveOrUpdate();" >
                 </div>

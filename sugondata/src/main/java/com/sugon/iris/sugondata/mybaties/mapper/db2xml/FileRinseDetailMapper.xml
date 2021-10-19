@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.FileRinseDetailMapper">
+  <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseDetailEntity">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="file_rinse_group_id" jdbcType="BIGINT" property="fileRinseGroupId" />
+    <result column="type_name" jdbcType="VARCHAR" property="typeName" />
+    <result column="comment" jdbcType="VARCHAR" property="comment" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, file_rinse_group_id, type_name, comment,user_id
+  </sql>
+  <select id="selectByGroupId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from file_rinse_detail
+    where file_rinse_group_id = #{fileRinseGroupId,jdbcType=BIGINT}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from file_rinse_detail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from file_rinse_detail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseDetailEntity">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into file_rinse_detail (file_rinse_group_id, type_name, comment,user_id
+      )
+    values (#{fileRinseGroupId,jdbcType=BIGINT}, #{typeName,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseDetailEntity">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into file_rinse_detail
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fileRinseGroupId != null">
+        file_rinse_group_id,
+      </if>
+      <if test="typeName != null">
+        type_name,
+      </if>
+      <if test="comment != null">
+        comment,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fileRinseGroupId != null">
+        #{fileRinseGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="typeName != null">
+        #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null">
+        #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseDetailEntity">
+    update file_rinse_detail
+    <set>
+      <if test="fileRinseGroupId != null">
+        file_rinse_group_id = #{fileRinseGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="typeName != null">
+        type_name = #{typeName,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null">
+        comment = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseDetailEntity">
+    update file_rinse_detail
+    set file_rinse_group_id = #{fileRinseGroupId,jdbcType=BIGINT},
+      type_name = #{typeName,jdbcType=VARCHAR},
+      comment = #{comment,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
