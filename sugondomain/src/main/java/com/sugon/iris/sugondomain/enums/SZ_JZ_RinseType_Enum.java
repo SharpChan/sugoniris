@@ -1,15 +1,7 @@
 package com.sugon.iris.sugondomain.enums;
 
 public enum SZ_JZ_RinseType_Enum {
-    RINSE_01("01","联子子账户信息"),
-    RINSE_02("02","交易明细分析"),
-    RINSE_03("03","强制措施"),
-    RINSE_04("04","人员联系方式"),
-    RINSE_05("05","人员信息"),
-    RINSE_06("06","人员住址"),
-    RINSE_07("07","任务信息成功"),
-    RINSE_08("08","任务信息失败"),
-    RINSE_09("09","账户信息")
+    RINSE_01("01","交易明细表，交易证件号为空用账户信息的证件号补全")
     ;
 
     private String code;

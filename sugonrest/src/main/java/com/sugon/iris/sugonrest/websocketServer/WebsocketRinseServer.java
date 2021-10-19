@@ -79,9 +79,9 @@ public class WebsocketRinseServer {
                 //解析发送的报文
                 JSONObject jsonObject = JSON.parseObject(message);
                 //map: key 业务类型，value 多个字段集合[key]表名，多个需要清洗的字段集合
-                WebSocketRequestDto<Map<String,Map<String,List<List<String>>>>> webSocketRequestDto = JSON.toJavaObject(jsonObject, WebSocketRequestDto.class);
+                WebSocketRequestDto webSocketRequestDto = JSON.toJavaObject(jsonObject, WebSocketRequestDto.class);
                 if(webSocketRequestDto.getBusinessNo().equals(SZ_JZ_RinseType_Enum.RINSE_01.getCode())){
-                    dataRinseServiceImpl.glzzhxxRinse(webSocketRequestDto.getParam());
+                    dataRinseServiceImpl.completeRinse();
                 }
 
                 //传送给对应toUserId用户的websocket

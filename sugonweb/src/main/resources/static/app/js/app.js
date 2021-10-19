@@ -5359,10 +5359,6 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             alert("请先选择字段！");
             return;
         }
-        if(myservice.isEmpty($scope.value)){
-            alert("请填写要修改的值！");
-            return;
-        }
         var url = "/fileTemplate/saveNullBuss";
         angular.forEach($scope.template.categoriesNull,function (e) {
             field = e.substring(e.lastIndexOf("::")+2);
@@ -6350,6 +6346,8 @@ App.controller("checkUserController", function ($http,$timeout,$scope,myservice)
         });
 
     }
+
+    $scope.getUsers();
 
     $scope.delete=function (id){
         var r=confirm("确定要删除吗？");
