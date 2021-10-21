@@ -53,7 +53,7 @@ public class User implements Serializable {
     private Date createTime = new Date();
 
     //0:无效 1：有效
-    private Integer flag = 1;
+    private Integer flag = 2;
 
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss.SSSSSS",timezone="GMT+8")
     private Date updateTime = new Date();

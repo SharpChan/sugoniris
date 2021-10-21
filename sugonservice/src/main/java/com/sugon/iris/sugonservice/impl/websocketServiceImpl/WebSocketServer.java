@@ -1,9 +1,10 @@
 package com.sugon.iris.sugonservice.impl.websocketServiceImpl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.sugon.iris.sugoncommon.baseConfig.SpringUtil;
-import com.sugon.iris.sugondomain.beans.webSocket.WebSocketRequest;
+import com.sugon.iris.sugondomain.beans.webSocket.Message;
+import com.sugon.iris.sugondomain.enums.WebSocketType_Enum;
 import com.sugon.iris.sugonservice.service.relationService.RelationCreateService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -13,10 +14,12 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-//@Component
-//@ServerEndpoint(value = "/websocket/{userId}")
+@Component
+@ServerEndpoint(value = "/schedule/{userId}")
 public class WebSocketServer {
 
     private static Logger log = LogManager.getLogger(WebSocketServer.class);
@@ -45,9 +48,11 @@ public class WebSocketServer {
             webSocketMap.remove(userId);
         }
         webSocketMap.put(userId, this);     //加入set中
-        System.out.println("连接成功");
         try {
-            sendMessage("连接成功");
+            Map<String,String> map = new HashMap<>();
+            map.put(WebSocketType_Enum.WS_00.getCode(),"连接成功");
+            Gson gson = new Gson();
+            sendMessage(gson.toJson(map));
         }catch (IOException e) {
             log.error("websocket IO异常");
         }
@@ -72,15 +77,14 @@ public class WebSocketServer {
         //可以群发消息
         //消息保存到数据库、redis
         if(StringUtils.isNotBlank(message)){
+            message = message.replaceAll("\\\\","").replaceAll("\"","");
             try {
-                //解析发送的报文
-                JSONObject jsonObject = JSON.parseObject(message);
-                WebSocketRequest webSocketRequest = JSON.toJavaObject(jsonObject, WebSocketRequest.class);
-                //进行业务处理
-                relationCreateServicesImpl.test1(webSocketRequest);
+                Gson gson = new Gson();
+                Message messageObj = gson.fromJson(message, new TypeToken<Message>(){}.getType());
+                String userId = messageObj.getData().get("userId");
                 //传送给对应toUserId用户的websocket
-                if(!webSocketMap.containsKey(String.valueOf(webSocketRequest.getUserId()))){
-                    webSocketMap.get(String.valueOf(webSocketRequest.getUserId())).sendMessage("请求的userId:"+webSocketRequest.getUserId()+"不在该服务器上");
+                if(!webSocketMap.containsKey(userId)){
+                    webSocketMap.get(userId).sendMessage("请求的userId:"+userId+"不在该服务器上");
                 }
             }catch (Exception e){
                 e.printStackTrace();
@@ -113,7 +117,9 @@ public class WebSocketServer {
 
 
     public void sendMessage(String message) throws IOException {
-        this.session.getBasicRemote().sendText(message);
+        synchronized(this.session) {
+            this.session.getBasicRemote().sendText(message);
+        }
     }
 
     /**

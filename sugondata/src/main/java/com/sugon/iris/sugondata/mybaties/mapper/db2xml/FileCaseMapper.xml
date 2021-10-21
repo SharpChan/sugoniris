@@ -12,11 +12,12 @@
         <result column="user_id" property="userId" jdbcType="BIGINT" />
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="rinse_times" property="rinseTimes" jdbcType="INTEGER" />
     </resultMap>
 
     <!--基础字段-->
     <sql id="Base_Column_List" >
-        id,case_no,case_name,case_info,user_id,rinse_url,create_time,update_time
+        id,case_no,case_name,case_info,user_id,rinse_url,create_time,update_time,rinse_times
     </sql>
 
     <!--表查询-->
@@ -77,6 +78,7 @@
                           case_info = #{caseInfo},
                           user_id = #{userId},
                           rinse_url = #{rinseUrl},
+                          rinse_times = #{rinseTimes},
                           update_time = #{updateTime}
                where id = #{id}
     </update>

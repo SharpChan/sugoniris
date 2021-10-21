@@ -8,6 +8,7 @@ import com.sugon.iris.sugondomain.dtos.fileDtos.FileTableDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
 import com.sugon.iris.sugondomain.dtos.neo4jDtos.Neo4jRelationDto;
 import com.sugon.iris.sugondomain.enums.RelationType_Enum;
+import com.sugon.iris.sugonservice.impl.websocketServiceImpl.WebSocketRelationServer;
 import com.sugon.iris.sugonservice.impl.websocketServiceImpl.WebSocketServer;
 import com.sugon.iris.sugonservice.service.relationService.RelationCreateService;
 import lombok.extern.slf4j.Slf4j;
@@ -59,12 +60,12 @@ public class RelationCreateServiceImpl implements RelationCreateService {
         }else{
             for(int i = 0 ;i<divideCount;i++){
                 this.batch(batch*i,batch*(i+1),sourceFileTableDto,targetFileTableDto,webSocketRequest.getNeo4jRelationDto().getRelationship(),webSocketRequest.getNeo4jRelationDto().getId()+"");
-                WebSocketServer.sendInfo(webSocketRequest.getNeo4jRelationDto().getId()+";"+ Math.round(i/(divideCount+1)),String.valueOf(webSocketRequest.getUserId()));
+                WebSocketRelationServer.sendInfo(webSocketRequest.getNeo4jRelationDto().getId()+";"+ Math.round(i/(divideCount+1)),String.valueOf(webSocketRequest.getUserId()));
             }
             //其余部分数据
             this.batch(batch*divideCount,count,sourceFileTableDto,targetFileTableDto,webSocketRequest.getNeo4jRelationDto().getRelationship(),webSocketRequest.getNeo4jRelationDto().getId()+"");
         }
-        WebSocketServer.sendInfo(webSocketRequest.getNeo4jRelationDto().getId()+";"+"100",String.valueOf(webSocketRequest.getUserId()));
+        WebSocketRelationServer.sendInfo(webSocketRequest.getNeo4jRelationDto().getId()+";"+"100",String.valueOf(webSocketRequest.getUserId()));
     }
 
     private void batch(int start ,int end , FileTableDto sourceFileTableDto, FileTableDto targetFileTableDto ,String relationship,String relationId ){

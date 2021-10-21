@@ -1,7 +1,7 @@
-package com.sugon.iris.sugonrest.websocketServer;
+package com.sugon.iris.sugonservice.impl.websocketServiceImpl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.Gson;
 import com.sugon.iris.sugoncommon.baseConfig.SpringUtil;
 import com.sugon.iris.sugondomain.beans.webSocket.WebSocketRequestDto;
 import com.sugon.iris.sugondomain.enums.SZ_JZ_RinseType_Enum;
@@ -74,14 +74,11 @@ public class WebsocketRinseServer {
         //消息保存到数据库、redis
         if(StringUtils.isNotBlank(message)){
             try {
-                //解析发送的报文
-                JSONObject jsonObject = JSON.parseObject(message);
-                //map: key 业务类型，value 多个字段集合[key]表名，多个需要清洗的字段集合
-                WebSocketRequestDto webSocketRequestDto = JSON.toJavaObject(jsonObject, WebSocketRequestDto.class);
-                if(webSocketRequestDto.getBusinessNo().equals(SZ_JZ_RinseType_Enum.RINSE_01.getCode())){
-                    dataRinseServiceImpl.completeRinse();
+                Gson gson = new Gson();
+                WebSocketRequestDto<Long> webSocketRequestDto = gson.fromJson(message, new TypeToken<WebSocketRequestDto<Long>>(){}.getType());
+                if(SZ_JZ_RinseType_Enum.RINSE_01.getCode().equals(webSocketRequestDto.getBusinessId())){
+                    dataRinseServiceImpl.completeRinse(userId,webSocketRequestDto.getParam());
                 }
-
                 //传送给对应toUserId用户的websocket
                 if(!webSocketMap.containsKey(String.valueOf(webSocketRequestDto.getUserId()))){
                     webSocketMap.get(String.valueOf(webSocketRequestDto.getUserId())).sendMessage("请求的userId:"+webSocketRequestDto.getUserId()+"不在该服务器上");

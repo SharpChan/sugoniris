@@ -146,4 +146,25 @@ public class FileController {
         }
         return restResult;
     }
+
+    @RequestMapping("/getFileServerIp")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<String> getFileServerIp() throws Exception {
+
+        RestResult<String> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(folderServiceImpl.getFileServerIp());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
 }

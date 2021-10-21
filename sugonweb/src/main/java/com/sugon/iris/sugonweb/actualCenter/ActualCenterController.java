@@ -28,8 +28,8 @@ public class ActualCenterController {
         RestResult<String> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
-            //restResult.setObj(PublicUtils.getConfigMap().get("mcgc-url")+"index.jsp?userName="+user.getUserName()+"&password="+user.getPassword());
-            restResult.setObj(PublicUtils.getConfigMap().get("mcgc-url")+"index.jsp?userName="+"Sysadmin"+"&password="+"1bbd886460827015e5d605ed44252251");
+            restResult.setObj(PublicUtils.getConfigMap().get("mcgc-url")+"index.jsp?userName="+user.getUserName()+"&password="+user.getPassword());
+            //restResult.setObj(PublicUtils.getConfigMap().get("mcgc-url")+"index.jsp?userName="+"Sysadmin"+"&password="+"1bbd886460827015e5d605ed44252251");
         }catch (Exception e){
             e.printStackTrace();
         }

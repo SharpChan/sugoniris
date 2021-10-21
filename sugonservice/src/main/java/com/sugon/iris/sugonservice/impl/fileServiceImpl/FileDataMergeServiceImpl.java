@@ -16,6 +16,7 @@ import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetail
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateEntity;
 import com.sugon.iris.sugonservice.service.excelService.ExcelService;
 import com.sugon.iris.sugonservice.service.fileService.FileDataMergeService;
+import com.sugon.iris.sugonservice.service.fileService.FileParsingService;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -50,6 +51,9 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
 
     @Resource
     private ExcelService excelServiceImpl;
+
+    @Resource
+    private FileParsingService fileParsingServiceImpl;
 
     private static final String baseSql_with_rinses = " (select row_number() OVER(PARTITION BY a.id ) AS rownum,a.*,b.*  from &&_tableName_&& a left join error_info b \n" +
             " on a.mppid2errorid = b.mppid2errorid) c where c.rownum = 1 and c.file_rinse_detail_id  not in(&&_rinses_&&) or c.file_rinse_detail_id is null";
@@ -142,6 +146,11 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
         sql = sql.replace("&&_tableName_&&",mppSearchDto.getTableName());
         String  res = mppMapper.mppSqlExecForSearch(sql).get(0);
         return Integer.parseInt(res);
+    }
+
+    @Override
+    public void doUserDefinedRinse(Long caseId, Long userId, List<Error> errorList) {
+        fileParsingServiceImpl.doUserDefinedRinse(caseId,userId,errorList);
     }
 
     @Override

@@ -17,6 +17,8 @@ public interface FileDataMergeService {
 
     Integer getTableRecordQuantity(MppSearchDto mppSearchDto,List<Error> errorList);
 
+    void doUserDefinedRinse(Long caseId,Long userId,List<Error> errorList);
+
     void getCsv(MppSearchDto mppSearchDto, HttpServletResponse response) throws Exception;
 
     void mergeExport(Long caseId, HttpServletResponse response) throws IOException;

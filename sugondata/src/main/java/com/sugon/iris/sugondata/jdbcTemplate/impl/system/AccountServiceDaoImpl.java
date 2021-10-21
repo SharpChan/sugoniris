@@ -58,7 +58,7 @@ public class AccountServiceDaoImpl implements AccountServiceDao {
     public List<UserEntity> getUserEntitysForCheck(String keyWord,Integer flag, List<Error> errorList){
         List<UserEntity>  userEntityList = null;
         try{
-            String sql = "select id,username,password,imageurl,createtime,updatetime,flag from sys_user where 1 = 1 ";
+            String sql = "select id,username,password,imageurl,createtime,updatetime,flag,id_card as idCard,policeno from sys_user where 1 = 1 ";
             if(!StringUtils.isEmpty(keyWord)){
                 sql = sql+" and username like '%"+keyWord+"%'";
             }
@@ -125,7 +125,7 @@ public class AccountServiceDaoImpl implements AccountServiceDao {
             });
         }catch(Exception e){
             LOGGER.info("{}-{}","插入表user失败",e);
-            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"插入user表出错",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"注册信息存在重复！",e.toString()));
         }
         return result;
     }

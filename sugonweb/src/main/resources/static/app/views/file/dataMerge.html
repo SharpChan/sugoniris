@@ -36,6 +36,8 @@
                         <th>序号</th>
                         <th>案件名称</th>
                         <th>案件编号</th>
+                        <th>清洗次数</th>
+                        <th>自定义清洗</th>
                         <th>合并后数据</th>
                         <th>合并导出</th>
                     </tr>
@@ -45,6 +47,12 @@
                         <td align="left">{{item.no}}</td>
                         <td align="left">{{item.caseName}}</td>
                         <td align="left">{{item.caseNo}}</td>
+                        <td align="left">{{item.rinseTimes}}</td>
+                        <td align="left">
+                            <button ng-show="item.fileTableDtoList.length()>0" type="button" ng-click="doUserDefinedRinse(item.id)" class="btn btn-sm btn-danger">
+                                <em class="fa fa-cogs"></em>
+                            </button>
+                        </td>
                         <td align="left">
                             <button ng-show="item.fileTableDtoList.length()>0" type="button" ng-click="detail(item.caseName,item.fileTableDtoList)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-plus"></em>
@@ -108,6 +116,9 @@
                 <input type="button" value="关闭" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="closeRecordDetail();" />
                 <input type="button" value="导出" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="saveRecordDetail();" />
             </div>
+        </div>
+        <div  style="height: 80px">
+
         </div>
         <div class="panel-body">
             <table  class="table table-striped" cellpadding="0" cellspacing="0">

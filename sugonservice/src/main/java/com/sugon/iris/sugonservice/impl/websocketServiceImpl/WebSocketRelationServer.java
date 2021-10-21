@@ -1,4 +1,4 @@
-package com.sugon.iris.sugonrest.websocketServer;
+package com.sugon.iris.sugonservice.impl.websocketServiceImpl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

@@ -12,4 +12,4 @@ spring:
       password: neo4j
 
 server:
-  port: 8092
+  port: 8091

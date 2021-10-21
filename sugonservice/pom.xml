@@ -112,6 +112,24 @@
                <artifactId>maven-resources-plugin</artifactId>
                <version>3.0.0</version>
            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <compilerArguments>
+                        <Xlint />
+                    </compilerArguments>
+                    <verbose>true</verbose>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <showWarnings>true</showWarnings>
+                    <compilerArguments>
+                        <verbose />
+                        <bootclasspath>C:/Program Files/Java/jdk1.8.0_131/jre/lib/rt.jar</bootclasspath>
+                    </compilerArguments>
+                </configuration>
+            </plugin>
        </plugins>
    </build>
 

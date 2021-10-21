@@ -8,9 +8,9 @@ public class WebSocketRequestDto<T> {
     /**
      *用户编号
      */
-    Long userId;
+   private Long userId;
 
-    String  businessNo;
+   private String  businessId;
 
-    T  param;
+   private T  param;
 }

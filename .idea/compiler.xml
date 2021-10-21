@@ -44,8 +44,8 @@
       <module name="sugoniris" options="-parameters" />
       <module name="sugonlistener" options="-parameters" />
       <module name="sugonrest" options="-parameters" />
-      <module name="sugonservice" options="-parameters" />
-      <module name="sugonweb" options="-parameters" />
+      <module name="sugonservice" options="-parameters -Xlint" />
+      <module name="sugonweb" options="-parameters -Xlint" />
       <module name="test" options="-parameters" />
     </option>
   </component>

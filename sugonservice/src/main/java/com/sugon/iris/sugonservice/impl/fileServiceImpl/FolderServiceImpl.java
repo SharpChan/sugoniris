@@ -398,6 +398,14 @@ public class FolderServiceImpl implements FolderService {
         return null;
     }
 
+    @Override
+    public String getFileServerIp() {
+        if("1".equals(PublicUtils.getConfigMap().get("environment"))){
+            return "localhost";
+        }
+        return PublicUtils.getConfigMap().get("linux.ipAddress");
+    }
+
     /**
      *
      * @param file:指定文件夹

@@ -294,7 +294,8 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           url: '/fileManager',
           title: 'FileManager',
           templateUrl: helper.basepath('file/fileManager.html'),
-          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+          cache: false,
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select','ngWebsocket')
       })
       .state('app.checkUser', {
       url: '/checkUser',
@@ -967,6 +968,7 @@ App
   .constant('APP_REQUIRES', {
     // jQuery based and standalone scripts
     scripts: {
+      'ngWebsocket':        ['vendor/ng-websocket/ng-websocket.js'],
       'drag':               ['vendor/drag/angularDrag.js'],
       'cytoscape':          ['vendor/cytoscape/cytoscape.min.js'],
       'ngDraggable':        ['vendor/ngDraggable/ngDraggable.js'],
@@ -1034,7 +1036,6 @@ App
     },
     // Angular based script (use the right module name)
     modules: [
-      {name: 'ngWebsocket',               files: ['vendor/ng-websocket/ng-websocket.js'] },
       {name: 'toaster',                   files: ['vendor/angularjs-toaster/toaster.js',
                                                  'vendor/angularjs-toaster/toaster.css']},
       {name: 'localytics.directives',     files: ['vendor/chosen_v1.2.0/chosen.jquery.min.js',
@@ -1492,7 +1493,6 @@ App.controller("dataMergeController", function ($http,$timeout,$scope,
     }
     
     $scope.selectLabel = function (label) {
-        console.log(label.checked);
         if(label.checked){
             checkFields.push(label.id);
         }else{
@@ -1545,6 +1545,18 @@ App.controller("dataMergeController", function ($http,$timeout,$scope,
             $("body").append(aForZip);
             $(".forExcel").click();
             aForZip.remove();
+        });
+    }
+
+    $scope.doUserDefinedRinse = function (id) {
+        var url = "/dataMerge/doUserDefinedRinse?caseId="+id;
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.query();
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
         });
     }
 });
@@ -5581,7 +5593,7 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
 
 //导入文件管理
 App.controller("fileManagerController", function ($http,$timeout,$scope,
-                                                myservice){
+                                                myservice,$rootScope,$websocket){
     $("#pleaseWait").hide();
     myservice.loginLockCheck();
 
@@ -5792,7 +5804,9 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
         });
     }
 
-    $scope.dataSync = function(){
+    var isArr = [];
+
+    $scope.dataSync = function(item){
         if($scope.selected.length == 0){
             alert("请先勾选");
             return;
@@ -5801,7 +5815,7 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
         if (confirm(msg)==false) {
             return;
         }
-
+        isArr.push(item.id);
         var url = "/file/dataSync?selected="+$scope.selected;
         $http.post(url).success(function(data)
         {
@@ -5819,6 +5833,41 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
 
     }
 
+
+
+    $scope.doWsClient = function () {
+        //获取文件服务器ip地址
+        var url = "/file/getFileServerIp";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            var ws = $websocket.$new('ws://'+temp.obj+":8092/schedule/"+$rootScope.user.id);
+            var webSocketRequestDto = {
+                userId: $rootScope.user.id
+            }
+            var jsonString = angular.toJson(webSocketRequestDto);
+            ws.$on('$open', function () {
+                ws.$emit("Hello",jsonString); // 进行注册
+            }).$on('$message', function (message) { // it listents for 'incoming event'
+                var jsonObj = angular.fromJson(message);
+                if(jsonObj["WS-00"]){
+                   console.log(jsonObj["WS-00"]);
+                }
+                if(jsonObj["WS-01"]){
+                    angular.forEach(isArr,function (e) {
+                        $scope.progress[e] = "radial-bar radial-bar-info radial-bar-"+jsonObj["WS-01"][e]+" radial-bar-sm";
+                    });
+                }
+            });
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.doWsClient();
     $scope.query();
 });
 
@@ -6473,6 +6522,8 @@ App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore
                         myservice.setCookie("irisEmail",$scope.account.email);
                         $localStorage.userName=$scope.account.userName;
                         $localStorage.userId = response.obj.id;
+                        $rootScope.user.name = $scope.account.userName;
+                        $rootScope.user.id = response.obj.id;
                         $state.go('app.dashboard');
                     }
                 }, function(x) {
@@ -10360,6 +10411,7 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
 
     $scope.loadSidebarMenu = function() {
 
+
       var menuURL="/menu/getSiderBarMenu";
       $http.post(menuURL)
         .success(function(data) {
@@ -10368,7 +10420,7 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
            $scope.menuItems = temp.obj;
         })
 
-             /*
+                    /*
               var menuJson = 'server/sidebar-menu.json',
                   menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
               $http.get(menuURL)

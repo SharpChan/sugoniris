@@ -116,4 +116,24 @@ public class FileDataMergeController {
         }
     }
 
+    @RequestMapping("/doUserDefinedRinse")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult doUserDefinedRinse(@CurrentUser User user,@RequestParam(value = "caseId") Long caseId){
+        RestResult restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            fileDataMergeServiceImpl.doUserDefinedRinse( caseId,user.getId(),errorList);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
 }

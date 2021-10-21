@@ -31,4 +31,6 @@ public interface FolderService {
      *修改模板组
      */
     Integer updateFileAttachmentTemplateGroup(User user,FileAttachmentDto fileAttachmentDto , List<Error> errorList) throws IllegalAccessException;
+
+    String getFileServerIp();
 }

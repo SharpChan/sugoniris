@@ -6,6 +6,6 @@ import java.util.Map;
 public interface DataRinseService {
 
     //关联子子账户信息
-    void completeRinse();
+    void completeRinse(String userId,Long caseId);
 
 }

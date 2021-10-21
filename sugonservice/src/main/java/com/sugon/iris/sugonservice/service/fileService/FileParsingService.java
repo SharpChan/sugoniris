@@ -4,11 +4,20 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface FileParsingService {
 
     /**
      * 解析csv文件并且写入mpp,并对文件和文件数据进行统计
      */
-    boolean fileParsing(Long userId, Long fileAttachmentId, List<Error> errorList) throws IOException, IllegalAccessException;
+    boolean fileParsing(Long userId, Long fileAttachmentId, List<Error> errorList) throws IOException, IllegalAccessException, InterruptedException, ExecutionException;
+
+    /**
+     * 进行自定义清洗
+     * @param caseId
+     * @param userId
+     * @param errorList
+     */
+    void doUserDefinedRinse(Long caseId, Long userId, List<Error> errorList);
 }

@@ -56,9 +56,9 @@
                         <th>清洗组</th>
                         <th>备注</th>
                         <th>修改</th>
-                        <th>删除</th>
                         <th>字段配置</th>
                         <th>固定清洗配置</th>
+                        <th>删除</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -79,11 +79,6 @@
                             </button>
                         </td>
                         <td align="left">
-                            <button  ng-show="item.userId != 1000000001 || userId == 1000000001" type="button" ng-click="deleteOne(item.id)" class="btn btn-sm btn-danger">
-                                <em class="fa fa-trash-o"></em>
-                            </button>
-                        </td>
-                        <td align="left">
                             <button type="button" ng-click="detail(item)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-plus"></em>
                             </button>
@@ -91,6 +86,11 @@
                         <td align="left">
                             <button type="button" ng-click="rinseBusiness(item)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-plus"></em>
+                            </button>
+                        </td>
+                        <td align="left">
+                            <button  ng-show="item.userId != 1000000001 || userId == 1000000001" type="button" ng-click="deleteOne(item.id)" class="btn btn-sm btn-danger">
+                                <em class="fa fa-trash-o"></em>
                             </button>
                         </td>
                     </tr>

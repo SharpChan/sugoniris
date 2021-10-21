@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.session.Session;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import javax.annotation.Resource;
@@ -77,7 +78,12 @@ public class AccountResource {
         Cookie cookie = new Cookie("jsessionid", session.getId());
         response.addCookie(cookie);
         //以秒为单位，即在没有活动120分钟后，session将失效
-        session.setMaxInactiveInterval(Integer.parseInt(PublicUtils.getConfigMap().get("systemExpiration"))*60);
+        //设置默认值30分钟
+        if(StringUtils.isEmpty(PublicUtils.getConfigMap().get("systemExpiration"))){
+            session.setMaxInactiveInterval(30*60);
+        }else {
+            session.setMaxInactiveInterval(Integer.parseInt(PublicUtils.getConfigMap().get("systemExpiration")) * 60);
+        }
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
             restResult.setMessage("登录失败！");
