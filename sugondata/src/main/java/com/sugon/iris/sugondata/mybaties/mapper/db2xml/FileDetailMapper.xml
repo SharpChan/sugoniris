@@ -19,11 +19,12 @@
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
         <result column="has_import" property="hasImport" jdbcType="TINYINT" />
         <result column="file_table_id" property="fileTableId" jdbcType="BIGINT" />
+        <result column="failure_message" property="failureMessage" jdbcType="VARCHAR" />
     </resultMap>
 
     <!--基础字段-->
     <sql id="Base_Column_List" >
-        id,file_attachment_id,file_type,file_name,file_path,file_template_id,row_count,import_row_count,case_id,table_name,user_id,create_time,update_time,has_import,file_table_id
+        id,file_attachment_id,file_type,file_name,file_path,file_template_id,row_count,import_row_count,case_id,table_name,user_id,create_time,update_time,has_import,file_table_id,failure_message
     </sql>
 
     <!--表查询-->
@@ -116,7 +117,8 @@
              #{createTime,jdbcType=TIMESTAMP},
              #{updateTime,jdbcType=TIMESTAMP},
              #{hasImport,jdbcType=TINYINT},
-             #{fileTableId,jdbcType=INTEGER}
+             #{fileTableId,jdbcType=INTEGER},
+             #{failureMessage,jdbcType=VARCHAR}
              )
     </insert>
 

@@ -12,6 +12,9 @@ import com.sugon.iris.sugondomain.dtos.systemDtos.UserDto;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.emailService.EmailService;
 import com.sugon.iris.sugonservice.service.systemService.AccountService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.session.Session;
@@ -31,6 +34,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@Api(value = "测试接口", tags = "用户管理相关的接口", description = "用户管理接口")
 public class AccountResource {
     private static final String FAILED = "FAILED";
     @Autowired
@@ -44,6 +48,10 @@ public class AccountResource {
 
     @PostMapping("/account/register")
     @ResponseStatus(HttpStatus.CREATED)
+    //方法参数说明，name参数名；value参数说明，备注；dataType参数类型；required 是否必传；defaultValue 默认值
+    @ApiImplicitParam(name = "UserDto", value = "用户信息")
+    //说明是什么方法(可以理解为方法注释)
+    @ApiOperation(value = "添加用户", notes = "添加用户")
     public RestResult<Integer> registerAccount(@Valid @RequestBody UserDto userDto) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

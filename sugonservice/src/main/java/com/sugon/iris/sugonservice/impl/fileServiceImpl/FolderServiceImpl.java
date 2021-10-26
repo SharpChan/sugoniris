@@ -401,9 +401,9 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public String getFileServerIp() {
         if("1".equals(PublicUtils.getConfigMap().get("environment"))){
-            return "localhost";
+            return "localhost:8092";
         }
-        return PublicUtils.getConfigMap().get("linux.ipAddress");
+        return PublicUtils.getConfigMap().get("webSocket_fileRest");
     }
 
     /**

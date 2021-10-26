@@ -86,4 +86,9 @@ public class FileDetailBean {
      * 表id
      */
     private Long fileTableId;
+
+    /**
+     * 错误信息
+     */
+    private String failureMessage;
 }

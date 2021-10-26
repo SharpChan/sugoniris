@@ -206,7 +206,7 @@ public class FileParsingServiceImpl implements FileParsingService {
             log.info(str.get());
 
         }
-
+        executorService.shutdown();
 
         //进行外切http/websocket 数据清洗
         //通过caseId案件编号获取http/websocket地址
@@ -214,7 +214,6 @@ public class FileParsingServiceImpl implements FileParsingService {
 
         json = getString(100,String.valueOf(fileAttachmentId));
         WebSocketServer.sendInfo(json,String.valueOf(userId));
-        executorService.shutdown();
         return result;
     }
 
@@ -260,7 +259,7 @@ public class FileParsingServiceImpl implements FileParsingService {
     }
 
     private void fileDetailFailedSave(Long userId, FileAttachmentEntity fileAttachmentEntity, List<File> fileListNew) {
-        //把为不匹配的文件信息入库
+        //把不匹配的文件信息入库
         for(File fileFailed : fileListNew){
             Long fileSeq = sequenceMapper.getSeq("file_detail");
             FileDetailEntity fileDetailEntityfSql = new FileDetailEntity();
@@ -281,6 +280,7 @@ public class FileParsingServiceImpl implements FileParsingService {
             fileDetailEntityfSql.setFilePath(fileFailed.getAbsolutePath());
             fileDetailEntityfSql.setRowCount(0);
             fileDetailEntityfSql.setHasImport(false);
+            fileDetailEntityfSql.setFailureMessage("没有对应的模板");
             //把信息存入文件信息表
             fileDetailMapper.fileDetailInsert(fileDetailEntityfSql);
         }

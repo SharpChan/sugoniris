@@ -5843,7 +5843,7 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
-            var ws = $websocket.$new('ws://'+temp.obj+":8092/schedule/"+$rootScope.user.id);
+            var ws = $websocket.$new('ws://'+temp.obj+"/schedule/"+$rootScope.user.id);
             var webSocketRequestDto = {
                 userId: $rootScope.user.id
             }

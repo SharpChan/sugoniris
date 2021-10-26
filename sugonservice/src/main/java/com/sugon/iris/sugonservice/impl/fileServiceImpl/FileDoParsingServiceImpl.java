@@ -103,6 +103,12 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         CsvRow csvRowHead = rows.get(0);
         //获取字段列表
         List<String> headList = csvRowHead.getFields();
+
+        //判断文件头是否有重复,或者字段头是空的，有重复不进行存库,并把错误信息存入文件信息表
+        if(isHeadRepeat(userId,caeId,headList,file,fileSeq,fileAttachmentId)){
+            return;
+        }
+
         boolean flag = getFeildRefIndex(fileTemplateDto.getFileTemplateDetailDtoList(), feildRefIndexMap, headList);
         //如果没有匹配到数据,utf8-也解析一次。满足的情况下进行覆盖
         if (!flag) {
@@ -274,6 +280,12 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         Sheet sheet = wb.getSheetAt(0);
         Row rowHead = sheet.getRow(0);
         List<String> headList = new ArrayList<>();
+
+        //判断文件头是否有重复,或者字段头是空的，有重复不进行存库,并把错误信息存入文件信息表
+        if(isHeadRepeat(userId,caeId,headList,file,fileSeq,fileAttachmentId)){
+            return;
+        }
+
         //第一行是列名，所以不读
         int firstRowIndex = sheet.getFirstRowNum()+1;
         int lastRowIndex = sheet.getLastRowNum()+1;
@@ -666,5 +678,48 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
             }
         }
         return result;
+    }
+
+    private boolean isHeadRepeat(Long userId ,Long caeId,List<String> headList,File file,Long fileSeq,Long fileAttachmentId){
+        boolean flag = false;
+        String message = "";
+        for_1: for(String str1 : headList){
+                    if(StringUtils.isEmpty(str1)){
+                        flag = true;
+                        message="表头不能为空";
+                        break;
+                    }
+                   for(String str2 : headList){
+                      if(str1.equals(str2)){
+                          flag = true;
+                          message="表头不能重复【"+str1+"】";
+                          break for_1;
+                      }
+                   }
+        }
+        if(flag){
+           //错误信息存库
+            FileDetailEntity fileDetailEntityfSql = new FileDetailEntity();
+            fileDetailEntityfSql.setId(fileSeq);
+            fileDetailEntityfSql.setUserId(userId);
+            fileDetailEntityfSql.setCaseId(caeId);
+            if(file.getName().contains(".csv")) {
+                fileDetailEntityfSql.setFileType("csv");
+            } else if(file.getName().contains(".xls")){
+                fileDetailEntityfSql.setFileType("xls");
+            } else if(file.getName().contains(".xlsx")){
+                fileDetailEntityfSql.setFileType("xlsx");
+            } else{
+                fileDetailEntityfSql.setFileType("");
+            }
+            fileDetailEntityfSql.setFileAttachmentId(fileAttachmentId);
+            fileDetailEntityfSql.setFileName(file.getName());
+            fileDetailEntityfSql.setFilePath(file.getAbsolutePath());
+            fileDetailEntityfSql.setRowCount(0);
+            fileDetailEntityfSql.setHasImport(false);
+            //把信息存入文件信息表
+            fileDetailMapper.fileDetailInsert(fileDetailEntityfSql);
+        }
+        return flag;
     }
 }

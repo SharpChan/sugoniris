@@ -146,12 +146,14 @@
 				<tr>
 					<th>文件名称</th>
 					<th>文件类型</th>
+					<th>原因</th>
 				</tr>
 				</thead>
 				<tbody>
 				<tr ng-repeat="item in failedFiles">
 					<td align="left">{{item.fileName}}</td>
 					<td align="left">{{item.fileType}}</td>
+					<td align="left">{{item.failureMessage}}</td>
 				</tr>
 				</tbody>
 			</table>
