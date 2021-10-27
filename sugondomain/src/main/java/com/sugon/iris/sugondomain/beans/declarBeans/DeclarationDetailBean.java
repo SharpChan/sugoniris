@@ -14,7 +14,7 @@ public class DeclarationDetailBean {
     /**
      *申报类型 1：删除案件；2：删除文件
      */
-    private String type;
+    private String businessType;
 
     /**
      * 申报内容

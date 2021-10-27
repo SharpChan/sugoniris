@@ -35,7 +35,7 @@ datasource:
 
     #连接本地数据库
     db2:
-      driverClassName: com.mysql.jdbc.Driver
+      driverClassName: com.mysql.cj.jdbc.Driver
       username: root
       password: root
       jdbc-url: jdbc:mysql://192.168.217.140:3306/iris?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC

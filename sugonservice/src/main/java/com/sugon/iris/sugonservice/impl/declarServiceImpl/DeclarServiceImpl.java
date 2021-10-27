@@ -72,9 +72,9 @@ public class DeclarServiceImpl implements DeclarService {
         List<DeclarationDetailDto> declarationDetailDtoList = new ArrayList<>();
         for(DeclarationDetailEntity declarationDetailEntity : declarationDetailEntityList){
             DeclarationDetailDto declarationDetailDto = new DeclarationDetailDto();
-           if( PublicRuleUtils.ONE.equals(declarationDetailEntity.getType()) ) {
+           if( PublicRuleUtils.ONE.equals(declarationDetailEntity.getBusinessType()) ) {
                declarationDetailDto.setTypeName("删除案件");
-           }else if( PublicRuleUtils.TWO.equals(declarationDetailEntity.getType()) ){
+           }else if( PublicRuleUtils.TWO.equals(declarationDetailEntity.getBusinessType()) ){
                declarationDetailDto.setTypeName("删除文件");
            }
             declarationDetailDtoList.add(PublicUtils.trans(declarationDetailEntity,declarationDetailDto));
@@ -87,7 +87,7 @@ public class DeclarServiceImpl implements DeclarService {
     public List<DeclarationDetailDto> getAllDeclarDetail(DeclarationDetailDto declarationDetail,List<Error> errorList) throws IllegalAccessException {
         List<DeclarationDetailEntity> declarationDetailEntityList = null;
         DeclarationDetailEntity declarationDetailEntitySql = new DeclarationDetailEntity();
-        declarationDetailEntitySql.setType(declarationDetail.getType());
+        declarationDetailEntitySql.setBusinessType(declarationDetail.getBusinessType());
         declarationDetailEntitySql.setStatus(declarationDetail.getStatus());
         try {
             declarationDetailEntityList = declarMapper.findDeclarationDetail4Check(declarationDetailEntitySql);
@@ -98,9 +98,9 @@ public class DeclarServiceImpl implements DeclarService {
         List<DeclarationDetailDto> declarationDetailDtoList = new ArrayList<>();
         for(DeclarationDetailEntity declarationDetailEntity : declarationDetailEntityList){
             DeclarationDetailDto declarationDetailDto = new DeclarationDetailDto();
-            if( PublicRuleUtils.ONE.equals(declarationDetailEntity.getType()) ) {
+            if( PublicRuleUtils.ONE.equals(declarationDetailEntity.getBusinessType()) ) {
                 declarationDetailDto.setTypeName("删除案件");
-            }else if( PublicRuleUtils.TWO.equals(declarationDetailEntity.getType()) ){
+            }else if( PublicRuleUtils.TWO.equals(declarationDetailEntity.getBusinessType()) ){
                 declarationDetailDto.setTypeName("删除文件");
             }
 
@@ -163,13 +163,13 @@ public class DeclarServiceImpl implements DeclarService {
             declarationDetailEntity = declarMapper.findDeclarationDetail(declarationDetailEntity).get(0);
             String[] idArr = {declarationDetailEntity.getBusinessId()+""};
             //案件删除
-            if(PublicRuleUtils.ONE.equals(declarationDetailEntity.getType())){
+            if(PublicRuleUtils.ONE.equals(declarationDetailEntity.getBusinessType())){
                 User user = new User();
                 user.setId(declarationDetailEntity.getOwnerUserId());
                 fileCaseServiceImpl.deleteCase(user,idArr,false,errorList);
             }
             //文件删除
-            if(PublicRuleUtils.TWO.equals(declarationDetailEntity.getType())){
+            if(PublicRuleUtils.TWO.equals(declarationDetailEntity.getBusinessType())){
                 User user = new User();
                 user.setId(declarationDetailEntity.getOwnerUserId());
                 folderServiceImpl.deleteFile(user,idArr,false,errorList);

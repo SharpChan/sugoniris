@@ -295,7 +295,7 @@ public class FolderServiceImpl implements FolderService {
                         declarationDetailDto.setDetail(DETAIL + fileAttachmentEntity.getFileName());
                         declarationDetailDto.setOwnerUserId(user.getId());
                         declarationDetailDto.setStatus(PublicRuleUtils.ZERO);
-                        declarationDetailDto.setType(PublicRuleUtils.TWO);
+                        declarationDetailDto.setBusinessType(PublicRuleUtils.TWO);
                         declarationDetailDto.setBusinessId(fileAttachmentEntity.getId());
                         declarationDetailDtoList.add(declarationDetailDto);
                         //删除数组中对应的值
@@ -303,7 +303,9 @@ public class FolderServiceImpl implements FolderService {
                         j++;
                     }
                 }
-                declarServiceImpl.saveDeclaration(user, declarationDetailDtoList, errorList);
+                if(!CollectionUtils.isEmpty(declarationDetailDtoList)){
+                    declarServiceImpl.saveDeclaration(user, declarationDetailDtoList, errorList);
+                }
                 if (arrList.size() == 0) {
                     return j;
                 }
@@ -357,7 +359,7 @@ public class FolderServiceImpl implements FolderService {
             FileAttachmentDto fileAttachmentDtoBean = new FileAttachmentDto();
             //查询申报状态
             DeclarationDetailEntity declarationDetailEntitySql = new DeclarationDetailEntity();
-            declarationDetailEntitySql.setType(PublicRuleUtils.TWO);
+            declarationDetailEntitySql.setBusinessType(PublicRuleUtils.TWO);
             declarationDetailEntitySql.setBusinessId(fileAttachmentEntity.getId());
             List<DeclarationDetailEntity> declarationDetailEntityList = declarMapper.findDeclarationDetail(declarationDetailEntitySql);
             if(CollectionUtils.isEmpty(declarationDetailEntityList)){

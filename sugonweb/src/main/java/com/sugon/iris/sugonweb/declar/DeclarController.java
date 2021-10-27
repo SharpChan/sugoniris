@@ -76,7 +76,7 @@ public class DeclarController {
         List<Error> errorList = new ArrayList<>();
         DeclarationDetailDto declarationDetail = new DeclarationDetailDto();
         declarationDetail.setStatus(UNDEFINED.equals(declarStatus) ? null : declarStatus);
-        declarationDetail.setType(UNDEFINED.equals(declarType)? null : declarType);
+        declarationDetail.setBusinessType(UNDEFINED.equals(declarType)? null : declarType);
         try{
             restResult.setObj(declarServiceImpl.getAllDeclarDetail(declarationDetail,errorList));
         }catch (Exception e){

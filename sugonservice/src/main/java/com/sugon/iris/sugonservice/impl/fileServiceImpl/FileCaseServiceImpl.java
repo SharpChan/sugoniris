@@ -94,7 +94,7 @@ public class FileCaseServiceImpl implements FileCaseService {
 
                 //查询申报状态
                 DeclarationDetailEntity declarationDetailEntitySql = new DeclarationDetailEntity();
-                declarationDetailEntitySql.setType(PublicRuleUtils.ONE);
+                declarationDetailEntitySql.setBusinessType(PublicRuleUtils.ONE);
                 declarationDetailEntitySql.setBusinessId(fileCaseEntityBean.getId());
                 List<DeclarationDetailEntity> declarationDetailEntityList = declarMapper.findDeclarationDetail(declarationDetailEntitySql);
                 if(CollectionUtils.isEmpty(declarationDetailEntityList)){
@@ -133,7 +133,7 @@ public class FileCaseServiceImpl implements FileCaseService {
                         declarationDetailDto.setDetail(DETAIL + fileCaseEntity.getCaseName());
                         declarationDetailDto.setOwnerUserId(user.getId());
                         declarationDetailDto.setStatus(PublicRuleUtils.ZERO);
-                        declarationDetailDto.setType(PublicRuleUtils.ONE);
+                        declarationDetailDto.setBusinessType(PublicRuleUtils.ONE);
                         declarationDetailDto.setBusinessId(fileCaseEntity.getId());
                         declarationDetailDtoList.add(declarationDetailDto);
                         //删除数组中对应的值

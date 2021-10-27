@@ -4,14 +4,14 @@
 
     <!--结果集-->
     <resultMap id="DeclarInfoResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.DeclarInfoBeanEntity" >
-        <result column="type" property="type" jdbcType="VARCHAR" />
+        <result column="business_type" property="businessType" jdbcType="VARCHAR" />
         <result column="amount" property="amount" jdbcType="INTEGER" />
         <result column="declarName" property="declarName" jdbcType="VARCHAR" />
     </resultMap>
 
     <resultMap id="DeclarationResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.DeclarationDetailEntity" >
         <result column="id" property="id" jdbcType="BIGINT" />
-        <result column="type" property="type" jdbcType="VARCHAR" />
+        <result column="business_type" property="businessType" jdbcType="VARCHAR" />
         <result column="detail" property="detail" jdbcType="VARCHAR" />
         <result column="owner_user_id" property="ownerUserId" jdbcType="BIGINT" />
         <result column="status" property="status" jdbcType="VARCHAR" />
@@ -22,7 +22,7 @@
     </resultMap>
 
     <sql id="Declaration_Column_List" >
-        id,`type`,detail,owner_user_id,status,check_user_id,create_time,business_id
+        id,business_type,detail,owner_user_id,status,check_user_id,create_time,business_id
     </sql>
 
     <select id="getDeclarInfoByUserId"  resultMap="DeclarInfoResultMap" >
@@ -50,11 +50,8 @@
         <if test="id!=null">
             and id = #{id}
         </if >
-        <if test="type!=null and type != ''">
-            and type = #{type}
-        </if >
-        <if test="type!=null and type != ''">
-            and type = #{type}
+        <if test="businessType!=null and businessType != ''">
+            and business_type = #{businessType}
         </if >
         <if test="ownerUserId!=null">
             and owner_user_id = #{ownerUserId}
@@ -75,7 +72,7 @@
     <select id="findDeclarationDetail4Check"  resultMap="DeclarationResultMap" >
         SELECT
          a.id,
-         a.type,
+         a.business_type,
          a.detail,
          a.owner_user_id,
          a.status,
@@ -91,8 +88,8 @@
         <if test="id!=null">
             and a.id = #{id}
         </if >
-        <if test="type!=null and type != ''">
-            and a.type = #{type}
+        <if test="businessType!=null and businessType != ''">
+            and a.business_type = #{businessType}
         </if >
         <if test="ownerUserId!=null">
             and a.owner_user_id = #{ownerUserId}
@@ -117,7 +114,7 @@
         <foreach collection="declarationDetailEntityList" item="item" index="i" separator=",">
              (
              #{item.id,jdbcType=BIGINT},
-             #{item.type,jdbcType=VARCHAR},
+             #{item.businessType,jdbcType=VARCHAR},
              #{item.detail,jdbcType=VARCHAR},
              #{item.ownerUserId,jdbcType=BIGINT},
              #{item.status,jdbcType=VARCHAR},
