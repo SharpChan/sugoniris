@@ -71,7 +71,7 @@
             添加<input type="button" value="关闭" style="margin-left:400px" class="btn btn-default" ng-click="close();" >
         </div>
         <div class="panel-body">
-            <div  class="form-group" style="top: 20px;width: 450px" ng-init="availableCategories = []">
+            <div  class="form-group" style="top: 20px;width: 450px" >
                 <ui-select multiple="" ng-model="template.categories" theme="bootstrap" ng-disabled="disabled" class="mb-lg">
                     <ui-select-match placeholder="选择模板">{{$item.substring(0,$item.lastIndexOf("::"))}}</ui-select-match>
                     <ui-select-choices repeat="cell in availableCategories">{{ cell.substring(0,cell.lastIndexOf("::"))}}</ui-select-choices>

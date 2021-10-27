@@ -121,6 +121,30 @@ public class FileParsingServiceImpl implements FileParsingService {
             return false;
         }
 
+        //判断一个表是否对应多个模板
+        for(File file : fileList){
+            boolean flag = false;
+            int c = 0;
+            for(FileTemplateDto fileTemplateDto : fileTemplateDtoList){
+               for(String key : fileTemplateDto.getTemplateKey().split("&&")){
+                   if(file.getName().contains(key)){
+                         c++;
+                   }
+               }
+               for(String exclude : fileTemplateDto.getExclude().split("&&")){
+                         if(file.getName().contains(exclude)){
+                             flag = true;
+                             break;
+                         }
+               }
+               if(c>1 && !flag){
+                   errorList.add(new Error(ErrorCode_Enum.FILE_01_012.getCode(),ErrorCode_Enum.FILE_01_012.getMessage()));
+                   return false;
+               }
+            }
+        }
+        //------------------------
+
 
         List<File> fileListNew = new ArrayList<>();
         fileListNew.addAll(fileList);
@@ -130,7 +154,10 @@ public class FileParsingServiceImpl implements FileParsingService {
         Map<FileTemplateDto, List<File>> mapTemplate2File = template2Files(fileListNew, fileTemplateDtoList);
         fileDetailFailedSave(userId, fileAttachmentEntity, fileListNew);
 
-
+        if(CollectionUtils.isEmpty(mapTemplate2File)){
+            errorList.add(new Error(ErrorCode_Enum.FILE_01_003.getCode(), ErrorCode_Enum.FILE_01_003.getMessage()));
+            return false;
+        }
 
         //创建多线程，一个模板创建一个线程,在子线程内分别入库
         ExecutorService executorService = Executors.newFixedThreadPool(mapTemplate2File.size());

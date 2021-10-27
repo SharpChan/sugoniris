@@ -1,6 +1,6 @@
 spring:
   profiles:
     #dev开发环境
-    #active: anno,common,data,domain,service,rest4web,web
+    active: anno,common,data,domain,service,rest4web,web
     #prd生产环境
-    active: annoWebPrd,commonWebPrd,dataWebPrd,domainWebPrd,serviceWebPrd,restWebPrd,webPrd
+    #active: annoWebPrd,commonWebPrd,dataWebPrd,domainWebPrd,serviceWebPrd,restWebPrd,webPrd

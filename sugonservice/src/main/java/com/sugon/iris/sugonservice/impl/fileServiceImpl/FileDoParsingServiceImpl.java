@@ -105,7 +105,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         List<String> headList = csvRowHead.getFields();
 
         //判断文件头是否有重复,或者字段头是空的，有重复不进行存库,并把错误信息存入文件信息表
-        if(isHeadRepeat(userId,caeId,headList,file,fileSeq,fileAttachmentId)){
+        if(isHeadRepeat(userId,caeId,headList,file,fileSeq,fileAttachmentId,errorList)){
             return;
         }
 
@@ -282,7 +282,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         List<String> headList = new ArrayList<>();
 
         //判断文件头是否有重复,或者字段头是空的，有重复不进行存库,并把错误信息存入文件信息表
-        if(isHeadRepeat(userId,caeId,headList,file,fileSeq,fileAttachmentId)){
+        if(isHeadRepeat(userId,caeId,headList,file,fileSeq,fileAttachmentId,errorList)){
             return;
         }
 
@@ -680,7 +680,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         return result;
     }
 
-    private boolean isHeadRepeat(Long userId ,Long caeId,List<String> headList,File file,Long fileSeq,Long fileAttachmentId){
+    private boolean isHeadRepeat(Long userId ,Long caeId,List<String> headList,File file,Long fileSeq,Long fileAttachmentId,List<Error> errorList){
         boolean flag = false;
         String message = "";
         for_1: for(String str1 : headList){
@@ -689,11 +689,15 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                         message="表头不能为空";
                         break;
                     }
+                    int c = 0;
                    for(String str2 : headList){
                       if(str1.equals(str2)){
-                          flag = true;
-                          message="表头不能重复【"+str1+"】";
-                          break for_1;
+                          c++;
+                          if(c > 1) {
+                              flag = true;
+                              message = "表头不能重复【" + str1 + "】";
+                              break for_1;
+                          }
                       }
                    }
         }
@@ -717,8 +721,10 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
             fileDetailEntityfSql.setFilePath(file.getAbsolutePath());
             fileDetailEntityfSql.setRowCount(0);
             fileDetailEntityfSql.setHasImport(false);
+            fileDetailEntityfSql.setFailureMessage(message);
             //把信息存入文件信息表
             fileDetailMapper.fileDetailInsert(fileDetailEntityfSql);
+            errorList.add(new Error(ErrorCode_Enum.FILE_01_002.getCode(),ErrorCode_Enum.FILE_01_002.getMessage()));
         }
         return flag;
     }

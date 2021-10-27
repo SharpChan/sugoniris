@@ -13,6 +13,7 @@ import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,6 +64,7 @@ public class FileTemplateServiceImpl implements FileTemplateService {
 
     @Override
     public int fileTemplateInsert(User user, FileTemplateDto fileTemplateDto, List<Error> errorList) throws IllegalAccessException {
+        if (checkKeys(fileTemplateDto, errorList)) return 0;
         int count = 0;
         FileTemplateEntity fileTemplateEntity = new FileTemplateEntity();
         PublicUtils.trans(fileTemplateDto,fileTemplateEntity);
@@ -77,6 +79,10 @@ public class FileTemplateServiceImpl implements FileTemplateService {
 
     @Override
     public int updateFileTemplate(User user, FileTemplateDto fileTemplateDto, List<Error> errorList) throws IllegalAccessException {
+
+        //校验关键字，是否有包含关系，有的话提示返回
+        if (checkKeys(fileTemplateDto, errorList)) return 0;
+
         int count = 0;
         FileTemplateEntity fileTemplateEntity = new FileTemplateEntity();
         fileTemplateEntity.setUserId(user.getId());
@@ -87,6 +93,25 @@ public class FileTemplateServiceImpl implements FileTemplateService {
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"更新表file_template出错",e.toString()));
         }
         return count;
+    }
+
+    private boolean checkKeys(FileTemplateDto fileTemplateDto, List<Error> errorList) {
+        if(!StringUtils.isEmpty(fileTemplateDto.getTemplateKey())){
+            String[] keys = fileTemplateDto.getTemplateKey().split("&&");
+             for(String key1 : keys){
+                 int c = 0;
+                 for(String key2 : keys){
+                    if(key1.contains(key2)){
+                        c++;
+                    }
+                 }
+                 if(c>1){
+                     errorList.add(new Error(ErrorCode_Enum.FILE_01_013.getCode(),ErrorCode_Enum.FILE_01_013.getMessage()));
+                     return true;
+                 }
+             }
+        }
+        return false;
     }
 
     @Override

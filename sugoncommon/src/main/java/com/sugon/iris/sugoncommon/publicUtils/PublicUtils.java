@@ -76,7 +76,7 @@ public  class PublicUtils {
      *
      */
     public static List<File> getAllFile(File baseFile,List<File> list) {
-        if(!baseFile.isDirectory()){
+        if(baseFile.isFile()){
             list.add(baseFile);
             return list;
         }
