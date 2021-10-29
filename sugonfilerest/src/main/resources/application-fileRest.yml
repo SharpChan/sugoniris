@@ -6,4 +6,4 @@ spring:
     port: 6379
 
 server:
-  port: 8092
+  port: 8668
