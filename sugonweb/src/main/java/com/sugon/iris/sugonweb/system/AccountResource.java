@@ -34,7 +34,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@Api(value = "测试接口", tags = "用户管理相关的接口", description = "用户管理接口")
+@Api(value = "后台管理", tags = "用户管理相关的接口", description = "用户管理接口")
 public class AccountResource {
     private static final String FAILED = "FAILED";
     @Autowired
@@ -51,7 +51,7 @@ public class AccountResource {
     //方法参数说明，name参数名；value参数说明，备注；dataType参数类型；required 是否必传；defaultValue 默认值
     @ApiImplicitParam(name = "UserDto", value = "用户信息")
     //说明是什么方法(可以理解为方法注释)
-    @ApiOperation(value = "添加用户", notes = "添加用户")
+    @ApiOperation(value = "用户注册", notes = "用户注册")
     public RestResult<Integer> registerAccount(@Valid @RequestBody UserDto userDto) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -70,6 +70,8 @@ public class AccountResource {
         return restResult;
     }
 
+    @ApiImplicitParam(name = "UserDto", value = "用户信息")
+    @ApiOperation(value = "用户登录", notes = "用户登录")
     @PostMapping("/account/login")
     @ResponseStatus(HttpStatus.CREATED)
     public RestResult<User> login(@Valid @RequestBody UserDto userDto, HttpServletResponse response, HttpSession session) throws UnsupportedEncodingException {
@@ -102,6 +104,9 @@ public class AccountResource {
         return restResult;
     }
 
+
+    //说明是什么方法(可以理解为方法注释)
+    @ApiOperation(value = "用户退出", notes = "用户退出")
     @PostMapping("/account/logOut")
     public void logOut( HttpServletRequest request){
         MySessionContext myc= MySessionContext.getInstance();
@@ -163,6 +168,7 @@ public class AccountResource {
         response.sendRedirect("http://"+strs[1]);
     }*/
 
+    @ApiOperation(value = "用户锁定", notes = "用户锁定")
     @PostMapping("/account/lock")
     @LogInCheck(doLock = true,doProcess = true)
     @ResponseStatus(HttpStatus.CREATED)
@@ -173,6 +179,7 @@ public class AccountResource {
         return restResult;
     }
 
+    @ApiOperation(value = "用户解锁", notes = "用户解锁")
     @PostMapping("/account/unlock")
     @LogInCheck(doLock = false,doProcess = true)
     @ResponseStatus(HttpStatus.CREATED)
@@ -200,6 +207,7 @@ public class AccountResource {
         return restResult;
     }
 
+    @ApiOperation(value = "用户校验", notes = "用户校验")
     @PostMapping("/account/userCheck")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<Integer> userCheck(@RequestParam(value = "id") long  id,@RequestParam(value = "flag") int flag){
@@ -220,6 +228,7 @@ public class AccountResource {
         return restResult;
     }
 
+    @ApiOperation(value = "获取所有用户", notes = "获取所有用户")
     @PostMapping("/account/getUsers")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<List<User>> getUsers(@CurrentUser User user,@RequestParam(value = "flag") int flag,@RequestParam(value = "keyWord") String keyWord){
@@ -240,6 +249,9 @@ public class AccountResource {
         return restResult;
     }
 
+
+    @ApiImplicitParam(name = "id", value = "用户id")
+    @ApiOperation(value = "用户删除", notes = "用户删除")
     @PostMapping("/account/deleteUser")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<Integer> getUsers(@RequestParam(value = "id") long id){

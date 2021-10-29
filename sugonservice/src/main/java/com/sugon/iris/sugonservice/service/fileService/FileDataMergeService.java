@@ -8,6 +8,7 @@ import com.sugon.iris.sugondomain.dtos.fileDtos.MppTableDto;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface FileDataMergeService {
 
@@ -21,5 +22,7 @@ public interface FileDataMergeService {
 
     void getCsv(MppSearchDto mppSearchDto, HttpServletResponse response) throws Exception;
 
-    void mergeExport(Long caseId, HttpServletResponse response) throws IOException;
+    void mergeExport(Long caseId, HttpServletResponse response) throws IOException, InterruptedException, ExecutionException;
+
+    void mergeExportAsync(Long caseId, HttpServletResponse response) throws IOException, InterruptedException, ExecutionException;
 }

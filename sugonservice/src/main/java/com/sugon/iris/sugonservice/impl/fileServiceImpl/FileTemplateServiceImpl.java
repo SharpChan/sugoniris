@@ -95,19 +95,19 @@ public class FileTemplateServiceImpl implements FileTemplateService {
         return count;
     }
 
+    //判断关键字内是包含
     private boolean checkKeys(FileTemplateDto fileTemplateDto, List<Error> errorList) {
         if(!StringUtils.isEmpty(fileTemplateDto.getTemplateKey())){
             String[] keys = fileTemplateDto.getTemplateKey().split("&&");
-             for(String key1 : keys){
-                 int c = 0;
-                 for(String key2 : keys){
-                    if(key1.contains(key2)){
-                        c++;
+             for(int i = 0 ; i < keys.length ; i++){
+                 for(int j = 0 ; j < keys.length ; j++){
+                     if(i == j ){
+                         continue;
+                     }
+                    if(keys[i].contains(keys[j])){
+                        errorList.add(new Error(ErrorCode_Enum.FILE_01_013.getCode(),ErrorCode_Enum.FILE_01_013.getMessage()));
+                        return true;
                     }
-                 }
-                 if(c>1){
-                     errorList.add(new Error(ErrorCode_Enum.FILE_01_013.getCode(),ErrorCode_Enum.FILE_01_013.getMessage()));
-                     return true;
                  }
              }
         }

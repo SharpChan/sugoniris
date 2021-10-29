@@ -126,7 +126,7 @@ public class FolderServiceImpl implements FolderService {
                     command = "if [-d " + fileAttachmentEntity.getAttachment() + "]; then rm -rf  " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + " fi";
                     sSHServiceBs.execCommand(command);
 
-                    command = "unar -o  " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + " " + fileAttachmentEntity.getAttachment();
+                    command = "unar  -o " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + " " + fileAttachmentEntity.getAttachment();
                     sSHServiceBs.execCommand(command);
 
                     fileAttachmentEntity.setHasDecompress(true);
@@ -339,6 +339,9 @@ public class FolderServiceImpl implements FolderService {
             List<FileDetailEntity> fileDetailEntityList = fileDetailMapper.selectFileDetailList(fileDetailEntitySql);
             //删除mpp数据
             for(FileDetailEntity fileDetailEntityBean : fileDetailEntityList){
+                if(StringUtils.isEmpty(fileDetailEntityBean.getTableName())){
+                    continue;
+                }
                 String sql = "delete from  "+fileDetailEntityBean.getTableName()+" where file_attachment_id ='"+fileAttachmentEntity.get(0).getId()+"'";
                 mppMapper.mppSqlExec(sql);
             }

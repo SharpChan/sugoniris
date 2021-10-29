@@ -4902,6 +4902,18 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
 
     $scope.updateSave = function(){
         var url = "/fileTemplate/updateFileTemplate";
+        if(myservice.isEmpty($scope.templateName_2)){
+            alert("模板名称必填！");
+            return;
+        }
+        if(myservice.isEmpty($scope.tablePrefix_2)){
+            alert("表前缀必填！");
+            return;
+        }
+        if(myservice.isEmpty($scope.templateKey_2)){
+            alert("关键字必填！");
+            return;
+        }
         var params = {
             id: $scope.id_2,
             templateName: $scope.templateName_2,
@@ -4965,6 +4977,18 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
     $scope.query();
 
     $scope.save = function () {
+        if(myservice.isEmpty($scope.templateName_1)){
+            alert("模板名称必填！");
+            return;
+        }
+        if(myservice.isEmpty($scope.tablePrefix_1)){
+            alert("表前缀必填！");
+            return;
+        }
+        if(myservice.isEmpty($scope.templateKey_1)){
+            alert("关键字必填！");
+            return;
+        }
         var url = "/fileTemplate/fileTemplateInsert";
         var params = {
             templateName: $scope.templateName_1,

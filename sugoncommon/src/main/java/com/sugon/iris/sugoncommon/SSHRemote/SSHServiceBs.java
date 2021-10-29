@@ -141,8 +141,11 @@ public class SSHServiceBs {
             channelSftp = (ChannelSftp) session.openChannel("sftp");
             // 远程连接
             channelSftp.connect();
+            File targetFile = new File(directoryFile);
             // 删除文件
-            channelSftp.rm(directoryFile);
+            if(targetFile.exists()) {
+                channelSftp.rm(directoryFile);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }finally {

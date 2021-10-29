@@ -2,11 +2,13 @@ package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateGroupMapper;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.SequenceMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateGroupDto;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateGroupEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateGroupService;
@@ -19,6 +21,9 @@ public class FileTemplateGroupServiceImpl implements FileTemplateGroupService {
 
     @Resource
     private FileTemplateGroupMapper fileTemplateGroupMapper;
+
+    @Resource
+    private FileTemplateMapper fileTemplateMapper;
 
     @Resource
     private SequenceMapper sequenceMapper;
@@ -72,6 +77,26 @@ public class FileTemplateGroupServiceImpl implements FileTemplateGroupService {
         int i =0;
         List<FileTemplateGroupEntity> fileTemplateGroupEntityList = new ArrayList<>();
         List<FileTemplateDto> fileTemplateDtoList = fileTemplateGroupDto.getFileTemplateDtoList();
+        for(FileTemplateDto fileTemplateDto : fileTemplateDtoList){
+            FileTemplateEntity fileTemplateEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(fileTemplateDto.getId());
+            fileTemplateDto.setTemplateKey(fileTemplateEntity.getTemplateKey());
+        }
+
+        //判断组内模板是否关键字相互包含，相互包含则提示设置排除字段
+        checkRepert:  for(int j = 0 ; j< fileTemplateDtoList.size();j++){
+            for(String key : fileTemplateDtoList.get(j).getTemplateKey().split("&&")){
+                for(int k =0 ;k < fileTemplateDtoList.size();k++){
+                     if(j == k){
+                         continue;
+                     }
+                     if(fileTemplateDtoList.get(k).getTemplateKey().contains(key)){
+                         errorList.add(new Error(ErrorCode_Enum.FILE_01_014.getCode(),ErrorCode_Enum.FILE_01_014.getMessage()+"["+fileTemplateDtoList.get(k).getTemplateName()+"]-["+fileTemplateDtoList.get(j).getTemplateName()+"]"));
+                         break  checkRepert;
+                     }
+                }
+            }
+        }
+
         Long groupId = sequenceMapper.getSeq("template_group_id");
         for(FileTemplateDto fileTemplateDto : fileTemplateDtoList){
             FileTemplateGroupEntity fileTemplateGroupEntity = new FileTemplateGroupEntity();

@@ -110,7 +110,7 @@ public class FileDataMergeController {
     @LogInCheck(doLock = true,doProcess = true)
     public void mergeExport(@CurrentUser User user, HttpServletResponse response,@RequestParam(value = "caseId") Long caseId){
         try{
-            fileDataMergeServiceImpl.mergeExport(caseId,response);
+            fileDataMergeServiceImpl.mergeExportAsync(caseId,response);
         }catch (Exception e){
             e.printStackTrace();
         }
