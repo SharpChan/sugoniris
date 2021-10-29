@@ -8,6 +8,9 @@ import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileCaseDto;
 import com.sugon.iris.sugonservice.service.fileService.FileCaseService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/fileCase")
+@Api(value = "文件管理", tags = "案件相关接口")
 public class FileCaseController {
 
     private static final String FAILED = "FAILED";
@@ -26,6 +30,8 @@ public class FileCaseController {
 
     @PostMapping("/saveCase")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiImplicitParam(name = "fileCaseDto", value = "案件信息")
+    @ApiOperation(value = "案件保存")
     public RestResult<Integer> saveCase(@CurrentUser User user, @RequestBody FileCaseDto fileCaseDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -46,6 +52,8 @@ public class FileCaseController {
 
     @RequestMapping("/getCases")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiImplicitParam(name = "fileCaseDto", value = "案件信息")
+    @ApiOperation(value = "获取案件")
     public RestResult<List<FileCaseDto>> getCases(@CurrentUser User user, @RequestBody FileCaseDto fileCaseDto){
         RestResult<List<FileCaseDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -67,6 +75,8 @@ public class FileCaseController {
 
     @PostMapping("/updateCase")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiImplicitParam(name = "fileCaseDto", value = "案件信息")
+    @ApiOperation(value = "案件更新")
     public RestResult<Integer> updateCase(@CurrentUser User user, @RequestBody FileCaseDto fileCaseDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -87,6 +97,8 @@ public class FileCaseController {
 
     @RequestMapping("/deleteCase")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiImplicitParam(name = "selected", value = "已选择的案件id")
+    @ApiOperation(value = "案件删除")
     public RestResult<Integer> deleteCase(@CurrentUser User user,@RequestParam(value = "selected") String selected) throws Exception {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

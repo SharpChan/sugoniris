@@ -34,7 +34,7 @@ public class ConfigController {
     @PostMapping("/saveConfig")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiImplicitParam(name = "configDto", value = "配置信息")
-    @ApiOperation(value = "配置信息新增", notes = "配置信息新增")
+    @ApiOperation(value = "配置信息新增")
     public RestResult<Integer> saveConfig(@CurrentUser User user, @RequestBody ConfigDto configDto){
         configDto.setUserName(String.valueOf(user.getId()));
         RestResult<Integer> restResult = new RestResult();
@@ -54,7 +54,7 @@ public class ConfigController {
         return restResult;
     }
 
-    @ApiOperation(value = "获取所有的配置信息", notes = "获取所有的配置信息")
+    @ApiOperation(value = "获取所有的配置信息")
     @PostMapping("/getAllConfigs")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<List<ConfigBean>> getAllConfigs(){
@@ -80,7 +80,7 @@ public class ConfigController {
     //方法参数说明，name参数名；value参数说明，备注；dataType参数类型；required 是否必传；defaultValue 默认值
     @ApiImplicitParam(name = "configDto", value = "配置信息")
     //说明是什么方法(可以理解为方法注释)
-    @ApiOperation(value = "配置信息更新", notes = "配置信息更新")
+    @ApiOperation(value = "配置信息更新")
     @PostMapping("/updateConfig")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<Integer> updateConfig(@CurrentUser User user,@RequestBody ConfigDto configDto){
@@ -104,7 +104,7 @@ public class ConfigController {
 
     @ApiImplicitParam(name = "id", value = "配置信息id")
     //说明是什么方法(可以理解为方法注释)
-    @ApiOperation(value = "配置信息删除", notes = "配置信息删除")
+    @ApiOperation(value = "配置信息删除")
     @PostMapping("/deleteConfig")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<Integer> deleteConfig(@RequestParam(value = "id") Long id) {

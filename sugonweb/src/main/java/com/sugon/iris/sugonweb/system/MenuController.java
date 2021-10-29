@@ -30,7 +30,7 @@ public class MenuController {
      * 菜单注册
      */
     @ApiImplicitParam(name = "MenuDto", value = "菜单信息")
-    @ApiOperation(value = "菜单注册", notes = "菜单页面保存")
+    @ApiOperation(value = "菜单注册")
     @PostMapping("/saveMenu")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<Integer> saveMenu(@CurrentUser User user, @RequestBody MenuDto menuDto){
@@ -57,7 +57,7 @@ public class MenuController {
      * 选择父节点
      */
     @ApiImplicitParam(name = "MenuDto", value = "菜单信息")
-    @ApiOperation(value = "选择父节点", notes = "选择父节点")
+    @ApiOperation(value = "选择父节点")
     @PostMapping("/getMenu")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<List<MenuDto>> getrMenu(@CurrentUser User user, @RequestBody MenuDto menuDto){
@@ -84,7 +84,7 @@ public class MenuController {
      * 获取节点信息
      */
     @ApiImplicitParam(name = "id", value = "节点id")
-    @ApiOperation(value = "获取节点信息", notes = "获取节点信息")
+    @ApiOperation(value = "获取节点信息")
     @PostMapping("/getNodeInfo")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<MenuDto> getNodeInfo(@RequestParam(value = "id") Long id){
@@ -109,7 +109,7 @@ public class MenuController {
     /**
      * 获取所有菜单节点
      */
-    @ApiOperation(value = "获取所有菜单节点信息", notes = "获取所有菜单节点信息")
+    @ApiOperation(value = "获取所有菜单节点信息")
     @PostMapping("/getSiderBarMenu")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<List<MenuDto>> getSiderBarMenu(@CurrentUser User user){
@@ -131,7 +131,7 @@ public class MenuController {
         return restResult;
     }
 
-    @ApiOperation(value = "获取所有菜单节点信息", notes = "获取所有菜单节点信息")
+    @ApiOperation(value = "获取所有菜单节点信息")
     @PostMapping("/getAllSiderBarMenu")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<List<MenuDto>> getAllSiderBarMenu(){
@@ -154,8 +154,10 @@ public class MenuController {
     }
 
     /**
-     * 菜单注册
+     * 更新菜单
      */
+    @ApiImplicitParam(name = "MenuDto", value = "菜单信息")
+    @ApiOperation(value = "更新菜单")
     @PostMapping("/updateMenu")
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<Integer> updateMenu(@CurrentUser User user, @RequestBody MenuDto menuDto){
@@ -183,6 +185,8 @@ public class MenuController {
      */
     @PostMapping("/deleteMenu")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiImplicitParam(name = "id", value = "菜单id")
+    @ApiOperation(value = "菜单删除")
     public RestResult<Integer> deleteMenudeleteMenu(@RequestParam("id") Long id){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

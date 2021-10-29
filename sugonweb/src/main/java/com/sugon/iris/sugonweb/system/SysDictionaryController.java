@@ -7,6 +7,9 @@ import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.configDtos.SysDictionaryDto;
 import com.sugon.iris.sugonservice.service.configService.SysDictionaryService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.util.CollectionUtils;
@@ -17,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/sysDictionary")
+@Api(value = "后台管理", tags = "系统字典配置")
 public class SysDictionaryController {
 
     private static final Logger LOGGER = LogManager.getLogger(ConfigController.class);
@@ -29,6 +33,8 @@ public class SysDictionaryController {
 
     @PostMapping("/saveSysDictionary")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiImplicitParam(name = "SysDictionaryDto", value = "字典信息")
+    @ApiOperation(value = "保存字典信息")
     public RestResult<Integer> saveSysDictionary(@CurrentUser User user, @RequestBody SysDictionaryDto sysDictionaryDto){
         sysDictionaryDto.setUserId(user.getId());
         RestResult<Integer> restResult = new RestResult();
@@ -50,6 +56,7 @@ public class SysDictionaryController {
 
     @PostMapping("/getAllSysDictionary")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取所有字典信息")
     public RestResult<List<SysDictionaryDto>> getAllSysDictionary(){
         RestResult<List<SysDictionaryDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -70,6 +77,8 @@ public class SysDictionaryController {
 
     @PostMapping("/getSysDictionaryByDicGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiImplicitParam(name = "dicGroup", value = "字典组名称")
+    @ApiOperation(value = "通过字典组名称获取字典信息")
     public RestResult<List<SysDictionaryDto>> getSysDictionaryByDicGroup(@RequestParam(value = "dicGroup") String dicGroup){
         RestResult<List<SysDictionaryDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -92,7 +101,9 @@ public class SysDictionaryController {
 
     @PostMapping("/updateSysDictionary")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<Integer> getUserNameAndPassword(@CurrentUser User user,@RequestBody SysDictionaryDto sysDictionaryDto){
+    @ApiImplicitParam(name = "sysDictionaryDto", value = "字典信息")
+    @ApiOperation(value = "更新字典信息")
+    public RestResult<Integer> updateSysDictionary(@CurrentUser User user,@RequestBody SysDictionaryDto sysDictionaryDto){
         sysDictionaryDto.setUserId(user.getId());
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -113,7 +124,9 @@ public class SysDictionaryController {
 
     @PostMapping("/deleteSysDictionary")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<Integer> deleteWhiteIp(@RequestParam(value = "id") Long id) {
+    @ApiImplicitParam(name = "id", value = "字典信息id")
+    @ApiOperation(value = "通过id删除字典信息")
+    public RestResult<Integer> deleteSysDictionary(@RequestParam(value = "id") Long id) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try {

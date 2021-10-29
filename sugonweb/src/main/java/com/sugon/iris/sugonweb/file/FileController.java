@@ -7,6 +7,9 @@ import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileAttachmentDto;
 import com.sugon.iris.sugonservice.service.fileService.FolderService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/file")
+@Api(value = "文件管理", tags = "文件相关接口")
 public class FileController {
 
     private static final String FAILED = "FAILED";
@@ -39,6 +43,8 @@ public class FileController {
 
     @RequestMapping("/uploadFile")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "文件上传")
+    @ApiImplicitParam(name = "caseId", value = "案件id")
     public RestResult<Integer> uploadFile(@CurrentUser User user,@RequestParam(value = "caseId") Long caseId ,HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -63,6 +69,8 @@ public class FileController {
 
     @RequestMapping("/updateFileAttachmentTemplateGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "文件绑定模板组")
+    @ApiImplicitParam(name = "fileAttachmentDto", value = "原始文件信息")
     public RestResult<Integer> updateFileAttachmentTemplateGroup(@CurrentUser User user, @RequestBody FileAttachmentDto fileAttachmentDto) throws Exception {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -83,6 +91,8 @@ public class FileController {
 
     @RequestMapping("/findFileList")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取原始文件信息")
+    @ApiImplicitParam(name = "fileAttachmentDto", value = "原始文件信息")
     public RestResult<List<FileAttachmentDto>>  findFileList(@CurrentUser User user,@RequestBody FileAttachmentDto fileAttachmentDto){
         RestResult<List<FileAttachmentDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -105,6 +115,8 @@ public class FileController {
 
     @RequestMapping("/deleteFile")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "删除原始文件")
+    @ApiImplicitParam(name = "selected", value = "选中的原始文件")
     public RestResult<Integer> deleteFile(@CurrentUser User user,@RequestParam(value = "selected") String selected) throws Exception {
 
         RestResult<Integer> restResult = new RestResult();
@@ -127,6 +139,8 @@ public class FileController {
 
     @RequestMapping("/dataSync")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "文件解析")
+    @ApiImplicitParam(name = "selected", value = "选中的原始文件")
     public RestResult<Void> dataSync(@CurrentUser User user,@RequestParam(value = "selected") String selected) throws Exception {
 
         RestResult<Void> restResult = new RestResult();
@@ -149,6 +163,7 @@ public class FileController {
 
     @RequestMapping("/getFileServerIp")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取文件解析服务器的ip")
     public RestResult<String> getFileServerIp() throws Exception {
 
         RestResult<String> restResult = new RestResult();

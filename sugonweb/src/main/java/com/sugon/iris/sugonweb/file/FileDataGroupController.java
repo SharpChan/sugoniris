@@ -7,6 +7,9 @@ import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileDataGroupDto;
 import com.sugon.iris.sugonservice.service.fileService.FileDataGroupService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/fileDataGroup")
+@Api(value = "文件管理", tags = "数据组信息接口")
 public class FileDataGroupController {
 
     private static final String FAILED = "FAILED";
@@ -26,11 +30,13 @@ public class FileDataGroupController {
     private FileDataGroupService  fileDataGroupServiceImpl;
 
     /**
-     * 查询模板信息
+     * 获取数据组信息
      */
 
     @RequestMapping("/getFileDataGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取数据组信息")
+    @ApiImplicitParam(name = "fileDataGroupDto", value = "数据组信息")
     public RestResult<List<FileDataGroupDto>> getFileDataGroup(@CurrentUser User user, @RequestBody FileDataGroupDto fileDataGroupDto){
         RestResult<List<FileDataGroupDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -51,6 +57,8 @@ public class FileDataGroupController {
 
     @RequestMapping("/fileDataGroupSave")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "数据组信息保存")
+    @ApiImplicitParam(name = "fileDataGroupDto", value = "数据组信息")
     public RestResult<Integer> fileDataGroupSave(@CurrentUser User user,@RequestBody FileDataGroupDto fileDataGroupDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -71,6 +79,8 @@ public class FileDataGroupController {
 
     @RequestMapping("/updateFileDataGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "数据组信息更新")
+    @ApiImplicitParam(name = "fileDataGroupDto", value = "数据组信息")
     public RestResult<Integer> updateFileTemplate(@RequestBody FileDataGroupDto fileDataGroupDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -91,6 +101,8 @@ public class FileDataGroupController {
 
     @RequestMapping("/deleteFileDataGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "数据组信息删除")
+    @ApiImplicitParam(name = "id", value = "数据组信息id")
     public RestResult<Integer> deleteFileDataGroup(@RequestParam(value = "id") Long  id) throws Exception {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

@@ -24,3 +24,11 @@ spring:
 
 server:
   port: 8090
+
+
+swagger:
+  enable: true
+  application-name: iris
+  application-version: 1.0
+  application-description: springfox swagger 3.0整合Demo
+  try-host: http://localhost:${server.port}

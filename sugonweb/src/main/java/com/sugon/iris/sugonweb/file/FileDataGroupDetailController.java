@@ -8,6 +8,9 @@ import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileDataGroupDetailDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.UserDto;
 import com.sugon.iris.sugonservice.service.fileService.FileDataGroupDetailService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/fileDataGroupDetail")
+@Api(value = "文件管理", tags = "数据组详细信息接口")
 public class FileDataGroupDetailController {
     private static final String FAILED = "FAILED";
 
@@ -27,6 +31,8 @@ public class FileDataGroupDetailController {
 
     @RequestMapping("/findFileDataGroupUsersByGroupId")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过数据组id获取详细信息")
+    @ApiImplicitParam(name = "groupId", value = "数据组id")
     public RestResult<List<UserDto>> findFileDataGroupUsersByGroupId(@RequestParam(value = "groupId") Long  groupId){
         RestResult<List<UserDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

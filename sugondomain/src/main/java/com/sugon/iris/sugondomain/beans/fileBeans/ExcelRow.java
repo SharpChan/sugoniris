@@ -1,5 +1,6 @@
 package com.sugon.iris.sugondomain.beans.fileBeans;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
 
@@ -12,6 +13,7 @@ public class ExcelRow {
     /**
      * 字段
      */
+    @ApiModelProperty(value="字段")
     private List<String> fields ;
 
     String getField(int index){

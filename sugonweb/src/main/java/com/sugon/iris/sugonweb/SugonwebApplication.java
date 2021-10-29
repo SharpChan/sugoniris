@@ -7,7 +7,6 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
-@EnableAsync
 @EnableRedisHttpSession
 @ServletComponentScan
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class},
