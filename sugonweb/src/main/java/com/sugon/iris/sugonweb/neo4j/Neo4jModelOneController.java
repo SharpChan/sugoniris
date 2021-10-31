@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
+//@RestController
 @RequestMapping("/neo4jModelOne")
 public class Neo4jModelOneController {
 

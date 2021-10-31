@@ -7,6 +7,9 @@ import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateGroupDto;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateGroupService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/fileTemplateGroup")
+@Api(value = "模板组", tags = "模板组相关接口")
 public class FileTemplateGroupController {
 
     private static final String FAILED = "FAILED";
@@ -32,6 +36,8 @@ public class FileTemplateGroupController {
 
     @RequestMapping("/getFileTemplateGroups")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过模板组id获取模板")
+    @ApiImplicitParam(name = "fileTemplateGroupDto", value = "模板组信息")
     public RestResult<List<FileTemplateGroupDto>> getFileTemplates(@CurrentUser User user,@RequestBody FileTemplateGroupDto fileTemplateGroupDto){
         RestResult<List<FileTemplateGroupDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -53,6 +59,8 @@ public class FileTemplateGroupController {
 
     @RequestMapping("/fileTemplateGroupInsert")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过模板组id获取模板")
+    @ApiImplicitParam(name = "fileTemplateGroupDto", value = "模板组信息")
     public RestResult<Integer> fileTemplateInsert(@CurrentUser User user,@RequestBody FileTemplateGroupDto fileTemplateGroupDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -75,7 +83,9 @@ public class FileTemplateGroupController {
 
     @RequestMapping("/deleteFileTemplateGroup")
     @LogInCheck(doLock = true,doProcess = true)
-    public RestResult<Integer> deleteFile(@RequestParam(value = "selected") String selected) throws Exception {
+    @ApiOperation(value = "删除模板组信息")
+    @ApiImplicitParam(name = "selected", value = "勾选的")
+    public RestResult<Integer> deleteFileTemplateGroup(@RequestParam(value = "selected") String selected) throws Exception {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         String[] selectedArr = selected.split(",");

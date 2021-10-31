@@ -9,6 +9,10 @@ import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.neo4jDtos.Neo4jRelationDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.MenuDto;
 import com.sugon.iris.sugonservice.service.neo4jService.Neo4jRelationService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +25,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/neo4jRelation")
+@Api(value = "neo4j图谱", tags = "图谱数据关系信息相关接口")
 public class Neo4jRelationController {
 
     private static final String FAILED = "FAILED";
@@ -34,6 +39,7 @@ public class Neo4jRelationController {
 
     @RequestMapping("/getNeo4jAttribute")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取节点属性")
     public RestResult<List<MenuDto>> getFileDataGroup(@CurrentUser User user){
         RestResult<List<MenuDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -54,6 +60,8 @@ public class Neo4jRelationController {
 
     @RequestMapping("/saveRelation")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "保存关系")
+    @ApiImplicitParam(name = "neo4jRelationDto", value = "关系信息")
     public RestResult<Integer> saveRelation(@CurrentUser User user, @RequestBody Neo4jRelationDto neo4jRelationDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -74,6 +82,7 @@ public class Neo4jRelationController {
 
     @RequestMapping("/getRelations")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取关系列表")
     public RestResult<List<Neo4jRelationDto>> getRelations(@CurrentUser User user){
         RestResult<List<Neo4jRelationDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -100,6 +109,8 @@ public class Neo4jRelationController {
      */
     @RequestMapping("/initRelation")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "关系数据初始化")
+    @ApiImplicitParam(name = "neo4jRelationDto", value = "关系信息")
     public RestResult<Integer> initRelation(@CurrentUser User user, @RequestBody Neo4jRelationDto neo4jRelationDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -119,6 +130,12 @@ public class Neo4jRelationController {
     }
 
     @RequestMapping("/getNeo4jRelations")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "关系数据初始化")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "relationship", value = "关系名称"),
+            @ApiImplicitParam(name = "relationId", value = "关系id")
+    })
     public RestResult<Elements> getNeo4jRelations(@RequestParam(value = "relationship") String  relationship,
                                                   @RequestParam(value = "relationId") String  relationId){
         RestResult<Elements> restResult = new RestResult();

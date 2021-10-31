@@ -6,6 +6,9 @@ import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +19,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/actualCenter")
+@Api(value = "实战中心", tags = "实战中心相关接口")
 public class ActualCenterController {
     private static final String FAILED = "FAILED";
 
 
     @PostMapping("/getMcgcUrl")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取数据魔方url地址")
     public RestResult<String> getMcgcUrl(@CurrentUser User user){
         RestResult<String> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

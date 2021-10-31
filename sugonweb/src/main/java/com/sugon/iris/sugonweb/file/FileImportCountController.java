@@ -9,6 +9,9 @@ import com.sugon.iris.sugondomain.dtos.fileDtos.FileCaseDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileParsingFailedDto;
 import com.sugon.iris.sugonservice.service.excelService.ExcelService;
 import com.sugon.iris.sugonservice.service.fileService.FileImportCountService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +29,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/fileImportCount")
+@Api(value = "导入文件数据统计", tags = "数据统计")
 public class FileImportCountController {
 
     private static final String FAILED = "FAILED";
@@ -39,6 +43,8 @@ public class FileImportCountController {
 
     @RequestMapping("/getImportCount")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "数据统计")
+    @ApiImplicitParam(name = "fileCaseDto", value = "文件信息")
     public RestResult<List<FileCaseDto>> getImportCount(@CurrentUser User user, @RequestBody FileCaseDto fileCaseDto) {
         RestResult<List<FileCaseDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -60,6 +66,8 @@ public class FileImportCountController {
 
     @RequestMapping("/getFailedDetail")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "错误数据统计")
+    @ApiImplicitParam(name = "fileDetailId", value = "文件id")
     public RestResult<List<FileParsingFailedDto>> getFailedDetail(@CurrentUser User user, @RequestBody  @RequestParam(value = "fileDetailId") Long  fileDetailId) {
         RestResult<List<FileParsingFailedDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -143,8 +151,11 @@ public class FileImportCountController {
         }
     }
 
+
     @RequestMapping(value = "/dataAmendment",produces = MediaType.APPLICATION_JSON_VALUE)
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "导出错误数据")
+    @ApiImplicitParam(name = "fileDetailId", value = "文件id")
     public RestResult<Integer> dataAmendment(HttpServletRequest request, HttpServletResponse response,@RequestParam(value = "fileDetailId") Long  fileDetailId) throws Exception {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

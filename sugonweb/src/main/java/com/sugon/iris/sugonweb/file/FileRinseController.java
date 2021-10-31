@@ -11,6 +11,9 @@ import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseRegularDto;
 import com.sugon.iris.sugonservice.service.fileService.FileRinseDetailService;
 import com.sugon.iris.sugonservice.service.fileService.FileRinseRegularService;
 import com.sugon.iris.sugonservice.service.fileService.FileRinseService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +24,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/fileRinse")
+@Api(value = "数据清洗组", tags = "数据清洗组")
 public class FileRinseController {
 
     private static final String FAILED = "FAILED";
@@ -36,6 +40,8 @@ public class FileRinseController {
 
     @RequestMapping("/addFileRinse")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "保存清洗组数据")
+    @ApiImplicitParam(name = "fileRinseDto", value = "清洗组信息")
     public RestResult<Integer> addFileRinse(@CurrentUser User user, @RequestBody FileRinseGroupDto fileRinseDto) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -57,6 +63,7 @@ public class FileRinseController {
 
     @RequestMapping("/getFileRinses")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取清洗组数据")
     public RestResult<List<FileRinseGroupDto>> getFileRinses(@CurrentUser User user) {
         RestResult<List<FileRinseGroupDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -77,6 +84,8 @@ public class FileRinseController {
 
     @RequestMapping("/modifyFileRinse")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "修改清洗组数据")
+    @ApiImplicitParam(name = "fileRinseDto", value = "清洗组信息")
     public RestResult<Integer> modifyFileRinse(@CurrentUser User user, @RequestBody FileRinseGroupDto fileRinseDto) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -98,6 +107,8 @@ public class FileRinseController {
 
     @RequestMapping("/deleteFileRinseGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "删除清洗组数据")
+    @ApiImplicitParam(name = "id", value = "数据组id")
     public RestResult<Integer> deleteFileRinseGroup(@CurrentUser User user, long id) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -119,6 +130,8 @@ public class FileRinseController {
 
     @RequestMapping("/getFileRinseDetailsByGroupId")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取清洗组数据")
+    @ApiImplicitParam(name = "groupId", value = "数据组id")
     public RestResult<List<FileRinseDetailDto>> getFileRinseDetailsByGroupId(@CurrentUser User user,Long groupId) {
         RestResult<List<FileRinseDetailDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -138,13 +151,15 @@ public class FileRinseController {
     }
 
     /**
-     * 返回插入的id
+     * 保存清洗详细信息
      * @param user
      * @param fileRinseDetailDto
      * @return
      */
     @RequestMapping("/addFileRinseDetail")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "保存清洗详细信息")
+    @ApiImplicitParam(name = "fileRinseDetailDto", value = "清洗详细信息")
     public RestResult<Long> addFileRinseDetail(@CurrentUser User user, @RequestBody FileRinseDetailDto fileRinseDetailDto) {
         RestResult<Long> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -166,6 +181,8 @@ public class FileRinseController {
 
     @RequestMapping("/removeFileRinseDetail")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "删除清洗详细信息")
+    @ApiImplicitParam(name = "id", value = "清洗详细信息id")
     public RestResult<Integer> removeFileRinseDetail(@CurrentUser User user, Long  id) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -186,6 +203,8 @@ public class FileRinseController {
 
     @RequestMapping("/updateFileRinseDetail")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "修改清洗详细信息")
+    @ApiImplicitParam(name = "fileRinseDetailDto", value = "清洗详细信息")
     public RestResult<Integer> updateFileRinseDetail(@CurrentUser User user, @RequestBody FileRinseDetailDto fileRinseDetailDto) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -206,6 +225,8 @@ public class FileRinseController {
 
     @RequestMapping("/saveFileRinseRegular")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "保存清洗表达式")
+    @ApiImplicitParam(name = "fileRinseDetailDto", value = "清洗详细信息")
     public RestResult<Integer> saveFileRinseRegular(@CurrentUser User user, @RequestBody FileRinseRegularDto fileRinseRegularDto) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -227,6 +248,8 @@ public class FileRinseController {
 
     @RequestMapping("/deleteFileRinse")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "删除清洗详细信息")
+    @ApiImplicitParam(name = "id", value = "清洗详细信息id")
     public RestResult<Integer> deleteFileRinse(@CurrentUser User user,  Long  id) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

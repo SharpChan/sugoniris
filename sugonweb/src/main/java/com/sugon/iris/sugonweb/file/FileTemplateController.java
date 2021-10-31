@@ -14,6 +14,9 @@ import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessSuffixDto;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateDetailService;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateService;
 import com.sugon.iris.sugonservice.service.rinseBusinessService.RinseBusinessService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +28,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/fileTemplate")
+@Api(value = "数据模板", tags = "数据模板相关接口")
 public class FileTemplateController {
 
     private static final String FAILED = "FAILED";
@@ -45,6 +49,8 @@ public class FileTemplateController {
 
     @RequestMapping("/getFileTemplates")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取数据导入模板")
+    @ApiImplicitParam(name = "fileTemplateDto", value = "数据模板")
     public RestResult<List<FileTemplateDto>> getFileTemplates(@CurrentUser User user,@RequestBody FileTemplateDto fileTemplateDto){
         RestResult<List<FileTemplateDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -66,6 +72,8 @@ public class FileTemplateController {
 
     @RequestMapping("/fileTemplateInsert")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "保存数据导入模板")
+    @ApiImplicitParam(name = "fileTemplateDto", value = "数据模板")
     public RestResult<Integer> fileTemplateInsert(@CurrentUser User user,@RequestBody FileTemplateDto fileTemplateDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -87,6 +95,8 @@ public class FileTemplateController {
 
     @RequestMapping("/updateFileTemplate")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "修改数据导入模板")
+    @ApiImplicitParam(name = "fileTemplateDto", value = "数据模板")
     public RestResult<Integer> updateFileTemplate(@CurrentUser User user,@RequestBody FileTemplateDto fileTemplateDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -107,6 +117,8 @@ public class FileTemplateController {
 
     @RequestMapping("/deleteFileTemplate")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "修改数据导入模板")
+    @ApiImplicitParam(name = "selected", value = "勾选的数据模板")
     public RestResult<Integer> deleteFile(@RequestParam(value = "selected") String selected) throws Exception {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -131,6 +143,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/getFileTemplateDetails")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取模板字段信息")
+    @ApiImplicitParam(name = "fileTemplateDetailDto", value = "模板字段信息")
     public   RestResult<List<FileTemplateDetailDto>>   getFileTemplateDetails(@CurrentUser User user,@RequestBody FileTemplateDetailDto fileTemplateDetailDto){
         RestResult<List<FileTemplateDetailDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -154,6 +168,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/saveFileTemplateDetails")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取模板字段信息")
+    @ApiImplicitParam(name = "fileTemplateDetailDto", value = "模板字段信息")
     public   RestResult<Integer>   saveFileTemplateDetails(@CurrentUser User user,@RequestBody FileTemplateDetailDto fileTemplateDetailDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -177,6 +193,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/updateFileTemplateDetails")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "修改获取模板字段信息")
+    @ApiImplicitParam(name = "fileTemplateDetailDto", value = "模板字段信息")
     public   RestResult<Integer>   updateFileTemplateDetails(@CurrentUser User user,@RequestBody FileTemplateDetailDto fileTemplateDetailDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -200,6 +218,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/removeFileTemplateDetails")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "删除获取模板字段信息")
+    @ApiImplicitParam(name = "selected", value = "已经勾选的")
     public   RestResult<Integer>   removeFileTemplateDetails(@RequestParam(value = "selected") String selected){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -224,6 +244,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/removeBoundByTemplateId")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过id删除模板")
+    @ApiImplicitParam(name = "templateId", value = "模板id")
     public   RestResult<Integer>   removeBoundByTemplateId(@RequestParam(value = "templateId") Long  templateId){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -247,6 +269,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/getPinyin")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "中文转拼音")
+    @ApiImplicitParam(name = "chinese", value = "中文字符")
     public   RestResult<String>   getPinyin(@RequestBody String  chinese){
         RestResult<String> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -270,6 +294,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/saveRepetBuss")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "去重配置信息保存")
+    @ApiImplicitParam(name = "rinseBusinessRepeatDto", value = "去重配置信息")
     public   RestResult<Integer>   saveRepetBuss( @RequestBody RinseBusinessRepeatDto rinseBusinessRepeatDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -293,6 +319,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/saveNullBuss")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "空值替换信息保存")
+    @ApiImplicitParam(name = "rinseBusinessNullDto", value = "空值信息")
     public   RestResult<Integer>   saveNullBuss( @RequestBody RinseBusinessNullDto rinseBusinessNullDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -316,6 +344,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/saveReplaceBuss")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "指定值替换信息保存")
+    @ApiImplicitParam(name = "rinseBusinessReplaceDto", value = "指定值信息")
     public   RestResult<Integer>   saveReplaceBuss( @RequestBody RinseBusinessReplaceDto rinseBusinessReplaceDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -339,6 +369,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/getRepetBussList")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取去重信息")
+    @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
     public   RestResult<List<RinseBusinessRepeatDto>>   getRepetBussList(@RequestParam(value = "fileTemplateId") Long  fileTemplateId){
         RestResult<List<RinseBusinessRepeatDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -362,6 +394,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/getNullBussList")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取空值替换信息")
+    @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
     public   RestResult<List<RinseBusinessNullDto>>   getNullBussList(@RequestParam(value = "fileTemplateId") Long  fileTemplateId){
         RestResult<List<RinseBusinessNullDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -385,6 +419,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/getReplaceBussList")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取指定值替换信息")
+    @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
     public   RestResult<List<RinseBusinessReplaceDto>>   getReplaceBussList(@RequestParam(value = "fileTemplateId") Long  fileTemplateId){
         RestResult<List<RinseBusinessReplaceDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -408,6 +444,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/getSuffixBussList")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "后缀替换信息")
+    @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
     public   RestResult<List<RinseBusinessSuffixDto>>   getSuffixBussList(@RequestParam(value = "fileTemplateId") Long  fileTemplateId){
         RestResult<List<RinseBusinessSuffixDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -431,6 +469,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/saveSuffixBuss")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "保存后缀替换信息")
+    @ApiImplicitParam(name = "rinseBusinessSuffixDto", value = "后缀替换信息")
     public   RestResult<Integer>   saveSuffixBuss( @RequestBody RinseBusinessSuffixDto rinseBusinessSuffixDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -454,6 +494,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/deleteRepetById")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过id删除去重信息")
+    @ApiImplicitParam(name = "id", value = "去重id")
     public   RestResult<Integer>   deleteRepetById( @RequestParam(value = "id") Long  id ){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -477,6 +519,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/deleteReplaceById")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过id删除指定值替换信息")
+    @ApiImplicitParam(name = "id", value = "指定值id")
     public   RestResult<Integer>   deleteReplaceById( @RequestParam(value = "id") Long  id ){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -500,6 +544,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/deleteNullById")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过id删除指定值替换信息")
+    @ApiImplicitParam(name = "id", value = "指定值id")
     public   RestResult<Integer>   deleteNullById( @RequestParam(value = "id") Long  id ){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -523,6 +569,8 @@ public class FileTemplateController {
      */
     @RequestMapping("/deleteSuffixById")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "后缀替换信息删除")
+    @ApiImplicitParam(name = "id", value = "替换id")
     public   RestResult<Integer>   deleteSuffixById( @RequestParam(value = "id") Long  id ){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

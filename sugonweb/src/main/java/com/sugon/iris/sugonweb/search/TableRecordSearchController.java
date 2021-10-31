@@ -7,6 +7,9 @@ import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.searchDtos.TableRecordSearchDto;
 import com.sugon.iris.sugonservice.service.searchService.TableRecordSearchService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/search")
+@Api(value = "数据搜索", tags = "数据搜索相关接口")
 public class TableRecordSearchController {
 
     private static final String FAILED = "FAILED";
@@ -26,6 +30,8 @@ public class TableRecordSearchController {
 
     @RequestMapping("/searchAllTables")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过条件获取查询结果")
+    @ApiImplicitParam(name = "condition", value = "查询条件")
     public RestResult<List<TableRecordSearchDto>> getFileTemplates(@CurrentUser User user, @RequestParam(value = "condition") String  condition){
         RestResult<List<TableRecordSearchDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

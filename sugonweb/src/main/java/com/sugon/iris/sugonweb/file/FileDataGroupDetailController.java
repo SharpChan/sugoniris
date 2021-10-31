@@ -54,6 +54,8 @@ public class FileDataGroupDetailController {
 
     @RequestMapping("/findUsersNotInDataGroupsByUserId")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "查找不在该数据组的用户")
+    @ApiImplicitParam(name = "groupId", value = "数据组id")
     public RestResult<List<UserDto>> findUsersNotInDataGroupsByUserId(@RequestParam(value = "groupId") Long  groupId){
         RestResult<List<UserDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -74,6 +76,8 @@ public class FileDataGroupDetailController {
 
     @RequestMapping("/saveUserFromDataGroupDetail")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "用户添加到数据组")
+    @ApiImplicitParam(name = "FileDataGroupDetailDtoList", value = "数据组对应用户列表")
     public RestResult<Integer> saveUserFromDataGroupDetail(@CurrentUser User user,@RequestBody List<FileDataGroupDetailDto> FileDataGroupDetailDtoList){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -94,6 +98,8 @@ public class FileDataGroupDetailController {
 
     @RequestMapping("/deleteUserFromDataGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "用户从数据组中删除")
+    @ApiImplicitParam(name = "FileDataGroupDetailDtoList", value = "数据组对应用户列表")
     public RestResult<Integer> deleteUserFromDataGroup(@RequestBody List<FileDataGroupDetailDto> FileDataGroupDetailDtoList){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

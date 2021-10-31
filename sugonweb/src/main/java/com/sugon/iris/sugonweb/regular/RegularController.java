@@ -9,6 +9,9 @@ import com.sugon.iris.sugondomain.dtos.regularDtos.RegularDetailDto;
 import com.sugon.iris.sugondomain.dtos.regularDtos.RegularGroupDto;
 import com.sugon.iris.sugonservice.service.regularService.RegularDetailService;
 import com.sugon.iris.sugonservice.service.regularService.RegularService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/regular")
+@Api(value = "正则表达式", tags = "正则表达式相关接口")
 public class RegularController {
 
     private static final String FAILED = "FAILED";
@@ -32,6 +36,8 @@ public class RegularController {
 
     @PostMapping("/groupAdd")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "清洗正则表达式组新增")
+    @ApiImplicitParam(name = "regularGroupDto", value = "清洗正则表达式组信息")
     public RestResult<Integer> groupAdd(@CurrentUser User user, @RequestBody RegularGroupDto regularGroupDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -53,6 +59,8 @@ public class RegularController {
 
     @PostMapping("/groupRemoveByPrimaryKey")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过id删除清洗组")
+    @ApiImplicitParam(name = "id", value = "id")
     public RestResult<Integer> groupRemoveByPrimaryKey(@CurrentUser User user,Long id){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -73,6 +81,7 @@ public class RegularController {
 
     @PostMapping("/getGroups")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过用户id获取清洗组")
     public RestResult<List<RegularGroupDto>> findRegularGroupByUserId(@CurrentUser User user){
         RestResult<List<RegularGroupDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -91,8 +100,11 @@ public class RegularController {
         return restResult;
     }
 
+    /*
     @PostMapping("/deleteGroupByPrimaryKey")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过id删除清洗组")
+    @ApiImplicitParam(name = "id", value = "id")
     public RestResult<Integer> deleteGroupByPrimaryKey(@CurrentUser User user,Long id){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -110,9 +122,11 @@ public class RegularController {
         }
         return restResult;
     }
-
+  */
     @PostMapping("/updateGroupByPrimaryKey")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "修改清洗组")
+    @ApiImplicitParam(name = "regularGroupDto", value = "清洗组信息")
     public RestResult<Integer> updateGroupByPrimaryKey(@CurrentUser User user,@RequestBody RegularGroupDto regularGroupDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -133,6 +147,8 @@ public class RegularController {
 
     @PostMapping("/getRegularDetailsByGroupId")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过id获取组内详细信息")
+    @ApiImplicitParam(name = "regularGroupId", value = "清洗组id")
     public RestResult<List<RegularDetailDto>> getRegularDetails(@CurrentUser User user, Long regularGroupId){
         RestResult<List<RegularDetailDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -153,6 +169,7 @@ public class RegularController {
 
     @PostMapping("/getRegularDetailsByUserId")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过用户id获取组内详细信息")
     public RestResult<List<String>> getRegularDetailsByUserId(@CurrentUser User user){
         RestResult<List<String>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -173,6 +190,8 @@ public class RegularController {
 
     @PostMapping("/addRegularDetails")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "新增正则表达式规则")
+    @ApiImplicitParam(name = "regularDetailDto", value = "正则表达式信息")
     public RestResult<Integer> addRegularDetails(@CurrentUser User user, @RequestBody  RegularDetailDto regularDetailDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -194,6 +213,8 @@ public class RegularController {
 
     @PostMapping("/modifyRegularDetails")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "修改正则表达式规则")
+    @ApiImplicitParam(name = "regularDetailDto", value = "正则表达式信息")
     public RestResult<Integer> modifyRegularDetails(@CurrentUser User user, @RequestBody  RegularDetailDto regularDetailDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -215,6 +236,8 @@ public class RegularController {
 
     @PostMapping("/removeRegularDetailByPrimaryKey")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "删除正则表达式规则")
+    @ApiImplicitParam(name = "id", value = "正则表达式信息id")
     public RestResult<Integer> removeRegularDetailByPrimaryKey(@CurrentUser User user,Long id){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

@@ -9,6 +9,9 @@ import com.sugon.iris.sugondomain.dtos.systemDtos.UserDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.UserGroupDetailDto;
 import com.sugon.iris.sugondomain.dtos.systemDtos.UserGroupDto;
 import com.sugon.iris.sugonservice.service.systemService.UserGroupService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
@@ -17,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/userGroup")
+@Api(value = "后台管理", tags = "用户组")
 public class UserGroupController {
 
     private static final String FAILED = "FAILED";
@@ -26,6 +30,8 @@ public class UserGroupController {
 
     @PostMapping("/saveUserGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "保存用户组")
+    @ApiImplicitParam(name = "userGroupDto", value = "用户组信息")
     public RestResult<Integer> saveUserGroup(@CurrentUser User user, @RequestBody UserGroupDto userGroupDto){
         userGroupDto.setUserId(user.getId());
         RestResult<Integer> restResult = new RestResult();
@@ -48,6 +54,7 @@ public class UserGroupController {
 
     @PostMapping("/getAllUserGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取所有的用户组信息")
     public RestResult<List<UserGroupDto>> getAllUserGroup(){
         RestResult<List<UserGroupDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -69,6 +76,8 @@ public class UserGroupController {
 
     @PostMapping("/getUserGroupById")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过id获取用户组信息")
+    @ApiImplicitParam(name = "id", value = "用户组id")
     public RestResult<UserGroupDto> getUserGroupById(@RequestParam(value = "id") Long id){
         RestResult<UserGroupDto> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -90,6 +99,8 @@ public class UserGroupController {
 
     @PostMapping("/modifyUserGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "修改用户组信息")
+    @ApiImplicitParam(name = "userGroupDto", value = "用户组信息")
     public RestResult<Integer> modifyUserGroup( @RequestBody UserGroupDto userGroupDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -111,6 +122,8 @@ public class UserGroupController {
 
     @PostMapping("/removeUserGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "删除用户组信息")
+    @ApiImplicitParam(name = "id", value = "用户组id")
     public RestResult<Integer> removeUserGroup( @RequestParam(value = "id") Long id){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -135,6 +148,8 @@ public class UserGroupController {
      */
     @PostMapping("/getUsers")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取未分配到该组的所有用户")
+    @ApiImplicitParam(name = "userGroupId", value = "用户组id")
     public RestResult<List<UserDto>> getUsers(@RequestParam(value = "userGroupId") long userGroupId ){
         RestResult<List<UserDto>> restResult = new RestResult<List<UserDto>>();
         List<Error> errorList = new ArrayList<>();
@@ -158,6 +173,8 @@ public class UserGroupController {
      */
     @PostMapping("/getGroupUsers")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取该用户组的所有用户")
+    @ApiImplicitParam(name = "userGroupId", value = "用户组id")
         public RestResult<List<UserDto>> getGroupUsers(@RequestParam(value = "userGroupId") long userGroupId ){
             RestResult<List<UserDto>> restResult = new RestResult<List<UserDto>>();
             List<Error> errorList = new ArrayList<>();
@@ -179,6 +196,8 @@ public class UserGroupController {
 
     @PostMapping("/addUserToUserGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "用户添加到用户组")
+    @ApiImplicitParam(name = "userGroupDetailDto", value = "用户用户组对应信息")
     public RestResult<Integer> addUserToUserGroup(@CurrentUser User user, @RequestBody UserGroupDetailDto userGroupDetailDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -201,6 +220,8 @@ public class UserGroupController {
 
     @PostMapping("/addUserToUserGroupBatch")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "批量用户添加到用户组")
+    @ApiImplicitParam(name = "userGroupDetailDtoArr", value = "用户用户组对应信息列表")
     public RestResult<Integer> addUserToUserGroupBatch(@CurrentUser User user,@RequestBody  List<UserGroupDetailDto> userGroupDetailDtoArr){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -222,6 +243,8 @@ public class UserGroupController {
 
     @PostMapping("/removeUserFromUserGroup")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "用户从用户组中移除")
+    @ApiImplicitParam(name = "userGroupDetailDto", value = "用户组内详细信息")
     public RestResult<Integer> removeUserFromUserGroup(@RequestBody UserGroupDetailDto userGroupDetailDto){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -243,6 +266,8 @@ public class UserGroupController {
 
     @PostMapping("/removeUserFromUserGroupBatch")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "批量用户从用户组中移除")
+    @ApiImplicitParam(name = "userGroupDetailDto", value = "用户组内详细信息列表")
     public RestResult<Integer> removeUserFromUserGroupBatch(@RequestBody List<UserGroupDetailDto> userGroupDetailDtoArr){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();

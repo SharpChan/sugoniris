@@ -8,6 +8,10 @@ import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.declarDtos.DeclarInfoDto;
 import com.sugon.iris.sugondomain.dtos.declarDtos.DeclarationDetailDto;
 import com.sugon.iris.sugonservice.impl.declarServiceImpl.DeclarServiceImpl;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/declar")
+@Api(value = "业务申报", tags = "业务申报相关接口")
 public class DeclarController {
 
     private static final String FAILED = "FAILED";
@@ -31,6 +36,7 @@ public class DeclarController {
 
     @PostMapping("/getDeclarInfo")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取申报信息")
     public RestResult<List<DeclarInfoDto>> getDeclarInfo(@CurrentUser User user){
         RestResult<List<DeclarInfoDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -51,6 +57,8 @@ public class DeclarController {
 
     @PostMapping("/getDeclarDetail")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取申报详细信息")
+    @ApiImplicitParam(name = "status", value = "申报状态")
     public RestResult<List<DeclarationDetailDto>> getDeclarDetail(@CurrentUser User user,@RequestParam(value = "status") String status){
         RestResult<List<DeclarationDetailDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -71,6 +79,11 @@ public class DeclarController {
 
     @PostMapping("/getAllDeclarDetail")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "根据申报类型申报状态获取所有申报详细信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "declarType", value = "申报类型"),
+            @ApiImplicitParam(name = "declarStatus", value = "申报状态")
+    })
     public RestResult<List<DeclarationDetailDto>> getAllDeclarDetail(@RequestParam(value = "declarType") String declarType,@RequestParam(value = "declarStatus") String declarStatus){
         RestResult<List<DeclarationDetailDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -94,6 +107,8 @@ public class DeclarController {
 
     @RequestMapping("/deleteDeclarDetail")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "删除获取申报详细信息")
+    @ApiImplicitParam(name = "selected", value = "勾选的申报详细信息")
     public RestResult<Integer> deleteDeclarDetail(@RequestParam(value = "selected") String selected) throws Exception {
 
         RestResult<Integer> restResult = new RestResult();
@@ -116,6 +131,8 @@ public class DeclarController {
 
     @RequestMapping("/failedDeclar")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "审核不通过")
+    @ApiImplicitParam(name = "selected", value = "勾选的申报详细信息")
     public RestResult<Integer> failedDeclar(@CurrentUser User user,@RequestParam(value = "selected") String selected) throws Exception {
 
         RestResult<Integer> restResult = new RestResult();
@@ -138,6 +155,8 @@ public class DeclarController {
 
     @RequestMapping("/approveDeclar")
     @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "审核通过")
+    @ApiImplicitParam(name = "selected", value = "勾选的申报详细信息")
     public RestResult<Integer> approveDeclar(@CurrentUser User user,@RequestParam(value = "selected") String selected) throws Exception {
 
         RestResult<Integer> restResult = new RestResult();
