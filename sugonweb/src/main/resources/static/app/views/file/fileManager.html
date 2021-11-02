@@ -110,7 +110,7 @@
                             <span ng-show="!item.hasImport" class="btn btn-sm btn-warning"><em class="fa fa-close"></em></span>
                         </td>
                         <td>
-                            <select ng-value="" ng-init="selectedName = item.templateGroupName+'::'+item.templateGroupId" ng-model="selectedName" ng-options="x for x in templateGroups" ng-change="changeFlag(item,selectedName)"></select>
+                            <select ng-value="selectedName = item.templateGroupName+'::'+item.templateGroupId"  ng-model="selectedName" ng-options="x for x in templateGroups" ng-change="changeFlag(item,selectedName)"></select>
                         </td>
                         <td align="center">
                                 <button ng-show="!item.hasImport" type="button" ng-click="dataSyncOne(item)" class="btn btn-sm btn-warning">

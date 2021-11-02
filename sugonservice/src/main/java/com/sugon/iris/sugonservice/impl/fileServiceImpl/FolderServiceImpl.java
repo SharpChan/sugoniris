@@ -141,9 +141,9 @@ public class FolderServiceImpl implements FolderService {
                     paramMap.add("fileAttachmentId", fileAttachmentEntity.getId());
                     HttpHeaders headers = new HttpHeaders();
                     HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<MultiValueMap<String, Object>>(paramMap,headers);
-                    ResponseEntity<RestResult> response = restTemplate.postForEntity(url, httpEntity, RestResult.class);
-                    if(!CollectionUtils.isEmpty(response.getBody().getErrorList())){
-                        errorList.addAll(response.getBody().getErrorList());
+                    RestResult<Void> response = restTemplate.postForObject(url, httpEntity, RestResult.class);
+                    if(!CollectionUtils.isEmpty(response.getErrorList())){
+                        errorList.addAll(response.getErrorList());
                         return;
                     }
                     //修改数据同步状态
@@ -276,7 +276,7 @@ public class FolderServiceImpl implements FolderService {
         List<String> arrList = new ArrayList<>(Arrays.asList(arr));
         int j = 0;
         if(flag && StringUtils.isNotEmpty(PublicUtils.getConfigMap().get("file_delete_time"))) {
-            String time = PublicUtils.getConfigMap().get("case_delete_time").trim().replaceAll("^\\s*$", "");
+            String time = PublicUtils.getConfigMap().get("file_delete_time").trim().replaceAll("^\\s*$", "");
             Pattern pattern = Pattern.compile("^-?[0-9]+");
             if (StringUtils.isNotEmpty(time) && pattern.matcher(time).matches()) {
                 List<DeclarationDetailDto> declarationDetailDtoList = new ArrayList<>();
@@ -290,7 +290,7 @@ public class FolderServiceImpl implements FolderService {
                     Long createTime = fileAttachmentEntity.getCreateTime().getTime();
                     Long nowTime = new Date().getTime();
 
-                    if ((nowTime - createTime) / 1000 / 60 / 60 >= Long.parseLong(time)) {
+                    if ((nowTime - createTime) / 1000 / 60 / 60 > Long.parseLong(time)) {
                         DeclarationDetailDto declarationDetailDto = new DeclarationDetailDto();
                         declarationDetailDto.setDetail(DETAIL + fileAttachmentEntity.getFileName());
                         declarationDetailDto.setOwnerUserId(user.getId());
@@ -315,19 +315,19 @@ public class FolderServiceImpl implements FolderService {
 
         int i = 0;
         for(String id :arr ){
-            FileAttachmentEntity fleAttachmentEntity = new FileAttachmentEntity();
-            fleAttachmentEntity.setId(Long.parseLong(id));
-            fleAttachmentEntity.setUserId(user.getId());
             //查询到文件服务器的文件路径进行删除
-            List<FileAttachmentEntity> fileAttachmentEntity = fileAttachmentMapper.selectFileAttachmentList(fleAttachmentEntity);
+            FileAttachmentEntity fileAttachmentEntity = fileAttachmentMapper.selectFileAttachmentByPrimaryKey(Long.parseLong(id));
+            if(null == fileAttachmentEntity){
+              return  j;
+            }
             Session session = new SSHConfig().getSession();
             SSHServiceBs sSHServiceBs = new SSHServiceBs(session);
             sSHServiceBs = new SSHServiceBs(new SSHConfig().getSession());
             //删除压缩文件
-            sSHServiceBs.deleteFile(fileAttachmentEntity.get(0).getAttachment());
+            sSHServiceBs.deleteFile(fileAttachmentEntity.getAttachment());
 
             //删除解压文件
-            String path = fileAttachmentEntity.get(0).getAttachment().substring(0,fileAttachmentEntity.get(0).getAttachment().lastIndexOf("."));
+            String path = fileAttachmentEntity.getAttachment().substring(0,fileAttachmentEntity.getAttachment().lastIndexOf("."));
             String command = "rm -rf  " + path;
             sSHServiceBs.execCommand(command);
             //关闭session
@@ -335,19 +335,19 @@ public class FolderServiceImpl implements FolderService {
             //删除mpp数据库的数据
             //通过fleAttachmentEntity的id编号获取文件信息
             FileDetailEntity fileDetailEntitySql = new FileDetailEntity();
-            fileDetailEntitySql.setFileAttachmentId(fleAttachmentEntity.getId());
+            fileDetailEntitySql.setFileAttachmentId(fileAttachmentEntity.getId());
             List<FileDetailEntity> fileDetailEntityList = fileDetailMapper.selectFileDetailList(fileDetailEntitySql);
             //删除mpp数据
             for(FileDetailEntity fileDetailEntityBean : fileDetailEntityList){
                 if(StringUtils.isEmpty(fileDetailEntityBean.getTableName())){
                     continue;
                 }
-                String sql = "delete from  "+fileDetailEntityBean.getTableName()+" where file_attachment_id ='"+fileAttachmentEntity.get(0).getId()+"'";
+                String sql = "delete from  "+fileDetailEntityBean.getTableName()+" where file_attachment_id ='"+fileAttachmentEntity.getId()+"'";
                 mppMapper.mppSqlExec(sql);
             }
             //删除文件信息
-            fileDetailMapper.deleteFileDetailByFileAttachmentId(fleAttachmentEntity.getId());
-            fileAttachmentMapper.deleteFileAttachmentById(fleAttachmentEntity);
+            fileDetailMapper.deleteFileDetailByFileAttachmentId(fileAttachmentEntity.getId());
+            fileAttachmentMapper.deleteFileAttachmentById(fileAttachmentEntity);
         }
         return i+j;
     }

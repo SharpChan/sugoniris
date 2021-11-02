@@ -1,0 +1,30 @@
+<style>
+    .page {font-size: 14px;background-color: transparent;}
+    .page .page-l select {width: 60px;height: 30px;}
+    .page .page-r {float: right;padding-top: 10px;}
+    .page .page-r ul {float: left;list-style: none;margin: 0;height: 30px;box-sizing: border-box;}
+    .page .page-r ul li {float: left;list-style: none;height: 100%;line-height: 30px;border: 1px solid #ccc;border-right: 0 none;box-sizing: border-box;}
+    .page .page-r ul li:hover {background-color: #e2e2e2;}
+    .page .page-r ul li:last-child {border-right: 1px solid #ccc;}
+    .page .page-r ul li a {text-decoration: none;display: block;height: 100%;padding:0 10px; color: #2A6496;}
+    .page .page-r ul li a.active {background-color: #428BCA;color: #fff;}
+    .page .page-r ul li span {display: block;height: 100%;padding:0 10px; color: #2A6496;cursor: pointer;}
+    .page .page-r ul li span.ellipsis {cursor: default;}
+</style>
+<div class="page" style="width: 100%;height: 50px;line-height: 50px;">
+    <div class="page-l" id="page_l" style="float: left;">
+        <span>总共 <span id="total_count">{{pageConfig.totalCount}}</span> 条</span>
+        <div style="display: inline-block;margin-left: 20px;">
+            <span>每页显示</span>
+            <select id="page_size">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>条
+        </div>
+    </div>
+    <div class="page-r">
+        <ul id="page_ul" class="page-ul"></ul>
+    </div>
+</div>

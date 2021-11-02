@@ -9,7 +9,7 @@
     <div align="center" class="panel panel-primary" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
         <div class="topnavbar" style="height: 50px;">
             <div align="left">
-                <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">文件导入模板配置</strong></label>
+                <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">数据清洗合并导出</strong></label>
             </div>
             <div align="right" style="margin-top:-30px;">
                 <input type="button" value="查询" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="query();" />
@@ -49,17 +49,17 @@
                         <td align="left">{{item.caseNo}}</td>
                         <td align="left">{{item.rinseTimes}}</td>
                         <td align="left">
-                            <button ng-show="item.fileTableDtoList.length()>0" type="button" ng-click="doUserDefinedRinse(item.id)" class="btn btn-sm btn-danger">
+                            <button ng-show="item.fileTableDtoList.length > 0" type="button" ng-click="doUserDefinedRinse(item.id)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-cogs"></em>
                             </button>
                         </td>
                         <td align="left">
-                            <button ng-show="item.fileTableDtoList.length()>0" type="button" ng-click="detail(item.caseName,item.fileTableDtoList)" class="btn btn-sm btn-danger">
+                            <button ng-show="item.fileTableDtoList.length > 0" type="button" ng-click="detail(item.caseName,item.fileTableDtoList)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-plus"></em>
                             </button>
                         </td>
                         <td align="left">
-                            <button ng-show="item.fileTableDtoList.length()>0" type="button" ng-click="mergeExport(item.id)" class="btn btn-sm btn-warning">
+                            <button ng-show="item.fileTableDtoList.length > 0" type="button" ng-click="mergeExport(item.id)" class="btn btn-sm btn-warning">
                                 <em class="fa fa-upload"></em>
                             </button>
                         </td>
@@ -133,9 +133,9 @@
                     </tr>
                 </tbody>
             </table>
-            <pagination total-items="bigTotalItems" ng-change="changePage(bigCurrentPage)" ng-model="bigCurrentPage" max-size="maxSize" boundary-links="true" rotate="false" items-per-page ="itemsPerPage" num-pages="numPages" class="pagination-sm"></pagination>
-            <!--<pre>Page: {{bigCurrentPage}} / {{numPages}}</pre>-->
-            <label><strong>共{{bigTotalItems}}条数据</strong></label>
+
+            <!--分页指令-->
+            <div page-directive page-config="pageConfig"></div>
         </div>
     </div>
 

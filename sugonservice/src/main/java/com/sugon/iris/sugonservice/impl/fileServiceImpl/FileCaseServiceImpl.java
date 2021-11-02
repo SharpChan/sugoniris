@@ -128,7 +128,7 @@ public class FileCaseServiceImpl implements FileCaseService {
                     Long createTime = fileCaseEntity.getCreateTime().getTime();
                     Long nowTime = new Date().getTime();
 
-                    if ((nowTime - createTime) / 1000 / 60 / 60 >= Long.parseLong(time)) {
+                    if ((nowTime - createTime) / 1000 / 60 / 60 > Long.parseLong(time)) {
                         DeclarationDetailDto declarationDetailDto = new DeclarationDetailDto();
                         declarationDetailDto.setDetail(DETAIL + fileCaseEntity.getCaseName());
                         declarationDetailDto.setOwnerUserId(user.getId());

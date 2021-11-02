@@ -1406,7 +1406,7 @@ App.controller("dataMergeController", function ($http,$timeout,$scope,
     }
 
     var checkFields = [];
-    $scope.itemsPerPage = 20000;
+    $scope.itemsPerPage = 10;
     $scope.offset = 0;
 
     $scope.tableDetail = function (item){
@@ -1426,6 +1426,22 @@ App.controller("dataMergeController", function ($http,$timeout,$scope,
         $scope.getTableRecord(item);
     }
 
+
+    //初始化数据
+    //分页参数（参数名固定不可变）
+    $scope.pageConfig = {
+        // pageSize:10,    //每页条数（不设置时，默认为10）
+        pageIndex:1,    //当前页码
+        totalCount:0,   //总记录数
+        totalPage:0,     //总页码
+        prevPage:'< 上一页',     //上一页（不设置时，默认为：<）
+        nextPage:'下一页 >',     //下一页（不设置时，默认为：>）
+        firstPage:'<< 首页',     //首页（不设置时，默认为：<<）
+        lastPage:'末页 >>',     //末页（不设置时，默认为：>>）
+        degeCount:3,             //当前页前后两边可显示的页码个数（不设置时，默认为3）
+        isShowEllipsis:true    //是否显示省略号不可点击按钮（true：显示，false：不显示）
+    }
+
     $scope.getQuantity = function(item){
         var url = "/dataMerge/getTableRecordQuantity";
         var params = {
@@ -1437,7 +1453,11 @@ App.controller("dataMergeController", function ($http,$timeout,$scope,
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
             $scope.bigTotalItems = temp.obj;
-            $("#pleaseWait").hide();
+            $scope.pageConfig.totalCount = temp.obj;
+            $scope.pageConfig.totalPage = Math.ceil($scope.pageConfig.totalCount / $scope.pageConfig.pageSize); //总页数
+            console.log('总记录数：'+$scope.pageConfig.totalCount+'； 总页数：'+$scope.pageConfig.totalPage+'；当前页码：'+$scope.pageConfig.pageIndex);
+            $scope.$broadcast("initPage")   //调用分页组件里的初始化页码函数
+                $("#pleaseWait").hide();
         }).error(function (data) {
             alert("请检查必填项是否填写！");
         });
@@ -1473,7 +1493,15 @@ App.controller("dataMergeController", function ($http,$timeout,$scope,
         $scope.offset = ( pageNo -1 )* $scope.itemsPerPage;
         $scope.getTableRecord($scope.tableInfo);
     }
-    
+
+    //监听分页组件中的分页点击事件
+    $scope.$on("clickPage", function(e, m) {
+        $scope.pageIndex = $scope.pageConfig.pageIndex;
+        $scope.itemsPerPage = $scope.pageConfig.pageSize;
+        $scope.changePage($scope.pageIndex);
+        console.log('pageSize='+$scope.pageSize+'pageIndex='+$scope.pageIndex);
+    })
+
     $scope.getFileRinseDetailsByGroupId = function (rinseGroupId) {
 
         var url = "/fileRinse/getFileRinseDetailsByGroupId?groupId="+rinseGroupId;
@@ -11453,7 +11481,146 @@ App.directive('href', function() {
    };
 });
 
+App.directive('pageDirective',['$rootScope',
+    function ($rootScope,helper) {
+        var link = function (scope,elem,attr) {
+            scope.pageConfig.pageIndex;  //当前页码
+            scope.pageConfig.totalPage;  //总页数
+            scope.pageConfig.totalCount; //总记录数
+            scope.pageConfig.pageSize = scope.pageConfig.pageSize || 10;  //每页条数
+            var prev = scope.pageConfig.prevPage || '<';  //上一页文字
+            var next = scope.pageConfig.nextPage || '>';  //下一页文字
+            var first = scope.pageConfig.firstPage || '<<';  //首页文字
+            var last = scope.pageConfig.lastPage || '>>';  //末页文字
+            var degeCount = scope.pageConfig.degeCount || 3;  //当前页码两边的页码个数（默认：3）
+            var isShowEllipsis = scope.pageConfig.isShowEllipsis;   //是否显示省略号不可点击按钮
+            var ellipsisBtn = isShowEllipsis ? '<li><span class="ellipsis">...</span></li>' : '';
 
+
+            //监听父作用域列表数据获取成功后
+            scope.$on("initPage", function(e, m) {
+                initPage(scope.pageConfig.totalPage, scope.pageConfig.pageIndex, degeCount)
+            });
+
+            function initPage(totalPage, pageIndex, degeCount) {
+                var pageHtml = '';
+                var tmpHtmlPrev = '';
+                var tmpHtmlNext = '';
+                if(pageIndex - degeCount >= degeCount-1 && totalPage - pageIndex >= degeCount+1){   //前后都需要
+                    var count = degeCount;  //前后各自需要显示的页码个数
+                    for(var i=0; i<count; i++){
+                        if(pageIndex != 1){
+                            tmpHtmlPrev += '<li><a href="javascript:;" class="page-number">'+(pageIndex-(count-i))+'</a></li>';
+                        }
+                        tmpHtmlNext += '<li><a href="javascript:;" class="page-number">'+((pageIndex-0)+i+1)+'</a></li>';
+                    }
+                    pageHtml = '<li><a id="first_page" href="javascript:;">'+first+'</a></li>'+
+                        '<li><a id="prev_page" href="javascript:;">'+prev+'</a></li>'+((pageIndex>degeCount+1) ? ellipsisBtn : '' )+
+                        tmpHtmlPrev +
+                        '<li><a href="javascript:;" class="active">'+pageIndex+'</a></li>'+
+                        tmpHtmlNext +
+                        ellipsisBtn+
+                        '<li><a id="next_page" href="javascript:;">'+next+'</a></li>'+
+                        '<li><a id="last_page" href="javascript:;">'+last+'</a></li>';
+                }else if(pageIndex - degeCount >= degeCount-1 && totalPage - pageIndex < degeCount+1) { //前需要，后不需要
+                    var count = degeCount;  //前需要显示的页码个数
+                    var countNext = totalPage - pageIndex;  //后需要显示的页码个数
+                    if(pageIndex != 1){
+                        for(var i=0; i<count; i++){
+                            tmpHtmlPrev += '<li><a href="javascript:;" class="page-number">'+(pageIndex-(count-i))+'</a></li>';
+                        }
+                    }
+                    for(var i=0; i<countNext; i++){
+                        tmpHtmlNext += '<li><a href="javascript:;" class="page-number">'+((pageIndex-0)+i+1)+'</a></li>';
+                    }
+                    pageHtml =  '<li><a id="first_page" href="javascript:;">'+first+'</a></li>'+
+                        '<li><a id="prev_page" href="javascript:;">'+prev+'</a></li>'+((pageIndex>degeCount+1) ? ellipsisBtn : '' )+
+                        tmpHtmlPrev +
+                        '<li><a href="javascript:;" class="active">'+pageIndex+'</a></li>'+
+                        tmpHtmlNext +
+                        '<li><a id="next_page" href="javascript:;">'+next+'</a></li>'+
+                        '<li><a id="last_page" href="javascript:;">'+last+'</a></li>';
+                }else if(pageIndex - degeCount < degeCount-1 && totalPage - pageIndex >= degeCount+1){ //前不需要，后需要
+                    var countPrev = pageIndex - 1;  //前需要显示的页码个数
+                    var count = degeCount;  //后需要显示的页码个数
+                    if(pageIndex != 1){
+                        for(var i=0; i<countPrev; i++){
+                            tmpHtmlPrev += '<li><a href="javascript:;" class="page-number">'+(pageIndex-(countPrev-i))+'</a></li>';
+                        }
+                    }
+                    for(var i=0; i<count; i++){
+                        tmpHtmlNext += '<li><a href="javascript:;" class="page-number">'+((pageIndex-0)+i+1)+'</a></li>';
+                    }
+                    pageHtml =  '<li><a id="first_page" href="javascript:;">'+first+'</a></li>'+
+                        '<li><a id="prev_page" href="javascript:;">'+prev+'</a></li>'+
+                        tmpHtmlPrev +
+                        '<li><a href="javascript:;" class="active">'+pageIndex+'</a></li>'+
+                        tmpHtmlNext +
+                        ellipsisBtn+
+                        '<li><a id="next_page" href="javascript:;">'+next+'</a></li>'+
+                        '<li><a id="last_page" href="javascript:;">'+last+'</a></li>';
+                }else if(pageIndex - degeCount < degeCount-1 && totalPage - pageIndex < degeCount+1){   //前后都不需要
+                    var countPrev = pageIndex - 1;  //前需要显示的页码个数
+                    var countNext = totalPage - pageIndex;  //后需要显示的页码个数
+                    if(pageIndex != 1){
+                        for(var i=0; i<countPrev; i++){
+                            tmpHtmlPrev += '<li><a href="javascript:;" class="page-number">'+(pageIndex-(countPrev-i))+'</a></li>';
+                        }
+                    }
+                    for(var i=0; i<countNext; i++){
+                        tmpHtmlNext += '<li><a href="javascript:;" class="page-number">'+((pageIndex-0)+i+1)+'</a></li>';
+                    }
+                    pageHtml =  '<li><a id="first_page" href="javascript:;">'+first+'</a></li>'+
+                        '<li><a id="prev_page" href="javascript:;">'+prev+'</a></li>'+
+                        tmpHtmlPrev +
+                        '<li><a href="javascript:;" class="active">'+pageIndex+'</a></li>'+
+                        tmpHtmlNext +
+                        '<li><a id="next_page" href="javascript:;">'+next+'</a></li>'+
+                        '<li><a id="last_page" href="javascript:;">'+last+'</a></li>';
+                }
+                document.getElementById('page_ul').innerHTML = pageHtml;
+            }
+
+            /*点击页码（首页、上一页、下一页、末页）*/
+            document.getElementById('page_ul').addEventListener('click', function (e) {
+                console.log(456);
+                var _this = e.target;   //当前被点击的a标签
+                var idAttr = _this.id;  //id属性
+                var className = _this.className;    //class属性
+                if(idAttr == 'first_page'){ //如果是点击的首页
+                    scope.pageConfig.pageIndex = 1;
+                }else if(idAttr == 'prev_page'){    //如果点击的是上一页
+                    scope.pageConfig.pageIndex = scope.pageConfig.pageIndex == 1 ? scope.pageConfig.pageIndex : scope.pageConfig.pageIndex - 1 ;
+                }else if(idAttr == 'next_page'){ //如果点击的是下一页
+                    scope.pageConfig.pageIndex = scope.pageConfig.pageIndex == scope.pageConfig.totalPage ? scope.pageConfig.pageIndex : parseInt(scope.pageConfig.pageIndex) + 1;
+                }else if(idAttr == 'last_page'){ //如果点击的是末页
+                    scope.pageConfig.pageIndex = scope.pageConfig.totalPage;
+                }else if(className == 'page-number'){   //如果点击的是数字页码
+                    scope.pageConfig.pageIndex = _this.innerText;
+                }
+                initPage(scope.pageConfig.totalPage, scope.pageConfig.pageIndex, degeCount);
+                scope.$emit('clickPage');
+            });
+            /*改变每页条数*/
+            document.getElementById('page_size').addEventListener('change', function () {
+                var _this = this;
+                scope.pageConfig.pageIndex = 1;
+                scope.pageConfig.pageSize = _this.value - 0;
+                initPage(scope.pageConfig.totalPage, scope.pageConfig.pageIndex, degeCount);
+                scope.$emit('clickPage');
+            })
+        };
+
+        return {
+            restrict: 'EA',
+            'scope':{
+                'pageConfig':'=',
+            },
+            templateUrl:'app/views/directive/pageConfig/page-directive.html',
+            link: link
+        };
+    }
+]);
 
 App.directive('treeView',[function(){
 
