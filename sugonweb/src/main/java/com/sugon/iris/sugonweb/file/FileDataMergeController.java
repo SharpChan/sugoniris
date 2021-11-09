@@ -13,10 +13,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
@@ -33,7 +31,7 @@ public class FileDataMergeController {
     private FileDataMergeService fileDataMergeServiceImpl;
 
 
-    @RequestMapping("/getCases")
+    @PostMapping("/getCases")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过用户信息获取案件信息")
     public RestResult<List<FileCaseDto>> getCases(@CurrentUser User user){
@@ -54,7 +52,7 @@ public class FileDataMergeController {
         return restResult;
     }
 
-    @RequestMapping("/getTableRecord")
+    @PostMapping("/getTableRecord")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过mpp表信息获取mpp表信息")
     @ApiImplicitParam(name = "mppSearchDto", value = "mpp表信息")
@@ -77,7 +75,7 @@ public class FileDataMergeController {
     }
 
 
-    @RequestMapping("/getTableRecordQuantity")
+    @PostMapping("/getTableRecordQuantity")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过mpp表信息获取mpp表数据量")
     @ApiImplicitParam(name = "mppSearchDto", value = "mpp表信息")
@@ -99,7 +97,7 @@ public class FileDataMergeController {
         return restResult;
     }
 
-    @RequestMapping("/getCsv")
+    @PostMapping("/getCsv")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过mpp表信息导出csv")
     @ApiImplicitParam(name = "mppSearchDto", value = "mpp表信息")
@@ -117,7 +115,7 @@ public class FileDataMergeController {
      * @param response
      * @param caseId
      */
-    @RequestMapping("/mergeExport")
+    @GetMapping("/mergeExport")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过mpp表信息导出excel压缩包")
     @ApiImplicitParam(name = "caseId", value = "案件编号")
@@ -129,7 +127,7 @@ public class FileDataMergeController {
         }
     }
 
-    @RequestMapping("/doUserDefinedRinse")
+    @PostMapping("/doUserDefinedRinse")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "数据清洗")
     @ApiImplicitParam(name = "caseId", value = "案件编号")

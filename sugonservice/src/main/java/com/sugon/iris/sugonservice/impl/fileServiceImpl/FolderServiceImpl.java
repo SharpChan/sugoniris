@@ -76,6 +76,16 @@ public class FolderServiceImpl implements FolderService {
     private DeclarMapper declarMapper;
 
 
+    @Override
+    public void test(User user) {
+        String url = "http://localhost:8668/data2Mpp/test";
+        MultiValueMap<String, Object> paramMap = new LinkedMultiValueMap<String, Object>();
+        paramMap.add("userId", user.getId());
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<MultiValueMap<String, Object>>(paramMap,headers);
+        RestResult<Void> response = restTemplate.postForObject(url, httpEntity, RestResult.class);
+    }
+
     //进行数据同步
     @Override
     public void dataSync(User user,String[] selectedArr,List<Error> errorList) throws IOException {
@@ -156,7 +166,12 @@ public class FolderServiceImpl implements FolderService {
             errorList.add(new Error(ErrorCode_Enum.SUGON_SSH_001.getCode(),ErrorCode_Enum.SUGON_SSH_001.getMessage(),e.toString()));
         }finally {
             if(null != session){
-                sSHServiceBs.closeSession(session);
+                try {
+                    sSHServiceBs.closeSession(session);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
             }
         }
     }
@@ -275,11 +290,12 @@ public class FolderServiceImpl implements FolderService {
     public int deleteFile(User user, String[] arr,boolean flag ,List<Error> errorList) throws Exception {
         List<String> arrList = new ArrayList<>(Arrays.asList(arr));
         int j = 0;
+        List<DeclarationDetailDto> declarationDetailDtoList = new ArrayList<>();
         if(flag && StringUtils.isNotEmpty(PublicUtils.getConfigMap().get("file_delete_time"))) {
             String time = PublicUtils.getConfigMap().get("file_delete_time").trim().replaceAll("^\\s*$", "");
             Pattern pattern = Pattern.compile("^-?[0-9]+");
             if (StringUtils.isNotEmpty(time) && pattern.matcher(time).matches()) {
-                List<DeclarationDetailDto> declarationDetailDtoList = new ArrayList<>();
+
                 for (Iterator<String> it = arrList.iterator(); it.hasNext();) {
                     String   id = it.next();
                     FileAttachmentEntity fleAttachmentEntity = new FileAttachmentEntity();
@@ -303,9 +319,7 @@ public class FolderServiceImpl implements FolderService {
                         j++;
                     }
                 }
-                if(!CollectionUtils.isEmpty(declarationDetailDtoList)){
-                    declarServiceImpl.saveDeclaration(user, declarationDetailDtoList, errorList);
-                }
+
                 if (arrList.size() == 0) {
                     return j;
                 }
@@ -324,7 +338,7 @@ public class FolderServiceImpl implements FolderService {
             SSHServiceBs sSHServiceBs = new SSHServiceBs(session);
             sSHServiceBs = new SSHServiceBs(new SSHConfig().getSession());
             //删除压缩文件
-            sSHServiceBs.deleteFile(fileAttachmentEntity.getAttachment());
+            //sSHServiceBs.deleteFile(fileAttachmentEntity.getAttachment());
 
             //删除解压文件
             String path = fileAttachmentEntity.getAttachment().substring(0,fileAttachmentEntity.getAttachment().lastIndexOf("."));
@@ -349,6 +363,16 @@ public class FolderServiceImpl implements FolderService {
             fileDetailMapper.deleteFileDetailByFileAttachmentId(fileAttachmentEntity.getId());
             fileAttachmentMapper.deleteFileAttachmentById(fileAttachmentEntity);
         }
+
+        try{
+            if(!CollectionUtils.isEmpty(declarationDetailDtoList)) {
+                declarServiceImpl.saveDeclaration(user, declarationDetailDtoList, errorList);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"修改表declaration出错",e.toString()));
+        }
+
         return i+j;
     }
 
@@ -406,7 +430,7 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public String getFileServerIp() {
         if("1".equals(PublicUtils.getConfigMap().get("environment"))){
-            return "localhost:8092";
+            return "localhost:8668";
         }
         return PublicUtils.getConfigMap().get("webSocket_fileRest");
     }

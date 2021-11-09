@@ -14,10 +14,8 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +35,7 @@ public class Neo4jRelationController {
      * 查询模板信息
      */
 
-    @RequestMapping("/getNeo4jAttribute")
+    @PostMapping("/getNeo4jAttribute")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取节点属性")
     public RestResult<List<MenuDto>> getFileDataGroup(@CurrentUser User user){
@@ -58,7 +56,7 @@ public class Neo4jRelationController {
         return restResult;
     }
 
-    @RequestMapping("/saveRelation")
+    @PostMapping("/saveRelation")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "保存关系")
     @ApiImplicitParam(name = "neo4jRelationDto", value = "关系信息")
@@ -80,7 +78,7 @@ public class Neo4jRelationController {
         return restResult;
     }
 
-    @RequestMapping("/getRelations")
+    @PostMapping("/getRelations")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取关系列表")
     public RestResult<List<Neo4jRelationDto>> getRelations(@CurrentUser User user){
@@ -107,7 +105,7 @@ public class Neo4jRelationController {
      * @param neo4jRelationDto
      * @return
      */
-    @RequestMapping("/initRelation")
+    @PostMapping("/initRelation")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "关系数据初始化")
     @ApiImplicitParam(name = "neo4jRelationDto", value = "关系信息")
@@ -129,7 +127,7 @@ public class Neo4jRelationController {
         return restResult;
     }
 
-    @RequestMapping("/getNeo4jRelations")
+    @PostMapping("/getNeo4jRelations")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "关系数据初始化")
     @ApiImplicitParams({

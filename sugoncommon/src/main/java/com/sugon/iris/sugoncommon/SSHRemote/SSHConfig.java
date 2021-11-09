@@ -25,7 +25,7 @@ public class SSHConfig {
            Properties config = new Properties();
            config.put("StrictHostKeyChecking", "no");
            session.setConfig(config);// 为Session对象设置properties
-           session.setTimeout(300000);// 设置超时
+           session.setTimeout(3000000);// 设置超时
            session.connect();//// 通过Session建立连接
        }catch (JSchException e){
            throw new Exception(

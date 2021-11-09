@@ -17,4 +17,6 @@ public interface FileTemplateDetailMapper {
     int deleteFileTemplateDetailByTemplatId(String[] templatIdArr);
 
     FileTemplateDetailEntity selectFileTemplateDetailByPrimary(Long id);
+
+   List<FileTemplateDetailEntity>  selectFileTemplateDetailByTemplateId(Long templateId);
 }

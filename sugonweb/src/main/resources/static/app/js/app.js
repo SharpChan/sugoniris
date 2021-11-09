@@ -5316,6 +5316,7 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
     //清洗配置
     $scope.rinseBusiness = function (item) {
         $scope.fileTemplateId = item.id;
+        $scope.fileTemplateName = item.templateName;
         $("#cnDivRinseBusiness").show();
         $scope.detailForRinseBusiness(item);
         $scope.getRepetBussDivDetailList();
@@ -5652,6 +5653,8 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
     //已选择的文件
      $scope.selected = [];
 
+    var isArr = [];
+
     //label:要赋值的标签，dic_group：字典组名称
     loadDictionary1 = function(){
         var url = "/sysDictionary/getSysDictionaryByDicGroup?dicGroup="+"hasDecompress";
@@ -5718,6 +5721,12 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
                 myservice.errors(temp);
             }
             $scope.obj = myservice.setSerialNumber (temp.obj);
+
+            angular.forEach($scope.obj,function(e){
+                //console.log(e.id);
+                isArr.push(e);
+            })
+
             $("#pleaseWait").hide();
         }).error(function(data)
         {
@@ -5837,7 +5846,8 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
 
     //保存和修改配置的目模板组
     $scope.changeFlag = function(item,selectName){
-
+        console.log(selectName);
+        $scope.selectedName = selectName;
         var arr = selectName.split("::");
         var url = "/file/updateFileAttachmentTemplateGroup";
         var params = {
@@ -5856,7 +5866,7 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
         });
     }
 
-    var isArr = [];
+
 
     $scope.dataSync = function(item){
         if($scope.selected.length == 0){
@@ -5867,7 +5877,6 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
         if (confirm(msg)==false) {
             return;
         }
-        isArr.push(item.id);
         var url = "/file/dataSync?selected="+$scope.selected;
         $http.post(url).success(function(data)
         {
@@ -5885,7 +5894,23 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
 
     }
 
+    $scope.test = function () {
 
+        var url = "/file/test";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.query();
+
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
 
     $scope.doWsClient = function () {
         //获取文件服务器ip地址
@@ -5903,13 +5928,21 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
             ws.$on('$open', function () {
                 ws.$emit("Hello",jsonString); // 进行注册
             }).$on('$message', function (message) { // it listents for 'incoming event'
+                //console.log(message);
                 var jsonObj = angular.fromJson(message);
                 if(jsonObj["WS-00"]){
                    console.log(jsonObj["WS-00"]);
                 }
                 if(jsonObj["WS-01"]){
+
+                    $scope.process = jsonObj["WS-01"];
+                   console.log( $scope.process );
+
                     angular.forEach(isArr,function (e) {
-                        $scope.progress[e] = "radial-bar radial-bar-info radial-bar-"+jsonObj["WS-01"][e]+" radial-bar-sm";
+                         if(jsonObj["WS-01"][e.id]){
+                            // $scope['progress'+e.id] = "radial-bar radial-bar-info radial-bar-"+jsonObj["WS-01"][e.id]+" radial-bar-sm";
+                             //$scope.progress[e.id] = jsonObj["WS-01"][e.id];
+                         }
                     });
                 }
             });

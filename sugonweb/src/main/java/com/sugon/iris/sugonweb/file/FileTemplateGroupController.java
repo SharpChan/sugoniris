@@ -11,10 +11,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +32,7 @@ public class FileTemplateGroupController {
      * 查询模板信息
      */
 
-    @RequestMapping("/getFileTemplateGroups")
+    @PostMapping("/getFileTemplateGroups")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过模板组id获取模板")
     @ApiImplicitParam(name = "fileTemplateGroupDto", value = "模板组信息")
@@ -57,7 +55,7 @@ public class FileTemplateGroupController {
         return restResult;
     }
 
-    @RequestMapping("/fileTemplateGroupInsert")
+    @PostMapping("/fileTemplateGroupInsert")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过模板组id获取模板")
     @ApiImplicitParam(name = "fileTemplateGroupDto", value = "模板组信息")
@@ -81,7 +79,7 @@ public class FileTemplateGroupController {
     }
 
 
-    @RequestMapping("/deleteFileTemplateGroup")
+    @PostMapping("/deleteFileTemplateGroup")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "删除模板组信息")
     @ApiImplicitParam(name = "selected", value = "勾选的")

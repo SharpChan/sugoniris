@@ -18,10 +18,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +45,7 @@ public class FileTemplateController {
      * 查询模板信息
      */
 
-    @RequestMapping("/getFileTemplates")
+    @PostMapping("/getFileTemplates")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取数据导入模板")
     @ApiImplicitParam(name = "fileTemplateDto", value = "数据模板")
@@ -70,7 +68,7 @@ public class FileTemplateController {
         return restResult;
     }
 
-    @RequestMapping("/fileTemplateInsert")
+    @PostMapping("/fileTemplateInsert")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "保存数据导入模板")
     @ApiImplicitParam(name = "fileTemplateDto", value = "数据模板")
@@ -93,7 +91,7 @@ public class FileTemplateController {
        return restResult;
     }
 
-    @RequestMapping("/updateFileTemplate")
+    @PostMapping("/updateFileTemplate")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "修改数据导入模板")
     @ApiImplicitParam(name = "fileTemplateDto", value = "数据模板")
@@ -115,7 +113,7 @@ public class FileTemplateController {
         return restResult;
     }
 
-    @RequestMapping("/deleteFileTemplate")
+    @PostMapping("/deleteFileTemplate")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "修改数据导入模板")
     @ApiImplicitParam(name = "selected", value = "勾选的数据模板")
@@ -141,7 +139,7 @@ public class FileTemplateController {
     /**
      * 查询模板信息
      */
-    @RequestMapping("/getFileTemplateDetails")
+    @PostMapping("/getFileTemplateDetails")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取模板字段信息")
     @ApiImplicitParam(name = "fileTemplateDetailDto", value = "模板字段信息")
@@ -166,7 +164,7 @@ public class FileTemplateController {
     /**
      * 保存模板详细信息
      */
-    @RequestMapping("/saveFileTemplateDetails")
+    @PostMapping("/saveFileTemplateDetails")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取模板字段信息")
     @ApiImplicitParam(name = "fileTemplateDetailDto", value = "模板字段信息")
@@ -191,7 +189,7 @@ public class FileTemplateController {
     /**
      * 修改模板详细信息
      */
-    @RequestMapping("/updateFileTemplateDetails")
+    @PostMapping("/updateFileTemplateDetails")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "修改获取模板字段信息")
     @ApiImplicitParam(name = "fileTemplateDetailDto", value = "模板字段信息")
@@ -216,7 +214,7 @@ public class FileTemplateController {
     /**
      * 删除模板详细信息
      */
-    @RequestMapping("/removeFileTemplateDetails")
+    @PostMapping("/removeFileTemplateDetails")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "删除获取模板字段信息")
     @ApiImplicitParam(name = "selected", value = "已经勾选的")
@@ -242,7 +240,7 @@ public class FileTemplateController {
     /**
      * 与清洗字段进行解绑
      */
-    @RequestMapping("/removeBoundByTemplateId")
+    @PostMapping("/removeBoundByTemplateId")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过id删除模板")
     @ApiImplicitParam(name = "templateId", value = "模板id")
@@ -267,7 +265,7 @@ public class FileTemplateController {
     /**
      * 获取拼音
      */
-    @RequestMapping("/getPinyin")
+    @PostMapping("/getPinyin")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "中文转拼音")
     @ApiImplicitParam(name = "chinese", value = "中文字符")
@@ -292,7 +290,7 @@ public class FileTemplateController {
     /**
      * 保存重复校验字段
      */
-    @RequestMapping("/saveRepetBuss")
+    @PostMapping("/saveRepetBuss")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "去重配置信息保存")
     @ApiImplicitParam(name = "rinseBusinessRepeatDto", value = "去重配置信息")
@@ -317,7 +315,7 @@ public class FileTemplateController {
     /**
      * 保存null替换
      */
-    @RequestMapping("/saveNullBuss")
+    @PostMapping("/saveNullBuss")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "空值替换信息保存")
     @ApiImplicitParam(name = "rinseBusinessNullDto", value = "空值信息")
@@ -342,7 +340,7 @@ public class FileTemplateController {
     /**
      * 保存字段关键字进行替换
      */
-    @RequestMapping("/saveReplaceBuss")
+    @PostMapping("/saveReplaceBuss")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "指定值替换信息保存")
     @ApiImplicitParam(name = "rinseBusinessReplaceDto", value = "指定值信息")
@@ -367,7 +365,7 @@ public class FileTemplateController {
     /**
      * 查询重复校验字段
      */
-    @RequestMapping("/getRepetBussList")
+    @PostMapping("/getRepetBussList")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取去重信息")
     @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
@@ -392,7 +390,7 @@ public class FileTemplateController {
     /**
      * 查询null值替换
      */
-    @RequestMapping("/getNullBussList")
+    @PostMapping("/getNullBussList")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取空值替换信息")
     @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
@@ -417,7 +415,7 @@ public class FileTemplateController {
     /**
      * 查询关键字替换
      */
-    @RequestMapping("/getReplaceBussList")
+    @PostMapping("/getReplaceBussList")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取指定值替换信息")
     @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
@@ -442,7 +440,7 @@ public class FileTemplateController {
     /**
      * 查询关键字替换
      */
-    @RequestMapping("/getSuffixBussList")
+    @PostMapping("/getSuffixBussList")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "后缀替换信息")
     @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
@@ -467,7 +465,7 @@ public class FileTemplateController {
     /**
      * 保存字段关键字进行替换
      */
-    @RequestMapping("/saveSuffixBuss")
+    @PostMapping("/saveSuffixBuss")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "保存后缀替换信息")
     @ApiImplicitParam(name = "rinseBusinessSuffixDto", value = "后缀替换信息")
@@ -492,7 +490,7 @@ public class FileTemplateController {
     /**
      * 删除去重
      */
-    @RequestMapping("/deleteRepetById")
+    @PostMapping("/deleteRepetById")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过id删除去重信息")
     @ApiImplicitParam(name = "id", value = "去重id")
@@ -517,7 +515,7 @@ public class FileTemplateController {
     /**
      * 删除关键字替换
      */
-    @RequestMapping("/deleteReplaceById")
+    @PostMapping("/deleteReplaceById")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过id删除指定值替换信息")
     @ApiImplicitParam(name = "id", value = "指定值id")
@@ -542,7 +540,7 @@ public class FileTemplateController {
     /**
      * 删除null替换
      */
-    @RequestMapping("/deleteNullById")
+    @PostMapping("/deleteNullById")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过id删除指定值替换信息")
     @ApiImplicitParam(name = "id", value = "指定值id")
@@ -567,7 +565,7 @@ public class FileTemplateController {
     /**
      * 删除去除后缀
      */
-    @RequestMapping("/deleteSuffixById")
+    @PostMapping("/deleteSuffixById")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "后缀替换信息删除")
     @ApiImplicitParam(name = "id", value = "替换id")

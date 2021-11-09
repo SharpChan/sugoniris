@@ -12,10 +12,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +27,7 @@ public class FileDataGroupDetailController {
     @Resource
     private FileDataGroupDetailService fileDataGroupDetailServiceImpl;
 
-    @RequestMapping("/findFileDataGroupUsersByGroupId")
+    @PostMapping("/findFileDataGroupUsersByGroupId")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过数据组id获取详细信息")
     @ApiImplicitParam(name = "groupId", value = "数据组id")
@@ -52,7 +50,7 @@ public class FileDataGroupDetailController {
     }
 
 
-    @RequestMapping("/findUsersNotInDataGroupsByUserId")
+    @PostMapping("/findUsersNotInDataGroupsByUserId")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "查找不在该数据组的用户")
     @ApiImplicitParam(name = "groupId", value = "数据组id")
@@ -74,7 +72,7 @@ public class FileDataGroupDetailController {
         return restResult;
     }
 
-    @RequestMapping("/saveUserFromDataGroupDetail")
+    @PostMapping("/saveUserFromDataGroupDetail")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "用户添加到数据组")
     @ApiImplicitParam(name = "FileDataGroupDetailDtoList", value = "数据组对应用户列表")
@@ -96,7 +94,7 @@ public class FileDataGroupDetailController {
         return restResult;
     }
 
-    @RequestMapping("/deleteUserFromDataGroup")
+    @PostMapping("/deleteUserFromDataGroup")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "用户从数据组中删除")
     @ApiImplicitParam(name = "FileDataGroupDetailDtoList", value = "数据组对应用户列表")

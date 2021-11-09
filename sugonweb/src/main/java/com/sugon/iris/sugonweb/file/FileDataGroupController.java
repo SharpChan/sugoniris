@@ -11,10 +11,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +31,7 @@ public class FileDataGroupController {
      * 获取数据组信息
      */
 
-    @RequestMapping("/getFileDataGroup")
+    @PostMapping("/getFileDataGroup")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取数据组信息")
     @ApiImplicitParam(name = "fileDataGroupDto", value = "数据组信息")
@@ -55,7 +53,7 @@ public class FileDataGroupController {
         return restResult;
     }
 
-    @RequestMapping("/fileDataGroupSave")
+    @PostMapping("/fileDataGroupSave")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "数据组信息保存")
     @ApiImplicitParam(name = "fileDataGroupDto", value = "数据组信息")
@@ -77,7 +75,7 @@ public class FileDataGroupController {
         return restResult;
     }
 
-    @RequestMapping("/updateFileDataGroup")
+    @PostMapping("/updateFileDataGroup")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "数据组信息更新")
     @ApiImplicitParam(name = "fileDataGroupDto", value = "数据组信息")
@@ -99,7 +97,7 @@ public class FileDataGroupController {
         return restResult;
     }
 
-    @RequestMapping("/deleteFileDataGroup")
+    @PostMapping("/deleteFileDataGroup")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "数据组信息删除")
     @ApiImplicitParam(name = "id", value = "数据组信息id")

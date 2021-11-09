@@ -14,10 +14,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.MediaType;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.annotation.Resource;
@@ -41,7 +38,7 @@ public class FileImportCountController {
     private ExcelService ExcelServiceImpl;
 
 
-    @RequestMapping("/getImportCount")
+    @PostMapping("/getImportCount")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "数据统计")
     @ApiImplicitParam(name = "fileCaseDto", value = "文件信息")
@@ -64,7 +61,7 @@ public class FileImportCountController {
         return restResult;
     }
 
-    @RequestMapping("/getFailedDetail")
+    @PostMapping("/getFailedDetail")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "错误数据统计")
     @ApiImplicitParam(name = "fileDetailId", value = "文件id")
@@ -93,7 +90,7 @@ public class FileImportCountController {
      * @param request
      * @throws IOException
      */
-    @RequestMapping("/getExcelqxxxTest")
+    @PostMapping("/getExcelqxxxTest")
     @LogInCheck(doLock = true,doProcess = true)
     public void getExcelzzz(HttpServletResponse res, HttpServletRequest request) throws IOException {
         String fileName = "华夏银行股份有限公司人员信息.xls";
@@ -130,7 +127,7 @@ public class FileImportCountController {
         System.out.println("export file finish");
     }
 
-    @RequestMapping("/getErrorsExcelZip")
+    @PostMapping("/getErrorsExcelZip")
     @LogInCheck(doLock = true,doProcess = true)
     public void getErrorsExcel(HttpServletResponse response, HttpServletRequest request,@RequestBody  @RequestParam(value = "fileDetailId") Long  fileDetailId) {
         try{
@@ -140,7 +137,7 @@ public class FileImportCountController {
         }
     }
 
-    @RequestMapping("/getExcel")
+    @PostMapping("/getExcel")
     @LogInCheck(doLock = true,doProcess = true)
     public void getExcel(HttpServletResponse response, HttpServletRequest request ,@RequestParam(value = "fileDetailId") Long  fileDetailId) throws IOException {
 
@@ -152,7 +149,7 @@ public class FileImportCountController {
     }
 
 
-    @RequestMapping(value = "/dataAmendment",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/dataAmendment",produces = MediaType.APPLICATION_JSON_VALUE)
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "导出错误数据")
     @ApiImplicitParam(name = "fileDetailId", value = "文件id")

@@ -12,10 +12,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +31,7 @@ public class FileDataGroupTableController {
     /**
      * 通过数据组id获取数据组信息
      */
-    @RequestMapping("/getFileDataGroupTable")
+    @PostMapping("/getFileDataGroupTable")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过数据组id获取数据组信息")
     @ApiImplicitParam(name = "dataGroupId", value = "数据组id")
@@ -55,7 +53,7 @@ public class FileDataGroupTableController {
         return restResult;
     }
 
-    @RequestMapping("/saveFileDataGroupTables")
+    @PostMapping("/saveFileDataGroupTables")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过数据组id获取数据组信息")
     @ApiImplicitParam(name = "dataGroupId", value = "数据组id")
@@ -77,7 +75,7 @@ public class FileDataGroupTableController {
         return restResult;
     }
 
-    @RequestMapping("/deleteFileDataGroupTables")
+    @PostMapping("/deleteFileDataGroupTables")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "删除数组和数据表的绑定关系")
     @ApiImplicitParam(name = "fileUserTableList", value = "除数组和数据表的绑定关系")

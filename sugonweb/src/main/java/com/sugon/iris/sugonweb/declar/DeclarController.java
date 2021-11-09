@@ -105,9 +105,9 @@ public class DeclarController {
         return restResult;
     }
 
-    @RequestMapping("/deleteDeclarDetail")
+    @PostMapping("/deleteDeclarDetail")
     @LogInCheck(doLock = true,doProcess = true)
-    @ApiOperation(value = "删除获取申报详细信息")
+    @ApiOperation(value = "删除申报详细信息")
     @ApiImplicitParam(name = "selected", value = "勾选的申报详细信息")
     public RestResult<Integer> deleteDeclarDetail(@RequestParam(value = "selected") String selected) throws Exception {
 
@@ -129,7 +129,7 @@ public class DeclarController {
         return restResult;
     }
 
-    @RequestMapping("/failedDeclar")
+    @PostMapping("/failedDeclar")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "审核不通过")
     @ApiImplicitParam(name = "selected", value = "勾选的申报详细信息")
@@ -153,7 +153,7 @@ public class DeclarController {
         return restResult;
     }
 
-    @RequestMapping("/approveDeclar")
+    @PostMapping("/approveDeclar")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "审核通过")
     @ApiImplicitParam(name = "selected", value = "勾选的申报详细信息")

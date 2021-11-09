@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface FolderService {
 
+    void test(User user);
+
     //进行数据同步
     void dataSync(User user,String[] selectedArr,List<Error> errorList) throws IOException;
 

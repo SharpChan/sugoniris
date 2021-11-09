@@ -50,7 +50,7 @@ public class FileCaseController {
         return restResult;
     }
 
-    @RequestMapping("/getCases")
+    @PostMapping("/getCases")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiImplicitParam(name = "fileCaseDto", value = "案件信息")
     @ApiOperation(value = "获取案件")
@@ -95,7 +95,7 @@ public class FileCaseController {
         return restResult;
     }
 
-    @RequestMapping("/deleteCase")
+    @PostMapping("/deleteCase")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiImplicitParam(name = "selected", value = "已选择的案件id")
     @ApiOperation(value = "案件删除")

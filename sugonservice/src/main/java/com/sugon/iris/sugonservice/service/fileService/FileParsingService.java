@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutionException;
 
 public interface FileParsingService {
 
+    void test(Long userId) throws IOException;
+
     /**
      * 解析csv文件并且写入mpp,并对文件和文件数据进行统计
      */

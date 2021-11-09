@@ -41,7 +41,7 @@ public class FileController {
         return restResult;
     }*/
 
-    @RequestMapping("/uploadFile")
+    @PostMapping("/uploadFile")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "文件上传")
     @ApiImplicitParam(name = "caseId", value = "案件id")
@@ -67,7 +67,7 @@ public class FileController {
         return restResult;
     }
 
-    @RequestMapping("/updateFileAttachmentTemplateGroup")
+    @PostMapping("/updateFileAttachmentTemplateGroup")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "文件绑定模板组")
     @ApiImplicitParam(name = "fileAttachmentDto", value = "原始文件信息")
@@ -89,7 +89,7 @@ public class FileController {
         return restResult;
     }
 
-    @RequestMapping("/findFileList")
+    @PostMapping("/findFileList")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取原始文件信息")
     @ApiImplicitParam(name = "fileAttachmentDto", value = "原始文件信息")
@@ -113,7 +113,7 @@ public class FileController {
         return restResult;
     }
 
-    @RequestMapping("/deleteFile")
+    @PostMapping("/deleteFile")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "删除原始文件")
     @ApiImplicitParam(name = "selected", value = "选中的原始文件")
@@ -137,7 +137,7 @@ public class FileController {
         return restResult;
     }
 
-    @RequestMapping("/dataSync")
+    @PostMapping("/dataSync")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "文件解析")
     @ApiImplicitParam(name = "selected", value = "选中的原始文件")
@@ -161,7 +161,28 @@ public class FileController {
         return restResult;
     }
 
-    @RequestMapping("/getFileServerIp")
+    @PostMapping("/test")
+    @LogInCheck(doLock = true,doProcess = true)
+    public RestResult<Void> test(@CurrentUser User user)  throws Exception {
+
+        RestResult<Void> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            folderServiceImpl.test(user);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/getFileServerIp")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取文件解析服务器的ip")
     public RestResult<String> getFileServerIp() throws Exception {

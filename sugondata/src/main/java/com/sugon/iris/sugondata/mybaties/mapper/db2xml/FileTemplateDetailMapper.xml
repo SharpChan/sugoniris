@@ -62,6 +62,16 @@
              id = #{id}
     </select>
 
+    <!--表查询-->
+    <select id="selectFileTemplateDetailByTemplateId" resultMap="BaseResultMap"  >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        file_template_detail
+        where
+        template_id = #{templateId}
+    </select>
+
     <!--插入-->
     <insert id="fileTemplateDetailInsert" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="id">
         insert into file_template_detail

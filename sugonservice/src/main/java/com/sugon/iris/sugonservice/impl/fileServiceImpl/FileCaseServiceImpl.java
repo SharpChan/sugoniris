@@ -115,11 +115,12 @@ public class FileCaseServiceImpl implements FileCaseService {
         //对超过一定时间的案件删除，走申报流程
         List<String> arrList = new ArrayList<>(Arrays.asList(arr));
         int j = 0;
+        List<DeclarationDetailDto> declarationDetailDtoList = new ArrayList<>();
         if(flag && StringUtils.isNotEmpty(PublicUtils.getConfigMap().get("case_delete_time"))) {
             String time = PublicUtils.getConfigMap().get("case_delete_time").trim().replaceAll("^\\s*$", "");
             Pattern pattern = Pattern.compile("^-?[0-9]+");
             if (StringUtils.isNotEmpty(time) && pattern.matcher(time).matches()) {
-                List<DeclarationDetailDto> declarationDetailDtoList = new ArrayList<>();
+
                 for (Iterator<String> it = arrList.iterator(); it.hasNext();) {
                     String   id = it.next();
                     FileCaseEntity fileCaseEntitySql = new FileCaseEntity();
@@ -141,9 +142,7 @@ public class FileCaseServiceImpl implements FileCaseService {
                         j++;
                     }
                 }
-                if(!CollectionUtils.isEmpty(declarationDetailDtoList)) {
-                    declarServiceImpl.saveDeclaration(user, declarationDetailDtoList, errorList);
-                }
+
                 if (arrList.size() == 0) {
                     return j;
                 }
@@ -179,6 +178,14 @@ public class FileCaseServiceImpl implements FileCaseService {
         }catch (Exception e){
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表file_case出错",e.toString()));
+        }
+        try{
+            if(!CollectionUtils.isEmpty(declarationDetailDtoList)) {
+                declarServiceImpl.saveDeclaration(user, declarationDetailDtoList, errorList);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"修改表declaration出错",e.toString()));
         }
         return count+j;
     }

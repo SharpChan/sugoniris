@@ -80,6 +80,19 @@ public class FileParsingServiceImpl implements FileParsingService {
     @Resource
     private FileCaseMapper fileCaseMapper;
 
+    @Override
+    public void test(Long userId) throws IOException {
+        for(int i =0 ; i <100;i++) {
+            Map<String,Map<String,String>> map1 = new HashMap<>();
+            Map<String,String> map2 = new HashMap<>();
+            map2.put("60",String.valueOf(80));
+            map1.put(WebSocketType_Enum.WS_01.getCode(),map2);
+            Gson gson = new Gson();
+            String json = gson.toJson(map1);
+            WebSocketServer.sendInfo(json,String.valueOf(userId));
+        }
+    }
+
     /**
      * 解析csv文件并且写入mpp,并对文件和文件数据进行统计
      * @param userId
@@ -244,11 +257,11 @@ public class FileParsingServiceImpl implements FileParsingService {
         return result;
     }
 
-    private String getString(int percent,String caseId) {
+    private String getString(int percent,String fileAttachmentId) {
         //key:业务id；value：值
         Map<String,Map<String,String>> map1 = new HashMap<>();
         Map<String,String> map2 = new HashMap<>();
-        map2.put(caseId,String.valueOf(percent));
+        map2.put(fileAttachmentId,String.valueOf(percent));
         map1.put(WebSocketType_Enum.WS_01.getCode(),map2);
         Gson gson = new Gson();
         return gson.toJson(map1);

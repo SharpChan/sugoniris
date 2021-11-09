@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +39,7 @@ public class FileRinseController {
     @Resource
     private FileRinseRegularService fileRinseRegularServiceImpl;
 
-    @RequestMapping("/addFileRinse")
+    @PostMapping("/addFileRinse")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "保存清洗组数据")
     @ApiImplicitParam(name = "fileRinseDto", value = "清洗组信息")
@@ -61,7 +62,7 @@ public class FileRinseController {
         return restResult;
     }
 
-    @RequestMapping("/getFileRinses")
+    @PostMapping("/getFileRinses")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取清洗组数据")
     public RestResult<List<FileRinseGroupDto>> getFileRinses(@CurrentUser User user) {
@@ -82,7 +83,7 @@ public class FileRinseController {
         return restResult;
     }
 
-    @RequestMapping("/modifyFileRinse")
+    @PostMapping("/modifyFileRinse")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "修改清洗组数据")
     @ApiImplicitParam(name = "fileRinseDto", value = "清洗组信息")
@@ -105,7 +106,7 @@ public class FileRinseController {
         return restResult;
     }
 
-    @RequestMapping("/deleteFileRinseGroup")
+    @PostMapping("/deleteFileRinseGroup")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "删除清洗组数据")
     @ApiImplicitParam(name = "id", value = "数据组id")
@@ -128,7 +129,7 @@ public class FileRinseController {
     }
 
 
-    @RequestMapping("/getFileRinseDetailsByGroupId")
+    @PostMapping("/getFileRinseDetailsByGroupId")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "获取清洗组数据")
     @ApiImplicitParam(name = "groupId", value = "数据组id")
@@ -156,7 +157,7 @@ public class FileRinseController {
      * @param fileRinseDetailDto
      * @return
      */
-    @RequestMapping("/addFileRinseDetail")
+    @PostMapping("/addFileRinseDetail")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "保存清洗详细信息")
     @ApiImplicitParam(name = "fileRinseDetailDto", value = "清洗详细信息")
@@ -179,7 +180,7 @@ public class FileRinseController {
         return restResult;
     }
 
-    @RequestMapping("/removeFileRinseDetail")
+    @PostMapping("/removeFileRinseDetail")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "删除清洗详细信息")
     @ApiImplicitParam(name = "id", value = "清洗详细信息id")
@@ -201,7 +202,7 @@ public class FileRinseController {
         return restResult;
     }
 
-    @RequestMapping("/updateFileRinseDetail")
+    @PostMapping("/updateFileRinseDetail")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "修改清洗详细信息")
     @ApiImplicitParam(name = "fileRinseDetailDto", value = "清洗详细信息")
@@ -223,7 +224,7 @@ public class FileRinseController {
         return restResult;
     }
 
-    @RequestMapping("/saveFileRinseRegular")
+    @PostMapping("/saveFileRinseRegular")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "保存清洗表达式")
     @ApiImplicitParam(name = "fileRinseDetailDto", value = "清洗详细信息")
@@ -246,7 +247,7 @@ public class FileRinseController {
         return restResult;
     }
 
-    @RequestMapping("/deleteFileRinse")
+    @PostMapping("/deleteFileRinse")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "删除清洗详细信息")
     @ApiImplicitParam(name = "id", value = "清洗详细信息id")

@@ -8,6 +8,7 @@ import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileCaseDto;
 import com.sugon.iris.sugonservice.service.neo4jService.Neo4jModelOneService;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-//@RestController
+@RestController
 @RequestMapping("/neo4jModelOne")
 public class Neo4jModelOneController {
 

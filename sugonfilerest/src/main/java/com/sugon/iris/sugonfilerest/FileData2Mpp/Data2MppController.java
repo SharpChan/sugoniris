@@ -41,4 +41,25 @@ public class Data2MppController {
         return restResult;
 
     }
+
+    @RequestMapping("/test")
+    public RestResult<Void> test(@RequestParam(name="userId",required = true) Long userId) throws Exception {
+
+        RestResult<Void> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            fileParsingServiceImpl.test(userId);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+
+    }
 }

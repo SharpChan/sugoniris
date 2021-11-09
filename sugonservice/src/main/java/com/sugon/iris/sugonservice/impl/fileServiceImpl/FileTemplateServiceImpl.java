@@ -6,8 +6,10 @@ import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateDetailMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseGroupEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateService;
@@ -29,6 +31,7 @@ public class FileTemplateServiceImpl implements FileTemplateService {
 
     @Resource
     private FileRinseGroupMapper fileRinseGroupMapper;
+
 
 
     @Override
@@ -125,5 +128,43 @@ public class FileTemplateServiceImpl implements FileTemplateService {
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表file_template出错",e.toString()));
         }
         return count;
+    }
+
+    @Override
+    public List<FileTemplateDto> getAllFileTemplateDtoAndDetailsList(List<Error> errorList) throws IllegalAccessException {
+        List<FileTemplateDto> fileTemplateDtoList = new ArrayList<>();
+        FileTemplateEntity fileTemplateEntity4Sql = new FileTemplateEntity();
+        List<FileTemplateEntity> fileTemplateEntityList = null;
+        try{
+
+            fileTemplateEntityList =  fileTemplateMapper.selectFileTemplateList(fileTemplateEntity4Sql);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表file_template出错",e.toString()));
+        }
+        for(FileTemplateEntity fileTemplateEntity : fileTemplateEntityList){
+
+            FileTemplateDto fileTemplateDto = new FileTemplateDto();
+            PublicUtils.trans(fileTemplateEntity,fileTemplateDto);
+            fileTemplateDtoList.add(fileTemplateDto);
+            List<FileTemplateDetailDto> fileTemplateDetailDtoList = new ArrayList<>();
+            List<FileTemplateDetailEntity> fileTemplateDetailEntityList = null;
+            //获取模板字段信息
+            try {
+                 fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailByTemplateId(fileTemplateDto.getId());
+            }catch (Exception e){
+                e.printStackTrace();
+                errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表file_template_detail出错",e.toString()));
+                return null;
+            }
+            for(FileTemplateDetailEntity fileTemplateDetailEntity : fileTemplateDetailEntityList){
+                FileTemplateDetailDto fileTemplateDetailDto = new FileTemplateDetailDto();
+                PublicUtils.trans(fileTemplateDetailEntity,fileTemplateDetailDto);
+                fileTemplateDetailDtoList.add(fileTemplateDetailDto);
+            }
+            fileTemplateDto.setFileTemplateDetailDtoList(fileTemplateDetailDtoList);
+        }
+        return fileTemplateDtoList;
     }
 }
