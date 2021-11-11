@@ -59,7 +59,7 @@ public class RegularController {
 
     @PostMapping("/groupRemoveByPrimaryKey")
     @LogInCheck(doLock = true,doProcess = true)
-    @ApiOperation(value = "通过id删除清洗组")
+    @ApiOperation(value = "通过id删除正则表达式组")
     @ApiImplicitParam(name = "id", value = "id")
     public RestResult<Integer> groupRemoveByPrimaryKey(@CurrentUser User user,Long id){
         RestResult<Integer> restResult = new RestResult();
@@ -81,7 +81,7 @@ public class RegularController {
 
     @PostMapping("/getGroups")
     @LogInCheck(doLock = true,doProcess = true)
-    @ApiOperation(value = "通过用户id获取清洗组")
+    @ApiOperation(value = "通过用户id获取正则表达式组")
     public RestResult<List<RegularGroupDto>> findRegularGroupByUserId(@CurrentUser User user){
         RestResult<List<RegularGroupDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -125,7 +125,7 @@ public class RegularController {
   */
     @PostMapping("/updateGroupByPrimaryKey")
     @LogInCheck(doLock = true,doProcess = true)
-    @ApiOperation(value = "修改清洗组")
+    @ApiOperation(value = "修改正则表达式组基础信息")
     @ApiImplicitParam(name = "regularGroupDto", value = "清洗组信息")
     public RestResult<Integer> updateGroupByPrimaryKey(@CurrentUser User user,@RequestBody RegularGroupDto regularGroupDto){
         RestResult<Integer> restResult = new RestResult();

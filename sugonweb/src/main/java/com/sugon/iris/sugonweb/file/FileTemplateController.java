@@ -216,7 +216,7 @@ public class FileTemplateController {
      */
     @PostMapping("/removeFileTemplateDetails")
     @LogInCheck(doLock = true,doProcess = true)
-    @ApiOperation(value = "删除获取模板字段信息")
+    @ApiOperation(value = "删除模板字段信息")
     @ApiImplicitParam(name = "selected", value = "已经勾选的")
     public   RestResult<Integer>   removeFileTemplateDetails(@RequestParam(value = "selected") String selected){
         RestResult<Integer> restResult = new RestResult();

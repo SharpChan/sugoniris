@@ -131,7 +131,7 @@ public class FileRinseController {
 
     @PostMapping("/getFileRinseDetailsByGroupId")
     @LogInCheck(doLock = true,doProcess = true)
-    @ApiOperation(value = "获取清洗组数据")
+    @ApiOperation(value = "通过组id通过id删除清洗组获取清洗组数据")
     @ApiImplicitParam(name = "groupId", value = "数据组id")
     public RestResult<List<FileRinseDetailDto>> getFileRinseDetailsByGroupId(@CurrentUser User user,Long groupId) {
         RestResult<List<FileRinseDetailDto>> restResult = new RestResult();

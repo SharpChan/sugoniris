@@ -116,17 +116,18 @@ public class FileParsingServiceImpl implements FileParsingService {
         List<File> fileList = new ArrayList<>();
         File baseFile = new File(path);
         PublicUtils.getAllFile(baseFile,fileList);
+
+        if(CollectionUtils.isEmpty(fileList)){
+            errorList.add(new Error(ErrorCode_Enum.FILE_01_001.getCode(),ErrorCode_Enum.FILE_01_001.getMessage()));
+            return false;
+        }
+
         //通过fileTemplateGroupId获取模板组
         List<FileTemplateGroupEntity> fileTemplateGroupEntityList = getFileTemplateGroupEntities( fileAttachmentEntity.getTemplateGroupId(),errorList);
         //获取模板，清洗字段组，清洗字段，树形结构
         List<FileTemplateDto> fileTemplateDtoList = null;
         if(!CollectionUtils.isEmpty(fileTemplateGroupEntityList)) {
-            fileTemplateDtoList=     getFileTemplateDtoList(fileTemplateGroupEntityList,errorList);
-        }
-
-        if(CollectionUtils.isEmpty(fileList)){
-            errorList.add(new Error(ErrorCode_Enum.FILE_01_001.getCode(),ErrorCode_Enum.FILE_01_001.getMessage()));
-            return false;
+            fileTemplateDtoList  =     getFileTemplateDtoList(fileTemplateGroupEntityList,errorList);
         }
 
         if(CollectionUtils.isEmpty(fileTemplateDtoList)){

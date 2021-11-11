@@ -42,8 +42,8 @@ public class Knife4jConfig {
                                 // 选择哪些接口作为swagger的doc发布
                                 .select()
                                 // 要扫描的API(Controller)基础包
-                               // .apis(RequestHandlerSelectors.basePackage("com.sugon.iris.sugonweb"))
-                                .apis(RequestHandlerSelectors.basePackage("com.sugon.iris.sugonrest"))
+                                .apis(RequestHandlerSelectors.basePackage("com.sugon.iris.sugonweb"))
+                                //.apis(RequestHandlerSelectors.basePackage("com.sugon.iris.sugonrest"))
                                 //                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                                 .paths(PathSelectors.any())
                                 .build();

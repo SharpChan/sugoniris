@@ -13,6 +13,8 @@ import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateGroupE
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateGroupService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -90,11 +92,25 @@ public class FileTemplateGroupServiceImpl implements FileTemplateGroupService {
                          continue;
                      }
                      if(fileTemplateDtoList.get(k).getTemplateKey().contains(key)){
-                         errorList.add(new Error(ErrorCode_Enum.FILE_01_014.getCode(),ErrorCode_Enum.FILE_01_014.getMessage()+"["+fileTemplateDtoList.get(k).getTemplateName()+"]-["+fileTemplateDtoList.get(j).getTemplateName()+"]"));
-                         break  checkRepert;
+                         boolean flag  = true;
+                         for(String exclude :  fileTemplateDtoList.get(k).getExclude().split("&&")){
+                             //已经配置对应的排除字段
+                             if(key.contains(exclude)){
+                                 flag = false;
+                             }
+                         }
+                         if(flag){
+                             errorList.add(new Error(ErrorCode_Enum.FILE_01_014.getCode(),ErrorCode_Enum.FILE_01_014.getMessage()+"["+fileTemplateDtoList.get(k).getTemplateName()+"]-["+fileTemplateDtoList.get(j).getTemplateName()+"]"));
+                             break  checkRepert;
+                         }
+
                      }
                 }
             }
+        }
+        //含有包含关系未配置排除字段则退出
+        if(!CollectionUtils.isEmpty(errorList)){
+            return i;
         }
 
         Long groupId = sequenceMapper.getSeq("template_group_id");
