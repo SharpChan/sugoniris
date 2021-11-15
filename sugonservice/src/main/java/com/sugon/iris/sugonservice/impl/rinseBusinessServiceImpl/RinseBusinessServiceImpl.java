@@ -3,10 +3,7 @@ package com.sugon.iris.sugonservice.impl.rinseBusinessServiceImpl;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.*;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessNullDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessRepeatDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessReplaceDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessSuffixDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.*;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.*;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.rinseBusinessService.RinseBusinessService;
@@ -32,6 +29,9 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
 
     @Resource
     private RinseBusinessSuffixMapper rinseBusinessSuffixMapper;
+
+    @Resource
+    private RinseBusinessPrefixMapper rinseBusinessPrefixMapper;
 
     @Override
     public int saveRinseBusinessRepeat(RinseBusinessRepeatDto rinseBusinessRepeatDto, List<Error> errorList) {
@@ -82,6 +82,19 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
             result = rinseBusinessSuffixMapper.saveRinseBusinessSuffix(rinseBusinessSuffixEntity4Sql);
         }catch (Exception e){
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"插入表rinse_business_suffix出错",e.toString()));
+        }
+        return result;
+    }
+
+    @Override
+    public int saveRinseBusinessPrefix(RinseBusinessPrefixDto rinseBusinessPrefixDto, List<Error> errorList) throws IllegalAccessException {
+        int result = 0;
+        RinseBusinessPrefixEntity rinseBusinessPrefixEntity4Sql = new RinseBusinessPrefixEntity();
+        PublicUtils.trans(rinseBusinessPrefixDto,rinseBusinessPrefixEntity4Sql);
+        try {
+            result = rinseBusinessPrefixMapper.saveRinseBusinessPrefix(rinseBusinessPrefixEntity4Sql);
+        }catch (Exception e){
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"插入表rinse_business_prefix出错",e.toString()));
         }
         return result;
     }
@@ -171,6 +184,26 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
     }
 
     @Override
+    public List<RinseBusinessPrefixDto> getPrefixBussList(Long fileTemplateId, List<Error> errorList) throws IllegalAccessException {
+        List<RinseBusinessPrefixDto> rinseBusinessPrefixDtoList = new ArrayList<>();
+        List<RinseBusinessPrefixEntity> rinseBusinessPrefixEntityList = null;
+        try {
+            rinseBusinessPrefixEntityList = rinseBusinessPrefixMapper.getRinseBusinessPrefixListByTemplateId(fileTemplateId);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表rinse_business_prefix出错",e.toString()));
+        }
+        for(RinseBusinessPrefixEntity rinseBusinessPrefixEntity : rinseBusinessPrefixEntityList){
+            RinseBusinessPrefixDto rinseBusinessPrefixDto = new RinseBusinessPrefixDto();
+            PublicUtils.trans(rinseBusinessPrefixEntity,rinseBusinessPrefixDto);
+            FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessPrefixDto.getFileTemplateDetailId());
+            rinseBusinessPrefixDto.setFileTemplateDetailKey(fileTemplateDetailEntity.getFieldKey());
+            rinseBusinessPrefixDtoList.add(rinseBusinessPrefixDto);
+        }
+        return rinseBusinessPrefixDtoList;
+    }
+
+    @Override
     public int deleteRinseBusinessRepeatById(Long id, List<Error> errorList) throws IllegalAccessException {
         int result= 0;
         try {
@@ -214,6 +247,18 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
         }catch (Exception e){
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表rinse_business_suffix出错",e.toString()));
+        }
+        return result;
+    }
+
+    @Override
+    public int deleteRinseBusinessPrefixById(Long id, List<Error> errorList) throws IllegalAccessException {
+        int result= 0;
+        try {
+            result =  rinseBusinessPrefixMapper.deleteByPrimaryKey(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表rinse_business_prefix出错",e.toString()));
         }
         return result;
     }

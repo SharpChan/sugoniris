@@ -51,6 +51,24 @@ public class FileCaseServiceImpl implements FileCaseService {
         int i =0;
         FileCaseEntity fileCaseEntity = new FileCaseEntity();
         PublicUtils.trans(fileCaseDto,fileCaseEntity);
+
+        //查看案件编号和案件名称有没有重复
+        FileCaseEntity fileCaseEntity4Sql_1 = new FileCaseEntity();
+        fileCaseEntity4Sql_1.setCaseName(fileCaseDto.getCaseName());
+        List<FileCaseEntity> fileCaseEntityListCaseName =  fileCaseMapper.selectFileCaseEntityList(fileCaseEntity4Sql_1);
+        if(!CollectionUtils.isEmpty(fileCaseEntityListCaseName)){
+            errorList.add(new Error(ErrorCode_Enum.SUGON_01_012.getCode(),"案件名称重复"));
+            return i;
+        }
+
+        FileCaseEntity fileCaseEntity4Sql_2 = new FileCaseEntity();
+        fileCaseEntity4Sql_2.setCaseNo(fileCaseDto.getCaseNo());
+        List<FileCaseEntity> fileCaseEntityListCaseNo =  fileCaseMapper.selectFileCaseEntityList(fileCaseEntity4Sql_2);
+        if(!CollectionUtils.isEmpty(fileCaseEntityListCaseNo)){
+            errorList.add(new Error(ErrorCode_Enum.SUGON_01_012.getCode(),"案件编号重复"));
+            return i;
+        }
+
         fileCaseEntity.setUserId(user.getId());
         try {
             i = fileCaseMapper.fileCaseInsert(fileCaseEntity);
@@ -66,6 +84,40 @@ public class FileCaseServiceImpl implements FileCaseService {
         int i =0;
         FileCaseEntity fileCaseEntity = new FileCaseEntity();
         PublicUtils.trans(fileCaseDto,fileCaseEntity);
+
+        //查看修改的编号和案件名称有没有重复
+        List<FileCaseEntity> fileCaseEntitySetList = new ArrayList<>();
+        //通过案件编号查询
+        FileCaseEntity fileCaseEntity4Sql_1 = new FileCaseEntity();
+        fileCaseEntity4Sql_1.setCaseNo(fileCaseDto.getCaseNo());
+        List<FileCaseEntity> fileCaseEntityListByCaseNo =  fileCaseMapper.selectFileCaseEntityList(fileCaseEntity4Sql_1);
+        if(!CollectionUtils.isEmpty(fileCaseEntityListByCaseNo)){
+            fileCaseEntitySetList.addAll(fileCaseEntityListByCaseNo);
+        }
+
+        FileCaseEntity fileCaseEntity4Sql_2 = new FileCaseEntity();
+        fileCaseEntity4Sql_2.setCaseName(fileCaseDto.getCaseName());
+        List<FileCaseEntity> fileCaseEntityListByCaseName =  fileCaseMapper.selectFileCaseEntityList(fileCaseEntity4Sql_2);
+        if(!CollectionUtils.isEmpty(fileCaseEntityListByCaseName)){
+            fileCaseEntitySetList.addAll(fileCaseEntityListByCaseName);
+        }
+
+        if(!CollectionUtils.isEmpty(fileCaseEntitySetList)){
+            for(FileCaseEntity fileCaseEntityBean : fileCaseEntitySetList){
+               if(fileCaseEntityBean.getId().equals(fileCaseDto.getId())){
+                    continue;
+               }
+               if(fileCaseEntityBean.getCaseName().equals(fileCaseDto.getCaseName())){
+                   errorList.add(new Error(ErrorCode_Enum.SUGON_01_012.getCode(),"案件名称重复"));
+                   return i;
+               }
+                if(fileCaseEntityBean.getCaseNo().equals(fileCaseDto.getCaseNo())){
+                    errorList.add(new Error(ErrorCode_Enum.SUGON_01_012.getCode(),"案件编号重复"));
+                    return i;
+                }
+            }
+        }
+
         fileCaseEntity.setUserId(user.getId());
         try {
             i = fileCaseMapper.updateFileCase(fileCaseEntity);

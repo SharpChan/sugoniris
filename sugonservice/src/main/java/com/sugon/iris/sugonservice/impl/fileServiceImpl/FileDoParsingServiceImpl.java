@@ -125,7 +125,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         List<MppErrorInfoEntity> mppErrorInfoEntityList = new ArrayList<>();
 
         //对模板字段和csv列索引的对应关系进行遍历
-        String mpp_insert_package_quantity = PublicUtils.getConfigMap().get("mpp_insert_package_quantity");
+        //String mpp_insert_package_quantity = PublicUtils.getConfigMap().get("mpp_insert_package_quantity");
 
         String sqlInsertPackage = "";
 
@@ -345,11 +345,11 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                      */
                     boolean checkRegular = false;
                     //把所有的单元格变为string类型
-                    if(null != sheet && null != sheet.getRow(i) && null != sheet.getRow(i).getCell(entry.getValue())) {
+                    if(null != sheet && null != sheet.getRow(i) && null != entry.getValue() && null != sheet.getRow(i).getCell(entry.getValue())) {
                         sheet.getRow(i).getCell(entry.getValue()).setCellType(Cell.CELL_TYPE_STRING);
                     }
                     boolean checkRegularY = false;
-                    if(!CollectionUtils.isEmpty(regularDetailDtoListY)){
+                    if(!CollectionUtils.isEmpty(regularDetailDtoListY) && null != entry.getValue()){
                         for(RegularDetailDto regularDetailDto : regularDetailDtoListY){
 
                             if (sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
@@ -362,7 +362,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     }
 
                     boolean checkRegularN = true;
-                    if(!CollectionUtils.isEmpty(regularDetailDtoListN)){
+                    if(!CollectionUtils.isEmpty(regularDetailDtoListN) && null != entry.getValue()){
                         for (RegularDetailDto regularDetailDto : regularDetailDtoListN) {
                             if (sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
                                 checkRegularN = false;
@@ -664,8 +664,14 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         if(!CollectionUtils.isEmpty(fileTemplateDetailDtoList) && !CollectionUtils.isEmpty(headList) ){
             for(FileTemplateDetailDto feild : fileTemplateDetailDtoList){
                 feildRefIndex.put(feild.getId(),null);//没有对应的表头也要保留到map中，为insertsql保留所有字段
-                String[] excludeList =feild.getExclude().split("&&") ;
-                String[] keyList = feild.getFieldKey().split("&&");
+                String[] excludeList = null;
+                String[] keyList = null;
+                if(StringUtils.isNotEmpty(feild.getExclude())) {
+                    excludeList = feild.getExclude().split("&&");
+                }
+                if(StringUtils.isNotEmpty(feild.getFieldKey())) {
+                    keyList = feild.getFieldKey().split("&&");
+                }
                  for(int i=0;i<headList.size();i++){
                     //关键字排除
                     if(null != excludeList && excludeList.length>0 ){

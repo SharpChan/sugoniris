@@ -111,7 +111,12 @@ public class FileParsingServiceImpl implements FileParsingService {
         AtomicInteger csvCount = new AtomicInteger(0);
 
         FileAttachmentEntity fileAttachmentEntity = getFileAttachment(fileAttachmentId, errorList);
-        String path = fileAttachmentEntity.getAttachment().substring(0,fileAttachmentEntity.getAttachment().lastIndexOf("."));
+        String path = null;
+        if(".csv".equals(fileAttachmentEntity.getFileType()) || ".xls".equals(fileAttachmentEntity.getFileType())||".xlsx".equals(fileAttachmentEntity.getFileType())) {
+            path = fileAttachmentEntity.getAttachment().substring(0, fileAttachmentEntity.getAttachment().lastIndexOf("/"));
+        }else{
+            path = fileAttachmentEntity.getAttachment().substring(0, fileAttachmentEntity.getAttachment().lastIndexOf("."));
+        }
         //获取解压文件夹内所有的文件
         List<File> fileList = new ArrayList<>();
         File baseFile = new File(path);
@@ -227,6 +232,8 @@ public class FileParsingServiceImpl implements FileParsingService {
                                 e.printStackTrace();
                             }
                         }
+                        //清洗前存一份保存为原始数据
+
                         //进行可配置的数据清洗
                         try {
                             fileDoParsingServiceImpl.doRinse(fileTemplateDto, tableInfos, fileSeq, errorList);

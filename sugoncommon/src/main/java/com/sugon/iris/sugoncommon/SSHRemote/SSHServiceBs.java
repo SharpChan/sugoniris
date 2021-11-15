@@ -200,6 +200,17 @@ public class SSHServiceBs {
         return ls;
     }
 
+    public boolean makeFiles(String directory){
+          boolean result = false;
+          try {
+              execCommand("mkdir -p "+directory);
+              result = true;
+          }catch (Exception e){
+              e.printStackTrace();
+          }
+          return result;
+    }
+
     /**
      * 对将要执行的linux的命令进行遍历
      */

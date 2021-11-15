@@ -137,7 +137,7 @@ public class FileImportCountController {
         }
     }
 
-    @PostMapping("/getExcel")
+    @GetMapping("/getExcel")
     @LogInCheck(doLock = true,doProcess = true)
     public void getExcel(HttpServletResponse response, HttpServletRequest request ,@RequestParam(value = "fileDetailId") Long  fileDetailId) throws IOException {
 

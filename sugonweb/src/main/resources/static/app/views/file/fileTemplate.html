@@ -384,6 +384,39 @@
                         </table>
                     </div>
                 </div>
+
+                <div  class="panel-body">
+                    <div class="panel-heading  topnavbar">
+                        <strong style="color: #FFF">去除前缀</strong>
+                        <div align="right" style="margin-top:-20px;">
+                            <input type="button" value="新增" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="addPrefixBuss()" >
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+                            <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>字段</th>
+                                <th>前缀符号</th>
+                                <th>删除</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="item in prefixBusinessList">
+                                <td align="center" style="width:50px">{{item.no}}</td>
+                                <td align="left" style="width:150px">{{item.fileTemplateDetailKey}}</td>
+                                <td align="left" style="width:150px">{{item.prefix}}</td>
+                                <td>
+                                    <button type="button" ng-click="deletePrefix(item.id)" class="btn btn-sm btn-danger">
+                                        <em class="fa fa-trash-o"></em>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
             <!--右半部分-->
             <div style="margin-left:5px;width: 49%" class="input-group panel">
@@ -539,6 +572,28 @@
             <div  class="form-group" style="margin-top:120px;width: 420px" >
                 <div align="right" style="margin-top:10px">
                     <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="saveSuffixBussDivDetail();" >
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id = "cnPrefixBussDivDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 450px; height: 450px; z-index: 9999;overflow-y:auto;">
+        <div id = "cnPrefixBussDivDetailheader" class="panel-heading topnavbar">
+            添加<input type="button" value="关闭" style="margin-left:350px" class="btn btn-default" ng-click="closePrefixBussDivDetail();" >
+        </div>
+        <div class="panel-body">
+            <div  class="form-group" style="top: 20px;width: 400px" ng-init="availableCategories=[]">
+                <ui-select multiple="" ng-model="template.categoriesPrefix" theme="bootstrap" ng-disabled="disabled" class="mb-lg">
+                    <ui-select-match placeholder="字段">{{$item.substring(0,$item.lastIndexOf("::"))}}</ui-select-match>
+                    <ui-select-choices repeat="cell in availableCategories track by $index">{{ cell.substring(0,cell.lastIndexOf("::"))}}</ui-select-choices>
+                </ui-select>
+            </div>
+            <div  class="form-group" style="top: 20px;width: 250px">
+                <span>请填写前缀分隔符<input placeholder="必填" class="form-control" type="text" ng-model="prefix" ></span>
+            </div>
+            <div  class="form-group" style="margin-top:120px;width: 420px" >
+                <div align="right" style="margin-top:10px">
+                    <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="savePrefixBussDivDetail();" >
                 </div>
             </div>
         </div>

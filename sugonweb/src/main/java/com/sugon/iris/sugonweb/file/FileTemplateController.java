@@ -7,10 +7,7 @@ import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessNullDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessRepeatDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessReplaceDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessSuffixDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.*;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateDetailService;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateService;
 import com.sugon.iris.sugonservice.service.rinseBusinessService.RinseBusinessService;
@@ -438,7 +435,7 @@ public class FileTemplateController {
     }
 
     /**
-     * 查询关键字替换
+     * 查询去除后缀
      */
     @PostMapping("/getSuffixBussList")
     @LogInCheck(doLock = true,doProcess = true)
@@ -463,7 +460,32 @@ public class FileTemplateController {
     }
 
     /**
-     * 保存字段关键字进行替换
+     * 查询前缀替换
+     */
+    @PostMapping("/getPrefixBussList")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "前缀替换信息")
+    @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
+    public   RestResult<List<RinseBusinessPrefixDto>>   getPrefixBussList(@RequestParam(value = "fileTemplateId") Long  fileTemplateId){
+        RestResult<List<RinseBusinessPrefixDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.getPrefixBussList(fileTemplateId,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 保存后缀替换
      */
     @PostMapping("/saveSuffixBuss")
     @LogInCheck(doLock = true,doProcess = true)
@@ -474,6 +496,31 @@ public class FileTemplateController {
         List<Error> errorList = new ArrayList<>();
         try {
             restResult.setObj(rinseBusinessService.saveRinseBusinessSuffix(rinseBusinessSuffixDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 保存后缀替换
+     */
+    @PostMapping("/savePrefixBuss")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "保存后缀替换信息")
+    @ApiImplicitParam(name = "rinseBusinessSuffixDto", value = "后缀替换信息")
+    public   RestResult<Integer>   savePrefixBuss( @RequestBody RinseBusinessPrefixDto rinseBusinessPrefixDto){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.saveRinseBusinessPrefix(rinseBusinessPrefixDto,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -574,6 +621,31 @@ public class FileTemplateController {
         List<Error> errorList = new ArrayList<>();
         try {
             restResult.setObj(rinseBusinessService.deleteRinseBusinessSuffixById(id,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 删除去除前缀
+     */
+    @PostMapping("/deletePrefixById")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "后缀替换信息删除")
+    @ApiImplicitParam(name = "id", value = "替换id")
+    public   RestResult<Integer>   deletePrefixById( @RequestParam(value = "id") Long  id ){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.deleteRinseBusinessPrefixById(id,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

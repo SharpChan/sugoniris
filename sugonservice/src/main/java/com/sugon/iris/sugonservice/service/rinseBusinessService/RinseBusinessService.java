@@ -1,10 +1,7 @@
 package com.sugon.iris.sugonservice.service.rinseBusinessService;
 
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessNullDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessRepeatDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessReplaceDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessSuffixDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.*;
 
 import java.util.List;
 
@@ -18,6 +15,8 @@ public interface RinseBusinessService {
 
     int saveRinseBusinessSuffix(RinseBusinessSuffixDto rinseBusinessSuffixDto, List<Error> errorList) throws IllegalAccessException;
 
+    int saveRinseBusinessPrefix(RinseBusinessPrefixDto rinseBusinessPrefixDto, List<Error> errorList) throws IllegalAccessException;
+
     List<RinseBusinessRepeatDto> getRepetBussList(Long fileTemplateId, List<Error> errorList) throws IllegalAccessException;
 
     List<RinseBusinessNullDto> getNullBussList(Long fileTemplateId, List<Error> errorList) throws IllegalAccessException;
@@ -26,6 +25,8 @@ public interface RinseBusinessService {
 
     List<RinseBusinessSuffixDto> getSuffixBussList(Long fileTemplateId, List<Error> errorList) throws IllegalAccessException;
 
+    List<RinseBusinessPrefixDto>  getPrefixBussList (Long fileTemplateId, List<Error> errorList) throws IllegalAccessException;
+
     int deleteRinseBusinessRepeatById(Long id, List<Error> errorList) throws IllegalAccessException;
 
     int deleteRinseBusinessNullById(Long id, List<Error> errorList) throws IllegalAccessException;
@@ -33,4 +34,6 @@ public interface RinseBusinessService {
     int deleteRinseBusinessReplaceById(Long id, List<Error> errorList) throws IllegalAccessException;
 
     int deleteRinseBusinessSuffixById(Long id, List<Error> errorList) throws IllegalAccessException;
+
+    int deleteRinseBusinessPrefixById(Long id, List<Error> errorList) throws IllegalAccessException;
 }

@@ -135,10 +135,14 @@ public class FolderServiceImpl implements FolderService {
                     //已经存在则删除
                     command = "if [-d " + fileAttachmentEntity.getAttachment() + "]; then rm -rf  " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + " fi";
                     sSHServiceBs.execCommand(command);
-
-                    command = "unar  -o " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + " " + fileAttachmentEntity.getAttachment();
+                    if(!(".csv".equals(fileAttachmentEntity.getFileType()) || ".xls".equals(fileAttachmentEntity.getFileType())||".xlsx".equals(fileAttachmentEntity.getFileType()))) {
+                        if (".zip".equals(fileAttachmentEntity.getFileType())) {
+                            command = "unzip -O CP936 " + fileAttachmentEntity.getAttachment() + " -d " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "");
+                        } else {
+                            command = "unar  -o " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + " " + fileAttachmentEntity.getAttachment();
+                        }
+                    }
                     sSHServiceBs.execCommand(command);
-
                     fileAttachmentEntity.setHasDecompress(true);
                     //修改解压状态
                     fileAttachmentMapper.updateFileAttachment(fileAttachmentEntity);
@@ -154,6 +158,7 @@ public class FolderServiceImpl implements FolderService {
                     RestResult<Void> response = restTemplate.postForObject(url, httpEntity, RestResult.class);
                     if(!CollectionUtils.isEmpty(response.getErrorList())){
                         errorList.addAll(response.getErrorList());
+                        errorList.add(new Error(ErrorCode_Enum.IRIS_00_002.getCode(),ErrorCode_Enum.IRIS_00_002.getMessage(),""));
                         return;
                     }
                     //修改数据同步状态
@@ -204,7 +209,7 @@ public class FolderServiceImpl implements FolderService {
         //把文件临时存入服务器，并且把文件信息记录进表。并且上传到
         for (MultipartFile fileItem : files) {
             String fileName = fileItem.getOriginalFilename();
-            String md5FileName = DigestUtils.md5DigestAsHex((fileName+System.currentTimeMillis()+new Random().nextInt(99)).getBytes());
+            String md5FileName = DigestUtils.md5DigestAsHex((fileName+user.getId()+System.currentTimeMillis()+new Random().nextInt(99)).getBytes());
             String size =String.valueOf(fileItem.getSize());
             String type= "";
 
@@ -220,8 +225,16 @@ public class FolderServiceImpl implements FolderService {
                 continue;
             }
 
+            String attachment = null;
 
-            String attachment = fileServerPAth+md5FileName+type;
+            if(".csv".equals(type) || ".xls".equals(type)||".xlsx".equals(type)){
+
+                fileServerPAth = fileServerPAth + md5FileName+"/";
+                sSHServiceBs.makeFiles(fileServerPAth);
+                attachment = fileServerPAth;
+            }else{
+                attachment = fileServerPAth+md5FileName+type;
+            }
             FileAttachmentEntity fileAttachmentEntity = new FileAttachmentEntity();
             fileAttachmentEntity.setAttachment(attachment);
             fileAttachmentEntity.setCaseId(caseId);
@@ -243,8 +256,11 @@ public class FolderServiceImpl implements FolderService {
                 //io 输入流读文件
                 is = fileItem.getInputStream();
                 //利用输出流写入对应的文件夹
-                fout = new FileOutputStream(new File(uploadPath + "/" + md5FileName+type));
-
+                if(".csv".equals(type) || ".xls".equals(type)||".xlsx".equals(type)) {
+                    fout = new FileOutputStream(new File(uploadPath + "/" + fileName));
+                }else{
+                    fout = new FileOutputStream(new File(uploadPath + "/" + md5FileName + type));
+                }
                 //写入数据
                 byte[] buffer = new byte[1024];
                 int len = 0;
@@ -272,7 +288,11 @@ public class FolderServiceImpl implements FolderService {
             }
             //文件上传到文件服务器，使用一次SSHServiceBs对象创建一次，可能有文件不被释放的情况
             //sSHServiceBs = new SSHServiceBs(new SSHConfig().getSession());
-            sSHServiceBs.uploadFile(fileServerPAth+md5FileName+type,uploadPath + "/" + md5FileName+type);
+            if(".csv".equals(type) || ".xls".equals(type)||".xlsx".equals(type)){
+                sSHServiceBs.uploadFile(fileServerPAth+fileName,uploadPath + "/" + fileName);
+            }else{
+                sSHServiceBs.uploadFile(fileServerPAth+md5FileName+type,uploadPath + "/" + md5FileName+type);
+            }
             sSHServiceBs.closeSession(session);
             //删除本地文件
             File file = new File(uploadPath + "/" + md5FileName+type);
@@ -320,6 +340,15 @@ public class FolderServiceImpl implements FolderService {
                     }
                 }
 
+                try{
+                    if(!CollectionUtils.isEmpty(declarationDetailDtoList)) {
+                        declarServiceImpl.saveDeclaration(user, declarationDetailDtoList, errorList);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"修改表declaration出错",e.toString()));
+                }
+
                 if (arrList.size() == 0) {
                     return j;
                 }
@@ -341,7 +370,12 @@ public class FolderServiceImpl implements FolderService {
             //sSHServiceBs.deleteFile(fileAttachmentEntity.getAttachment());
 
             //删除解压文件
-            String path = fileAttachmentEntity.getAttachment().substring(0,fileAttachmentEntity.getAttachment().lastIndexOf("."));
+            String path = null;
+            if(fileAttachmentEntity.getAttachment().contains(".")) {
+                 path = fileAttachmentEntity.getAttachment().substring(0, fileAttachmentEntity.getAttachment().lastIndexOf("."));
+            }else if(fileAttachmentEntity.getAttachment().contains("/")){
+                path = fileAttachmentEntity.getAttachment().substring(0, fileAttachmentEntity.getAttachment().lastIndexOf(""));
+            }
             String command = "rm -rf  " + path;
             sSHServiceBs.execCommand(command);
             //关闭session
@@ -362,15 +396,6 @@ public class FolderServiceImpl implements FolderService {
             //删除文件信息
             fileDetailMapper.deleteFileDetailByFileAttachmentId(fileAttachmentEntity.getId());
             fileAttachmentMapper.deleteFileAttachmentById(fileAttachmentEntity);
-        }
-
-        try{
-            if(!CollectionUtils.isEmpty(declarationDetailDtoList)) {
-                declarServiceImpl.saveDeclaration(user, declarationDetailDtoList, errorList);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"修改表declaration出错",e.toString()));
         }
 
         return i+j;

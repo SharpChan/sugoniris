@@ -5,7 +5,6 @@ import com.sugon.iris.sugondomain.beans.neo4jBeans.Neo4jRelationshipBean;
 import org.neo4j.driver.types.Node;
 import org.neo4j.driver.types.Relationship;
 import com.sugon.iris.sugondata.neo4j.intf.Neo4jDao;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;

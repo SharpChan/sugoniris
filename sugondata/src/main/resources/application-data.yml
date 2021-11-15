@@ -23,14 +23,14 @@ datasource:
       password: root
       jdbc-url: jdbc:mysql://192.168.217.140:3306/jianmo3.3.1?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
       type: com.alibaba.druid.pool.DruidDataSource
-      initialSize: 2
+      initialSize: 5
       minIdle: 2
-      maxActive: 5
+      maxActive: 20
       validationQuery: SELECT 1 from dual
       testWhileIdle: true
       testOnBorrow: true
       testOnReturn: false
-      maxWait: 6000
+      maxWait: 60000
       filters: stat,slf4j #wall,
 
     #连接本地数据库
@@ -40,14 +40,14 @@ datasource:
       password: root
       jdbc-url: jdbc:mysql://192.168.217.140:3306/iris?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
       type: com.alibaba.druid.pool.DruidDataSource
-      initialSize: 2
+      initialSize: 20
       minIdle: 2
-      maxActive: 5
+      maxActive: 100
       validationQuery: SELECT 1 from dual
       testWhileIdle: true
       testOnBorrow: true
       testOnReturn: false
-      maxWait: 6000
+      maxWait: 60000
       filters: stat,slf4j #wall,
 
     #备用
@@ -57,9 +57,9 @@ datasource:
       password: root
       jdbc-url: jdbc:mysql://192.168.217.140:3306/dzzoffice?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
       type: com.alibaba.druid.pool.DruidDataSource
-      initialSize: 2
+      initialSize: 20
       minIdle: 2
-      maxActive: 5
+      maxActive: 100
       validationQuery: SELECT 1 from dual
       testWhileIdle: true
       testOnBorrow: true
@@ -73,9 +73,9 @@ datasource:
       password: 123456
       jdbc-url: jdbc:postgresql://192.168.217.140:5432/iris?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
       type: com.alibaba.druid.pool.DruidDataSource
-      initialSize: 2
+      initialSize: 20
       minIdle: 2
-      maxActive: 5
+      maxActive: 100
       validationQuery: SELECT 1 as a
       testWhileIdle: true
       testOnBorrow: true
