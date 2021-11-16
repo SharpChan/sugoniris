@@ -13,10 +13,7 @@ import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.dtos.regularDtos.RegularDetailDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessNullDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessRepeatDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessReplaceDto;
-import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessSuffixDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.*;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileParsingFailedEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
@@ -444,6 +441,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList = rinseBusinessServiceImpl.getRepetBussList(fileTemplateDto.getId(),errorList);
         List<RinseBusinessReplaceDto> rinseBusinessReplaceDtoList = rinseBusinessServiceImpl.getReplaceBussList(fileTemplateDto.getId(),errorList);
         List<RinseBusinessSuffixDto>  rinseBusinessSuffixDtoList = rinseBusinessServiceImpl.getSuffixBussList(fileTemplateDto.getId(),errorList);
+        List<RinseBusinessPrefixDto>  rinseBusinessPrefixDtoList = rinseBusinessServiceImpl.getPrefixBussList(fileTemplateDto.getId(),errorList);
 
         //放入子线程中删除
         List<Long> mppid2erroridDeleteList = new ArrayList<>();
@@ -503,10 +501,24 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         if(!CollectionUtils.isEmpty(rinseBusinessSuffixDtoList)){
             for(RinseBusinessSuffixDto rinseBusinessSuffixDto : rinseBusinessSuffixDtoList){
                 FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessSuffixDto.getFileTemplateDetailId());
-                String condition = fileTemplateDetailEntity.getFieldName() + "=  reverse(substr(reverse("+fileTemplateDetailEntity.getFieldName()+"),position('"+rinseBusinessSuffixDto.getSuffix()+"' in reverse("+fileTemplateDetailEntity.getFieldName()+"))+1))"+
+                String condition = fileTemplateDetailEntity.getFieldName() + "=  reverse(substr(reverse("+fileTemplateDetailEntity.getFieldName()+"),position('"+rinseBusinessSuffixDto.getSuffix()+"' in reverse("+fileTemplateDetailEntity.getFieldName()+"))+length('"+rinseBusinessSuffixDto.getSuffix()+"')))"+
                                    " where "+fileTemplateDetailEntity.getFieldName()+" like '%" +rinseBusinessSuffixDto.getSuffix()+"%' and file_detail_id="+fileSeq;
                 suffixSql = suffixSql.replace("_&condition&_",condition);
                 mppMapper.mppSqlExec(suffixSql);
+            }
+        }
+
+        /**
+         * 去除前缀
+         */
+        String prefixSql = "update "+tableInfos[0] +" set _&condition&_";
+        if(!CollectionUtils.isEmpty(rinseBusinessPrefixDtoList)){
+            for(RinseBusinessPrefixDto rinseBusinessPrefixDto : rinseBusinessPrefixDtoList){
+                FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessPrefixDto.getFileTemplateDetailId());
+                String condition = fileTemplateDetailEntity.getFieldName() + "=   substring("+fileTemplateDetailEntity.getFieldName()+",position('"+rinseBusinessPrefixDto.getPrefix() + "' in "+  fileTemplateDetailEntity.getFieldName()+")+length('"+rinseBusinessPrefixDto.getPrefix()+"'))"+
+                        " where "+fileTemplateDetailEntity.getFieldName()+" like '%" +rinseBusinessPrefixDto.getPrefix()+"%' and file_detail_id="+fileSeq;
+                prefixSql = prefixSql.replace("_&condition&_",condition);
+                mppMapper.mppSqlExec(prefixSql);
             }
         }
 

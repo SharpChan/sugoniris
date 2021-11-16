@@ -136,11 +136,11 @@ public class FolderServiceImpl implements FolderService {
                     command = "if [-d " + fileAttachmentEntity.getAttachment() + "]; then rm -rf  " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + " fi";
                     sSHServiceBs.execCommand(command);
                     if(!(".csv".equals(fileAttachmentEntity.getFileType()) || ".xls".equals(fileAttachmentEntity.getFileType())||".xlsx".equals(fileAttachmentEntity.getFileType()))) {
-                        if (".zip".equals(fileAttachmentEntity.getFileType())) {
-                            command = "unzip -O CP936 " + fileAttachmentEntity.getAttachment() + " -d " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "");
-                        } else {
+                       // if (".zip".equals(fileAttachmentEntity.getFileType())) {
+                           // command = "unzip -O CP936 " + fileAttachmentEntity.getAttachment() + " -d " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "");
+                       // } else {
                             command = "unar  -o " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + " " + fileAttachmentEntity.getAttachment();
-                        }
+                       // }
                     }
                     sSHServiceBs.execCommand(command);
                     fileAttachmentEntity.setHasDecompress(true);
