@@ -1,5 +1,6 @@
 package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
+import com.google.gson.Gson;
 import com.sugon.iris.sugoncommon.SSHRemote.SSHConfig;
 import com.sugon.iris.sugoncommon.SSHRemote.SSHServiceBs;
 import com.sugon.iris.sugoncommon.publicUtils.PublicRuleUtils;
@@ -22,12 +23,14 @@ import com.sugon.iris.sugondomain.enums.FileType_Enum;
 import com.sugon.iris.sugondomain.enums.Peripheral_Enum;
 import com.sugon.iris.sugonservice.service.fileService.FolderService;
 import com.sugon.iris.sugonservice.service.declarService.DeclarService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
@@ -39,9 +42,9 @@ import javax.annotation.Resource;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
-
 import com.jcraft.jsch.Session;
 
+@Slf4j
 @Service
 public class FolderServiceImpl implements FolderService {
 
@@ -153,9 +156,16 @@ public class FolderServiceImpl implements FolderService {
                     MultiValueMap<String, Object> paramMap = new LinkedMultiValueMap<String, Object>();
                     paramMap.add("userId", user.getId());
                     paramMap.add("fileAttachmentId", fileAttachmentEntity.getId());
+
                     HttpHeaders headers = new HttpHeaders();
+                    headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+
                     HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<MultiValueMap<String, Object>>(paramMap,headers);
-                    RestResult<Void> response = restTemplate.postForObject(url, httpEntity, RestResult.class);
+                    String resultRemote= restTemplate.postForEntity(url, httpEntity, String.class).getBody();
+
+                    Gson gson = new Gson();
+                    RestResult<Void> response = gson.fromJson(resultRemote, new TypeToken<RestResult<Void>>(){}.getType());
+
                     if(!CollectionUtils.isEmpty(response.getErrorList())){
                         errorList.addAll(response.getErrorList());
                         errorList.add(new Error(ErrorCode_Enum.IRIS_00_002.getCode(),ErrorCode_Enum.IRIS_00_002.getMessage(),""));

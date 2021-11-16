@@ -26,6 +26,7 @@ public class Data2MppController {
 
         RestResult<Void> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
+
         try {
             fileParsingServiceImpl.fileParsing(userId,fileAttachmentId,errorList);
         }catch(Exception e){

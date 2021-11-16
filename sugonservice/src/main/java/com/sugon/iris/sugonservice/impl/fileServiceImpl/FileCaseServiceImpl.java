@@ -196,6 +196,9 @@ public class FileCaseServiceImpl implements FileCaseService {
                 }
 
                 if (arrList.size() == 0) {
+                    if(!CollectionUtils.isEmpty(declarationDetailDtoList)){
+                        declarServiceImpl.saveDeclaration(user, declarationDetailDtoList, errorList);
+                    }
                     return j;
                 }
             }
