@@ -2,8 +2,11 @@ package com.sugon.iris.sugoncommon.publicUtils;
 
 import com.google.common.collect.Lists;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
+import org.springframework.util.CollectionUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -113,6 +116,45 @@ public  class PublicUtils {
         });
     }
 
+    /**
+     * windows执行cmd命令
+     */
+    public static String windowsRunShell(List<String> shellList){
+        if(CollectionUtils.isEmpty(shellList)){
+            throw new RuntimeException("Shell scripts cannot be empty");
+        }
+        StringBuffer sb = new StringBuffer();
+        Process process = null;
+        String sh = "";
+        for(int i = 0;i < shellList.size();i++) {
+            String tmpSh = shellList.get(i);
+            sh += tmpSh;
+            if(i != shellList.size() - 1) {
+                //多条命令使用这个符号连起来
+                sh += "&&";
+            }
+        }
+        try {
+            process = Runtime.getRuntime().exec(sh);
+            BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream(),"gb2312"));
+            String line = "";
+            while ((line = input.readLine()) != null) {
+                sb.append(line);
+                sb.append("\n");
+            }
+            process.waitFor();
+            input.close();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return sb.toString();
+    }
+
+    /**
+     *
+     * @param object
+     * @return
+     */
     private static Field[] getAllFields(Object object){
         Class clazz = object.getClass();
         List<Field> fieldList = new ArrayList<>();

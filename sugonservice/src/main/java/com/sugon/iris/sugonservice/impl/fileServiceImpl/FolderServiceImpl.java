@@ -3,6 +3,7 @@ package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 import com.google.gson.Gson;
 import com.sugon.iris.sugoncommon.SSHRemote.SSHConfig;
 import com.sugon.iris.sugoncommon.SSHRemote.SSHServiceBs;
+import com.sugon.iris.sugoncommon.fileUtils.ZipUtil;
 import com.sugon.iris.sugoncommon.publicUtils.PublicRuleUtils;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.DeclarMapper;
@@ -130,71 +131,144 @@ public class FolderServiceImpl implements FolderService {
         }catch (Exception e){
             errorList.add(new Error(ErrorCode_Enum.SUGON_SSH_001.getCode(),ErrorCode_Enum.SUGON_SSH_001.getMessage()));
         }
-        SSHServiceBs sSHServiceBs = new SSHServiceBs(session);
-        try {
-            if (!CollectionUtils.isEmpty(fileAttachmentEntityListAll)) {
-                for (FileAttachmentEntity fileAttachmentEntity : fileAttachmentEntityListAll) {
-                    String command = null;
-                    //已经存在则删除
-                    command = "if [-d " + fileAttachmentEntity.getAttachment() + "]; then rm -rf  " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + " fi";
-                    sSHServiceBs.execCommand(command);
-                    if(!(".csv".equals(fileAttachmentEntity.getFileType()) || ".xls".equals(fileAttachmentEntity.getFileType())||".xlsx".equals(fileAttachmentEntity.getFileType()))) {
-                       // if (".zip".equals(fileAttachmentEntity.getFileType())) {
-                           // command = "unzip -O CP936 " + fileAttachmentEntity.getAttachment() + " -d " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "");
-                       // } else {
-                            command = "unar  -o " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + " " + fileAttachmentEntity.getAttachment();
-                       // }
+        //linux系统
+        if(!"1".equals(PublicUtils.getConfigMap().get("environment"))) {
+            SSHServiceBs  sSHServiceBs = new SSHServiceBs(session);
+            try {
+                if (!CollectionUtils.isEmpty(fileAttachmentEntityListAll)) {
+                    for (FileAttachmentEntity fileAttachmentEntity : fileAttachmentEntityListAll) {
+                        //linux解压文件
+                        linuxUncompress(sSHServiceBs, fileAttachmentEntity);
+                        //调用远程文件解析服务进行文件读取
+                        readData(user, errorList, fileAttachmentEntity);
                     }
-                    sSHServiceBs.execCommand(command);
-                    fileAttachmentEntity.setHasDecompress(true);
-                    //修改解压状态
-                    fileAttachmentMapper.updateFileAttachment(fileAttachmentEntity);
-
-                    //远程调用进行数据同步
-                    //获取远程调用路径
-                    String url = PublicUtils.getConfigMap().get("fileServer")+ Peripheral_Enum.sugonfilerest_data2Mpp_uploadFile.getCode();
-                    MultiValueMap<String, Object> paramMap = new LinkedMultiValueMap<String, Object>();
-                    paramMap.add("userId", user.getId());
-                    paramMap.add("fileAttachmentId", fileAttachmentEntity.getId());
-
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.add("Accept", MediaType.APPLICATION_JSON.toString());
-
-                    HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<MultiValueMap<String, Object>>(paramMap,headers);
-                    String resultRemote= restTemplate.postForEntity(url, httpEntity, String.class).getBody();
-
-                    Gson gson = new Gson();
-                    RestResult<Void> response = gson.fromJson(resultRemote, new TypeToken<RestResult<Void>>(){}.getType());
-
-                    if(!CollectionUtils.isEmpty(response.getErrorList())){
-                        errorList.addAll(response.getErrorList());
-                        errorList.add(new Error(ErrorCode_Enum.IRIS_00_002.getCode(),ErrorCode_Enum.IRIS_00_002.getMessage(),""));
-                        return;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                errorList.add(new Error(ErrorCode_Enum.SUGON_SSH_001.getCode(),ErrorCode_Enum.SUGON_SSH_001.getMessage(),e.toString()));
+            }finally {
+                if(null != session){
+                    try {
+                        sSHServiceBs.closeSession(session);
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
-                    //修改数据同步状态
-                    fileAttachmentEntity.setHasImport(true);
-                    fileAttachmentMapper.updateFileAttachment(fileAttachmentEntity);
                 }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            errorList.add(new Error(ErrorCode_Enum.SUGON_SSH_001.getCode(),ErrorCode_Enum.SUGON_SSH_001.getMessage(),e.toString()));
-        }finally {
-            if(null != session){
-                try {
-                    sSHServiceBs.closeSession(session);
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
             }
         }
+        //windows系统,部署的主服务和文件解析服务需在同一服务器上
+        else{
+
+          try {
+              if (!CollectionUtils.isEmpty(fileAttachmentEntityListAll)) {
+                  for (FileAttachmentEntity fileAttachmentEntity : fileAttachmentEntityListAll) {
+                      //windows解压文件
+                      windowsUncompress(fileAttachmentEntity);
+                      //调用远程文件解析服务进行文件读取
+                      readData(user, errorList, fileAttachmentEntity);
+                  }
+              }
+          }catch (Exception e){
+              e.printStackTrace();
+          }
+
+        }
+
+    }
+
+    private void readData(User user, List<Error> errorList, FileAttachmentEntity fileAttachmentEntity) {
+        //远程调用进行数据同步
+        //获取远程调用路径
+        String url = null;
+        if(!"1".equals(PublicUtils.getConfigMap().get("environment"))) {
+            url = PublicUtils.getConfigMap().get("fileServer") + Peripheral_Enum.sugonfilerest_data2Mpp_uploadFile.getCode();
+        }else{
+            url = PublicUtils.getConfigMap().get("fileServer_dev") + Peripheral_Enum.sugonfilerest_data2Mpp_uploadFile.getCode();
+        }
+
+        MultiValueMap<String, Object> paramMap = new LinkedMultiValueMap<String, Object>();
+        paramMap.add("userId", user.getId());
+        paramMap.add("fileAttachmentId", fileAttachmentEntity.getId());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<MultiValueMap<String, Object>>(paramMap,headers);
+        String resultRemote= restTemplate.postForEntity(url, httpEntity, String.class).getBody();
+
+        Gson gson = new Gson();
+        RestResult<Void> response = gson.fromJson(resultRemote, new TypeToken<RestResult<Void>>(){}.getType());
+
+        if(!CollectionUtils.isEmpty(response.getErrorList())){
+            errorList.addAll(response.getErrorList());
+        }
+        //修改数据同步状态
+        fileAttachmentEntity.setHasImport(true);
+        fileAttachmentMapper.updateFileAttachment(fileAttachmentEntity);
+    }
+
+    //linux下解压文件
+    private void linuxUncompress(SSHServiceBs sSHServiceBs, FileAttachmentEntity fileAttachmentEntity) throws IOException {
+        String command = null;
+        //已经存在则删除
+        command = "if [-d " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + "]; then rm -rf  " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + " fi";
+        sSHServiceBs.execCommand(command);
+        if(!(".csv".equals(fileAttachmentEntity.getFileType()) || ".xls".equals(fileAttachmentEntity.getFileType())||".xlsx".equals(fileAttachmentEntity.getFileType()))) {
+            command = "unar  -o " + fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "") + " " + fileAttachmentEntity.getAttachment();
+        }
+        sSHServiceBs.execCommand(command);
+        fileAttachmentEntity.setHasDecompress(true);
+        //修改解压状态
+        fileAttachmentMapper.updateFileAttachment(fileAttachmentEntity);
+    }
+
+    //windows下解压文件
+    private void windowsUncompress( FileAttachmentEntity fileAttachmentEntity) throws IOException {
+
+        //判断文件是否已经存在，存在的话先删除
+        File file = new File(fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), ""));
+        deleteDir(file);
+        List<String> shellList = new ArrayList<>();
+        if(!(".csv".equals(fileAttachmentEntity.getFileType()) || ".xls".equals(fileAttachmentEntity.getFileType())||".xlsx".equals(fileAttachmentEntity.getFileType()))) {
+
+            ZipUtil.unZipFiles(fileAttachmentEntity.getAttachment(),fileAttachmentEntity.getAttachment().replace(fileAttachmentEntity.getFileType(), "\\"));
+        }
+        fileAttachmentEntity.setHasDecompress(true);
+        //修改解压状态
+        fileAttachmentMapper.updateFileAttachment(fileAttachmentEntity);
+    }
+
+    /**
+     * 递归删除目录下的所有文件及子目录下所有文件
+     * @param dir 将要删除的文件目录
+     * @return boolean Returns "true" if all deletions were successful.
+     *                 If a deletion fails, the method stops attempting to
+     *                 delete and returns "false".
+     */
+    private static boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+           //递归删除目录中的子目录下
+            for (int i=0; i<children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        // 目录此时为空，可以删除
+        return dir.delete();
     }
 
     public int uploadFile(User user, List<MultipartFile> files, Long caseId, List<Error> errorList) throws Exception {
         //在配置页面配置文件的上传路径
-        String uploadPath = PublicUtils.getConfigMap().get("fileUploadPath");
-
+        String uploadPath = null;
+        //生产linux环境
+        if(!"1".equals(PublicUtils.getConfigMap().get("environment"))) {
+            uploadPath = PublicUtils.getConfigMap().get("fileUploadPath");
+        }else{
+            uploadPath = PublicUtils.getConfigMap().get("fileUploadPath_windows");
+        }
         File folder = new File(uploadPath);
         if (!folder.exists()) {
             folder.mkdirs();
@@ -206,114 +280,210 @@ public class FolderServiceImpl implements FolderService {
         String day = String.valueOf(calendar.get(Calendar.DATE));
         String fileServerBasePath = PublicUtils.getConfigMap().get("fileServerBasePath");
         String fileServerPAth = fileServerBasePath + "/"+year+"/"+month+"/"+day+"/"+caseId+"/";
-        Session session = new SSHConfig().getSession();
-        SSHServiceBs sSHServiceBs = new SSHServiceBs(session);
-        sSHServiceBs.listFiles(fileServerPAth,true);
+        Session session = null;
+        SSHServiceBs sSHServiceBs = null;
+        //生产linux环境
+        if(!"1".equals(PublicUtils.getConfigMap().get("environment"))){
+            session = new SSHConfig().getSession();
+            sSHServiceBs = new SSHServiceBs(session);
+            sSHServiceBs.listFiles(fileServerPAth,true);
+            //文件上传组件
+            DiskFileItemFactory factory = new DiskFileItemFactory();
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            upload.setHeaderEncoding("UTF-8");
+            int i = 0;
+            List<FileAttachmentEntity> fileAttachmentEntityList = new ArrayList<>();
+            //把文件临时存入服务器，并且把文件信息记录进表。并且上传到
+            for (MultipartFile fileItem : files) {
+                String fileName = fileItem.getOriginalFilename();
+                String md5FileName = DigestUtils.md5DigestAsHex((fileName+user.getId()+System.currentTimeMillis()+new Random().nextInt(99)).getBytes());
+                String size =String.valueOf(fileItem.getSize());
+                String type= "";
 
-        //文件上传组件
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        upload.setHeaderEncoding("UTF-8");
-        int i = 0;
-        List<FileAttachmentEntity> fileAttachmentEntityList = new ArrayList<>();
-        //把文件临时存入服务器，并且把文件信息记录进表。并且上传到
-        for (MultipartFile fileItem : files) {
-            String fileName = fileItem.getOriginalFilename();
-            String md5FileName = DigestUtils.md5DigestAsHex((fileName+user.getId()+System.currentTimeMillis()+new Random().nextInt(99)).getBytes());
-            String size =String.valueOf(fileItem.getSize());
-            String type= "";
-
-            if(fileName.contains(".")){
-                String str1=fileName.substring(0, fileName.indexOf("."));
-                type=fileName.substring(str1.length(), fileName.length());
-                if(!PublicUtils.getConfigMap().get("fileType").contains(type)){
+                if(fileName.contains(".")){
+                    String str1=fileName.substring(0, fileName.indexOf("."));
+                    type=fileName.substring(str1.length(), fileName.length());
+                    if(!PublicUtils.getConfigMap().get("fileType").contains(type)){
+                        errorList.add(new Error(ErrorCode_Enum.IRIS_00_002.getCode(),ErrorCode_Enum.IRIS_00_002.getMessage(),fileName));
+                        continue;
+                    }
+                }else {
                     errorList.add(new Error(ErrorCode_Enum.IRIS_00_002.getCode(),ErrorCode_Enum.IRIS_00_002.getMessage(),fileName));
                     continue;
                 }
-            }else {
-                errorList.add(new Error(ErrorCode_Enum.IRIS_00_002.getCode(),ErrorCode_Enum.IRIS_00_002.getMessage(),fileName));
-                continue;
-            }
 
-            String attachment = null;
+                String attachment = null;
 
-            if(".csv".equals(type) || ".xls".equals(type)||".xlsx".equals(type)){
+                if(".csv".equals(type) || ".xls".equals(type)||".xlsx".equals(type)){
 
-                fileServerPAth = fileServerPAth + md5FileName+"/";
-                sSHServiceBs.makeFiles(fileServerPAth);
-                attachment = fileServerPAth;
-            }else{
-                attachment = fileServerPAth+md5FileName+type;
-            }
-            FileAttachmentEntity fileAttachmentEntity = new FileAttachmentEntity();
-            fileAttachmentEntity.setAttachment(attachment);
-            fileAttachmentEntity.setCaseId(caseId);
-            fileAttachmentEntity.setFileName(fileName);
-            fileAttachmentEntity.setFileType(type);
-            fileAttachmentEntity.setFileSize(size);
-            fileAttachmentEntity.setUserId(user.getId());
-            fileAttachmentEntity.setHasDecompress(false);
-            fileAttachmentEntity.setHasImport(false);
-            //如果是经侦角色，则默认模板组
-            if(user.isEconomicUser()){
-                fileAttachmentEntity.setTemplateGroupId(1L);
-            }
-            fileAttachmentEntityList.add(fileAttachmentEntity);
-
-            FileOutputStream fout = null;
-            InputStream is = null;
-            try {
-                //io 输入流读文件
-                is = fileItem.getInputStream();
-                //利用输出流写入对应的文件夹
-                if(".csv".equals(type) || ".xls".equals(type)||".xlsx".equals(type)) {
-                    fout = new FileOutputStream(new File(uploadPath + "/" + fileName));
+                    fileServerPAth = fileServerPAth + md5FileName+"/";
+                    sSHServiceBs.makeFiles(fileServerPAth);
+                    attachment = fileServerPAth;
                 }else{
-                    fout = new FileOutputStream(new File(uploadPath + "/" + md5FileName + type));
+                    attachment = fileServerPAth+md5FileName+type;
                 }
-                //写入数据
-                byte[] buffer = new byte[1024];
-                int len = 0;
-                while ((len = (is.read(buffer))) > -1) {
-                    fout.write(buffer, 0, len);
+                FileAttachmentEntity fileAttachmentEntity = new FileAttachmentEntity();
+                fileAttachmentEntity.setAttachment(attachment);
+                fileAttachmentEntity.setCaseId(caseId);
+                fileAttachmentEntity.setFileName(fileName);
+                fileAttachmentEntity.setFileType(type);
+                fileAttachmentEntity.setFileSize(size);
+                fileAttachmentEntity.setUserId(user.getId());
+                fileAttachmentEntity.setHasDecompress(false);
+                fileAttachmentEntity.setHasImport(false);
+                //如果是经侦角色，则默认模板组
+                if(user.isEconomicUser()){
+                    fileAttachmentEntity.setTemplateGroupId(1L);
                 }
-            }catch (Exception e){
-                   e.printStackTrace();
-                   errorList.add(new Error(ErrorCode_Enum.SYS_STORE_001.getCode(),ErrorCode_Enum.SYS_STORE_001.getMessage(),fileName));
-            }finally {
-                if(null!= fout){
-                    try{
-                        fout.close();
-                    }catch (Exception e){
-                        e.printStackTrace();
+                fileAttachmentEntityList.add(fileAttachmentEntity);
+
+                FileOutputStream fout = null;
+                InputStream is = null;
+                try {
+                    //io 输入流读文件
+                    is = fileItem.getInputStream();
+                    //利用输出流写入对应的文件夹
+                    if(".csv".equals(type) || ".xls".equals(type)||".xlsx".equals(type)) {
+                        fout = new FileOutputStream(new File(uploadPath + "/" + fileName));
+                    }else{
+                        fout = new FileOutputStream(new File(uploadPath + "/" + md5FileName + type));
+                    }
+                    //写入数据
+                    byte[] buffer = new byte[1024];
+                    int len = 0;
+                    while ((len = (is.read(buffer))) > -1) {
+                        fout.write(buffer, 0, len);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    errorList.add(new Error(ErrorCode_Enum.SYS_STORE_001.getCode(),ErrorCode_Enum.SYS_STORE_001.getMessage(),fileName));
+                }finally {
+                    if(null!= fout){
+                        try{
+                            fout.close();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                    if(null!= fout){
+                        try{
+                            is.close();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 }
-                if(null!= fout){
-                    try{
-                        is.close();
-                    }catch (Exception e){
-                    e.printStackTrace();
+
+                //文件上传到文件服务器，使用一次SSHServiceBs对象创建一次，可能有文件不被释放的情况
+                if(".csv".equals(type) || ".xls".equals(type)||".xlsx".equals(type)){
+                    sSHServiceBs.uploadFile(fileServerPAth+fileName,uploadPath + "/" + fileName);
+                }else{
+                    sSHServiceBs.uploadFile(fileServerPAth+md5FileName+type,uploadPath + "/" + md5FileName+type);
                 }
+                sSHServiceBs.closeSession(session);
+                //删除本地文件
+                File file = new File(uploadPath + "/" + md5FileName+type);
+                if (file.isFile() && file.exists()) {
+                    file.delete();
                 }
+                i++;
             }
-            //文件上传到文件服务器，使用一次SSHServiceBs对象创建一次，可能有文件不被释放的情况
-            //sSHServiceBs = new SSHServiceBs(new SSHConfig().getSession());
-            if(".csv".equals(type) || ".xls".equals(type)||".xlsx".equals(type)){
-                sSHServiceBs.uploadFile(fileServerPAth+fileName,uploadPath + "/" + fileName);
-            }else{
-                sSHServiceBs.uploadFile(fileServerPAth+md5FileName+type,uploadPath + "/" + md5FileName+type);
-            }
-            sSHServiceBs.closeSession(session);
-            //删除本地文件
-            File file = new File(uploadPath + "/" + md5FileName+type);
-            if (file.isFile() && file.exists()) {
-                file.delete();
-            }
-            i++;
+            //把文件信息入库
+            fileAttachmentMapper.batchFileAttachmentInsert(fileAttachmentEntityList);
+            return i;
         }
-        //把文件信息入库
-        fileAttachmentMapper.batchFileAttachmentInsert(fileAttachmentEntityList);
-        return i;
+        //测试windows环境
+        else{
+            //文件上传组件
+            DiskFileItemFactory factory = new DiskFileItemFactory();
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            upload.setHeaderEncoding("UTF-8");
+            int i = 0;
+            List<FileAttachmentEntity> fileAttachmentEntityList = new ArrayList<>();
+            //把文件临时存入服务器，并且把文件信息记录进表。并且上传到
+            for (MultipartFile fileItem : files) {
+                String fileName = fileItem.getOriginalFilename();
+                String md5FileName = DigestUtils.md5DigestAsHex((fileName+user.getId()+System.currentTimeMillis()+new Random().nextInt(99)).getBytes());
+                String size =String.valueOf(fileItem.getSize());
+                String type= "";
+
+                if(fileName.contains(".")){
+                    String str1=fileName.substring(0, fileName.indexOf("."));
+                    type=fileName.substring(str1.length(), fileName.length());
+                    if(!PublicUtils.getConfigMap().get("fileType").contains(type)){
+                        errorList.add(new Error(ErrorCode_Enum.IRIS_00_002.getCode(),ErrorCode_Enum.IRIS_00_002.getMessage(),fileName));
+                        continue;
+                    }
+                }else {
+                    errorList.add(new Error(ErrorCode_Enum.IRIS_00_002.getCode(),ErrorCode_Enum.IRIS_00_002.getMessage(),fileName));
+                    continue;
+                }
+
+                String attachment = null;
+
+                if(".csv".equals(type) || ".xls".equals(type)||".xlsx".equals(type)){
+                    fileServerPAth = uploadPath + "/" +fileName+"/";
+                    attachment = fileServerPAth;
+                }else{
+                    attachment = uploadPath+"/"+md5FileName+type;
+                }
+                FileAttachmentEntity fileAttachmentEntity = new FileAttachmentEntity();
+                fileAttachmentEntity.setAttachment(attachment);
+                fileAttachmentEntity.setCaseId(caseId);
+                fileAttachmentEntity.setFileName(fileName);
+                fileAttachmentEntity.setFileType(type);
+                fileAttachmentEntity.setFileSize(size);
+                fileAttachmentEntity.setUserId(user.getId());
+                fileAttachmentEntity.setHasDecompress(false);
+                fileAttachmentEntity.setHasImport(false);
+                //如果是经侦角色，则默认模板组
+                if(user.isEconomicUser()){
+                    fileAttachmentEntity.setTemplateGroupId(1L);
+                }
+                fileAttachmentEntityList.add(fileAttachmentEntity);
+
+                FileOutputStream fout = null;
+                InputStream is = null;
+                try {
+                    //io 输入流读文件
+                    is = fileItem.getInputStream();
+                    //利用输出流写入对应的文件夹
+                    if(".csv".equals(type) || ".xls".equals(type)||".xlsx".equals(type)) {
+                        fout = new FileOutputStream(new File(uploadPath + "/" + fileName));
+                    }else{
+                        fout = new FileOutputStream(new File(uploadPath + "/" + md5FileName + type));
+                    }
+                    //写入数据
+                    byte[] buffer = new byte[1024];
+                    int len = 0;
+                    while ((len = (is.read(buffer))) > -1) {
+                        fout.write(buffer, 0, len);
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    errorList.add(new Error(ErrorCode_Enum.SYS_STORE_001.getCode(),ErrorCode_Enum.SYS_STORE_001.getMessage(),fileName));
+                }finally {
+                    if(null!= fout){
+                        try{
+                            fout.close();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                    if(null!= fout){
+                        try{
+                            is.close();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                i++;
+            }
+            //把文件信息入库
+            fileAttachmentMapper.batchFileAttachmentInsert(fileAttachmentEntityList);
+            return i;
+        }
     }
 
     @Override

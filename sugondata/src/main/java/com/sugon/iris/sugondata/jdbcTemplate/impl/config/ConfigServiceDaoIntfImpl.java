@@ -31,7 +31,7 @@ public class ConfigServiceDaoIntfImpl implements ConfigServiceDao {
      * 描述：获取所有的配置信息
      */
     public List<ConfigEntity> getAllConfig(List<Error> errorList){
-        String sql = "select id,cfg_key,cfg_value,flag,description from config";
+        String sql = "select id,cfg_key,cfg_value,flag,description from config order by description ASC";
         List<ConfigEntity> list = null;
         try{
             list = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(ConfigEntity.class));
