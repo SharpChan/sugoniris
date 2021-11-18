@@ -101,167 +101,173 @@ public class FileParsingServiceImpl implements FileParsingService {
      */
     @Override
     public boolean fileParsing(Long userId, Long fileAttachmentId, List<Error> errorList) throws IOException, IllegalAccessException, InterruptedException, ExecutionException {
-
         boolean result = true;
-        //解析次数，线程安全
-        AtomicInteger xlsCount=new AtomicInteger(0) ;
-        //解析次数，线程安全
-        AtomicInteger xlsxCount = new AtomicInteger(0) ;
-        //解析次数，线程安全
-        AtomicInteger csvCount = new AtomicInteger(0);
+     try {
 
-        FileAttachmentEntity fileAttachmentEntity = getFileAttachment(fileAttachmentId, errorList);
-        String path = null;
-        if(".csv".equals(fileAttachmentEntity.getFileType()) || ".xls".equals(fileAttachmentEntity.getFileType())||".xlsx".equals(fileAttachmentEntity.getFileType())) {
-            path = fileAttachmentEntity.getAttachment().substring(0, fileAttachmentEntity.getAttachment().lastIndexOf("/"));
-        }else{
-            path = fileAttachmentEntity.getAttachment().substring(0, fileAttachmentEntity.getAttachment().lastIndexOf("."));
-        }
-        //获取解压文件夹内所有的文件
-        List<File> fileList = new ArrayList<>();
-        File baseFile = new File(path);
-        PublicUtils.getAllFile(baseFile,fileList);
+         //解析次数，线程安全
+         AtomicInteger xlsCount = new AtomicInteger(0);
+         //解析次数，线程安全
+         AtomicInteger xlsxCount = new AtomicInteger(0);
+         //解析次数，线程安全
+         AtomicInteger csvCount = new AtomicInteger(0);
 
-        if(CollectionUtils.isEmpty(fileList)){
-            errorList.add(new Error(ErrorCode_Enum.FILE_01_001.getCode(),ErrorCode_Enum.FILE_01_001.getMessage()));
-            return false;
-        }
+         FileAttachmentEntity fileAttachmentEntity = getFileAttachment(fileAttachmentId, errorList);
+         String path = null;
+         if (".csv".equals(fileAttachmentEntity.getFileType()) || ".xls".equals(fileAttachmentEntity.getFileType()) || ".xlsx".equals(fileAttachmentEntity.getFileType())) {
+             path = fileAttachmentEntity.getAttachment().substring(0, fileAttachmentEntity.getAttachment().lastIndexOf("/"));
+         } else {
+             path = fileAttachmentEntity.getAttachment().substring(0, fileAttachmentEntity.getAttachment().lastIndexOf("."));
+         }
+         //获取解压文件夹内所有的文件
+         List<File> fileList = new ArrayList<>();
+         File baseFile = new File(path);
+         PublicUtils.getAllFile(baseFile, fileList);
 
-        //通过fileTemplateGroupId获取模板组
-        List<FileTemplateGroupEntity> fileTemplateGroupEntityList = getFileTemplateGroupEntities( fileAttachmentEntity.getTemplateGroupId(),errorList);
-        //获取模板，清洗字段组，清洗字段，树形结构
-        List<FileTemplateDto> fileTemplateDtoList = null;
-        if(!CollectionUtils.isEmpty(fileTemplateGroupEntityList)) {
-            fileTemplateDtoList  =     getFileTemplateDtoList(fileTemplateGroupEntityList,errorList);
-        }
+         if (CollectionUtils.isEmpty(fileList)) {
+             errorList.add(new Error(ErrorCode_Enum.FILE_01_001.getCode(), ErrorCode_Enum.FILE_01_001.getMessage()));
+             return false;
+         }
 
-        if(CollectionUtils.isEmpty(fileTemplateDtoList)){
-            errorList.add(new Error(ErrorCode_Enum.FILE_01_002.getCode(),ErrorCode_Enum.FILE_01_002.getMessage()));
-            return false;
-        }
+         //通过fileTemplateGroupId获取模板组
+         List<FileTemplateGroupEntity> fileTemplateGroupEntityList = getFileTemplateGroupEntities(fileAttachmentEntity.getTemplateGroupId(), errorList);
+         //获取模板，清洗字段组，清洗字段，树形结构
+         List<FileTemplateDto> fileTemplateDtoList = null;
+         if (!CollectionUtils.isEmpty(fileTemplateGroupEntityList)) {
+             fileTemplateDtoList = getFileTemplateDtoList(fileTemplateGroupEntityList, errorList);
+         }
 
-        //判断一个表是否对应多个模板
-        for(File file : fileList){
-            boolean flag = false;
-            int c = 0;
-            for(FileTemplateDto fileTemplateDto : fileTemplateDtoList){
-               for(String key : fileTemplateDto.getTemplateKey().split("&&")){
-                   if(file.getName().contains(key)){
+         if (CollectionUtils.isEmpty(fileTemplateDtoList)) {
+             errorList.add(new Error(ErrorCode_Enum.FILE_01_002.getCode(), ErrorCode_Enum.FILE_01_002.getMessage()));
+             return false;
+         }
+
+         //判断一个表是否对应多个模板
+         for (File file : fileList) {
+             boolean flag = false;
+             int c = 0;
+             for (FileTemplateDto fileTemplateDto : fileTemplateDtoList) {
+                 for (String key : fileTemplateDto.getTemplateKey().split("&&")) {
+                     if (file.getName().contains(key)) {
                          c++;
-                   }
-               }
-               for(String exclude : fileTemplateDto.getExclude().split("&&")){
-                         if(file.getName().contains(exclude)){
-                             flag = true;
-                             break;
+                     }
+                 }
+                 for (String exclude : fileTemplateDto.getExclude().split("&&")) {
+                     if (file.getName().contains(exclude)) {
+                         flag = true;
+                         break;
+                     }
+                 }
+                 if (c > 1 && !flag) {
+                     errorList.add(new Error(ErrorCode_Enum.FILE_01_012.getCode(), ErrorCode_Enum.FILE_01_012.getMessage()));
+                     return false;
+                 }
+             }
+         }
+         //------------------------
+
+
+         List<File> fileListNew = new ArrayList<>();
+         fileListNew.addAll(fileList);
+         /*
+          *模板与文件进行配对map（key：模板，value：对应的文件列表）
+          */
+         Map<FileTemplateDto, List<File>> mapTemplate2File = template2Files(fileListNew, fileTemplateDtoList);
+         fileDetailFailedSave(userId, fileAttachmentEntity, fileListNew);
+
+         if (CollectionUtils.isEmpty(mapTemplate2File)) {
+             errorList.add(new Error(ErrorCode_Enum.FILE_01_003.getCode(), ErrorCode_Enum.FILE_01_003.getMessage()));
+             return false;
+         }
+
+         //创建多线程，一个模板创建一个线程,在子线程内分别入库
+         ExecutorService executorService = Executors.newFixedThreadPool(mapTemplate2File.size());
+
+         List<Callable<String>> cList = new ArrayList<>();  //定义添加线程的集合
+
+         Callable<String> task = null;  //创建单个线程
+
+         List<File> fileList4Process = new ArrayList<>();
+         String json = getString(5, String.valueOf(fileAttachmentId));
+         WebSocketServer.sendInfo(json, String.valueOf(userId));
+         //进行文件读取
+         for (Map.Entry<FileTemplateDto, List<File>> entry : mapTemplate2File.entrySet()) {
+             task = new Callable<String>() {
+                 @Override
+                 public String call() throws Exception {
+                     FileTemplateDto fileTemplateDto = entry.getKey();
+                     List<File> fileList4Template = entry.getValue();
+                     //index[0] :tableName ;index[01: tableId
+                     Object[] tableInfos = createMppTable(userId, fileAttachmentEntity, fileTemplateDto);
+                     String insertSql = getInsertSql(fileAttachmentEntity.getId(), fileAttachmentEntity.getCaseId(), fileTemplateDto.getFileTemplateDetailDtoList(), (String) tableInfos[0], fileTemplateDto.getId());
+
+                     //key:模板字段id编号；value：正则表达式列表；用于导入前数据校验
+                     Map<Long, FileRinseDetailDto> regularMap = new HashMap<>();
+                     for (FileTemplateDetailDto fileTemplateDetailDtoBean : fileTemplateDto.getFileTemplateDetailDtoList()) {
+                         regularMap.put(fileTemplateDetailDtoBean.getId(), fileTemplateDetailDtoBean.getFileRinseDetailDto());
+                     }
+
+                     //模板下文件读取
+                     for (File file : fileList4Template) {
+                         if (file.getName().contains("交易明细")) {
+                             System.out.println(file.getName());
                          }
-               }
-               if(c>1 && !flag){
-                   errorList.add(new Error(ErrorCode_Enum.FILE_01_012.getCode(),ErrorCode_Enum.FILE_01_012.getMessage()));
-                   return false;
-               }
-            }
-        }
-        //------------------------
+                         fileList4Process.add(file);
+                         int percent = fileList4Process.size() * 100 / fileList.size();
+                         String json = getString(percent, String.valueOf(fileAttachmentId));
+                         WebSocketServer.sendInfo(json, String.valueOf(userId));
 
+                         Long fileSeq = sequenceMapper.getSeq("file_detail");
+                         if (file.getName().contains(".csv")) {
+                             csvCount.incrementAndGet();
+                             try {
+                                 fileDoParsingServiceImpl.doParsingCsv(userId, fileAttachmentEntity.getCaseId(),
+                                         fileTemplateDto, file, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId, errorList);
 
-        List<File> fileListNew = new ArrayList<>();
-        fileListNew.addAll(fileList);
-        /*
-         *模板与文件进行配对map（key：模板，value：对应的文件列表）
-         */
-        Map<FileTemplateDto, List<File>> mapTemplate2File = template2Files(fileListNew, fileTemplateDtoList);
-        fileDetailFailedSave(userId, fileAttachmentEntity, fileListNew);
+                             } catch (IOException e) {
+                                 e.printStackTrace();
+                             }
+                         }
+                         if (file.getName().contains(".xls") || file.getName().contains(".xlsx")) {
+                             xlsCount.incrementAndGet();
+                             try {
+                                 fileDoParsingServiceImpl.doParsingExcel(userId, fileAttachmentEntity.getCaseId(),
+                                         fileTemplateDto, file, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId, errorList);
+                             } catch (Exception e) {
+                                 e.printStackTrace();
+                             }
+                         }
+                         //清洗前存一份保存为原始数据
 
-        if(CollectionUtils.isEmpty(mapTemplate2File)){
-            errorList.add(new Error(ErrorCode_Enum.FILE_01_003.getCode(), ErrorCode_Enum.FILE_01_003.getMessage()));
-            return false;
-        }
+                         //进行可配置的数据清洗
+                         try {
+                             fileDoParsingServiceImpl.doRinse(fileTemplateDto, tableInfos, fileSeq, errorList);
+                         } catch (Exception e) {
+                             e.printStackTrace();
+                         }
+                     }
+                     return fileTemplateDto.getTemplateName();
+                 }
 
-        //创建多线程，一个模板创建一个线程,在子线程内分别入库
-        ExecutorService executorService = Executors.newFixedThreadPool(mapTemplate2File.size());
+             };
+             cList.add(task);
+         }
 
-        List<Callable<String>> cList = new ArrayList<>();  //定义添加线程的集合
+         List<Future<String>> results = executorService.invokeAll(cList, 30, TimeUnit.MINUTES); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
 
-        Callable<String> task = null;  //创建单个线程
+         for (Future<String> str : results) {  //打印返回值
+             //log.info(str.get());
+         }
+         executorService.shutdown();
 
-        List<File> fileList4Process = new ArrayList<>();
-        String json = getString(5,String.valueOf(fileAttachmentId));
-        WebSocketServer.sendInfo(json,String.valueOf(userId));
-        //进行文件读取
-        for(Map.Entry<FileTemplateDto, List<File>> entry : mapTemplate2File.entrySet()){
-            task = new Callable<String>() {
-                @Override
-                public String call() throws Exception {
-                    FileTemplateDto  fileTemplateDto = entry.getKey();
-                    List<File> fileList4Template = entry.getValue();
-                    //index[0] :tableName ;index[01: tableId
-                    Object[] tableInfos = createMppTable(userId,fileAttachmentEntity,fileTemplateDto);
-                    String insertSql = getInsertSql(fileAttachmentEntity.getId(),fileAttachmentEntity.getCaseId(),fileTemplateDto.getFileTemplateDetailDtoList(),(String) tableInfos[0],fileTemplateDto.getId());
+         //进行外切http/websocket 数据清洗
+         //通过caseId案件编号获取http/websocket地址
+         doUserDefinedRinse(fileAttachmentEntity.getCaseId(), userId, errorList);
 
-                    //key:模板字段id编号；value：正则表达式列表；用于导入前数据校验
-                    Map<Long,FileRinseDetailDto>  regularMap = new HashMap<>();
-                    for(FileTemplateDetailDto fileTemplateDetailDtoBean : fileTemplateDto.getFileTemplateDetailDtoList()){
-                        regularMap.put(fileTemplateDetailDtoBean.getId(),fileTemplateDetailDtoBean.getFileRinseDetailDto());
-                    }
-
-                    //模板下文件读取
-                    for(File file : fileList4Template){
-                        fileList4Process.add(file);
-                        int percent = fileList4Process.size()*100 / fileList.size();
-                        String json = getString(percent,String.valueOf(fileAttachmentId));
-                        WebSocketServer.sendInfo(json,String.valueOf(userId));
-
-                        Long fileSeq = sequenceMapper.getSeq("file_detail");
-                        if(file.getName().contains(".csv")){
-                            csvCount.incrementAndGet();
-                            try {
-                                fileDoParsingServiceImpl.doParsingCsv(userId,fileAttachmentEntity.getCaseId(),
-                                        fileTemplateDto,file,tableInfos,insertSql,regularMap,fileSeq, fileAttachmentId, errorList);
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if(file.getName().contains(".xls") || file.getName().contains(".xlsx")){
-                            xlsCount.incrementAndGet();
-                            try {
-                                fileDoParsingServiceImpl.doParsingExcel(userId, fileAttachmentEntity.getCaseId(),
-                                        fileTemplateDto, file, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId, errorList);
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }
-                        //清洗前存一份保存为原始数据
-
-                        //进行可配置的数据清洗
-                        try {
-                            fileDoParsingServiceImpl.doRinse(fileTemplateDto, tableInfos, fileSeq, errorList);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                    return fileTemplateDto.getTemplateName();
-                }
-
-            };
-            cList.add(task);
-        }
-
-        List<Future<String>> results = executorService.invokeAll(cList,30, TimeUnit.MINUTES); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
-
-        for(Future<String> str:results){  //打印返回值
-            log.info(str.get());
-
-        }
-        executorService.shutdown();
-
-        //进行外切http/websocket 数据清洗
-        //通过caseId案件编号获取http/websocket地址
-        doUserDefinedRinse(fileAttachmentEntity.getCaseId(), userId, errorList);
-
-        json = getString(100,String.valueOf(fileAttachmentId));
-        WebSocketServer.sendInfo(json,String.valueOf(userId));
+         json = getString(100, String.valueOf(fileAttachmentId));
+         WebSocketServer.sendInfo(json, String.valueOf(userId));
+     }catch (Exception e){
+         e.printStackTrace();
+     }
         return result;
     }
 

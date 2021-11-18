@@ -7,6 +7,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 public class FileTemplateDto extends FileTemplateBean {
@@ -35,5 +36,22 @@ public class FileTemplateDto extends FileTemplateBean {
             this.fileTemplateDetailDtoList = new ArrayList<FileTemplateDetailDto>();
         }
         return this.fileTemplateDetailDtoList;
+    }
+
+    @Override
+    public  boolean equals(Object o) {
+        if(null == this.getId()){
+            throw new RuntimeException("模板id不能为空");
+        }
+        if(! (o instanceof FileTemplateBean)){
+             return false;
+        }else{
+            FileTemplateBean fileTemplateBean = (FileTemplateBean)o;
+            if(this.getId().equals(fileTemplateBean.getId())){
+                return true;
+            }else{
+                return false;
+            }
+        }
     }
 }
