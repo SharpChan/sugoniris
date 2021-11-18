@@ -24,6 +24,7 @@ import com.sugon.iris.sugonservice.service.rinseBusinessService.RinseBusinessSer
 import de.siegmar.fastcsv.reader.CsvContainer;
 import de.siegmar.fastcsv.reader.CsvReader;
 import de.siegmar.fastcsv.reader.CsvRow;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -86,7 +87,6 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                              String insertSql,Map<Long, FileRinseDetailDto>  regularMap, Long fileSeq, Long fileAttachmentId,List<Error> errorList) throws IOException {
 
   try {
-      boolean hasImport = true;
       String fileType = "csv";
       //数据总数
       Integer rowCount = 0;
@@ -110,15 +110,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
 
       boolean flag = getFeildRefIndex(fileTemplateDto.getFileTemplateDetailDtoList(), feildRefIndexMap, headList);
 
-      String formatError = "";
-      for(int i = 1 ; i < rows.size() ; i++) {
-          if (!CollectionUtils.isEmpty(rows.get(i).getFields()) && rows.get(i).getFields().size() < feildRefIndexMap.size()){
-                formatError += i+"行格式不满足要求;\n";
-          }
-      }
-      if(StringUtils.isNotEmpty(formatError)){
-          saveFilefailedDetail(userId, caeId, fileTemplateDto, file, tableInfos, fileSeq, fileAttachmentId, hasImport, fileType, rowCount, importRowCount,formatError);
-          errorList.add(new Error(ErrorCode_Enum.FILE_01_015.getCode(), ErrorCode_Enum.FILE_01_015.getMessage()));
+      //校验列数是否匹配
+      if (checkFieldSize(userId, caeId, fileTemplateDto, file, tableInfos, fileSeq, fileAttachmentId, errorList, fileType, feildRefIndexMap, rows)) {
           return;
       }
 
@@ -135,10 +128,6 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
       //存入mpp
       List<MppErrorInfoEntity> mppErrorInfoEntityList = new ArrayList<>();
 
-      //对模板字段和csv列索引的对应关系进行遍历
-      //String mpp_insert_package_quantity = PublicUtils.getConfigMap().get("mpp_insert_package_quantity");
-
-      String sqlInsertPackage = "";
 
       //创建多线程，50000行一个线程
       ExecutorService executorService = Executors.newFixedThreadPool(rows.size() / Integer.valueOf(PublicUtils.getConfigMap().get("executorServiceInput")) + 1);
@@ -262,11 +251,35 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
       if (!CollectionUtils.isEmpty(fileParsingFailedEntityListSql)) {
           dealWithfailed(fileParsingFailedEntityListSql, mppErrorInfoEntityList);
       }
-      //处理校验不满足数据
-      saveFileDetail(userId, caeId, fileTemplateDto, file, tableInfos, fileSeq, fileAttachmentId, hasImport, fileType, rowCount, importRowCount);
+      //保存文件信息
+      saveFileDetail(userId, caeId, fileTemplateDto, file, tableInfos, fileSeq, fileAttachmentId, true, fileType, rowCount, importRowCount);
+
       }catch (Exception e){
+        errorList.add(new Error(ErrorCode_Enum.FILE_01_016.getCode(), ErrorCode_Enum.FILE_01_016.getMessage(),e.toString()));
         e.printStackTrace();
-  }
+     }
+    }
+
+    private boolean checkFieldSize(Long userId, Long caeId, FileTemplateDto fileTemplateDto, File file, Object[] tableInfos, Long fileSeq, Long fileAttachmentId, List<Error> errorList, String fileType, Map<Long, Integer> feildRefIndexMap, List<CsvRow> rows) {
+        int fieldSize = 0;
+        for(Map.Entry<Long, Integer> entry : feildRefIndexMap.entrySet()){
+            Integer csvIndex = entry.getValue();
+            if(null != csvIndex){
+                fieldSize ++;
+            }
+        }
+        String formatError = "";
+        for(int i = 1 ; i < rows.size() ; i++) {
+            if (!CollectionUtils.isEmpty(rows.get(i).getFields()) && rows.get(i).getFields().size() < fieldSize){
+                  formatError += i+"行格式不满足要求;\n";
+            }
+        }
+        if(StringUtils.isNotEmpty(formatError)){
+            saveFilefailedDetail(userId, caeId, fileTemplateDto, file, tableInfos, fileSeq, fileAttachmentId , fileType,formatError);
+            errorList.add(new Error(ErrorCode_Enum.FILE_01_015.getCode(), ErrorCode_Enum.FILE_01_015.getMessage()));
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -280,174 +293,179 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
     @Override
     public void doParsingExcel(Long userId,Long caeId, FileTemplateDto fileTemplateDto, File file, Object[] tableInfos,
                                String insertSql,Map<Long, FileRinseDetailDto>  regularMap, Long fileSeq, Long fileAttachmentId,List<Error> errorList) throws IOException, InvalidFormatException {
-        boolean hasImport = true;
-        String fileType = "excel";
-        //数据总数
-        Integer rowCount = 0;
-        //导入数据总数
-        Integer importRowCount = 0;
+        try {
+            boolean hasImport = true;
+            String fileType = "excel";
+            //数据总数
+            Integer rowCount = 0;
+            //导入数据总数
+            Integer importRowCount = 0;
 
-        //key:模板字段id，value:excel列索引
-        Map<Long, Integer> feildRefIndexMap = new HashMap();
+            //key:模板字段id，value:excel列索引
+            Map<Long, Integer> feildRefIndexMap = new HashMap();
 
-        //解析excel
-        Workbook wb = null;
-        if(file.getName().contains(".xlsx")){
-            wb = new XSSFWorkbook(file);
-        }else if(file.getName().contains(".xls")){
-            FileInputStream fis = new FileInputStream(file);   //文件流对象
-            wb = new HSSFWorkbook(fis);
-        }else {
-            errorList.add(new Error(ErrorCode_Enum.FILE_01_003.getCode(), ErrorCode_Enum.FILE_01_003.getMessage()));
-            return;
-        }
-        //读取sheet0
-        Sheet sheet = wb.getSheetAt(0);
-        Row rowHead = sheet.getRow(0);
-        List<String> headList = new ArrayList<>();
+            //解析excel
+            Workbook wb = null;
+            if (file.getName().contains(".xlsx")) {
+                wb = new XSSFWorkbook(file);
+            } else if (file.getName().contains(".xls")) {
+                FileInputStream fis = new FileInputStream(file);   //文件流对象
+                wb = new HSSFWorkbook(fis);
+            } else {
+                errorList.add(new Error(ErrorCode_Enum.FILE_01_003.getCode(), ErrorCode_Enum.FILE_01_003.getMessage()));
+                return;
+            }
+            //读取sheet0
+            Sheet sheet = wb.getSheetAt(0);
+            Row rowHead = sheet.getRow(0);
+            List<String> headList = new ArrayList<>();
 
-        //判断文件头是否有重复,或者字段头是空的，有重复不进行存库,并把错误信息存入文件信息表
-        if(isHeadRepeat(userId,caeId,headList,file,fileSeq,fileAttachmentId,errorList)){
-            return;
-        }
+            //判断文件头是否有重复,或者字段头是空的，有重复不进行存库,并把错误信息存入文件信息表
+            if (isHeadRepeat(userId, caeId, headList, file, fileSeq, fileAttachmentId, errorList)) {
+                return;
+            }
 
-        //第一行是列名，所以不读
-        int firstRowIndex = sheet.getFirstRowNum()+1;
-        int lastRowIndex = sheet.getLastRowNum()+1;
-        int firstCellIndex = rowHead.getFirstCellNum();
-        int lastCellIndex = rowHead.getLastCellNum();
-        rowCount = sheet.getLastRowNum();
-        for(int i = firstCellIndex;i<lastCellIndex;i++){
-            Cell cell = rowHead.getCell(i);
-            headList.add(cell.getStringCellValue().replaceAll("\\s*", ""));
-        }
-        boolean flag = getFeildRefIndex(fileTemplateDto.getFileTemplateDetailDtoList(), feildRefIndexMap, headList);
+            //第一行是列名，所以不读
+            int firstRowIndex = sheet.getFirstRowNum() + 1;
+            int lastRowIndex = sheet.getLastRowNum() + 1;
+            int firstCellIndex = rowHead.getFirstCellNum();
+            int lastCellIndex = rowHead.getLastCellNum();
+            rowCount = sheet.getLastRowNum();
+            for (int i = firstCellIndex; i < lastCellIndex; i++) {
+                Cell cell = rowHead.getCell(i);
+                headList.add(cell.getStringCellValue().replaceAll("\\s*", ""));
+            }
+            boolean flag = getFeildRefIndex(fileTemplateDto.getFileTemplateDetailDtoList(), feildRefIndexMap, headList);
 
-        //校验不通过列表,存入mysql
-        List<FileParsingFailedEntity>  fileParsingFailedEntityListSql = new ArrayList<>();
+            //校验不通过列表,存入mysql
+            List<FileParsingFailedEntity> fileParsingFailedEntityListSql = new ArrayList<>();
 
-        //存入mpp
-        List<MppErrorInfoEntity> mppErrorInfoEntityList = new ArrayList<>();
+            //存入mpp
+            List<MppErrorInfoEntity> mppErrorInfoEntityList = new ArrayList<>();
 
-        //创建多线程，一个模板创建一个线程,在子线程内分别入库
-        //ExecutorService executorServiceSqlInsert = Executors.newFixedThreadPool(20);
-        //对excel行进行遍历,获取list集合行列表
-        List<ExcelRow> excelRowList = null;
+            //创建多线程，一个模板创建一个线程,在子线程内分别入库
+            //ExecutorService executorServiceSqlInsert = Executors.newFixedThreadPool(20);
+            //对excel行进行遍历,获取list集合行列表
+            List<ExcelRow> excelRowList = null;
 
-        for(int i = firstRowIndex;i<lastRowIndex;i++){
-            if (!CollectionUtils.isEmpty(feildRefIndexMap)) {
-                boolean mppId2ErrorId_flag = true;
-                String sqlInsertExec = insertSql;
-                for (Map.Entry<Long, Integer> entry : feildRefIndexMap.entrySet()) {
-                    FileRinseDetailDto fileRinseDetailDto  =  regularMap.get(entry.getKey());
-                    //任意一个满足
-                    List<RegularDetailDto> regularDetailDtoListY = null;
-                    //任意一个进行排除
-                    List<RegularDetailDto> regularDetailDtoListN = null;
-                    if(null != fileRinseDetailDto) {
+            for (int i = firstRowIndex; i < lastRowIndex; i++) {
+                if (!CollectionUtils.isEmpty(feildRefIndexMap)) {
+                    boolean mppId2ErrorId_flag = true;
+                    String sqlInsertExec = insertSql;
+                    for (Map.Entry<Long, Integer> entry : feildRefIndexMap.entrySet()) {
+                        FileRinseDetailDto fileRinseDetailDto = regularMap.get(entry.getKey());
+                        //任意一个满足
+                        List<RegularDetailDto> regularDetailDtoListY = null;
+                        //任意一个进行排除
+                        List<RegularDetailDto> regularDetailDtoListN = null;
+                        if (null != fileRinseDetailDto) {
 
-                        regularDetailDtoListY = fileRinseDetailDto.getRegularDetailDtoListY();
+                            regularDetailDtoListY = fileRinseDetailDto.getRegularDetailDtoListY();
 
-                        regularDetailDtoListN = fileRinseDetailDto.getRegularDetailDtoListN();
-                    }
-
-                    /*
-                     *feildRefIndexMap(key:模板字段，value：csv列序号)
-                     * regularMap(key:模板字段，value：清洗字段)
-                     * 清洗字段下挂了清洗正则表达式
-                     * 这样csv的单元格数据与正则表达式进行对应
-                     */
-                    boolean checkRegular = false;
-                    //把所有的单元格变为string类型
-                    if(null != sheet && null != sheet.getRow(i) && null != entry.getValue() && null != sheet.getRow(i).getCell(entry.getValue())) {
-                        sheet.getRow(i).getCell(entry.getValue()).setCellType(Cell.CELL_TYPE_STRING);
-                    }
-                    boolean checkRegularY = false;
-                    if(!CollectionUtils.isEmpty(regularDetailDtoListY) && null != entry.getValue()){
-                        for(RegularDetailDto regularDetailDto : regularDetailDtoListY){
-
-                            if (sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
-                                checkRegularY = true;
-                                break;//只要匹配一个就跳出
-                            }
+                            regularDetailDtoListN = fileRinseDetailDto.getRegularDetailDtoListN();
                         }
-                    }else{
-                        checkRegularY = true;
-                    }
 
-                    boolean checkRegularN = true;
-                    if(!CollectionUtils.isEmpty(regularDetailDtoListN) && null != entry.getValue()){
-                        for (RegularDetailDto regularDetailDto : regularDetailDtoListN) {
-                            if (sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
-                                checkRegularN = false;
-                                break;//只要匹配一个就跳出
-                            }
+                        /*
+                         *feildRefIndexMap(key:模板字段，value：csv列序号)
+                         * regularMap(key:模板字段，value：清洗字段)
+                         * 清洗字段下挂了清洗正则表达式
+                         * 这样csv的单元格数据与正则表达式进行对应
+                         */
+                        boolean checkRegular = false;
+                        //把所有的单元格变为string类型
+                        if (null != sheet && null != sheet.getRow(i) && null != entry.getValue() && null != sheet.getRow(i).getCell(entry.getValue())) {
+                            sheet.getRow(i).getCell(entry.getValue()).setCellType(Cell.CELL_TYPE_STRING);
                         }
-                    }
+                        boolean checkRegularY = false;
+                        if (!CollectionUtils.isEmpty(regularDetailDtoListY) && null != entry.getValue()) {
+                            for (RegularDetailDto regularDetailDto : regularDetailDtoListY) {
 
-                    checkRegular = checkRegularY && checkRegularN;
-                    mppId2ErrorId_flag = checkRegular && mppId2ErrorId_flag;
+                                if (sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
+                                    checkRegularY = true;
+                                    break;//只要匹配一个就跳出
+                                }
+                            }
+                        } else {
+                            checkRegularY = true;
+                        }
 
-                    //基础sql
-                    sqlInsertExec = sqlInsertExec.replace("&&"+entry.getKey()+"&&",(null == entry.getValue() || null == sheet.getRow(i).getCell(entry.getValue()))?"": sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", ""));
-
-                    //校验不通过
-                    if(!checkRegular){
-                        //检查excel的行号是否已经有了，有了用之前的mppid2errorid
-                        Long seq = null;
-                        if(CollectionUtils.isEmpty(fileParsingFailedEntityListSql)){
-                            seq = mppErrorInfoMapper.selectErrorSeq();
-                        }else{
-                            for(FileParsingFailedEntity fileParsingFailedEntityBean : fileParsingFailedEntityListSql){
-                                if(fileParsingFailedEntityBean.getRowNumber().equals(String.valueOf(i))){
-                                    seq = fileParsingFailedEntityBean.getMppId2ErrorId();
-                                    break;
+                        boolean checkRegularN = true;
+                        if (!CollectionUtils.isEmpty(regularDetailDtoListN) && null != entry.getValue()) {
+                            for (RegularDetailDto regularDetailDto : regularDetailDtoListN) {
+                                if (sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
+                                    checkRegularN = false;
+                                    break;//只要匹配一个就跳出
                                 }
                             }
                         }
 
-                        if(null == seq){
-                            seq = mppErrorInfoMapper.selectErrorSeq();
+                        checkRegular = checkRegularY && checkRegularN;
+                        mppId2ErrorId_flag = checkRegular && mppId2ErrorId_flag;
+
+                        //基础sql
+                        sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == sheet.getRow(i).getCell(entry.getValue())) ? "" : sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", ""));
+
+                        //校验不通过
+                        if (!checkRegular) {
+                            //检查excel的行号是否已经有了，有了用之前的mppid2errorid
+                            Long seq = null;
+                            if (CollectionUtils.isEmpty(fileParsingFailedEntityListSql)) {
+                                seq = mppErrorInfoMapper.selectErrorSeq();
+                            } else {
+                                for (FileParsingFailedEntity fileParsingFailedEntityBean : fileParsingFailedEntityListSql) {
+                                    if (fileParsingFailedEntityBean.getRowNumber().equals(String.valueOf(i))) {
+                                        seq = fileParsingFailedEntityBean.getMppId2ErrorId();
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (null == seq) {
+                                seq = mppErrorInfoMapper.selectErrorSeq();
+                            }
+                            FileParsingFailedEntity fileParsingFailedEntitySql = new FileParsingFailedEntity();
+                            fileParsingFailedEntitySql.setRowNumber(String.valueOf(i));
+                            fileParsingFailedEntitySql.setFileDetailId(fileSeq);
+                            fileParsingFailedEntitySql.setFileTemplateId(fileTemplateDto.getId());
+                            fileParsingFailedEntitySql.setFileTemplateDetailId(entry.getKey());
+                            fileParsingFailedEntitySql.setContent(sheet.getRow(i).getCell(entry.getValue()).getStringCellValue());
+                            fileParsingFailedEntitySql.setCaseId(caeId);
+                            //mpp表名是唯一的
+                            fileParsingFailedEntitySql.setTableName((String) tableInfos[0]);
+                            fileParsingFailedEntitySql.setUserId(userId);
+                            fileParsingFailedEntitySql.setMark(false);
+                            fileParsingFailedEntitySql.setMppId2ErrorId(seq);
+                            fileParsingFailedEntityListSql.add(fileParsingFailedEntitySql);
+                            MppErrorInfoEntity mppErrorInfoEntity = new MppErrorInfoEntity();
+                            mppErrorInfoEntity.setFileAttachmentId(fileAttachmentId);
+                            mppErrorInfoEntity.setFileDetailId(fileSeq);
+                            mppErrorInfoEntity.setFileRinseDetailId(fileRinseDetailDto.getId());
+                            mppErrorInfoEntity.setMppid2errorid(seq);
+                            mppErrorInfoEntity.setFileCaseId(caeId);
+                            mppErrorInfoEntityList.add(mppErrorInfoEntity);
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_mppId2ErrorId_xx&&", String.valueOf(seq));
                         }
-                        FileParsingFailedEntity fileParsingFailedEntitySql = new FileParsingFailedEntity();
-                        fileParsingFailedEntitySql.setRowNumber(String.valueOf(i));
-                        fileParsingFailedEntitySql.setFileDetailId(fileSeq);
-                        fileParsingFailedEntitySql.setFileTemplateId(fileTemplateDto.getId());
-                        fileParsingFailedEntitySql.setFileTemplateDetailId(entry.getKey());
-                        fileParsingFailedEntitySql.setContent(sheet.getRow(i).getCell(entry.getValue()).getStringCellValue());
-                        fileParsingFailedEntitySql.setCaseId(caeId);
-                        //mpp表名是唯一的
-                        fileParsingFailedEntitySql.setTableName((String) tableInfos[0]);
-                        fileParsingFailedEntitySql.setUserId(userId);
-                        fileParsingFailedEntitySql.setMark(false);
-                        fileParsingFailedEntitySql.setMppId2ErrorId(seq);
-                        fileParsingFailedEntityListSql.add(fileParsingFailedEntitySql);
-                        MppErrorInfoEntity mppErrorInfoEntity = new MppErrorInfoEntity();
-                        mppErrorInfoEntity.setFileAttachmentId(fileAttachmentId);
-                        mppErrorInfoEntity.setFileDetailId(fileSeq);
-                        mppErrorInfoEntity.setFileRinseDetailId(fileRinseDetailDto.getId());
-                        mppErrorInfoEntity.setMppid2errorid(seq);
-                        mppErrorInfoEntity.setFileCaseId(caeId);
-                        mppErrorInfoEntityList.add(mppErrorInfoEntity);
-                        sqlInsertExec = sqlInsertExec.replace("&&xx_mppId2ErrorId_xx&&",String.valueOf(seq));
                     }
+                    sqlInsertExec = sqlInsertExec.replace("&&xx_file_detail_id_xx&&", String.valueOf(fileSeq));
+                    //通过校验没有对应的错误信息 赋空值
+                    if (mppId2ErrorId_flag) {
+                        sqlInsertExec = sqlInsertExec.replace("&&xx_mppId2ErrorId_xx&&", "0");
+                        importRowCount++;
+                    }
+                    mppMapper.mppSqlExec(sqlInsertExec);
                 }
-                sqlInsertExec = sqlInsertExec.replace("&&xx_file_detail_id_xx&&",String.valueOf(fileSeq));
-                //通过校验没有对应的错误信息 赋空值
-                if(mppId2ErrorId_flag){
-                    sqlInsertExec = sqlInsertExec.replace("&&xx_mppId2ErrorId_xx&&","0");
-                    importRowCount ++;
-                }
-                mppMapper.mppSqlExec(sqlInsertExec);
             }
+            //没有不满足的行，则返回
+            if (!CollectionUtils.isEmpty(fileParsingFailedEntityListSql)) {
+                //处理校验不满足数据
+                dealWithfailed(fileParsingFailedEntityListSql, mppErrorInfoEntityList);
+            }
+            //保存文件信息
+            saveFileDetail(userId, caeId, fileTemplateDto, file, tableInfos, fileSeq, fileAttachmentId, hasImport, fileType, rowCount, importRowCount);
+        }catch (Exception e){
+            errorList.add(new Error(ErrorCode_Enum.FILE_01_016.getCode(), ErrorCode_Enum.FILE_01_016.getMessage(),e.toString()));
+            e.printStackTrace();
         }
-        //没有不满足的行，则返回
-        if(!CollectionUtils.isEmpty(fileParsingFailedEntityListSql)){
-            //处理校验不满足数据
-            dealWithfailed(fileParsingFailedEntityListSql, mppErrorInfoEntityList);
-        }
-        //保存文件信息
-        saveFileDetail(userId, caeId, fileTemplateDto, file, tableInfos, fileSeq, fileAttachmentId, hasImport, fileType, rowCount, importRowCount);
     }
 
 
@@ -646,7 +664,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         fileDetailMapper.fileDetailInsert(fileDetailEntityfSql);
     }
 
-    private void saveFilefailedDetail(Long userId, Long caeId, FileTemplateDto fileTemplateDto, File file, Object[] tableInfos, Long fileSeq, Long fileAttachmentId, boolean hasImport, String fileType, Integer rowCount, Integer importRowCount,String formatError) {
+    private void saveFilefailedDetail(Long userId, Long caeId, FileTemplateDto fileTemplateDto, File file, Object[] tableInfos, Long fileSeq, Long fileAttachmentId, String fileType,String formatError) {
         //把文件信息存入文件信息表
         FileDetailEntity fileDetailEntityfSql = new FileDetailEntity();
         fileDetailEntityfSql.setId(fileSeq);
@@ -657,9 +675,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         fileDetailEntityfSql.setFileName(file.getName());
         fileDetailEntityfSql.setFilePath(file.getAbsolutePath());
         fileDetailEntityfSql.setFileType(fileType);
-        fileDetailEntityfSql.setHasImport(hasImport);
-        fileDetailEntityfSql.setImportRowCount(importRowCount);
-        fileDetailEntityfSql.setRowCount(rowCount);
+        fileDetailEntityfSql.setImportRowCount(0);
+        fileDetailEntityfSql.setRowCount(0);
         fileDetailEntityfSql.setTableName((String) tableInfos[0]);
         fileDetailEntityfSql.setFileTableId((Long) tableInfos[1]);
         fileDetailEntityfSql.setHasImport(false);

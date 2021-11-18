@@ -104,4 +104,10 @@ public class FileParsingFailedBean {
      */
     @ApiModelProperty(value="问题处理")
     private Boolean mark;
+
+    /**
+     * 原始文件id
+     */
+    @ApiModelProperty(value="原始文件id")
+    private Long fileAttachmentId;
 }

@@ -19,11 +19,12 @@
         <result column="mppid2errorid" property="mppId2ErrorId" jdbcType="BIGINT" />
         <result column="template_name" property="templateName" jdbcType="VARCHAR" />
         <result column="field_key" property="fieldKey" jdbcType="VARCHAR" />
+        <result column="file_attachment_id" property="fileAttachmentId" jdbcType="BIGINT" />
     </resultMap>
 
     <!--基础字段-->
     <sql id="Base_Column_List" >
-        id,file_detail_id,row_number,content,case_id,table_name,user_id,create_time,update_time,file_template_id,file_template_detail_id,mark,mppid2errorid
+        id,file_detail_id,row_number,content,case_id,table_name,user_id,create_time,update_time,file_template_id,file_template_detail_id,mark,mppid2errorid,file_attachment_id
     </sql>
 
     <!--表查询-->
@@ -74,7 +75,8 @@
              #{item.fileTemplateId,jdbcType=BIGINT},
              #{item.fileTemplateDetailId,jdbcType=BIGINT},
              #{item.mark,jdbcType=TINYINT},
-             #{item.mppId2ErrorId,jdbcType=BIGINT}
+             #{item.mppId2ErrorId,jdbcType=BIGINT},
+             #{item.fileAttachmentId,jdbcType=BIGINT}
              )
           </foreach>
     </insert>
@@ -112,6 +114,15 @@
         file_parsing_failed
         <where>
             mppid2errorid = #{mppid2errorid}
+        </where>
+    </delete>
+
+    <delete id="deleteFileParsingFailedByFileAttachmentId">
+        DELETE
+        FROM
+        file_parsing_failed
+        <where>
+            file_attachment_id = #{fileAttachmentId}
         </where>
     </delete>
 </mapper>

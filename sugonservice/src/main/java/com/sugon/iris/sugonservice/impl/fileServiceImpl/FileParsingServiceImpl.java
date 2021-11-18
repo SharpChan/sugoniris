@@ -80,6 +80,9 @@ public class FileParsingServiceImpl implements FileParsingService {
     @Resource
     private FileCaseMapper fileCaseMapper;
 
+    @Resource
+    private FileOriginTableMapper fileOriginTableMapper;
+
     @Override
     public void test(Long userId) throws IOException {
         for(int i =0 ; i <100;i++) {
@@ -208,9 +211,6 @@ public class FileParsingServiceImpl implements FileParsingService {
 
                      //模板下文件读取
                      for (File file : fileList4Template) {
-                         if (file.getName().contains("交易明细")) {
-                             System.out.println(file.getName());
-                         }
                          fileList4Process.add(file);
                          int percent = fileList4Process.size() * 100 / fileList.size();
                          String json = getString(percent, String.valueOf(fileAttachmentId));
@@ -236,8 +236,9 @@ public class FileParsingServiceImpl implements FileParsingService {
                                  e.printStackTrace();
                              }
                          }
-                         //清洗前存一份保存为原始数据
 
+                         //把
+                         log.info("文件编号："+fileSeq);
                          //进行可配置的数据清洗
                          try {
                              fileDoParsingServiceImpl.doRinse(fileTemplateDto, tableInfos, fileSeq, errorList);
@@ -333,6 +334,7 @@ public class FileParsingServiceImpl implements FileParsingService {
             fileDetailEntityfSql.setFileName(fileFailed.getName());
             fileDetailEntityfSql.setFilePath(fileFailed.getAbsolutePath());
             fileDetailEntityfSql.setRowCount(0);
+            fileDetailEntityfSql.setImportRowCount(0);
             fileDetailEntityfSql.setHasImport(false);
             fileDetailEntityfSql.setFailureMessage("没有对应的模板");
             //把信息存入文件信息表
@@ -363,7 +365,7 @@ public class FileParsingServiceImpl implements FileParsingService {
      * @return   index[0] :tableName ;index[01: tableId
      */
     private Object[] createMppTable(Long userId,FileAttachmentEntity fileAttachmentEntity, FileTemplateDto fileTemplateDto) {
-        Object[] tableInfos = new Object[2];
+        Object[] tableInfos = new Object[3];
         //如果之前已经存库则获取表名
         FileTableEntity fileTableEntity = getMppTableName(fileAttachmentEntity.getCaseId(), fileTemplateDto.getId());
         //之前没有创建表则新建
@@ -371,12 +373,17 @@ public class FileParsingServiceImpl implements FileParsingService {
             //组装建表和插入语句
             //表名="base_"+模板配置前缀+"_"+案件编号
             String tableName = "base_" + fileTemplateDto.getTablePrefix() + "_" + fileAttachmentEntity.getCaseId()+"_"+userId;
+            String origin_tableName = "origin_" + fileTemplateDto.getTablePrefix() + "_" + fileAttachmentEntity.getCaseId()+"_"+userId;
             tableInfos[0] = tableName;
+            tableInfos[2] = origin_tableName;
             String sqlCreate =  "CREATE TABLE "+tableName+" ( id serial not null,"+" mppId2ErrorId int8 NULL,"+" file_detail_id int4 NULL,"+" file_template_id int4 NULL,";
+            String origin_sqlCreate =  "CREATE TABLE "+origin_tableName+" ( id int4 not null,"+" mppId2ErrorId int8 NULL,"+" file_detail_id int4 NULL,"+" file_template_id int4 NULL,";
             for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDto.getFileTemplateDetailDtoList()){
                 sqlCreate += fileTemplateDetailDto.getFieldName() +" varchar NULL,";
+                origin_sqlCreate += fileTemplateDetailDto.getFieldName() +" varchar NULL,";
             }
             sqlCreate += "file_attachment_id  varchar NULL,case_id varchar NULL);";
+            origin_sqlCreate += "file_attachment_id  varchar NULL,case_id varchar NULL);";
 
             String index_file_template_id = "CREATE INDEX "+tableName+"_mppid2errorid_idx ON "+tableName+" USING btree (file_template_id);";
             String index_file_detail_id = "CREATE INDEX "+tableName+"_file_detail_id ON "+tableName+" USING btree (file_detail_id);";
@@ -392,10 +399,22 @@ public class FileParsingServiceImpl implements FileParsingService {
             fileTableEntity4Sql.setUserId(userId);
             fileTableMapper.saveFileTable(fileTableEntity4Sql);
             tableInfos[1] =  fileTableEntity4Sql.getId();
+
+            //创建原始数据表
+            mppMapper.mppSqlExec(origin_sqlCreate);
+            FileOriginTableEntity fileOriginTableEntity4Sql = new FileOriginTableEntity();
+            fileOriginTableEntity4Sql.setCaseId(fileAttachmentEntity.getCaseId());
+            fileOriginTableEntity4Sql.setFileTableId(fileTableEntity4Sql.getId());
+            fileOriginTableEntity4Sql.setFileTemplateId(fileTemplateDto.getId());
+            fileOriginTableEntity4Sql.setTableName(origin_tableName);
+            fileOriginTableEntity4Sql.setUserId(userId);
+            fileOriginTableMapper.saveFileOriginTable(fileOriginTableEntity4Sql);
         }else{
             String tableName = fileTableEntity.getTableName();
             tableInfos[0] = tableName;
             tableInfos[1] = fileTableEntity.getId();
+            String origin_tableName = getMppOriginTableName(fileAttachmentEntity.getCaseId(), fileTemplateDto.getId()).getTableName();
+            tableInfos[2] = origin_tableName;
         }
         return tableInfos;
     }
@@ -464,6 +483,23 @@ public class FileParsingServiceImpl implements FileParsingService {
             return null;
         }
         return fileTableEntityList.get(0);
+    }
+
+    /**
+     * 如果之前已经存库则获取表名
+     * @param caseId:案件编号
+     * @param templateId：模板编号
+     * @return
+     */
+    private FileOriginTableEntity getMppOriginTableName( Long caseId, Long templateId) {
+        FileOriginTableEntity fileOriginTableEntity4Sql = new FileOriginTableEntity();
+        fileOriginTableEntity4Sql.setCaseId(caseId);
+        fileOriginTableEntity4Sql.setFileTemplateId(templateId);
+        List<FileOriginTableEntity> fileOriginTableEntityList = fileOriginTableMapper.findFileOriginTableList(fileOriginTableEntity4Sql);
+        if(CollectionUtils.isEmpty(fileOriginTableEntityList)){
+            return null;
+        }
+        return fileOriginTableEntityList.get(0);
     }
 
 

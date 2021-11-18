@@ -5269,6 +5269,14 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
        }
     }
 
+    $scope.checktablePrefix = function(tablePrefix,index){
+       if(tablePrefix.indexOf("origin")>-1){
+           $scope['tablePrefix_'+index] = "";
+           alert("表名前缀不允许含有【origin】关键字");
+       }
+    }
+
+
     $scope.deleteOneDetail = function (id){
         var url = "/fileTemplate/removeFileTemplateDetails?selected="+id+",";
         $http.post(url).success(function(data)

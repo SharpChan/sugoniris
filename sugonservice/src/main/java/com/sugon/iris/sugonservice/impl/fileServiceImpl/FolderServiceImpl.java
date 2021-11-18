@@ -9,6 +9,7 @@ import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.DeclarMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileAttachmentMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileDetailMapper;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.FileParsingFailedMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
@@ -78,6 +79,9 @@ public class FolderServiceImpl implements FolderService {
 
     @Resource
     private DeclarMapper declarMapper;
+
+    @Resource
+    private FileParsingFailedMapper fileParsingFailedMapper;
 
 
     @Override
@@ -576,8 +580,12 @@ public class FolderServiceImpl implements FolderService {
             //删除文件信息
             fileDetailMapper.deleteFileDetailByFileAttachmentId(fileAttachmentEntity.getId());
             fileAttachmentMapper.deleteFileAttachmentById(fileAttachmentEntity);
+            //删除校验不通过信息
+            fileParsingFailedMapper.deleteFileParsingFailedByFileAttachmentId(fileAttachmentEntity.getId());
+            //删除mpp数据库内error_info数据
+            String sql =  "delete from error_info where file_attachment_id ='"+fileAttachmentEntity.getId()+"'";
+            mppMapper.mppSqlExec(sql);
         }
-
         return i+j;
     }
 

@@ -15,4 +15,6 @@ public interface FileParsingFailedMapper {
 
     int deleteFileParsingFailedByFileDetailId(String[] fileDetailIdArr);
 
+    int deleteFileParsingFailedByFileAttachmentId(Long fileAttachmentId);
+
 }

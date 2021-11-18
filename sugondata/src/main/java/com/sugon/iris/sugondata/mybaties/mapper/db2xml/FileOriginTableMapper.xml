@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.FileOriginTableMapper">
+
+    <!--结果集-->
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileOriginTableEntity">
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="table_name" property="tableName" jdbcType="VARCHAR" />
+        <result column="file_template_id" property="fileTemplateId" jdbcType="BIGINT" />
+        <result column="case_id" property="caseId" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="BIGINT" />
+        <result column="file_template_id" property="fileTemplateId" jdbcType="BIGINT" />
+        <result column="file_table_id" property="fileTableId" jdbcType="BIGINT" />
+    </resultMap>
+
+    <!--基础字段-->
+    <sql id="Base_Column_List" >
+        id,table_name,file_template_id,case_id,user_id,file_table_id
+    </sql>
+
+
+    <select id="findFileOriginTableList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        file_origin_table
+        where
+        1=1
+        <if test="fileTemplateId!=null">
+            and file_template_id =  #{fileTemplateId}
+        </if>
+        <if test="caseId!=null">
+            and case_id =  #{caseId}
+        </if >
+        <if test="userId!=null">
+            and user_id = #{userId}
+        </if >
+    </select>
+
+    <!--单个插入-->
+    <insert id="saveFileOriginTable" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileOriginTableEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into file_origin_table
+        (<include refid="Base_Column_List" />)
+        values
+             (
+             #{id,jdbcType=BIGINT},
+             #{tableName,jdbcType=VARCHAR},
+             #{fileTemplateId,jdbcType=BIGINT},
+             #{caseId,jdbcType=BIGINT},
+             #{userId,jdbcType=BIGINT},
+             #{fileTableId,jdbcType=BIGINT}
+             )
+    </insert>
+
+
+    <!--通过caseId删除-->
+    <delete id="deleteFileOriginTableByCaseId">
+        DELETE
+        FROM
+        file_origin_table
+        <where>
+            case_id in (
+            <foreach collection="idArr" item="item" index="i" separator=",">
+                #{item}
+            </foreach>
+            )
+        </where>
+    </delete>
+</mapper>
