@@ -56,7 +56,7 @@
                             </ul>
                         </td>
                         <td align="center">
-                            <button type="button" ng-click="addFieldRelation(cell.groupId)" class="btn btn-sm btn-danger">
+                            <button type="button" ng-click="showFileFieldCompletes(cell.groupId,cell.groupName)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-plus"></em>
                             </button>
                         </td>
@@ -91,6 +91,86 @@
                     <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="save();" >
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id = "fieldCompleteDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 1100px; height: 750px; z-index: 9999;overflow-y:auto;">
+        <div id = "fieldCompleteDetailheader" class="panel-heading topnavbar">
+            <div align="left">
+                <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">模板组名称:{{groupName_2}}</strong></label>
+            </div>
+            <div align="right" style="margin-top:-30px;">
+                <input type="button" value="新增补全" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="addFieldComplete();" />
+                <input type="button" value="关闭" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="closeAddFieldComplete();" />
+            </div>
+        </div>
+        <div class="panel-body">
+            <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>目的模板</th>
+                    <th>源模板</th>
+                    <th>关联关系</th>
+                    <th>取值字段</th>
+                    <th>删除</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in details">
+                    <td align="left">{{item.no}}</td>
+                    <td align="left">{{item.destFileTemplateName}}</td>
+                    <td align="left">{{item.sourceFileTemplateName}}</td>
+                    <td align="left">{{item.fieldRelation}}</td>
+                    <td align="left">{{item.fieldSource}}</td>
+                    <td align="center">
+                        <button type="button" ng-click="deleteOneDetail(item.id)" class="btn btn-sm btn-danger">
+                            <em class="fa fa-trash-o"></em>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div id = "fieldCompleteAdd" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 1500px; height: 750px; z-index: 9999;overflow-y:auto;">
+        <div id = "fieldCompleteAddheader" class="panel-heading topnavbar">
+            <div align="left">
+                <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">补全新增</strong></label>
+            </div>
+            <div align="right" style="margin-top:-30px;">
+                <input type="button" value="关闭" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="closeFieldCompleteAdd();" />
+            </div>
+        </div>
+        <div class="panel-body">
+            <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>目的模板</th>
+                    <th>源模板</th>
+                    <th>关联关系</th>
+                    <th>取值字段</th>
+                    <th>删除</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in details">
+                    <td align="left">{{item.no}}</td>
+                    <td align="left">{{item.destFileTemplateName}}</td>
+                    <td align="left">{{item.sourceFileTemplateName}}</td>
+                    <td align="left">{{item.fieldRelation}}</td>
+                    <td align="left">{{item.fieldSource}}</td>
+                    <td align="center">
+                        <button type="button" ng-click="deleteOneDetail(item.id)" class="btn btn-sm btn-danger">
+                            <em class="fa fa-trash-o"></em>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

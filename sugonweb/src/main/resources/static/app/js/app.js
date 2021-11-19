@@ -4642,10 +4642,11 @@ App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
     $scope.selected = [];
 
     myservice.dragFunc("cnDiv");
-
+    myservice.dragFunc("fieldCompleteDetail");
+    myservice.dragFunc("fieldCompleteAdd");
     $("#cnDiv").hide();
-
-
+    $("#fieldCompleteDetail").hide();
+    $("#fieldCompleteAdd").hide();
 
     //单个勾选去勾选
     $scope.selectOne = function (item) {
@@ -4836,8 +4837,32 @@ App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
         });
     }
 
+    $scope.showFileFieldCompletes = function(groupId,groupName){
+        $("#fieldCompleteDetail").show();
+        $scope.groupName_2 = groupName;
+        $scope.groupId_2 = groupId;
+        var url = "/fileTemplateGroup/getFileFieldCompletes?groupId="+groupId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.details = myservice.setSerialNumber (temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
 
+    $scope.closeAddFieldComplete = function () {
+        $("#fieldCompleteDetail").hide();
+    }
 
+    $scope.addFieldComplete = function(){
+        $("#fieldCompleteAdd").show();
+    }
 });
 
 App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootScope,

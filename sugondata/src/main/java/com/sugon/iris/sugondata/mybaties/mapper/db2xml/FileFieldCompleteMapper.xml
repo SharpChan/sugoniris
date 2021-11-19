@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.FileFieldCompleteMapper" >
+
+    <!--结果集-->
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileFieldCompleteEntity" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="dest_file_template_id" property="destFileTemplateId" jdbcType="BIGINT" />
+        <result column="source_file_template_id" property="sourceFileTemplateId" jdbcType="BIGINT" />
+        <result column="field_relation" property="fieldRelation" jdbcType="VARCHAR" />
+        <result column="field_source" property="fieldSource" jdbcType="VARCHAR" />
+        <result column="file_template_group_id" property="fileTemplateGroupId" jdbcType="BIGINT" />
+    </resultMap>
+
+    <!--基础字段-->
+    <sql id="Base_Column_List" >
+        id,dest_file_template_id,source_file_template_id,field_relation,field_source,file_template_group_id
+    </sql>
+
+    <!--表查询-->
+    <select id="selectFileFieldCompleteByPrimaryKey"  resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        file_field_complete
+        where
+             id = #{id}
+    </select>
+
+    <!--表查询-->
+    <select id="selectFileFieldCompleteList" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileFieldCompleteEntity" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        file_field_complete
+        where
+        1=1
+        <if test="id!=null">
+            and id = #{id}
+        </if >
+        <if test="destFileTemplateId!=null">
+            and dest_file_template_id =  #{destFileTemplateId}
+        </if >
+        <if test="sourceFileTemplateId!=null">
+            and source_file_template_id =  #{sourceFileTemplateId}
+        </if >
+        <if test="fileTemplateGroupId!=null">
+            and file_template_group_id = #{fileTemplateGroupId}
+        </if >
+    </select>
+
+
+    <!--插入-->
+    <insert id="fileFieldCompleteInsert" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileFieldCompleteEntity"  useGeneratedKeys="true" keyProperty="id">
+        insert into file_field_complete
+        (<include refid="Base_Column_List" />)
+        values
+             (
+             #{id,jdbcType=BIGINT},
+             #{destFileTemplateId,jdbcType=BIGINT},
+             #{sourceFileTemplateId,jdbcType=BIGINT},
+             #{fieldRelation,jdbcType=VARCHAR},
+             #{fieldSource,jdbcType=VARCHAR},
+             #{fileTemplateGroupId,jdbcType=BIGINT}
+             )
+    </insert>
+
+    <!--删除-->
+    <delete id="deleteFieldCompleteById">
+            DELETE
+            FROM
+                 file_case
+            WHERE
+                id = #{id}
+    </delete>
+</mapper>

@@ -5,7 +5,9 @@ import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileFieldCompleteDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateGroupDto;
+import com.sugon.iris.sugonservice.service.fileService.FileFieldCompleteService;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateGroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -26,6 +28,9 @@ public class FileTemplateGroupController {
 
     @Resource
     private FileTemplateGroupService fileTemplateGroupServiceImpl;
+
+    @Resource
+    private FileFieldCompleteService fileFieldCompleteServiceImpl;
 
 
     /**
@@ -90,6 +95,28 @@ public class FileTemplateGroupController {
         try {
             restResult.setObj(fileTemplateGroupServiceImpl.deleteFileTemplateGroup(selectedArr,errorList));
         }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/getFileFieldCompletes")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过模板组id获取数据补全配置信息")
+    @ApiImplicitParam(name = "groupId", value = "模板组id")
+    public RestResult<List<FileFieldCompleteDto>> getFileFieldCompletes(@CurrentUser User user, @RequestParam(value = "groupId") Long groupId){
+        RestResult<List<FileFieldCompleteDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(fileFieldCompleteServiceImpl.getFileFieldCompletesList(groupId,errorList));
+        }catch (Exception e){
             e.printStackTrace();
         }
         if(!CollectionUtils.isEmpty(errorList)){

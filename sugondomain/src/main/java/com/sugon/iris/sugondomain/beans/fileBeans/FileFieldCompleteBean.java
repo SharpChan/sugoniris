@@ -38,4 +38,10 @@ public class FileFieldCompleteBean {
      */
     @ApiModelProperty(value="取值字段，用&&进行分割（多个取值字段，取到一个非空即可）")
     private String fieldSource;
+
+    /**
+     *模板组id
+     */
+    @ApiModelProperty(value="模板组id")
+    private Long fileTemplateGroupId;
 }
