@@ -11,16 +11,10 @@
     <bookmark url="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js" line="3346" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a90609e4-7a89-43d9-9541-decbe39a1fc1" name="Default Changelist" comment="修复csv格式问题">
+    <list default="true" id="a90609e4-7a89-43d9-9541-decbe39a1fc1" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileCaseMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileCaseMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileParsingFailedMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileParsingFailedMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2xml/FileDetailMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2xml/FileDetailMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/fileBeans/FileDetailBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/fileBeans/FileDetailBean.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileCaseServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileCaseServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileDoParsingServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileDoParsingServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileParsingServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileParsingServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FolderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FolderServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/caseManager.html" beforeDir="false" afterPath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/caseManager.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/fileManager.html" beforeDir="false" afterPath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/fileManager.html" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -70,40 +64,19 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="446">
+              <caret line="4595" column="39" selection-start-line="4595" selection-start-column="28" selection-end-line="4595" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/file/FileCaseController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2457">
-              <caret line="106" column="57" selection-start-line="106" selection-start-column="57" selection-end-line="106" selection-end-column="57" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileCaseServiceImpl.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6399">
-              <caret line="258" column="69" selection-start-line="258" selection-start-column="69" selection-end-line="258" selection-end-column="69" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileDoParsingServiceImpl.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="21276">
-              <caret line="833" column="45" selection-start-line="833" selection-start-column="12" selection-end-line="833" selection-end-column="45" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sugonfilerest/src/main/resources/application.yml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="5" column="52" selection-start-line="5" selection-start-column="52" selection-end-line="5" selection-end-column="52" />
+            <state relative-caret-position="101">
+              <caret line="106" selection-start-line="106" selection-end-line="106" />
             </state>
           </provider>
         </entry>
@@ -112,7 +85,7 @@
         <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileParsingFailedMapper.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="135">
-              <caret line="5" column="42" lean-forward="true" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
+              <caret line="5" column="42" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -125,6 +98,30 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="108">
               <caret line="4" column="84" selection-start-line="4" selection-start-column="84" selection-end-line="4" selection-end-column="84" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/fileManager.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="432">
+              <caret line="136" column="110" selection-start-line="136" selection-start-column="110" selection-end-line="136" selection-end-column="110" />
+              <folding>
+                <element signature="n#src#0;n#img#0;n#span#0;n#td#9;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/caseManager.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="459">
+              <caret line="74" column="118" selection-start-line="74" selection-start-column="106" selection-end-line="74" selection-end-column="118" />
+              <folding>
+                <element signature="n#src#0;n#img#0;n#span#0;n#td#8;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -150,10 +147,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileCaseMapper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="52">
+            <state relative-caret-position="54">
               <caret line="2" column="77" selection-start-line="2" selection-start-column="77" selection-end-line="2" selection-end-column="77" />
             </state>
           </provider>
@@ -211,8 +208,8 @@
       <find>/deleteFile</find>
       <find>fileManagerController</find>
       <find>Object[] tableInfos</find>
-      <find>/deleteCase</find>
       <find>fileDetailMapper.fileDetailInsert</find>
+      <find>/deleteCase</find>
       <find>caseManagerController</find>
     </findStrings>
     <replaceStrings>
@@ -235,9 +232,7 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/file/FileController.java" />
         <option value="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/service/fileService/FileParsingService.java" />
-        <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/fileManager.html" />
         <option value="$PROJECT_DIR$/sugonannotation/src/main/java/com/sugon/iris/sugonannotation/annotation/swagger/Knife4jConfig.java" />
         <option value="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileTemplateGroupServiceImpl.java" />
         <option value="$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/file/FileRinseController.java" />
@@ -286,6 +281,8 @@
         <option value="$PROJECT_DIR$/sugonfilerest/src/main/resources/application.yml" />
         <option value="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileParsingFailedMapper.java" />
         <option value="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileCaseMapper.java" />
+        <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/caseManager.html" />
+        <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/fileManager.html" />
       </list>
     </option>
   </component>
@@ -311,7 +308,17 @@
   </component>
   <component name="MavenProjectNavigator">
     <treeState>
-      <expand />
+      <expand>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="sugoniris" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+        </path>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="sugoniris" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+          <item name="Lifecycle" type="58874e2:MavenProjectsStructure$LifecycleNode" />
+        </path>
+      </expand>
       <select />
     </treeState>
   </component>
@@ -566,7 +573,7 @@
     </option>
     <option name="contentProportion" value="0.21873279" />
   </component>
-  <component name="RunManager" selected="Spring Boot.SugonwebApplication">
+  <component name="RunManager" selected="Spring Boot.SugonfilerestApplication">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="sugoniris" />
       <working_directory value="$PROJECT_DIR$" />
@@ -703,14 +710,7 @@
       <workItem from="1635748291649" duration="73987000" />
       <workItem from="1636290575863" duration="162921000" />
       <workItem from="1637133266220" duration="74420000" />
-      <workItem from="1637294718460" duration="199000" />
-    </task>
-    <task id="LOCAL-00060" summary="流程申报审核">
-      <created>1627887077770</created>
-      <option name="number" value="00060" />
-      <option name="presentableId" value="LOCAL-00060" />
-      <option name="project" value="LOCAL" />
-      <updated>1627887077770</updated>
+      <workItem from="1637294718460" duration="1452000" />
     </task>
     <task id="LOCAL-00061" summary="流程申报审核">
       <created>1627887623345</created>
@@ -1048,7 +1048,14 @@
       <option name="project" value="LOCAL" />
       <updated>1637275240948</updated>
     </task>
-    <option name="localTasksCounter" value="109" />
+    <task id="LOCAL-00109" summary="修复csv格式问题">
+      <created>1637295129682</created>
+      <option name="number" value="00109" />
+      <option name="presentableId" value="LOCAL-00109" />
+      <option name="project" value="LOCAL" />
+      <updated>1637295129683</updated>
+    </task>
+    <option name="localTasksCounter" value="110" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1084,7 +1091,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4214491000" />
+    <option name="totallyTimeSpent" value="4215744000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1106,9 +1113,9 @@
       <window_info id="Web" order="4" sideWeight="0.50652176" side_tool="true" weight="0.30247578" />
       <window_info id="Designer" order="5" />
       <window_info id="Structure" order="6" sideWeight="0.50652176" side_tool="true" weight="0.30247578" />
-      <window_info active="true" content_ui="combo" id="Project" order="7" sideWeight="0.49347827" visible="true" weight="0.39989236" />
+      <window_info content_ui="combo" id="Project" order="7" sideWeight="0.49347827" weight="0.39989236" />
       <window_info anchor="bottom" id="Terminal" order="0" weight="0.3292232" />
-      <window_info anchor="bottom" id="Messages" order="1" sideWeight="0.49892357" visible="true" weight="0.32059187" />
+      <window_info anchor="bottom" id="Messages" order="1" sideWeight="0.49892357" weight="0.32059187" />
       <window_info anchor="bottom" id="Run Dashboard" order="2" sideWeight="0.57104415" weight="0.36621454" />
       <window_info anchor="bottom" id="Spring" order="3" weight="0.3292232" />
       <window_info anchor="bottom" id="Docker" order="4" show_stripe_button="false" />
@@ -1139,6 +1146,47 @@
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="11" weight="0.2497309" />
       <window_info anchor="right" id="Ant Build" order="12" weight="0.2497309" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Image Layers" order="0" />
+      <window_info id="Capture Tool" order="1" />
+      <window_info id="UI Designer" order="2" />
+      <window_info id="Favorites" order="3" sideWeight="0.5055487" side_tool="true" weight="0.28471476" />
+      <window_info id="Web" order="4" sideWeight="0.50652176" side_tool="true" weight="0.30247578" />
+      <window_info id="Designer" order="5" />
+      <window_info id="Structure" order="6" sideWeight="0.50652176" side_tool="true" weight="0.30247578" />
+      <window_info content_ui="combo" id="Project" order="7" sideWeight="0.49347827" weight="0.39989236" />
+      <window_info anchor="bottom" id="Terminal" order="0" weight="0.3292232" />
+      <window_info anchor="bottom" id="Messages" order="1" sideWeight="0.49892357" weight="0.32059187" />
+      <window_info anchor="bottom" id="Run Dashboard" order="2" sideWeight="0.57104415" weight="0.36621454" />
+      <window_info anchor="bottom" id="Spring" order="3" weight="0.3292232" />
+      <window_info anchor="bottom" id="Docker" order="4" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.50053823" side_tool="true" weight="0.38717633" />
+      <window_info anchor="bottom" id="Java Enterprise" order="6" weight="0.3292232" />
+      <window_info anchor="bottom" id="Database Changes" order="7" />
+      <window_info anchor="bottom" id="Version Control" order="8" weight="0.3292232" />
+      <window_info anchor="bottom" id="Application Servers" order="9" weight="0.3292232" />
+      <window_info anchor="bottom" id="Message" order="10" />
+      <window_info anchor="bottom" id="Find" order="11" weight="0.54747224" />
+      <window_info anchor="bottom" id="Run" order="12" weight="0.41430333" />
+      <window_info active="true" anchor="bottom" id="Debug" order="13" sideWeight="0.4994618" visible="true" weight="0.5351418" />
+      <window_info anchor="bottom" id="Cvs" order="14" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="15" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="16" sideWeight="0.4994618" weight="0.3292232" />
+      <window_info anchor="bottom" id="Problems" order="17" sideWeight="0.4994618" weight="0.3292232" />
+      <window_info anchor="right" id="Coverage" order="0" side_tool="true" weight="0.32992464" />
+      <window_info anchor="right" id="Palette" order="1" />
+      <window_info anchor="right" id="Capture Analysis" order="2" />
+      <window_info anchor="right" id="Module Dependencies" order="3" weight="0.32992464" />
+      <window_info anchor="right" id="Palette&#9;" order="4" />
+      <window_info anchor="right" id="Theme Preview" order="5" />
+      <window_info anchor="right" id="CDI" order="6" />
+      <window_info anchor="right" id="Bean Validation" order="7" weight="0.32992464" />
+      <window_info anchor="right" id="Database" order="8" weight="0.32992464" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="9" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Maven" order="10" weight="0.18406889" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="11" weight="0.2497309" />
+      <window_info anchor="right" id="Ant Build" order="12" weight="0.2497309" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
@@ -1533,13 +1581,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/fileManager.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="6" column="41" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/file/FileController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="526">
@@ -1591,31 +1632,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/caseManager.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="6" column="41" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sugonservice/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1010">
           <caret line="77" column="36" lean-forward="true" selection-start-line="77" selection-start-column="36" selection-end-line="77" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="123849">
-          <caret line="4595" column="39" selection-start-line="4595" selection-start-column="28" selection-end-line="4595" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/file/FileCaseController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2457">
-          <caret line="106" column="57" selection-start-line="106" selection-start-column="57" selection-end-line="106" selection-end-column="57" />
         </state>
       </provider>
     </entry>
@@ -1650,13 +1670,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/jdbcTemplate/impl/system/GroupRoleServiceDaoImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="4" column="84" selection-start-line="4" selection-start-column="84" selection-end-line="4" selection-end-column="84" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/jdbcTemplateEntity/systemEntities/GroupRoleEntity.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="162">
@@ -1674,20 +1687,61 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileCaseMapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="2" column="77" selection-start-line="2" selection-start-column="77" selection-end-line="2" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileParsingFailedMapper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
-          <caret line="5" column="42" lean-forward="true" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
+          <caret line="5" column="42" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileCaseMapper.java">
+    <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/jdbcTemplate/impl/system/GroupRoleServiceDaoImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="52">
-          <caret line="2" column="77" selection-start-line="2" selection-start-column="77" selection-end-line="2" selection-end-column="77" />
+        <state relative-caret-position="108">
+          <caret line="4" column="84" selection-start-line="4" selection-start-column="84" selection-end-line="4" selection-end-column="84" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="446">
+          <caret line="4595" column="39" selection-start-line="4595" selection-start-column="28" selection-end-line="4595" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/file/FileCaseController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="101">
+          <caret line="106" selection-start-line="106" selection-end-line="106" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/caseManager.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="74" column="118" selection-start-line="74" selection-start-column="106" selection-end-line="74" selection-end-column="118" />
+          <folding>
+            <element signature="n#src#0;n#img#0;n#span#0;n#td#8;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/fileManager.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="136" column="110" selection-start-line="136" selection-start-column="110" selection-end-line="136" selection-end-column="110" />
+          <folding>
+            <element signature="n#src#0;n#img#0;n#span#0;n#td#9;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
