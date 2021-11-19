@@ -2,16 +2,16 @@ package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicRuleUtils;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
-import com.sugon.iris.sugondata.mybaties.mapper.db2.DeclarMapper;
-import com.sugon.iris.sugondata.mybaties.mapper.db2.FileAttachmentMapper;
-import com.sugon.iris.sugondata.mybaties.mapper.db2.FileCaseMapper;
-import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTableMapper;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.*;
+import com.sugon.iris.sugondata.mybaties.mapper.db4.MppMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.declarDtos.DeclarationDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileCaseDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.DeclarationDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileCaseEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileOriginTableEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTableEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.fileService.FileCaseService;
 import com.sugon.iris.sugonservice.service.fileService.FolderService;
@@ -45,6 +45,12 @@ public class FileCaseServiceImpl implements FileCaseService {
 
     @Resource
     private DeclarMapper declarMapper;
+
+    @Resource
+    private FileOriginTableMapper fileOriginTableMapper;
+
+    @Resource
+    private MppMapper mppMapper;
 
     @Override
     public Integer saveCase(User user, FileCaseDto fileCaseDto, List<Error> errorList) throws IllegalAccessException {
@@ -228,7 +234,30 @@ public class FileCaseServiceImpl implements FileCaseService {
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除文件和对应的信息出错",e.toString()));
         }
         try{
+            //通过caseId案件编号，删除mpp内表
+            for(String caseId : arr){
+                //查询原始表表名,并删除。
+                FileOriginTableEntity fileOriginTableEntity4Sql = new FileOriginTableEntity();
+                fileOriginTableEntity4Sql.setCaseId(Long.parseLong(caseId));
+                List<FileOriginTableEntity> fileOriginTableEntityList = fileOriginTableMapper.findFileOriginTableList(fileOriginTableEntity4Sql);
+                for(FileOriginTableEntity fileOriginTableEntity : fileOriginTableEntityList) {
+                    String sql = "DROP TABLE " +fileOriginTableEntity.getTableName();
+                    mppMapper.mppSqlExec(sql);
+                }
+                //查询资源表名并删除
+                FileTableEntity fileTableEntity4Sql = new FileTableEntity();
+                fileTableEntity4Sql.setCaseId(Long.parseLong(caseId));
+                List<FileTableEntity> fileTableEntityList = fileTableMapper.findFileTableList(fileTableEntity4Sql);
+                for(FileTableEntity fileTableEntity : fileTableEntityList){
+                    String sql = "DROP TABLE " +fileTableEntity.getTableName();
+                    mppMapper.mppSqlExec(sql);
+                }
+            }
+            //删除表信息
             fileTableMapper.deleteFileTableByCaseId(arr);
+            //删除原始数据表信息
+            fileOriginTableMapper.deleteFileOriginTableByCaseId(arr);
+            //删除案件信息
             count =  fileCaseMapper.deleteFileCaseById(arr);
         }catch (Exception e){
             e.printStackTrace();

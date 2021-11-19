@@ -25,6 +25,7 @@ import de.siegmar.fastcsv.reader.CsvContainer;
 import de.siegmar.fastcsv.reader.CsvReader;
 import de.siegmar.fastcsv.reader.CsvRow;
 import io.swagger.models.auth.In;
+import jdk.nashorn.internal.ir.IdentNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -42,9 +43,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @Slf4j
 @Service
@@ -131,6 +130,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
 
       //创建多线程，50000行一个线程
       ExecutorService executorService = Executors.newFixedThreadPool(rows.size() / Integer.valueOf(PublicUtils.getConfigMap().get("executorServiceInput")) + 1);
+      List<Callable<Integer>> cList = new ArrayList<>();  //定义添加线程的集合
+      Callable<Integer> task = null;  //创建单个线程
 
       //对csv行进行遍历
       int k = 0;
@@ -218,6 +219,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                       fileParsingFailedEntitySql.setUserId(userId);
                       fileParsingFailedEntitySql.setMark(false);
                       fileParsingFailedEntitySql.setMppId2ErrorId(seq);
+                      fileParsingFailedEntitySql.setFileAttachmentId(fileAttachmentId);
                       fileParsingFailedEntityListSql.add(fileParsingFailedEntitySql);
 
                       MppErrorInfoEntity mppErrorInfoEntity = new MppErrorInfoEntity();
@@ -236,16 +238,34 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                   sqlInsertExec = sqlInsertExec.replace("&&xx_mppId2ErrorId_xx&&", "0");
                   importRowCount++;
               }
+
+              /*
               StringBuffer sb = new StringBuffer(sqlInsertExec);
               executorService.execute(new Runnable() {
                   @Override
                   public void run() {
+
                       mppMapper.mppSqlExec(sb.toString());
                   }
               });
-              ;
+              */
+              StringBuffer sb = new StringBuffer(sqlInsertExec);
+              task = new Callable<Integer>() {
+                  @Override
+                  public Integer call() throws Exception {
+                     int res =  mppMapper.mppSqlExec(sb.toString());
+                     return res;
+                  }
+              };
+              cList.add(task);
           }
+
       }
+      List<Future<Integer>> results = executorService.invokeAll(cList, 30, TimeUnit.MINUTES); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
+      for (Future<Integer> str : results) {  //打印返回值
+          //log.info(str.get());
+      }
+      executorService.shutdown();
 
       //没有不满足的行，则返回
       if (!CollectionUtils.isEmpty(fileParsingFailedEntityListSql)) {
@@ -435,6 +455,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                             fileParsingFailedEntitySql.setUserId(userId);
                             fileParsingFailedEntitySql.setMark(false);
                             fileParsingFailedEntitySql.setMppId2ErrorId(seq);
+                            fileParsingFailedEntitySql.setFileAttachmentId(fileAttachmentId);
                             fileParsingFailedEntityListSql.add(fileParsingFailedEntitySql);
                             MppErrorInfoEntity mppErrorInfoEntity = new MppErrorInfoEntity();
                             mppErrorInfoEntity.setFileAttachmentId(fileAttachmentId);
@@ -660,6 +681,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         fileDetailEntityfSql.setRowCount(rowCount);
         fileDetailEntityfSql.setTableName((String) tableInfos[0]);
         fileDetailEntityfSql.setFileTableId((Long) tableInfos[1]);
+        fileDetailEntityfSql.setOriginTableName((String) tableInfos[2]);
         //把信息存入文件信息表
         fileDetailMapper.fileDetailInsert(fileDetailEntityfSql);
     }
@@ -679,6 +701,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         fileDetailEntityfSql.setRowCount(0);
         fileDetailEntityfSql.setTableName((String) tableInfos[0]);
         fileDetailEntityfSql.setFileTableId((Long) tableInfos[1]);
+        fileDetailEntityfSql.setOriginTableName((String) tableInfos[2]);
         fileDetailEntityfSql.setHasImport(false);
         fileDetailEntityfSql.setFailureMessage(formatError);
         //把信息存入文件信息表

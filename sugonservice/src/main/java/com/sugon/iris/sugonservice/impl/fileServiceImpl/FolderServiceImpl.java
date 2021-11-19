@@ -574,8 +574,12 @@ public class FolderServiceImpl implements FolderService {
                 if(StringUtils.isEmpty(fileDetailEntityBean.getTableName())){
                     continue;
                 }
+                //删除资源表数据
                 String sql = "delete from  "+fileDetailEntityBean.getTableName()+" where file_attachment_id ='"+fileAttachmentEntity.getId()+"'";
                 mppMapper.mppSqlExec(sql);
+                //删除原始表数据
+                String originSql = "delete from  "+fileDetailEntityBean.getOriginTableName()+" where file_attachment_id ='"+fileAttachmentEntity.getId()+"'";
+                mppMapper.mppSqlExec(originSql);
             }
             //删除文件信息
             fileDetailMapper.deleteFileDetailByFileAttachmentId(fileAttachmentEntity.getId());

@@ -237,8 +237,9 @@ public class FileParsingServiceImpl implements FileParsingService {
                              }
                          }
 
-                         //把
-                         log.info("文件编号："+fileSeq);
+                         //数据保存到原始表
+                         saveOrigin(tableInfos,fileTemplateDto,fileSeq);
+
                          //进行可配置的数据清洗
                          try {
                              fileDoParsingServiceImpl.doRinse(fileTemplateDto, tableInfos, fileSeq, errorList);
@@ -270,6 +271,19 @@ public class FileParsingServiceImpl implements FileParsingService {
          e.printStackTrace();
      }
         return result;
+    }
+
+    void saveOrigin(Object[] tableInfos,FileTemplateDto fileTemplateDto,Long fileSeq){
+
+        if(CollectionUtils.isEmpty(fileTemplateDto.getFileTemplateDetailDtoList())){
+            return;
+        }
+        String columnNames = "";
+        for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDto.getFileTemplateDetailDtoList()){
+            columnNames += fileTemplateDetailDto.getFieldName()+",";
+        }
+        String sql = "insert into "+tableInfos[2]+"(id,"+columnNames+"file_detail_id ,file_attachment_id,case_id) select id,"+columnNames+"file_detail_id,file_attachment_id,case_id from "+tableInfos[0]+" where file_detail_id ="+fileSeq;
+        mppMapper.mppSqlExec(sql);
     }
 
     private String getString(int percent,String fileAttachmentId) {
@@ -377,7 +391,7 @@ public class FileParsingServiceImpl implements FileParsingService {
             tableInfos[0] = tableName;
             tableInfos[2] = origin_tableName;
             String sqlCreate =  "CREATE TABLE "+tableName+" ( id serial not null,"+" mppId2ErrorId int8 NULL,"+" file_detail_id int4 NULL,"+" file_template_id int4 NULL,";
-            String origin_sqlCreate =  "CREATE TABLE "+origin_tableName+" ( id int4 not null,"+" mppId2ErrorId int8 NULL,"+" file_detail_id int4 NULL,"+" file_template_id int4 NULL,";
+            String origin_sqlCreate =  "CREATE TABLE "+origin_tableName+" ( id int4 not null,"+" file_detail_id int4 NULL,"+" file_template_id int4 NULL,";
             for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDto.getFileTemplateDetailDtoList()){
                 sqlCreate += fileTemplateDetailDto.getFieldName() +" varchar NULL,";
                 origin_sqlCreate += fileTemplateDetailDto.getFieldName() +" varchar NULL,";

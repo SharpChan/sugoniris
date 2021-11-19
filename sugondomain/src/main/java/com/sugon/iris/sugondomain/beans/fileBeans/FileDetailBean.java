@@ -108,4 +108,10 @@ public class FileDetailBean {
      */
     @ApiModelProperty(value="表编号")
     private String failureMessage;
+
+    /**
+     * 原始表表名
+     */
+    @ApiModelProperty(value="原始表表名")
+    private String  originTableName;
 }

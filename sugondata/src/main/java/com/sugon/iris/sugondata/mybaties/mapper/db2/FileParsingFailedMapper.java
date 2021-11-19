@@ -9,11 +9,7 @@ public interface FileParsingFailedMapper {
 
     int fileParsingFailedInsert(List<FileParsingFailedEntity> fileParsingFailedEntityList);
 
-    int deleteFileParsingFailedById(String[] idArr);
-
     int deleteFileParsingFailedByMppid2errorid(Long  mppid2errorid);
-
-    int deleteFileParsingFailedByFileDetailId(String[] fileDetailIdArr);
 
     int deleteFileParsingFailedByFileAttachmentId(Long fileAttachmentId);
 
