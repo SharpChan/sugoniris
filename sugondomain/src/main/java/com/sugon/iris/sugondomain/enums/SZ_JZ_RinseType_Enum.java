@@ -1,7 +1,7 @@
 package com.sugon.iris.sugondomain.enums;
 
 public enum SZ_JZ_RinseType_Enum {
-    RINSE_01("01","交易明细表，交易证件号为空用账户信息的证件号补全")
+    RINSE_01("01","交易明细表:交易证件号为空用账户信息的证件号补全")
     ;
 
     private String code;

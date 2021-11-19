@@ -14,6 +14,7 @@ import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateGroupService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -77,6 +78,15 @@ public class FileTemplateGroupServiceImpl implements FileTemplateGroupService {
     @Override
     public int fileTemplateGroupInsert(User user, FileTemplateGroupDto fileTemplateGroupDto, List<Error> errorList) {
         int i =0;
+        if(StringUtils.isEmpty(fileTemplateGroupDto.getGroupName())){
+            errorList.add(new Error(ErrorCode_Enum.SUGON_01_007.getCode(),"请填入模板组名称"));
+        }
+        if(CollectionUtils.isEmpty(fileTemplateGroupDto.getFileTemplateDtoList())){
+            errorList.add(new Error(ErrorCode_Enum.SUGON_01_007.getCode(),"请选择模板"));
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            return i;
+        }
         List<FileTemplateGroupEntity> fileTemplateGroupEntityList = new ArrayList<>();
         List<FileTemplateDto> fileTemplateDtoList = fileTemplateGroupDto.getFileTemplateDtoList();
         for(FileTemplateDto fileTemplateDto : fileTemplateDtoList){

@@ -37,6 +37,7 @@
                         <th>序号</th>
                         <th>名称</th>
                         <th>模板</th>
+                        <th>数据补全配置</th>
                         <th>备注</th>
                         <th>删除</th>
                     </tr>
@@ -53,6 +54,11 @@
                             <ul  ng-repeat="template in cell.selectedCategories">
                               <li>{{template.substring(0,template.lastIndexOf(":"))}}</li>
                             </ul>
+                        </td>
+                        <td align="center">
+                            <button type="button" ng-click="addFieldRelation(cell.groupId)" class="btn btn-sm btn-danger">
+                                <em class="fa fa-plus"></em>
+                            </button>
                         </td>
                         <td align="left">{{cell.comment}}</td>
                         <td align="left">

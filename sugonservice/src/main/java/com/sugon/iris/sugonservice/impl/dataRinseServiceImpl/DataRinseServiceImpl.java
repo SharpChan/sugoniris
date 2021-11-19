@@ -46,6 +46,18 @@ public class DataRinseServiceImpl implements DataRinseService {
         updateRinseTimes(caseId);
     }
 
+    /**
+     * 进行数据补全
+     * @param userId
+     * @param caseId
+     */
+    @Override
+    public void completeRinse2(String userId,Long caseId) {
+
+
+
+    }
+
     private void updateRinseTimes(Long caseId) {
         FileCaseEntity fileCaseEntity = fileCaseMapper.selectFileCaseByPrimaryKey(caseId);
         fileCaseEntity.setRinseTimes(fileCaseEntity.getRinseTimes() == null ? 1: fileCaseEntity.getRinseTimes()+1);
