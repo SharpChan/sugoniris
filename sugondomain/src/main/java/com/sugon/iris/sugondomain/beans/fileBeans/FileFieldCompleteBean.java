@@ -30,13 +30,13 @@ public class FileFieldCompleteBean {
     /**
      *关联关系
      */
-    @ApiModelProperty(value="关联关系，字段间用&&分割，关系间--分割（存在多个关联关系）")
+    @ApiModelProperty(value="关联关系，字段间用++分割，关系间--分割（存在多个关联关系）（目标++源）")
     private String fieldRelation;
 
     /**
-     *取值字段，用&&进行分割（多个取值字段，取到一个非空即可）
+     *取值字段id，用&&进行分割（多个取值字段，取到一个非空即可）
      */
-    @ApiModelProperty(value="取值字段，用&&进行分割（多个取值字段，取到一个非空即可）")
+    @ApiModelProperty(value="取值字段id，用&&进行分割（多个取值字段，取到一个非空即可）")
     private String fieldSource;
 
     /**
@@ -44,4 +44,18 @@ public class FileFieldCompleteBean {
      */
     @ApiModelProperty(value="模板组id")
     private Long fileTemplateGroupId;
+
+    /**
+     *目标字段id
+     */
+    @ApiModelProperty(value="目标字段id")
+    private Long fieldDest;
+
+    /**
+     *排序字段
+     */
+    @ApiModelProperty(value="排序字段")
+    private String sortNo;
+
+
 }

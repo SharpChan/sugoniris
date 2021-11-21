@@ -41,6 +41,25 @@ public class FileController {
         return restResult;
     }*/
 
+    @PostMapping("/test2")
+    public RestResult<Integer> test() throws Exception {
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(folderServiceImpl.test());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
     @PostMapping("/uploadFile")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "文件上传")

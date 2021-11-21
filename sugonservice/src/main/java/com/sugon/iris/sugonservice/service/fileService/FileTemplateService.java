@@ -17,4 +17,6 @@ public interface FileTemplateService {
     int deleteFileTemplate(String[] idArr, List<Error> errorList);
 
     List<FileTemplateDto> getAllFileTemplateDtoAndDetailsList( List<Error> errorList) throws IllegalAccessException;
+
+
 }

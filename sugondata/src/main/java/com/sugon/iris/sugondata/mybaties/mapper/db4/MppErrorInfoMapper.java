@@ -38,4 +38,6 @@ public interface MppErrorInfoMapper {
 
     public int errorInfoListInsert(List<MppErrorInfoEntity> mppErrorInfoEntityList);
 
+    public int deleteErrorInfoListByMppid2errorid(List<Long> idArr);
+
 }

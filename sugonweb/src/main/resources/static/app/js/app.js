@@ -4841,6 +4841,7 @@ App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
         $("#fieldCompleteDetail").show();
         $scope.groupName_2 = groupName;
         $scope.groupId_2 = groupId;
+        //获取配置的补全信息
         var url = "/fileTemplateGroup/getFileFieldCompletes?groupId="+groupId;
         $http.post(url).success(function(data)
         {
@@ -4854,6 +4855,154 @@ App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
         {
             alert("会话已经断开或者检查网络是否正常！");
         });
+
+        //获取模板组内模板信息
+        var url = "/fileTemplateGroup/getFileTemplateByGroupId?groupId="+groupId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.sites1 = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+
+    }
+
+    $scope.sortNoChange = function () {
+        var reg=/^[0-9]{1,3}$/;
+        if(!reg.test($scope.sortNo)){
+            $scope.sortNo = "";
+            alert("请填写0-999数字！");
+        }
+    }
+
+    $scope.selectedOptionsChange = function(index1,index2){
+         var url = "/fileTemplate/getFileTemplateDetails";
+        var params = {
+            templateId: $scope['selectedOptions'+index1]
+        }
+        $http.post(url,params).success(function(data)
+            {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+                $scope['templateDetailList'+index1] = myservice.setSerialNumber (temp.obj);
+                $scope['templateDetailList'+index2] =angular.copy(myservice.setSerialNumber (temp.obj));
+            }).error(function(data)
+            {
+                alert("会话已经断开或者检查网络是否正常！");
+            });
+    }
+
+    $scope.selectFieldOne = function(item,index){
+        angular.forEach($scope['templateDetailList'+index],function(e){
+            e.checked = false;
+            if(item.id == e.id){
+                e.checked = true;
+                $scope['checkedId'+index] = item;
+            }
+        })
+    }
+
+    //源字段可以是多个，有一个匹配就进行匹配
+    $scope.selectFieldComb2 = [];
+    $scope.selectFieldComb = function(item){
+        if(item.checked){
+            $scope.selectFieldComb2.push(item.id);
+        }else{
+            $scope.selectFieldComb2.splice($scope.selectFieldComb2.indexOf(item.id),1);
+        }
+    }
+
+    $scope.fieldRelations = [];
+    $scope.createFieldRelation = function(){
+        if(myservice.isEmpty($scope.checkedId3) || myservice.isEmpty($scope.checkedId4)){
+            alert("请先勾选！");
+            return;
+        }
+        //判断是否重复配置
+        var flag = false;
+        if(!myservice.isEmpty($scope.fieldRelations)){
+            angular.forEach($scope.fieldRelations,function (e) {
+                if(e.fieldRelationId == ($scope.checkedId3.id +"++"+$scope.checkedId4.id)){
+                    alert("请勿重复配置！");
+                    flag = true;
+                }
+            })
+        }
+        if(flag){
+            return;
+        }
+        var fieldRelationObj = new Object();
+        fieldRelationObj.fieldRelation = $scope.checkedId3.fieldKey +"++"+$scope.checkedId4.fieldKey;
+        fieldRelationObj.fieldRelationId = $scope.checkedId3.id +"++"+$scope.checkedId4.id;
+        $scope.fieldRelations.push(fieldRelationObj);
+        $scope.fieldRelations = myservice.setSerialNumber($scope.fieldRelations);
+    }
+
+    //进行关系删除
+    $scope.deleteFieldRelation = function(no){
+        $scope.fieldRelations.splice($scope.fieldRelations.indexOf(no),1);
+    }
+
+    //保存补全配置
+    $scope.saveFieldComplete = function(){
+
+        $("#fieldCompleteAdd").hide();
+
+        if(myservice.isEmpty($scope.checkedId1) || myservice.isEmpty($scope.selectFieldComb2) || myservice.isEmpty($scope.fieldRelations)|| myservice.isEmpty($scope.sortNo)){
+            alert("目标字段，源字段，关联关系，排序字段,是否都已配置！");
+            return;
+        }
+
+        var relation = "";
+        angular.forEach($scope.fieldRelations,function (e) {
+            relation += e.fieldRelationId + "--";
+        });
+
+        var fieldComb = "";
+        angular.forEach($scope.selectFieldComb2,function (e) {
+            fieldComb += e + "++";
+        });
+        
+        var url = "/fileTemplateGroup/saveFileFieldCompletes";
+        var params = {
+            sortNo: $scope.sortNo,
+            destFileTemplateId: $scope.selectedOptions1,
+            sourceFileTemplateId: $scope.selectedOptions2,
+            fieldRelation: relation,
+            fieldSource: fieldComb,
+            fileTemplateGroupId: $scope.groupId_2,
+            fieldDest: $scope.checkedId1.id
+        }
+
+        $http.post(url,params).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.showFileFieldCompletes($scope.groupId_2,$scope.groupName_2);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.deleteFieldComplete = function(id){
+       var url = "/fileTemplateGroup/removeFileFieldComplete?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.showFileFieldCompletes($scope.groupId_2,$scope.groupName_2);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
     }
 
     $scope.closeAddFieldComplete = function () {
@@ -4862,6 +5011,19 @@ App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
 
     $scope.addFieldComplete = function(){
         $("#fieldCompleteAdd").show();
+        $scope.checkedId1 = "";
+        $scope.selectFieldComb2 = [];
+        $scope.checkedId3 = "";
+        $scope.fieldRelations = [];
+        $scope.checkedId4 = "";
+        $scope.templateDetailList1 = [];
+        $scope.templateDetailList2 = [];
+        $scope.templateDetailList3 = [];
+        $scope.templateDetailList4 = [];
+    }
+
+    $scope.closeFieldCompleteAdd = function(){
+        $("#fieldCompleteAdd").hide();
     }
 });
 
@@ -5761,6 +5923,22 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
      $scope.selected = [];
 
     var isArr = [];
+
+    $scope.test2 = function(){
+        var url = "/file/test2";
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            $scope.sites1 = temp.obj;
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
 
     //label:要赋值的标签，dic_group：字典组名称
     loadDictionary1 = function(){

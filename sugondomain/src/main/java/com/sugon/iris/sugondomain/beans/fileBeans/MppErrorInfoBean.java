@@ -41,4 +41,10 @@ public class MppErrorInfoBean {
      */
     @ApiModelProperty(value="案件编号")
     private Long fileCaseId;
+
+    /**
+     *对应数据的表名
+     */
+    @ApiModelProperty(value="对应数据的表名")
+    private String mppTableName;
 }

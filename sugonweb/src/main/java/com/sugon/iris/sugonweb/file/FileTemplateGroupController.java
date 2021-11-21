@@ -6,12 +6,14 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileFieldCompleteDto;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateGroupDto;
 import com.sugon.iris.sugonservice.service.fileService.FileFieldCompleteService;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateGroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -119,6 +121,73 @@ public class FileTemplateGroupController {
         }catch (Exception e){
             e.printStackTrace();
         }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/removeFileFieldComplete")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过模板组id获取数据补全配置信息")
+    @ApiImplicitParam(name = "groupId", value = "模板组id")
+    public RestResult<Integer> removeFileFieldComplete(@RequestParam(value = "id") Long id){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(fileFieldCompleteServiceImpl.removeFileFieldComplete(id,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/getFileTemplateByGroupId")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过模板组id获取数据补全配置信息")
+    @ApiImplicitParam(name = "groupId", value = "模板组id")
+    public RestResult<List<FileTemplateDto>> getFileTemplateByGroupId(@RequestParam(value = "groupId") Long groupId){
+        RestResult<List<FileTemplateDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(fileTemplateGroupServiceImpl.getFileTemplateByFileTemplateGroupId(groupId,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/saveFileFieldCompletes")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "保存数据补全配置信息")
+    @ApiImplicitParam(name = "fileFieldCompleteDto", value = "数据补全配置信息")
+    public RestResult<Integer> saveFileFieldCompletes(@CurrentUser User user,@RequestBody FileFieldCompleteDto fileFieldCompleteDto){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(fileFieldCompleteServiceImpl.saveFileFieldComplete(fileFieldCompleteDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         if(!CollectionUtils.isEmpty(errorList)){
             restResult.setFlag(FAILED);
             restResult.setMessage("执行失败！");

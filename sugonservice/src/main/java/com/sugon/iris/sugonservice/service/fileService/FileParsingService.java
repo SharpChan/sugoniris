@@ -22,4 +22,6 @@ public interface FileParsingService {
      * @param errorList
      */
     void doUserDefinedRinse(Long caseId, Long userId, List<Error> errorList);
+
+
 }

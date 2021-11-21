@@ -4,10 +4,8 @@ import com.sugon.iris.sugondomain.beans.fileBeans.FileTemplateBean;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Data
 public class FileTemplateDto extends FileTemplateBean {

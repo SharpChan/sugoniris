@@ -11,6 +11,18 @@
          ${sql}
     </select>
 
+    <select id="mppSqlExecForSearchCount" parameterType="String" resultType="java.lang.Integer">
+         ${sql}
+    </select>
+
+    <select id="mppSqlExecForSearchResInteger" parameterType="String" resultType="java.lang.Long">
+         ${sql}
+    </select>
+
+    <select id="mppSqlExecForSearchResLong" parameterType="String" resultType="java.lang.Long">
+         ${sql}
+    </select>
+
     <select id="mppSqlExecForSearchRtMapList" parameterType="String" resultType="java.util.HashMap">
          ${sql}
     </select>

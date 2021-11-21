@@ -249,7 +249,6 @@ public class FileParsingServiceImpl implements FileParsingService {
                      }
                      return fileTemplateDto.getTemplateName();
                  }
-
              };
              cList.add(task);
          }
@@ -261,9 +260,12 @@ public class FileParsingServiceImpl implements FileParsingService {
          }
          executorService.shutdown();
 
+
          //进行外切http/websocket 数据清洗
          //通过caseId案件编号获取http/websocket地址
-         doUserDefinedRinse(fileAttachmentEntity.getCaseId(), userId, errorList);
+         this.doUserDefinedRinse(fileAttachmentEntity.getCaseId(), userId, errorList);
+
+
 
          json = getString(100, String.valueOf(fileAttachmentId));
          WebSocketServer.sendInfo(json, String.valueOf(userId));
@@ -400,9 +402,11 @@ public class FileParsingServiceImpl implements FileParsingService {
             origin_sqlCreate += "file_attachment_id  varchar NULL,case_id varchar NULL);";
 
             String index_file_template_id = "CREATE INDEX "+tableName+"_mppid2errorid_idx ON "+tableName+" USING btree (file_template_id);";
+            String index_case_id = "CREATE INDEX "+tableName+"_caseId_idx ON "+tableName+" USING btree (case_id);";
             String index_file_detail_id = "CREATE INDEX "+tableName+"_file_detail_id ON "+tableName+" USING btree (file_detail_id);";
             mppMapper.mppSqlExec(sqlCreate);
             mppMapper.mppSqlExec(index_file_template_id);
+            mppMapper.mppSqlExec(index_case_id);
             mppMapper.mppSqlExec(index_file_detail_id);
 
             FileTableEntity fileTableEntity4Sql = new FileTableEntity();

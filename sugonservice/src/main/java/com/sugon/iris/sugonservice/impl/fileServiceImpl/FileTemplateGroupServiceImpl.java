@@ -156,6 +156,26 @@ public class FileTemplateGroupServiceImpl implements FileTemplateGroupService {
         return count;
     }
 
+    @Override
+    public List<FileTemplateDto> getFileTemplateByFileTemplateGroupId(Long groupId, List<Error> errorList) throws IllegalAccessException {
+        List<FileTemplateDto> fileTemplateDtoList = new ArrayList<>();
+        FileTemplateGroupEntity fileTemplateGroupEntity4Sql = new FileTemplateGroupEntity();
+        fileTemplateGroupEntity4Sql.setGroupId(groupId);
+        try {
+            List<FileTemplateGroupEntity> fileTemplateGroupEntityList = fileTemplateGroupMapper.selectFileTemplateGroupList(fileTemplateGroupEntity4Sql);
+            for(FileTemplateGroupEntity fileTemplateGroupEntity : fileTemplateGroupEntityList){
+                FileTemplateEntity fileTemplateEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(fileTemplateGroupEntity.getTemplateId());
+                FileTemplateDto fileTemplateDto = new FileTemplateDto();
+                PublicUtils.trans(fileTemplateEntity,fileTemplateDto);
+                fileTemplateDtoList.add(fileTemplateDto);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage(),e.toString()));
+        }
+        return fileTemplateDtoList;
+    }
+
     //给模板字段排序
     private void fileTemplateGroupDtoListSort(List<FileTemplateGroupDto> fileTemplateGroupDtoList) {
         //用排序字段对字段列表进行排序

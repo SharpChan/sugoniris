@@ -27,6 +27,22 @@
         id,file_detail_id,row_number,content,case_id,table_name,user_id,create_time,update_time,file_template_id,file_template_detail_id,mark,mppid2errorid,file_attachment_id
     </sql>
 
+    <select id = "countRecord" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT count(*)  cont
+        FROM
+            file_parsing_failed
+        WHERE
+            mppid2errorid = #{mppid2errorid}
+    </select>
+
+    <select id = "selectMppTableName" parameterType="java.lang.Long" resultType="java.lang.String">
+        SELECT disconnect table_name  tableName
+        FROM
+            file_parsing_failed
+        WHERE
+            mppid2errorid = #{mppid2errorid}
+    </select>
+
     <!--表查询-->
     <select id="selectFileParsingFailedList" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileParsingFailedEntity" resultMap="BaseResultMap"  >
         SELECT
@@ -114,6 +130,34 @@
         file_parsing_failed
         <where>
             mppid2errorid = #{mppid2errorid}
+        </where>
+    </delete>
+
+    <delete id="deleteFileParsingFailedByMppid2erroridAndFileField">
+        DELETE
+        FROM
+        file_parsing_failed
+        <where>
+            <if test="fileDetailId!=null">
+                mppid2errorid = #{mppid2errorid}
+            </if>
+            <if test="fileDetailId!=null">
+                file_template_detail_id = #{fileTemplateDetailId}
+            </if>
+        </where>
+    </delete>
+
+    <!--批量删除-->
+    <delete id="deleteFileParsingFailedByMppid2erroridBatch">
+        DELETE
+        FROM
+        file_parsing_failed
+        <where>
+            mppid2errorid in (
+            <foreach collection="idArr" item="item" index="i" separator=",">
+                #{item}
+            </foreach>
+            )
         </where>
     </delete>
 

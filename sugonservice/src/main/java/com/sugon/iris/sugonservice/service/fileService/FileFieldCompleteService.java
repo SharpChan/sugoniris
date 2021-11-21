@@ -8,8 +8,8 @@ public interface FileFieldCompleteService {
 
     List<FileFieldCompleteDto> getFileFieldCompletesList(Long groupId, List<Error> errorList) throws IllegalAccessException;
 
-    int saveFileFieldComplete(FileFieldCompleteDto  fileFieldCompleteDto);
+    int saveFileFieldComplete(FileFieldCompleteDto  fileFieldCompleteDto, List<Error> errorList) throws IllegalAccessException;
 
-    int removeFileFieldComplete(Long id);
+    int removeFileFieldComplete(Long id , List<Error> errorList);
 
 }

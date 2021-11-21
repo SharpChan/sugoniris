@@ -10,11 +10,13 @@
         <result column="field_relation" property="fieldRelation" jdbcType="VARCHAR" />
         <result column="field_source" property="fieldSource" jdbcType="VARCHAR" />
         <result column="file_template_group_id" property="fileTemplateGroupId" jdbcType="BIGINT" />
+        <result column="field_dest" property="fieldDest" jdbcType="BIGINT" />
+        <result column="sort_no" property="sortNo" jdbcType="BIGINT" />
     </resultMap>
 
     <!--基础字段-->
     <sql id="Base_Column_List" >
-        id,dest_file_template_id,source_file_template_id,field_relation,field_source,file_template_group_id
+        id,dest_file_template_id,source_file_template_id,field_relation,field_source,file_template_group_id,field_dest,sort_no
     </sql>
 
     <!--表查询-->
@@ -25,6 +27,16 @@
         file_field_complete
         where
              id = #{id}
+    </select>
+
+    <!--表查询-->
+    <select id="selectFileFieldCompleteByTemplateGroupId"  resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        file_field_complete
+        where
+        file_template_group_id = #{templateGroupId}
     </select>
 
     <!--表查询-->
@@ -47,6 +59,9 @@
         <if test="fileTemplateGroupId!=null">
             and file_template_group_id = #{fileTemplateGroupId}
         </if >
+        <if test="sortNo!=null  and sortNo != ''">
+            and sort_no = #{sortNo}
+        </if >
     </select>
 
 
@@ -61,7 +76,9 @@
              #{sourceFileTemplateId,jdbcType=BIGINT},
              #{fieldRelation,jdbcType=VARCHAR},
              #{fieldSource,jdbcType=VARCHAR},
-             #{fileTemplateGroupId,jdbcType=BIGINT}
+             #{fileTemplateGroupId,jdbcType=BIGINT},
+             #{fieldDest,jdbcType=BIGINT},
+             #{sortNo,jdbcType=VARCHAR}
              )
     </insert>
 
@@ -69,7 +86,7 @@
     <delete id="deleteFieldCompleteById">
             DELETE
             FROM
-                 file_case
+                 file_field_complete
             WHERE
                 id = #{id}
     </delete>

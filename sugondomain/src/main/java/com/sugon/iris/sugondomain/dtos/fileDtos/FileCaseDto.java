@@ -16,13 +16,13 @@ public class FileCaseDto extends FileCaseBean {
     /**
      * 已导入的数据量
      */
-    @ApiModelProperty(value="已导入的数据量")
+    @ApiModelProperty(value="该文件已导入的数据量")
     private Integer  caseImportRowCount=0;
 
     /**
      * 该案件数据总量
      */
-    @ApiModelProperty(value="该案件数据总量")
+    @ApiModelProperty(value="该文件数据总量")
     private Integer caseRowCount=0;
 
     /**

@@ -39,10 +39,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 @Slf4j
@@ -228,6 +225,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                       mppErrorInfoEntity.setFileRinseDetailId(fileRinseDetailDto.getId());
                       mppErrorInfoEntity.setMppid2errorid(seq);
                       mppErrorInfoEntity.setFileCaseId(caeId);
+                      mppErrorInfoEntity.setMppTableName((String)tableInfos[0]);
                       mppErrorInfoEntityList.add(mppErrorInfoEntity);
                       sqlInsertExec = sqlInsertExec.replace("&&xx_mppId2ErrorId_xx&&", String.valueOf(seq));
                   }
@@ -463,6 +461,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                             mppErrorInfoEntity.setFileRinseDetailId(fileRinseDetailDto.getId());
                             mppErrorInfoEntity.setMppid2errorid(seq);
                             mppErrorInfoEntity.setFileCaseId(caeId);
+                            mppErrorInfoEntity.setMppTableName((String) tableInfos[0]);
                             mppErrorInfoEntityList.add(mppErrorInfoEntity);
                             sqlInsertExec = sqlInsertExec.replace("&&xx_mppId2ErrorId_xx&&", String.valueOf(seq));
                         }
@@ -710,22 +709,27 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
 
     private void dealWithfailed(List<FileParsingFailedEntity> fileParsingFailedEntityListSql, List<MppErrorInfoEntity> mppErrorInfoEntityList) {
         ExecutorService fileParsingFailedInsert = Executors.newFixedThreadPool(5);
+        List<Callable<Integer>> cList = new ArrayList<>();  //定义添加线程的集合
+        Callable<Integer> task = null;  //创建单个线程
+
         int errorPackage = 0;
         //进行分包存库
         List<FileParsingFailedEntity> fileParsingFailedEntityPackage = new ArrayList<>();
         for(int i =0 ;i<fileParsingFailedEntityListSql.size();i++){
             fileParsingFailedEntityPackage.add(fileParsingFailedEntityListSql.get(i));
             if((++errorPackage == 10) || (i== fileParsingFailedEntityListSql.size()-1)){
+                errorPackage = 0;
                 //多线程避免脏读
-                List<FileParsingFailedEntity> fileParsingFailedEntityinsertList  = new ArrayList<>();
-                fileParsingFailedEntityinsertList.addAll(fileParsingFailedEntityPackage);
+                Vector<FileParsingFailedEntity> vector = new Vector<>();
+                vector.addAll(fileParsingFailedEntityPackage);
+                fileParsingFailedEntityPackage = new ArrayList<>();
                 fileParsingFailedInsert.execute(new Runnable() {
                     @Override
                     public void run() {
-                       fileParsingFailedMapper.fileParsingFailedInsert(fileParsingFailedEntityinsertList);
+                       fileParsingFailedMapper.fileParsingFailedInsert(vector);
                     }
                 });
-                fileParsingFailedEntityPackage = new ArrayList<>();
+
             }
         }
 
@@ -735,6 +739,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         for(int i =0 ;i<mppErrorInfoEntityList.size();i++){
             mppErrorInfoEntityListPackage.add(mppErrorInfoEntityList.get(i));
             if((++errorPackage == 10) || (i== fileParsingFailedEntityListSql.size()-1)){
+                errorPackage = 0;
                 //多线程避免脏读
                 List<MppErrorInfoEntity> mppErrorInfoEntityInserttList  = new ArrayList<>();
                 mppErrorInfoEntityInserttList.addAll(mppErrorInfoEntityListPackage);

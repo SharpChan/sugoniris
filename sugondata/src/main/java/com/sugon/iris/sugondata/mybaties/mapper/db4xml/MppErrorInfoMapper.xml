@@ -9,16 +9,17 @@
         <result column="mppid2errorid" property="mppid2errorid" jdbcType="BIGINT" />
         <result column="file_rinse_detail_id" property="fileRinseDetailId" jdbcType="BIGINT" />
         <result column="file_case_id" property="fileCaseId" jdbcType="BIGINT" />
+        <result column="mpp_table_name" property="mppTableName" jdbcType="VARCHAR" />
     </resultMap>
 
     <!--基础字段-->
     <sql id="Base_Column_List" >
-        id,file_attachment_id,file_detail_id,mppid2errorid,file_rinse_detail_id,file_case_id
+        id,file_attachment_id,file_detail_id,mppid2errorid,file_rinse_detail_id,file_case_id,mpp_table_name
     </sql>
 
     <!--基础字段-->
     <sql id="Base_Column_ListInsert" >
-        file_attachment_id,file_detail_id,mppid2errorid,file_rinse_detail_id,file_case_id
+        file_attachment_id,file_detail_id,mppid2errorid,file_rinse_detail_id,file_case_id,mpp_table_name
     </sql>
 
 
@@ -33,8 +34,23 @@
             #{item.fileDetailId,jdbcType=BIGINT},
             #{item.mppid2errorid,jdbcType=BIGINT},
             #{item.fileRinseDetailId,jdbcType=BIGINT},
-            #{item.fileCaseId,jdbcType=BIGINT}
+            #{item.fileCaseId,jdbcType=BIGINT},
+            #{item.mppTableName,jdbcType=VARCHAR}
             )
         </foreach>
     </insert>
+
+    <!--批量删除-->
+    <delete id="deleteErrorInfoListByMppid2errorid">
+        DELETE
+        FROM
+        error_info
+        <where>
+            mppid2errorid in (
+            <foreach collection="idArr" item="item" index="i" separator=",">
+                #{item}
+            </foreach>
+            )
+        </where>
+    </delete>
 </mapper>

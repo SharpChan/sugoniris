@@ -13,4 +13,6 @@ public interface FileFieldCompleteMapper {
     int fileFieldCompleteInsert(FileFieldCompleteEntity fileFieldCompleteEntity);
 
     int deleteFieldCompleteById(Long id);
+
+    List<FileFieldCompleteEntity> selectFileFieldCompleteByTemplateGroupId(Long templateGroupId);
 }

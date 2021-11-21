@@ -89,6 +89,10 @@ public class FileImportCountServiceImpl implements FileImportCountService {
                 FileDetailDto fileDetailDto = new FileDetailDto();
                 PublicUtils.trans(fileDetailEntityBean ,fileDetailDto );
                 fileDetailDtoList.add(fileDetailDto);
+                //查mpp数据库，获取已经导入的记录数
+                //1.获取模板信息
+
+
             }
         }catch (Exception e){
             e.printStackTrace();

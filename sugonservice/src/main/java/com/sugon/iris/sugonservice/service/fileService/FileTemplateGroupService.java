@@ -2,6 +2,7 @@ package com.sugon.iris.sugonservice.service.fileService;
 
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.system.User;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateGroupDto;
 import java.util.List;
 
@@ -13,4 +14,5 @@ public interface FileTemplateGroupService {
 
     int deleteFileTemplateGroup(String[] idArr, List<Error> errorList);
 
+    List<FileTemplateDto> getFileTemplateByFileTemplateGroupId(Long groupId , List<Error> errorList) throws IllegalAccessException;
 }

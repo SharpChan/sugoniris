@@ -9,7 +9,13 @@ public interface MppMapper {
 
     Integer mppSqlExec(String sql);
 
+    Integer mppSqlExecForSearchCount(String sql);
+
+
+
     List<String> mppSqlExecForSearch(String sql);
+
+    List<Long>  mppSqlExecForSearchResInteger(String sql);
 
     List<Map<String,Object>> mppSqlExecForSearchRtMapList(String sql);
 }
