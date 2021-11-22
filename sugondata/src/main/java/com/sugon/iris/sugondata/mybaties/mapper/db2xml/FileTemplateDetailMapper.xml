@@ -49,6 +49,9 @@
         <if test="userId!=null">
             and user_id = #{userId}
         </if >
+        <if test="fileRinseDetailId!=null">
+            and file_rinse_detail_id = #{fileRinseDetailId}
+        </if >
         order by cast(sort_no as SIGNED)
     </select>
 

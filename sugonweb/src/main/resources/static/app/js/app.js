@@ -5538,6 +5538,7 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         var params = {
             templateId: item.id
         }
+        $scope.availableCategories = [];
         $http.post(url,params).success(function(data)
         {
             var jsonString = angular.toJson(data);

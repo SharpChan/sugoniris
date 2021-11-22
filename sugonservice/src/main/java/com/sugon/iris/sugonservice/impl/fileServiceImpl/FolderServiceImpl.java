@@ -408,7 +408,7 @@ public class FolderServiceImpl implements FolderService {
                        FileTemplateEntity fileTemplateSourceEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(sourceFileTemplateId);
                        String sourceTable = "base_" + fileTemplateSourceEntity.getTablePrefix() + "_" + caseId + "_" + userId;
                        //关联关系
-                       String relations = getFieldRelation4Sql(fileFieldCompleteEntity);
+                       //String relations = getFieldRelation4Sql(fileFieldCompleteEntity);
                        //源关联字段/目标字段相关信息
                        Map<String,String> source2Destmap = new HashMap<>();
                        List<String> sourceList = new ArrayList<>();
@@ -429,7 +429,7 @@ public class FolderServiceImpl implements FolderService {
 
                        //查询出需要补全的数据
                        for (String strSource : fieldSourceFieldNameList) {
-                           String sql_01 = "select "+sourceFields[4] +fieldDestFieldName +" from "+destTable +"where "+fieldDestFieldName +"=''";
+                           String sql_01 = "select id ,mppid2errorid,"+sourceFields[3] +fieldDestFieldName +" from "+destTable +" where "+fieldDestFieldName +"=''";
                            //需要补全的数据
                            List<Map<String,Object>> list = mppMapper.mppSqlExecForSearchRtMapList(sql_01);
                            for(Map map : list){
@@ -439,9 +439,9 @@ public class FolderServiceImpl implements FolderService {
                                    //只有一个关联字段,源表关联字段不允许为空
                                    if(sourceList.size() == 1) {
                                        if (i == sourceList.size() - 1) {
-                                           condi +=sourceList.get(i)+"!='' and "+ sourceList.get(i) + " = '" + map.get(source2Destmap.get(sourceList.get(i))) + "'";
+                                           condi +=sourceList.get(i)+" != '' and "+ sourceList.get(i) + " = '" + map.get(source2Destmap.get(sourceList.get(i))) + "'";
                                        } else {
-                                           condi +=sourceList.get(i)+"!='' and "+ sourceList.get(i) + " = '" + map.get(source2Destmap.get(sourceList.get(i))) + "' and ";
+                                           condi +=sourceList.get(i)+" != '' and "+ sourceList.get(i) + " = '" + map.get(source2Destmap.get(sourceList.get(i))) + "' and ";
                                        }
                                    }
                                    //有多个关联字段
@@ -454,25 +454,31 @@ public class FolderServiceImpl implements FolderService {
                                    }
                                }
                                //判断是否有多个对应数据，有多个的话，不补全，跳过
-                               String sql_02 = "select count( distinct "+strSource+") from "+sourceTable  +"where "+condi+" and "+strSource+"!=''";
+                               String sql_02 = "select count( distinct "+strSource+") from "+sourceTable  +" where "+condi+" and "+strSource+"!=''";
                                Integer resCount = mppMapper.mppSqlExecForSearchCount(sql_02);
-                               if(resCount >1){
+                               if(resCount >1 || resCount == 0){
                                     continue;
                                }
                                //获取源数据
-                               String sql_03 = "select  distinct "+strSource+" from "+sourceTable  +"where "+condi+" and "+strSource+"!=''";
-                               List<Map<String,Object>> listSource = mppMapper.mppSqlExecForSearchRtMapList(sql_01);
+                               String sql_03 = "select  distinct "+strSource+" from "+sourceTable  +" where "+condi+" and "+strSource+"!=''";
+                               List<Map<String,Object>> listSource = mppMapper.mppSqlExecForSearchRtMapList(sql_03);
                                //进行数据补全
                                String updateSQL = "Update "+destTable+" set "+fieldDestFieldName+"= '"+listSource.get(0).get(strSource)+"' where id = " +map.get("id");
                                mppMapper.mppSqlExec(updateSQL);
                                //通过字段id和mppid2errorid把表file_parsing_failed对应数据删除
                                String mppid2errorid = map.get("mppid2errorid").toString();
-                               fileParsingFailedMapper.deleteFileParsingFailedByMppid2erroridAndFileField(Long.parseLong(mppid2errorid),fieldDest);
+                               if("0".equals(mppid2errorid)){
+                                  continue;
+                               }
+                               List<FileParsingFailedEntity> fileParsingFailedEntityList_01 = getFileParsingFailedEntities(fieldDest, mppid2errorid);
+                               if(!CollectionUtils.isEmpty(fileParsingFailedEntityList_01)) {
+                                   fileParsingFailedMapper.deleteFileParsingFailedByMppid2erroridAndFileField(Long.parseLong(mppid2errorid), fieldDest);
+                               }
                                //查看file_parsing_failed对应的表 相应的mppid2errorid 数据是否都已经删除，删除的话，把mpp error_info对应的数据删除
                                FileParsingFailedEntity fileParsingFailedEntity = new FileParsingFailedEntity();
                                fileParsingFailedEntity.setMppId2ErrorId(Long.parseLong(mppid2errorid));
-                               List<FileParsingFailedEntity> fileParsingFailedEntityList = fileParsingFailedMapper.selectFileParsingFailedList(fileParsingFailedEntity);
-                               if(CollectionUtils.isEmpty(fileParsingFailedEntityList)){
+                               List<FileParsingFailedEntity> fileParsingFailedEntityList_02 = fileParsingFailedMapper.selectFileParsingFailedList(fileParsingFailedEntity);
+                               if(CollectionUtils.isEmpty(fileParsingFailedEntityList_02)){
                                    mppid2erroridList.add(mppid2errorid);
                                }
                            }
@@ -504,6 +510,13 @@ public class FolderServiceImpl implements FolderService {
                }
            }
        }
+    }
+
+    private List<FileParsingFailedEntity> getFileParsingFailedEntities(Long fieldDest, String mppid2errorid) {
+        FileParsingFailedEntity fileParsingFailedEntity4Sql = new FileParsingFailedEntity();
+        fileParsingFailedEntity4Sql.setFileTemplateDetailId(fieldDest);
+        fileParsingFailedEntity4Sql.setMppId2ErrorId(Long.parseLong(mppid2errorid));
+        return fileParsingFailedMapper.selectFileParsingFailedList(fileParsingFailedEntity4Sql);
     }
 
     //获取关联关系

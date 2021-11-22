@@ -68,6 +68,9 @@
         <if test="mppId2ErrorId!=null">
             and a.mppid2errorid = #{mppId2ErrorId}
         </if >
+        <if test="fileTemplateDetailId!=null">
+            and a.file_template_detail_id = #{fileTemplateDetailId}
+        </if >
     </select>
 
 
@@ -138,11 +141,11 @@
         FROM
         file_parsing_failed
         <where>
-            <if test="fileDetailId!=null">
+            <if test="mppid2errorid!=null">
                 mppid2errorid = #{mppid2errorid}
             </if>
-            <if test="fileDetailId!=null">
-                file_template_detail_id = #{fileTemplateDetailId}
+            <if test="fileTemplateDetailId!=null">
+                and file_template_detail_id = #{fileTemplateDetailId}
             </if>
         </where>
     </delete>

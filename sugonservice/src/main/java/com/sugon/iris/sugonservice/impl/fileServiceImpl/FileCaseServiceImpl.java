@@ -242,7 +242,11 @@ public class FileCaseServiceImpl implements FileCaseService {
                 List<FileOriginTableEntity> fileOriginTableEntityList = fileOriginTableMapper.findFileOriginTableList(fileOriginTableEntity4Sql);
                 for(FileOriginTableEntity fileOriginTableEntity : fileOriginTableEntityList) {
                     String sql = "DROP TABLE " +fileOriginTableEntity.getTableName();
-                    mppMapper.mppSqlExec(sql);
+                    try {
+                        mppMapper.mppSqlExec(sql);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
                 //查询资源表名并删除
                 FileTableEntity fileTableEntity4Sql = new FileTableEntity();

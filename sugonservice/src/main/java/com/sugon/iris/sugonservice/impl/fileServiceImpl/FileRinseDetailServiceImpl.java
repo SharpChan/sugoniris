@@ -2,11 +2,13 @@ package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileRinseDetailMapper;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateDetailMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.RegularShowMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseDetailDto;
 import com.sugon.iris.sugondomain.dtos.regularDtos.RegularShowDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseDetailEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RegularShowEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.fileService.FileRinseDetailService;
@@ -27,6 +29,9 @@ public class FileRinseDetailServiceImpl implements FileRinseDetailService {
 
     @Resource
     private RegularShowMapper regularShowMapper;
+
+    @Resource
+    private FileTemplateDetailMapper fileTemplateDetailMapper;
 
     @Override
     public Long add(FileRinseDetailDto fileRinseDetailDto, List<Error> errorList) throws IllegalAccessException {
@@ -98,6 +103,14 @@ public class FileRinseDetailServiceImpl implements FileRinseDetailService {
         try {
             result = fileRinseDetailMapper.deleteByPrimaryKey(id);
             fileRinseRegularServiceImpl.deleteByFileRinseDetailId(id,errorList);
+            //模板字段如果配置了该清洗组，则从模板字段中删除
+            FileTemplateDetailEntity fileTemplateDetailEntity4Sql = new FileTemplateDetailEntity();
+            fileTemplateDetailEntity4Sql.setFileRinseDetailId(id);
+            List<FileTemplateDetailEntity>  fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntity4Sql);
+            for(FileTemplateDetailEntity bean : fileTemplateDetailEntityList){
+                bean.setFileRinseDetailId(null);
+                fileTemplateDetailMapper.updateFileTemplateDetail(bean);
+            }
         }catch (Exception e){
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表file_rinse_detail出错",e.toString()));
