@@ -3,6 +3,8 @@ package com.sugon.iris.sugoncommon.fileUtils;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FieldDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.MppTableDto;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.StringUtils;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -19,7 +21,7 @@ public class CsvExportUtil {
     /**
      * CSV文件列分隔符
      */
-    private static final String CSV_COLUMN_SEPARATOR = "&&&&";
+    private static final String CSV_COLUMN_SEPARATOR = ",";
 
     /**
      * CSV文件行分隔符
@@ -36,7 +38,7 @@ public class CsvExportUtil {
 
         // 组装表头
         for (FieldDto fieldDto : mppTableDto.getCols()) {
-            buf.append(fieldDto.getFieldKey()).append(CSV_COLUMN_SEPARATOR);
+            buf.append("\"").append(fieldDto.getFieldKey()).append("\"").append(CSV_COLUMN_SEPARATOR);
         }
         buf.append(CSV_ROW_SEPARATOR);
 
@@ -44,7 +46,7 @@ public class CsvExportUtil {
         if (CollectionUtils.isNotEmpty(mppTableDto.getRows())) {
             for (Map<String, Object> data : mppTableDto.getRows()) {
                 for (FieldDto fieldDto : mppTableDto.getCols()) {
-                    buf.append(data.get(fieldDto.getFieldName())).append(CSV_COLUMN_SEPARATOR);
+                    buf.append("\"").append(data.get(fieldDto.getFieldName())).append("\"").append(CSV_COLUMN_SEPARATOR);
                 }
                 buf.append(CSV_ROW_SEPARATOR);
             }

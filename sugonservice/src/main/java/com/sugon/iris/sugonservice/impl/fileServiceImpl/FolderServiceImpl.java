@@ -98,6 +98,8 @@ public class FolderServiceImpl implements FolderService {
     @Resource
     private MppErrorInfoMapper mppErrorInfoMapper;
 
+    @Resource FileTableMapper fileTableMapper;
+
 
 
     @Override
@@ -222,173 +224,12 @@ public class FolderServiceImpl implements FolderService {
      */
     @Override
     public void doFixedDefinedComplete(Long userId, Map<Long,Set<Long>> caseId2TemplateGroupIdsMap, List<Error> errorList) {
-       if("1".equals(PublicUtils.getConfigMap().get("file_field_complete"))) {
-           for (Map.Entry<Long, Set<Long>> entry : caseId2TemplateGroupIdsMap.entrySet()) {
-               Long caseId = entry.getKey();
-               Set<Long> TemplateGroupIdSet = entry.getValue();
-               for (Long templateGroupId : TemplateGroupIdSet) {
-                   //通过模板组id，获取补全配置
-                   List<FileFieldCompleteEntity> fileFieldCompleteEntityList = fileFieldCompleteMapper.selectFileFieldCompleteByTemplateGroupId(templateGroupId);
-                   this.fileFieldCompleteEntityListSort(fileFieldCompleteEntityList);
-
-
-                   //1.按照  目地模板id，源模板id，取值字段id，目标字段id，模板组id进行分组
-                   Map<Complete, List<FileFieldCompleteEntity>> completeMap = new HashMap<>();
-                   //归类需要清除的错误数据
-                   for (FileFieldCompleteEntity fileFieldCompleteEntity : fileFieldCompleteEntityList) {
-                       //目地模板id
-                       Long destFileTemplateId = fileFieldCompleteEntity.getDestFileTemplateId();
-                       //源模板id
-                       Long sourceFileTemplateId = fileFieldCompleteEntity.getSourceFileTemplateId();
-                       //取值字段
-                       String fieldSource = fileFieldCompleteEntity.getFieldSource();
-                       //目标字段
-                       Long fieldDest = fileFieldCompleteEntity.getFieldDest();
-
-                       Complete complete = new Complete();
-                       complete.setDestFileTemplateId(destFileTemplateId);
-                       complete.setSourceFileTemplateId(sourceFileTemplateId);
-                       complete.setFieldSource(fieldSource);
-                       complete.setFieldDest(fieldDest);
-                       complete.setFileTemplateGroupId(templateGroupId);
-
-                       List<FileFieldCompleteEntity> fileFieldCompleteEntityList4Map = completeMap.get(complete);
-                       if (CollectionUtils.isEmpty(fileFieldCompleteEntityList4Map)) {
-                           fileFieldCompleteEntityList4Map = new ArrayList<>();
-                           fileFieldCompleteEntityList4Map.add(fileFieldCompleteEntity);
-                           completeMap.put(complete, fileFieldCompleteEntityList4Map);
-                       } else {
-                           fileFieldCompleteEntityList4Map.add(fileFieldCompleteEntity);
-                       }
-                   }
-
-                   //2.删除记录在错误表中的数据
-                   for (Map.Entry<Complete, List<FileFieldCompleteEntity>> completeEntry : completeMap.entrySet()) {
-
-                       List<String> getErrorsSqlList = new ArrayList<>();
-                       String[] fieldSourceArr = completeEntry.getKey().getFieldSource().split("\\+\\+");
-                       List<String> fieldSourceFieldNameList = new ArrayList<>();
-                       for (String str : fieldSourceArr) {
-                           FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(Long.parseLong(str));
-                           fieldSourceFieldNameList.add(fileTemplateDetailEntity.getFieldName());
-                       }
-
-                       for (String fieldSourceFieldName : fieldSourceFieldNameList) { //遍历取值字段
-                           for (FileFieldCompleteEntity fileFieldCompleteEntity : completeEntry.getValue()) {
-                               //目地模板id
-                               Long destFileTemplateId = fileFieldCompleteEntity.getDestFileTemplateId();
-                               //目地模板
-                               FileTemplateEntity fileTemplateDestEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(destFileTemplateId);
-                               //源模板id
-                               Long sourceFileTemplateId = fileFieldCompleteEntity.getSourceFileTemplateId();
-                               //源模板
-                               FileTemplateEntity fileTemplateSourceEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(sourceFileTemplateId);
-                               String relations = getFieldRelation4Sql(fileFieldCompleteEntity);
-                               //目标字段
-                               Long fieldDest = fileFieldCompleteEntity.getFieldDest();
-                               FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(fieldDest);
-                               String fieldDestFieldName = fileTemplateDetailEntity.getFieldName();
-
-                               String sql = "select a.mppid2errorid as mppid2errorid from base_" + fileTemplateDestEntity.getTablePrefix() + "_" + caseId + "_" + userId + " a  where a." +
-                                       fieldDestFieldName + "='' and exists(select * from base_" + fileTemplateSourceEntity.getTablePrefix() + "_" + caseId + "_" + userId
-                                       + " b where " + relations + "b." + fieldSourceFieldName + "!='')";
-                               getErrorsSqlList.add(sql);
-                           }
-                       }
-                       String sql = "";
-                       for (int i = 0; i < getErrorsSqlList.size(); i++) {
-                           if (i == getErrorsSqlList.size() - 1) {
-                               sql += getErrorsSqlList.get(i);
-                           } else {
-                               sql += getErrorsSqlList.get(i) + " union ";
-                           }
-                       }
-                       List<Long> mppid2erroridList = mppMapper.mppSqlExecForSearchResInteger(sql);
-
-                       //获取对应 mppid2errorid，数量为1的，把对应的base_biao的mppid2errorid修改为0
-                       if (!CollectionUtils.isEmpty(mppid2erroridList)) {
-                           for (Long mppid2errorid : mppid2erroridList) {
-                               Integer count = fileParsingFailedMapper.countRecord(mppid2errorid);
-                               //获取表名
-                               String tableName = fileParsingFailedMapper.selectMppTableName(mppid2errorid);
-                               if (count == 1) {
-                                   String upsql = "update " + tableName + " set mppid2errorid = 0 where mppid2errorid = " + mppid2errorid;
-                                   mppMapper.mppSqlExec(upsql);
-                               }
-                           }
-                       }
-
-                       //删除错误记录信息表
-                       ExecutorService fileParsingFailedInsert = Executors.newFixedThreadPool(mppid2erroridList.size() / 2000 + 1);
-                       int errorPackage = 0;
-                       List<Long> mppid2erroridListPackage = new ArrayList<>();
-                       for (int i = 0; i < mppid2erroridList.size(); i++) {
-                           mppid2erroridListPackage.add(mppid2erroridList.get(i));
-                           if ((++errorPackage == 2000) || (i == mppid2erroridList.size() - 1)) {
-                               errorPackage = 0;
-                               //多线程避免脏读
-                               List<Long> deleteList = new ArrayList<>();
-                               deleteList.addAll(mppid2erroridListPackage);
-                               fileParsingFailedInsert.execute(new Runnable() {
-                                   @Override
-                                   public void run() {
-                                       mppErrorInfoMapper.deleteErrorInfoListByMppid2errorid(deleteList);
-                                       fileParsingFailedMapper.deleteFileParsingFailedByMppid2erroridBatch(deleteList);
-                                   }
-                               });
-                               mppid2erroridListPackage = new ArrayList<>();
-                           }
-                       }
-                   }
-                   //进行统计数据更新
-
-                   //4.进行数据补全
-                   for (FileFieldCompleteEntity fileFieldCompleteEntity : fileFieldCompleteEntityList) {
-                       //目地模板id
-                       Long destFileTemplateId = fileFieldCompleteEntity.getDestFileTemplateId();
-                       //目地模板
-                       FileTemplateEntity fileTemplateDestEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(destFileTemplateId);
-                       String destTable = "base_" + fileTemplateDestEntity.getTablePrefix() + "_" + caseId + "_" + userId;
-                       //源模板id
-                       Long sourceFileTemplateId = fileFieldCompleteEntity.getSourceFileTemplateId();
-                       //源模板
-                       FileTemplateEntity fileTemplateSourceEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(sourceFileTemplateId);
-                       String sourceTable = "base_" + fileTemplateSourceEntity.getTablePrefix() + "_" + caseId + "_" + userId;
-                       //关联关系
-                       String relations = getFieldRelation4Sql(fileFieldCompleteEntity);
-                       //源关联字段
-                       String[] sourceFields = getSourceFields(fileFieldCompleteEntity);
-                       //取值字段
-                       String fieldSource = fileFieldCompleteEntity.getFieldSource();
-                       String[] fieldSourceArr = fieldSource.split("\\+\\+");
-                       List<String> fieldSourceFieldNameList = new ArrayList<>();
-                       for (String str : fieldSourceArr) {
-                           FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(Long.parseLong(str));
-                           fieldSourceFieldNameList.add(fileTemplateDetailEntity.getFieldName());
-                       }
-                       //目标字段
-                       Long fieldDest = fileFieldCompleteEntity.getFieldDest();
-                       FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(fieldDest);
-                       String fieldDestFieldName = fileTemplateDetailEntity.getFieldName();
-                       try {
-                           for (String str : fieldSourceFieldNameList) {
-                               String updateSql = "update  " + destTable +
-                                       " a  set " + fieldDestFieldName + "= b." + str + " from (select distinct " + sourceFields[1] + str + " from " + sourceTable + " where " + sourceFields[2] + str + " != '')b where " + relations + " 1=1";
-                               int aa = mppMapper.mppSqlExec(updateSql);
-                               log.info("更新的数据2：" + aa + "");
-                           }
-                       } catch (Exception e) {
-                           e.printStackTrace();
-                           errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(), "固定补全数据库操作执行出错，请进行确认！"));
-                       }
-                   }
-               }
-           }
-       }else{
            for (Map.Entry<Long, Set<Long>> entry : caseId2TemplateGroupIdsMap.entrySet()) {
                //mpp  error_info 进行统一删除
                List<String> mppid2erroridList = new ArrayList<>();
                Long caseId = entry.getKey();
+               List<String> tableNames = getTableNames(caseId);
+
                Set<Long> TemplateGroupIdSet = entry.getValue();
                for (Long templateGroupId : TemplateGroupIdSet) {
                    //通过模板组id，获取补全配置
@@ -402,11 +243,17 @@ public class FolderServiceImpl implements FolderService {
                        FileTemplateEntity fileTemplateDestEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(destFileTemplateId);
                        //目地表
                        String destTable = "base_" + fileTemplateDestEntity.getTablePrefix() + "_" + caseId + "_" + userId;
+                       if(!tableNames.contains(destTable)){
+                                continue;
+                       }
                        //源模板id
                        Long sourceFileTemplateId = fileFieldCompleteEntity.getSourceFileTemplateId();
                        //源模板
                        FileTemplateEntity fileTemplateSourceEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(sourceFileTemplateId);
                        String sourceTable = "base_" + fileTemplateSourceEntity.getTablePrefix() + "_" + caseId + "_" + userId;
+                       if(!tableNames.contains(sourceTable)){
+                           continue;
+                       }
                        //关联关系
                        //String relations = getFieldRelation4Sql(fileFieldCompleteEntity);
                        //源关联字段/目标字段相关信息
@@ -510,6 +357,17 @@ public class FolderServiceImpl implements FolderService {
                }
            }
        }
+
+    private List<String> getTableNames(Long caseId) {
+        //获取该案件下的所有Mpp表名
+        FileTableEntity fileTableEntity4Sql = new FileTableEntity();
+        fileTableEntity4Sql.setCaseId(caseId);
+        List<FileTableEntity> fileTableEntityList =  fileTableMapper.findFileTableList(fileTableEntity4Sql);
+        List<String> tableNames = new ArrayList<>();
+        for(FileTableEntity fileTableEntity : fileTableEntityList){
+            tableNames.add(fileTableEntity.getTableName());
+        }
+        return tableNames;
     }
 
     private List<FileParsingFailedEntity> getFileParsingFailedEntities(Long fieldDest, String mppid2errorid) {
