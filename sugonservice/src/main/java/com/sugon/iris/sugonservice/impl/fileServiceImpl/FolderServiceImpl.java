@@ -98,7 +98,11 @@ public class FolderServiceImpl implements FolderService {
     @Resource
     private MppErrorInfoMapper mppErrorInfoMapper;
 
-    @Resource FileTableMapper fileTableMapper;
+    @Resource
+    private FileTableMapper fileTableMapper;
+
+    @Resource
+    private FileTemplateGroupMapper fileTemplateGroupMapper;
 
 
 
@@ -787,8 +791,14 @@ public class FolderServiceImpl implements FolderService {
                 if(user.isEconomicUser()){
                     fileAttachmentEntity.setTemplateGroupId(1L);
                     //通过模板组编号获取模板组名称
-
-                    fileAttachmentEntity.setTemplateGroupName("");
+                    FileTemplateGroupEntity fileTemplateGroupEntity = new FileTemplateGroupEntity();
+                    fileTemplateGroupEntity.setGroupId(1L);
+                    List<FileTemplateGroupEntity> fileTemplateGroupEntityList =  fileTemplateGroupMapper.selectFileTemplateGroupList(fileTemplateGroupEntity);
+                    String groupName = "";
+                    if(!CollectionUtils.isEmpty(fileTemplateGroupEntityList)) {
+                        groupName = fileTemplateGroupEntityList.get(0).getGroupName();
+                    }
+                    fileAttachmentEntity.setTemplateGroupName(groupName);
                 }
                 //如果是经侦角色，则默认模板组
                 if(user.isEconomicUser()){

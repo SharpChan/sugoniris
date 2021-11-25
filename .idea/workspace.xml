@@ -13,9 +13,7 @@
   <component name="ChangeListManager">
     <list default="true" id="a90609e4-7a89-43d9-9541-decbe39a1fc1" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileTemplateDetailServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileTemplateDetailServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FolderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FolderServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/systemImpl/AccountServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/systemImpl/AccountServiceImpl.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -64,20 +62,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileTemplateDetailServiceImpl.java">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FolderServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="178">
-              <caret line="48" column="121" selection-start-line="48" selection-start-column="97" selection-end-line="48" selection-end-column="121" />
+            <state relative-caret-position="213">
+              <caret line="794" column="55" selection-start-line="794" selection-start-column="55" selection-end-line="794" selection-end-column="55" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FolderServiceImpl.java">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2xml/FileTemplateGroupMapper.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="483">
-              <caret line="789" column="20" selection-start-line="789" selection-start-column="20" selection-end-line="789" selection-end-column="20" />
+            <state relative-caret-position="381">
+              <caret line="34" column="25" selection-start-line="34" selection-start-column="18" selection-end-line="34" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -149,10 +147,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/fileBeans/FileAttachmentBean.java">
+        <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileTemplateGroupMapper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="361">
-              <caret line="75" column="17" selection-start-line="75" selection-start-column="17" selection-end-line="75" selection-end-column="17" />
+            <state relative-caret-position="189">
+              <caret line="8" column="34" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -173,7 +171,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>/getCsv</find>
       <find>saveRecordDetail</find>
       <find>CSV_COLUMN_SEPARATOR</find>
       <find>导出</find>
@@ -192,7 +189,6 @@
       <find>fileTemplateGroup</find>
       <find>补全新增</find>
       <find>/fileTemplateGroup</find>
-      <find>selectFileTemplateGroupList</find>
       <find>fileTemplateGroupController</find>
       <find>/getFileTemplateGroups</find>
       <find>/getFileTemplates</find>
@@ -203,6 +199,8 @@
       <find>/uploadFile</find>
       <find>/getFileTemplateDetails</find>
       <find>myFileUploadController</find>
+      <find>fileTemplateGroupMapper</find>
+      <find>selectFileTemplateGroupList</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -454,6 +452,158 @@
               <item name="sugonannotation" type="462c0819:PsiDirectoryNode" />
               <item name="resolver" type="462c0819:PsiDirectoryNode" />
               <item name="system" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="sugon" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="sugon" type="462c0819:PsiDirectoryNode" />
+              <item name="iris" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="sugon" type="462c0819:PsiDirectoryNode" />
+              <item name="iris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="sugon" type="462c0819:PsiDirectoryNode" />
+              <item name="iris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="jdbcTemplate" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="sugon" type="462c0819:PsiDirectoryNode" />
+              <item name="iris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="jdbcTemplate" type="462c0819:PsiDirectoryNode" />
+              <item name="impl" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="sugon" type="462c0819:PsiDirectoryNode" />
+              <item name="iris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="jdbcTemplate" type="462c0819:PsiDirectoryNode" />
+              <item name="impl" type="462c0819:PsiDirectoryNode" />
+              <item name="system" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="sugon" type="462c0819:PsiDirectoryNode" />
+              <item name="iris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="mybaties" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="sugon" type="462c0819:PsiDirectoryNode" />
+              <item name="iris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="mybaties" type="462c0819:PsiDirectoryNode" />
+              <item name="mapper" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sugoniris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="sugon" type="462c0819:PsiDirectoryNode" />
+              <item name="iris" type="462c0819:PsiDirectoryNode" />
+              <item name="sugondata" type="462c0819:PsiDirectoryNode" />
+              <item name="mybaties" type="462c0819:PsiDirectoryNode" />
+              <item name="mapper" type="462c0819:PsiDirectoryNode" />
+              <item name="db2" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="sugoniris" type="b2602c69:ProjectViewProjectNode" />
@@ -807,14 +957,7 @@
       <workItem from="1637802607367" duration="3576000" />
       <workItem from="1637808391550" duration="616000" />
       <workItem from="1637809191266" duration="1481000" />
-      <workItem from="1637814959478" duration="5031000" />
-    </task>
-    <task id="LOCAL-00069" summary="关系图谱关系信息初始化">
-      <created>1630977927552</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
-      <option name="project" value="LOCAL" />
-      <updated>1630977927554</updated>
+      <workItem from="1637814959478" duration="6391000" />
     </task>
     <task id="LOCAL-00070" summary="集成websocket">
       <created>1631099894009</created>
@@ -1152,7 +1295,14 @@
       <option name="project" value="LOCAL" />
       <updated>1637809576439</updated>
     </task>
-    <option name="localTasksCounter" value="118" />
+    <task id="LOCAL-00118" summary="权限优化">
+      <created>1637821661559</created>
+      <option name="number" value="00118" />
+      <option name="presentableId" value="LOCAL-00118" />
+      <option name="project" value="LOCAL" />
+      <updated>1637821661559</updated>
+    </task>
+    <option name="localTasksCounter" value="119" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1188,7 +1338,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4416464000" />
+    <option name="totallyTimeSpent" value="4417824000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1265,7 +1415,7 @@
       <window_info anchor="bottom" id="Message" order="10" />
       <window_info anchor="bottom" id="Find" order="11" weight="0.54747224" />
       <window_info anchor="bottom" id="Run" order="12" weight="0.41183725" />
-      <window_info active="true" anchor="bottom" id="Debug" order="13" sideWeight="0.4994618" visible="true" weight="0.4217016" />
+      <window_info anchor="bottom" id="Debug" order="13" sideWeight="0.4994618" visible="true" weight="0.4217016" />
       <window_info anchor="bottom" id="Cvs" order="14" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="15" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="16" sideWeight="0.4994618" weight="0.3292232" />
@@ -1339,7 +1489,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Ｏ(≧口≦)Ｏ" />
     <MESSAGE value="页面注册" />
     <MESSAGE value="角色页面配置" />
     <MESSAGE value="修改bug" />
@@ -1364,7 +1513,8 @@
     <MESSAGE value="修复csv格式问题" />
     <MESSAGE value="优化" />
     <MESSAGE value="可配置补全" />
-    <option name="LAST_COMMIT_MESSAGE" value="可配置补全" />
+    <MESSAGE value="权限优化" />
+    <option name="LAST_COMMIT_MESSAGE" value="权限优化" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1380,6 +1530,18 @@
           <line>64</line>
           <properties />
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FolderServiceImpl.java</url>
+          <line>797</line>
+          <properties />
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FolderServiceImpl.java</url>
+          <line>795</line>
+          <properties />
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -1455,13 +1617,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/jdbcTemplate/impl/system/TableInitServiceDaoImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1212">
-          <caret line="25" column="16" selection-start-line="25" selection-start-column="16" selection-end-line="25" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sugonlistener/src/main/java/com/sugon/iris/sugonlistener/table/TableListener.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
@@ -1717,13 +1872,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileTemplateGroupMapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="8" column="33" selection-start-line="8" selection-start-column="3" selection-end-line="8" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/package-lock.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
@@ -1843,10 +1991,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileTemplateGroupMapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="8" column="34" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2xml/FileTemplateGroupMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="381">
+          <caret line="34" column="25" selection-start-line="34" selection-start-column="18" selection-end-line="34" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FolderServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
-          <caret line="789" column="20" selection-start-line="789" selection-start-column="20" selection-end-line="789" selection-end-column="20" />
+        <state relative-caret-position="213">
+          <caret line="794" column="55" selection-start-line="794" selection-start-column="55" selection-end-line="794" selection-end-column="55" />
         </state>
       </provider>
     </entry>
