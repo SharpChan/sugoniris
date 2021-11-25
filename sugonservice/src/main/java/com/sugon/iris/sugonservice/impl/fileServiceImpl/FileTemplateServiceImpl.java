@@ -1,6 +1,7 @@
 package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.UserGroupDao;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileRinseGroupMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateDetailMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateMapper;
@@ -11,6 +12,7 @@ import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileRinseGroupEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateGroupEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateService;
 import org.springframework.stereotype.Service;
@@ -32,17 +34,27 @@ public class FileTemplateServiceImpl implements FileTemplateService {
     @Resource
     private FileRinseGroupMapper fileRinseGroupMapper;
 
+    @Resource
+    private UserGroupDao userGroupDaoImpl;
+
 
 
     @Override
     public List<FileTemplateDto> getFileTemplateDtoList(User user, FileTemplateDto fileTemplateDto, List<Error> errorList) throws IllegalAccessException {
         List<FileTemplateDto> fileTemplateDtoList = new ArrayList<>();
-        List<FileTemplateEntity> fileTemplateEntityList = null;
-        FileTemplateEntity fileTemplateEntity = new FileTemplateEntity();
-        PublicUtils.trans(fileTemplateDto,fileTemplateEntity);
-        fileTemplateEntity.setUserId(user.getId());
+        List<FileTemplateEntity> fileTemplateEntityList = new ArrayList<>();
         try{
-            fileTemplateEntityList =  fileTemplateMapper.selectFileTemplateList(fileTemplateEntity);
+            List<Long> userIdList = userGroupDaoImpl.getGroupUserIdList(user.getId(),errorList);
+            List<FileTemplateGroupEntity> fileTemplateGroupEntitylist = new ArrayList<>();
+            for(Long userId : userIdList){
+                FileTemplateEntity fileTemplateEntity = new FileTemplateEntity();
+                PublicUtils.trans(fileTemplateDto,fileTemplateEntity);
+                fileTemplateEntity.setUserId(userId);
+                List<FileTemplateEntity> fileTemplateEntityListPer =  fileTemplateMapper.selectFileTemplateList(fileTemplateEntity);
+                if(!CollectionUtils.isEmpty(fileTemplateEntityListPer)){
+                    fileTemplateEntityList.addAll(fileTemplateEntityListPer);
+                }
+            }
         }catch (Exception e){
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表file_template出错",e.toString()));

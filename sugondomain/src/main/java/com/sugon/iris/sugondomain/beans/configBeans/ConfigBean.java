@@ -42,4 +42,8 @@ public class ConfigBean {
     //描述
     @ApiModelProperty(value="描述")
     private String description;
+
+    //描述
+    @ApiModelProperty(value="排序编号")
+    private String sortNo;
 }

@@ -29,6 +29,25 @@ public class UserGroupDaoImpl implements UserGroupDao {
     @Autowired
     private JdbcTemplate ds1JdbcTemplate;
 
+    /**
+     * 通过该人员找出和该人员同一组的所有人员id
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<Long> getGroupUserIdList(Long userId,List<Error> errorList) {
+        List<Long> userIdList = null;
+        try{
+            String sql = "select user_id from sys_user_group_detail where user_group_id in " +
+                    "(select user_group_id from sys_user_group_detail where user_id="+userId+")";
+            userIdList = ds1JdbcTemplate.queryForList(sql, Long.class);
+        }catch(Exception e){
+            LOGGER.info("{}-{}","查询表sys_user_group_detail失败",e);
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表sys_user_group_detail出错",e.toString()));
+        }
+        return  userIdList;
+    }
+
     @Override
     public List<UserGroupEntity> getUserGroupEntitys(List<Error> errorList) {
         List<UserGroupEntity>  userGroupEntityList = null;

@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface FileTemplateGroupService {
 
+    public List<FileTemplateGroupDto> getFileTemplateGroupDtoListByThisUserId(User user,  List<Error> errorList) throws IllegalAccessException;
+
     List<FileTemplateGroupDto> getFileTemplateGroupDtoList(User user, FileTemplateGroupDto fileTemplateGroupDto,List<Error> errorList) throws IllegalAccessException;
 
     int fileTemplateGroupInsert(User user, FileTemplateGroupDto fileTemplateGroupDto,List<Error> errorList);

@@ -1,8 +1,17 @@
 package com.sugon.iris.sugonlistener.common;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
+import com.sugon.iris.sugondomain.beans.baseBeans.Error;
+import com.sugon.iris.sugondomain.dtos.configDtos.ConfigDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.configEntities.ConfigEntity;
+import com.sugon.iris.sugonservice.service.configService.ConfigService;
 import com.sugon.iris.sugonservice.service.kafkaService.KafkaStartStopService;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
+import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
+import org.apache.rocketmq.common.message.MessageExt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +26,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import javax.sql.DataSource;
 import java.sql.DatabaseMetaData;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,39 +65,67 @@ public class CommonConfigurationListener implements ServletContextListener {
   public void getConfigBean() throws Exception{
         java.sql.Connection connection = null;
         try {
-            DataSource dataSource = jdbcTemplate.getDataSource();
-            connection = dataSource.getConnection();
-            DatabaseMetaData meta = connection.getMetaData();
-            java.sql.ResultSet tables = meta.getTables (null, null, "config", null);
-
-            if (tables.next()) {
-
-               String sql = "select cfg_key ,cfg_value from config where flag = 1 ";
-                List<ConfigEntity> list = null;
-                try {
-                    list = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(ConfigEntity.class));
+            //进行系统配置项配置
+            String sql = "select cfg_key ,cfg_value from config where flag = 1 ";
+            List<ConfigEntity> list = null;
+            try {
+                list = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(ConfigEntity.class));
                     if(!CollectionUtils.isEmpty(list)){
                         for(ConfigEntity obj :list){
                             PublicUtils.getConfigMap().put(obj.getCfg_key(),obj.getCfg_value());
                             kafkaStopStart(obj);//对kafka的启停进行控制
                         }
                     }
-                } catch (Exception e) {
+            } catch (Exception e) {
                     e.printStackTrace();
+            }
+            //开启或者关闭rocket
+            if("0".equals(PublicUtils.getConfigMap().get("rocketMq.consumer.onOff"))){//进行关闭
+               if(PublicUtils.rocketMqConsumer != null ){//当前是打开状态
+                   PublicUtils.rocketMqConsumer.shutdown();
+                   PublicUtils.rocketMqConsumer = null;
+               }
+            }
+            if("1".equals(PublicUtils.getConfigMap().get("rocketMq.consumer.onOff"))){//进行开启
+                if(PublicUtils.rocketMqConsumer == null ){//当前是关闭状态
+                    String rocketMq_NameSvrAddr = PublicUtils.getConfigMap().get("rocketMq.NameSvrAddr");
+
+                    String consumerGroup = PublicUtils.getConfigMap().get("rocketMq.consumerGroup");
+
+                    String topic = PublicUtils.getConfigMap().get("rocketMq.topic");
+
+                    String tag = PublicUtils.getConfigMap().get("rocketMq.tag");
+
+                    // 设置消费者组
+                    DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(consumerGroup);
+
+                    consumer.setVipChannelEnabled(false);
+                    consumer.setNamesrvAddr(rocketMq_NameSvrAddr);
+                    // 设置消费者端消息拉取策略，表示从哪里开始消费
+                    consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+
+                    // 设置消费者拉取消息的策略，*表示消费该topic下的所有消息，也可以指定tag进行消息过滤
+                    consumer.subscribe(topic, "*");
+
+                    // 消费者端启动消息监听，一旦生产者发送消息被监听到，就打印消息，和rabbitmq中的handlerDelivery类似
+                    consumer.registerMessageListener(new MessageListenerConcurrently() {
+
+                        @Override
+                        public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+                            for (MessageExt messageExt : msgs) {
+                                String topic = messageExt.getTopic();
+                                String tag = messageExt.getTags();
+                                String msg = new String(messageExt.getBody());
+                                System.out.println("*********************************");
+                                System.out.println("消费响应：msgId : " + messageExt.getMsgId() + ",  msgBody : " + msg + ", tag:" + tag + ", topic:" + topic);
+                                System.out.println("*********************************");
+                            }
+                            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+                        }
+                    });
+                    PublicUtils.rocketMqConsumer = consumer;
+                    consumer.start();
                 }
-            }else {
-                String SQL="CREATE TABLE `config` (\n" +
-                    "  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',\n" +
-                    "  `cfg_key` varchar(200) DEFAULT NULL COMMENT 'key',\n" +
-                    "  `cfg_value` varchar(200) DEFAULT NULL COMMENT 'value',\n" +
-                    "  `createtime` timestamp NULL DEFAULT NULL COMMENT '创建时间',\n" +
-                    "  `flag` int(11) DEFAULT NULL COMMENT '可用标志1：可用，0：不可用',\n" +
-                    "  `updatetime` timestamp NULL DEFAULT NULL COMMENT '修改时间',\n" +
-                    "  `userName` varchar(100) DEFAULT NULL COMMENT '操作人',\n" +
-                    "  `description` varchar(200) DEFAULT NULL COMMENT '描述',\n" +
-                    "  PRIMARY KEY (`id`)\n" +
-                    ") ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8";
-                jdbcTemplate.execute(SQL);
             }
         } catch (Exception e) {
             e.printStackTrace ();

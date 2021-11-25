@@ -1123,7 +1123,7 @@ App.service('drawCodaService', function() {
         context.fillStyle="#ccc";
         context.fillRect(0,0,80,30);
         context.fillStyle="red";
-        var text="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        var text="abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
         context.font="25px 黑体";
         context.rotate(Math.random()*8*Math.PI/180)
         context.fillStyle="rgb("+r1+','+g1+','+b1+")";
@@ -4712,7 +4712,7 @@ App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
 
     //查询所有的模板组信息
     $scope.query = function(){
-        var url = "/fileTemplateGroup/getFileTemplateGroups";
+        var url = "/fileTemplateGroup/getFileTemplateGroupDtoListByThisUserId";
         var params = {
         }
         $http.post(url,params).success(function (data)
@@ -6111,7 +6111,7 @@ App.controller("fileManagerController", function ($http,$timeout,$scope,
     //获取所有的模板组
     $scope.templateGroups = [];
     $scope.getTemplateGroup = function(){
-        var url = "/fileTemplateGroup/getFileTemplateGroups";
+        var url = "/fileTemplateGroup/getFileTemplateGroupDtoListByThisUserId";
         var params = {
         }
         $http.post(url,params).success(function (data)
@@ -6371,12 +6371,12 @@ App.controller("configController", function ($http,$timeout,$scope,
     }
 
     $scope.save = function(){
-
         var params = {
             description:$scope.description,
             cfg_key:$scope.cfg_key,
             cfg_value:$scope.cfg_value,
-            flag:$scope.selectedName == "无效" ? 0:1
+            flag:$scope.selectedName == "无效" ? 0:1,
+            sortNo: $scope.sortNo
         }
         var url = "/config/saveConfig";
         $http.post(url,params).success(function (data)
@@ -6418,6 +6418,14 @@ App.controller("configController", function ($http,$timeout,$scope,
 
     }
 
+    $scope.sortNoChange = function () {
+        var reg=/^[0-9]{1,3}$/;
+        if(!reg.test($scope.sortNo)){
+            $scope.sortNo = "";
+            alert("请填写0-999数字！");
+        }
+    }
+
     $scope.getAllConfig();
 
     $scope.update = function(item){
@@ -6431,7 +6439,8 @@ App.controller("configController", function ($http,$timeout,$scope,
             description: item.description,
             cfg_key: item.cfg_key,
             cfg_value: item.cfg_value,
-            flag: item.flag
+            flag: item.flag,
+            sortNo: item.sortNo
         }
         $http.post(url,params).success(function(data)
         {

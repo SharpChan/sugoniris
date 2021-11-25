@@ -13,10 +13,8 @@ import com.sugon.iris.sugonservice.service.fileService.FileTemplateGroupService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +34,34 @@ public class FileTemplateGroupController {
 
 
     /**
-     * 查询模板信息
+     * 查询模板组信息
+     */
+
+    @PostMapping("/getFileTemplateGroupDtoListByThisUserId")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过模板组id获取用户组内模板组")
+    public RestResult<List<FileTemplateGroupDto>> getFileTemplateGroupDtoListByThisUserId(@CurrentUser User user){
+        RestResult<List<FileTemplateGroupDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(fileTemplateGroupServiceImpl.getFileTemplateGroupDtoListByThisUserId(user,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+
+    /**
+     * 查询模板组信息
      */
 
     @PostMapping("/getFileTemplateGroups")

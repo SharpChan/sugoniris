@@ -1,6 +1,7 @@
 package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
+import com.sugon.iris.sugondata.jdbcTemplate.intf.system.UserGroupDao;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateGroupMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.SequenceMapper;
@@ -15,7 +16,6 @@ import com.sugon.iris.sugonservice.service.fileService.FileTemplateGroupService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
 import javax.annotation.Resource;
 import java.util.*;
 
@@ -30,6 +30,52 @@ public class FileTemplateGroupServiceImpl implements FileTemplateGroupService {
 
     @Resource
     private SequenceMapper sequenceMapper;
+
+    @Resource
+    private UserGroupDao userGroupDaoImpl;
+
+    @Override
+    public List<FileTemplateGroupDto> getFileTemplateGroupDtoListByThisUserId(User user, List<Error> errorList) throws IllegalAccessException {
+        List<FileTemplateGroupDto> fileTemplateGroupDtoList = new ArrayList<>();
+        List<Long> userIdList = userGroupDaoImpl.getGroupUserIdList(user.getId(),errorList);
+        List<FileTemplateGroupEntity> fileTemplateGroupEntitylist = new ArrayList<>();
+        for(Long userId : userIdList){
+            FileTemplateGroupEntity fileTemplateGroupEntity = new FileTemplateGroupEntity();
+            fileTemplateGroupEntity.setUserId(userId);
+            List<FileTemplateGroupEntity> fileTemplateGroupEntitylistPer = fileTemplateGroupMapper.selectFileTemplateGroupList(fileTemplateGroupEntity);
+            if(!CollectionUtils.isEmpty(fileTemplateGroupEntitylistPer)){
+                fileTemplateGroupEntitylist.addAll(fileTemplateGroupEntitylistPer);
+            }
+        }
+
+        //获取模板组编号
+        Set<FileTemplateGroupEntity> sileTemplateGroupEntitySet = new HashSet<>(fileTemplateGroupEntitylist);
+        Set<Long> groupIdSet = new  HashSet<>();
+        for(FileTemplateGroupEntity fileTemplateGroupEntityBean : fileTemplateGroupEntitylist){
+            groupIdSet.add(fileTemplateGroupEntityBean.getGroupId());
+        }
+
+        Map<Long, List<String>>  map = new HashMap<>();
+        for(Long groupId : groupIdSet) {
+            List<String> selectedCategories = new ArrayList<>();
+            for (FileTemplateGroupEntity fileTemplateGroupEntityBean : fileTemplateGroupEntitylist) {
+                if(groupId.equals(fileTemplateGroupEntityBean.getGroupId())) {
+                    selectedCategories.add(fileTemplateGroupEntityBean.getTemplateName()+":"+fileTemplateGroupEntityBean.getTemplateId());
+                }
+            }
+            map.put(groupId,selectedCategories);
+        }
+
+        for(FileTemplateGroupEntity fileTemplateGroupEntityRemoved : sileTemplateGroupEntitySet){
+            FileTemplateGroupDto fileTemplateGroupDtoBean = new FileTemplateGroupDto();
+            PublicUtils.trans(fileTemplateGroupEntityRemoved,fileTemplateGroupDtoBean);
+            fileTemplateGroupDtoBean.setSelectedCategories(map.get(fileTemplateGroupEntityRemoved.getGroupId()));
+            fileTemplateGroupDtoList.add(fileTemplateGroupDtoBean);
+        }
+
+        this.fileTemplateGroupDtoListSort(fileTemplateGroupDtoList);
+        return fileTemplateGroupDtoList;
+    }
 
     @Override
     public List<FileTemplateGroupDto> getFileTemplateGroupDtoList(User user, FileTemplateGroupDto fileTemplateGroupDto, List<Error> errorList) throws IllegalAccessException {

@@ -2,6 +2,8 @@ package com.sugon.iris.sugoncommon.publicUtils;
 
 import com.google.common.collect.Lists;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedReader;
@@ -33,6 +35,13 @@ public  class PublicUtils {
     public static Map<String, String> getConfigMap() {
         return configMap;
     }
+
+    //rocketMq消费者
+    public static DefaultMQPushConsumer  rocketMqConsumer;
+
+
+    //rocketMq生产者
+    public static DefaultMQProducer  rocketMqProducer;
 
     public static <T,K> K trans(T tin, K tout) throws IllegalAccessException {
         if(null == tin || tin instanceof Collection){

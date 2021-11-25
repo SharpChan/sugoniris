@@ -284,7 +284,7 @@ public class FileParsingServiceImpl implements FileParsingService {
         for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDto.getFileTemplateDetailDtoList()){
             columnNames += fileTemplateDetailDto.getFieldName()+",";
         }
-        String sql = "insert into "+tableInfos[2]+"(id,"+columnNames+"file_detail_id ,file_attachment_id,case_id) select id,"+columnNames+"file_detail_id,file_attachment_id,case_id from "+tableInfos[0]+" where file_detail_id ="+fileSeq;
+        String sql = "insert into "+tableInfos[2]+"(id,file_template_id,"+columnNames+"file_detail_id ,file_attachment_id,case_id) select id,file_template_id,"+columnNames+"file_detail_id,file_attachment_id,case_id from "+tableInfos[0]+" where file_detail_id ="+fileSeq;
         mppMapper.mppSqlExec(sql);
     }
 

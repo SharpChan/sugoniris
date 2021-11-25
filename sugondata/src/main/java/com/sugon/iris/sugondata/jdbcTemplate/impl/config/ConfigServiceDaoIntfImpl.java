@@ -31,7 +31,7 @@ public class ConfigServiceDaoIntfImpl implements ConfigServiceDao {
      * 描述：获取所有的配置信息
      */
     public List<ConfigEntity> getAllConfig(List<Error> errorList){
-        String sql = "select id,cfg_key,cfg_value,flag,description from config order by description ASC";
+        String sql = "select id,cfg_key,cfg_value,flag,description,sort_no from config order by (sort_no+0) ASC";
         List<ConfigEntity> list = null;
         try{
             list = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(ConfigEntity.class));
@@ -42,17 +42,52 @@ public class ConfigServiceDaoIntfImpl implements ConfigServiceDao {
         return list;
     }
 
-
-    @Transactional
+     @Override
      public int  updateConfig(ConfigEntity configEntity,List<Error> errorList){
          int result=0;
-         String sql = "UPDATE config SET cfg_key = ?,cfg_value = ?,flag = ?,updatetime = ?,description = ? ,userName = ? WHERE id = ?";
-         Object[] objs = new Object[] {configEntity.getCfg_key(),configEntity.getCfg_value(), configEntity.getFlag(),new Date(),configEntity.getDescription(),configEntity.getUserName(),configEntity.getId()};
+         String sql = "UPDATE config SET cfg_key = ?,cfg_value = ?,flag = ?,updatetime = ?,description = ? ,userName = ? ,sort_no = ?  WHERE id = ?";
          try{
-             result=jdbcTemplate.update(sql,objs);
+             result=jdbcTemplate.update(sql, new PreparedStatementSetter(){
+                 @Override
+                 public void setValues(PreparedStatement ps) throws SQLException {
+                     if(!StringUtils.isEmpty(configEntity.getCfg_key()) ) {
+                         ps.setString(1, configEntity.getCfg_key());
+                     }else{
+                         ps.setString(1, null);
+                     }
+                     if(!StringUtils.isEmpty(configEntity.getCfg_value())) {
+                         ps.setString(2, configEntity.getCfg_value());
+                     }else{
+                         ps.setString(2, null);
+                     }
+                     if(null != configEntity.getFlag()) {
+                         ps.setInt(3, configEntity.getFlag());
+                     }else{
+                         ps.setString(3, null);
+                     }
+                     ps.setTimestamp(4, new Timestamp(configEntity.getUpdateTime().getTime()));
+                     if(!StringUtils.isEmpty(configEntity.getDescription())) {
+                         ps.setString(5, configEntity.getDescription());
+                     }else{
+                         ps.setString(5, null);
+                     }
+
+                     if(!StringUtils.isEmpty(configEntity.getUserName())) {
+                         ps.setString(6, configEntity.getUserName());
+                     }else{
+                         ps.setString(6, null);
+                     }
+                     if(!StringUtils.isEmpty(configEntity.getSortNo())) {
+                         ps.setString(7, configEntity.getSortNo());
+                     }else{
+                         ps.setString(7, null);
+                     }
+                     ps.setLong(8, configEntity.getId());
+                 }
+             });
          }catch(Exception e){
-             e.printStackTrace();
-             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"更新配置信息表config出错",e.toString()));
+             LOGGER.info("{}-{}","修改表config失败",e);
+             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"修改config表出错",e.toString()));
          }
          return result;
      }
@@ -60,7 +95,7 @@ public class ConfigServiceDaoIntfImpl implements ConfigServiceDao {
     @Override
     public int saveConfig(ConfigEntity configEntity, List<Error> errorList) {
         int result=0;
-        String sql = "insert into config(cfg_key,cfg_value,flag,description,createtime,userName) values(?,?,?,?,?,?)";
+        String sql = "insert into config(cfg_key,cfg_value,flag,description,createtime,userName,sort_no) values(?,?,?,?,?,?,?)";
         try{
             result=jdbcTemplate.update(sql, new PreparedStatementSetter(){
                 @Override
@@ -90,6 +125,11 @@ public class ConfigServiceDaoIntfImpl implements ConfigServiceDao {
                         ps.setString(6, configEntity.getUserName());
                     }else{
                         ps.setString(6, null);
+                    }
+                    if(!StringUtils.isEmpty(configEntity.getSortNo())) {
+                        ps.setString(7, configEntity.getSortNo());
+                    }else{
+                        ps.setString(7, null);
                     }
                 }
             });

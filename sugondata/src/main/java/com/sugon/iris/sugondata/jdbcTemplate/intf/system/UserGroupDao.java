@@ -9,6 +9,9 @@ import java.util.List;
 
 public interface UserGroupDao {
 
+
+    List<Long> getGroupUserIdList(Long userId,List<Error> errorList);
+
     List<UserGroupEntity> getUserGroupEntitys( List<Error> errorList);
 
     UserGroupEntity getUserGroupEntityById( Long id,List<Error> errorList);

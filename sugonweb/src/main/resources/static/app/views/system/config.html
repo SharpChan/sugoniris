@@ -35,6 +35,7 @@
 							<th>描述</th>
 							<th>键</th>
 							<th>值</th>
+							<th>排序</th>
 							<th>是否有效</th>
 							<th>修改</th>
 							<th>删除</th>
@@ -46,6 +47,7 @@
 							<td contentEditable="true"><input type="text" ng-model="item.description" ></td>
 							<td contentEditable="true"><input type="text" ng-model="item.cfg_key" ></td>
 							<td contentEditable="true"><input type="text" ng-model="item.cfg_value" ></td>
+							<td><input type="text" ng-model="item.sortNo" ></td>
 							<td contentEditable="true">
 								<select ng-value="" ng-init="selectedName = names[item.flag]" ng-model="selectedName" ng-options="x for x in names" ng-change="changeFlag(item,selectedName)"></select>
 							</td>
@@ -67,7 +69,7 @@
 			</div>
 		</div>
 
-	<div id = "cnDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 380px; z-index: 9999">
+	<div id = "cnDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 450px; z-index: 9999">
 		<div id = "cnDivheader" class="panel-heading topnavbar">
 			添加<input type="button" value="关闭" style="margin-left:220px" class="btn btn-default" ng-click="close();" >
 		</div>
@@ -80,6 +82,9 @@
 			</div>
 			<div  class="form-group" style="top: 20px;width: 250px" >
 				<span>请填写值<input placeholder="必填" class="form-control" type="text" ng-model="cfg_value" ></span>
+			</div>
+			<div  class="form-group" style="top: 20px;width: 250px" >
+				<span>请填写排序编号<input placeholder="必填，请输入整数0-999" class="form-control" type="text" ng-change="sortNoChange();" ng-model="sortNo" ></span>
 			</div>
 			<div  class="form-group" style="top: 20px;width: 250px" >
 				<span>是否有效
