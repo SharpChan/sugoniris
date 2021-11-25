@@ -786,6 +786,13 @@ public class FolderServiceImpl implements FolderService {
                 //如果是经侦角色，则默认模板组
                 if(user.isEconomicUser()){
                     fileAttachmentEntity.setTemplateGroupId(1L);
+                    //通过模板组编号获取模板组名称
+
+                    fileAttachmentEntity.setTemplateGroupName("");
+                }
+                //如果是经侦角色，则默认模板组
+                if(user.isEconomicUser()){
+                    fileAttachmentEntity.setTemplateGroupId(1L);
                 }
                 fileAttachmentEntityList.add(fileAttachmentEntity);
 

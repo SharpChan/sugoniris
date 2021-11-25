@@ -44,7 +44,6 @@ public class FileTemplateDetailServiceImpl implements FileTemplateDetailService 
         List<FileTemplateDetailEntity> fileTemplateDetailEntityList = null;
         List<FileTemplateDetailDto> fileTemplateDetailDtoList = new ArrayList<>();
         FileTemplateDetailEntity fileTemplateDetailEntity = new FileTemplateDetailEntity();
-        fileTemplateDetailEntity.setUserId(user.getId());
         fileTemplateDetailEntity.setTemplateId(fileTemplateDetailDto.getTemplateId());
         try {
             fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntity);

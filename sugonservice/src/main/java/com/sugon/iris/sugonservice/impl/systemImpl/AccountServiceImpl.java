@@ -65,11 +65,11 @@ public class AccountServiceImpl implements AccountService {
         List<RoleEntity> roleEntityList =  roleServiceDaoImpl.getRolesByUserId(user.getId(),errorList);
         int i = 0;
         for(RoleEntity roleEntity : roleEntityList){
-              if(roleEntity.getId().equals("1")){
+              if(roleEntity.getId() == 1){
                   user.setSystemUser(true);
                   i ++;
               }
-            if(roleEntity.getId().equals("2")){
+            if(roleEntity.getId() == 2){
                 user.setEconomicUser(true);
                  i ++;
             }
