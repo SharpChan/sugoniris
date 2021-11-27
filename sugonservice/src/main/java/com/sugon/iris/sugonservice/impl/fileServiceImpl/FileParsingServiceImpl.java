@@ -103,8 +103,9 @@ public class FileParsingServiceImpl implements FileParsingService {
      * @param errorList
      */
     @Override
-    public boolean fileParsing(Long userId, Long fileAttachmentId, List<Error> errorList) throws IOException, IllegalAccessException, InterruptedException, ExecutionException {
-        boolean result = true;
+    public List<Long> fileParsing(Long userId, Long fileAttachmentId, List<Error> errorList) throws IOException, IllegalAccessException, InterruptedException, ExecutionException {
+
+         List<Long> fileIdList = new ArrayList<>();
      try {
 
          //解析次数，线程安全
@@ -128,7 +129,7 @@ public class FileParsingServiceImpl implements FileParsingService {
 
          if (CollectionUtils.isEmpty(fileList)) {
              errorList.add(new Error(ErrorCode_Enum.FILE_01_001.getCode(), ErrorCode_Enum.FILE_01_001.getMessage()));
-             return false;
+             return fileIdList;
          }
 
          //通过fileTemplateGroupId获取模板组
@@ -141,7 +142,7 @@ public class FileParsingServiceImpl implements FileParsingService {
 
          if (CollectionUtils.isEmpty(fileTemplateDtoList)) {
              errorList.add(new Error(ErrorCode_Enum.FILE_01_002.getCode(), ErrorCode_Enum.FILE_01_002.getMessage()));
-             return false;
+             return fileIdList;
          }
 
          //判断一个表是否对应多个模板
@@ -162,7 +163,7 @@ public class FileParsingServiceImpl implements FileParsingService {
                  }
                  if (c > 1 && !flag) {
                      errorList.add(new Error(ErrorCode_Enum.FILE_01_012.getCode(), ErrorCode_Enum.FILE_01_012.getMessage()));
-                     return false;
+                     return fileIdList;
                  }
              }
          }
@@ -179,7 +180,7 @@ public class FileParsingServiceImpl implements FileParsingService {
 
          if (CollectionUtils.isEmpty(mapTemplate2File)) {
              errorList.add(new Error(ErrorCode_Enum.FILE_01_003.getCode(), ErrorCode_Enum.FILE_01_003.getMessage()));
-             return false;
+             return fileIdList;
          }
 
          //创建多线程，一个模板创建一个线程,在子线程内分别入库
@@ -217,6 +218,7 @@ public class FileParsingServiceImpl implements FileParsingService {
                          WebSocketServer.sendInfo(json, String.valueOf(userId));
 
                          Long fileSeq = sequenceMapper.getSeq("file_detail");
+                         fileIdList.add(fileSeq);
                          if (file.getName().contains(".csv")) {
                              csvCount.incrementAndGet();
                              try {
@@ -265,14 +267,12 @@ public class FileParsingServiceImpl implements FileParsingService {
          //通过caseId案件编号获取http/websocket地址
          this.doUserDefinedRinse(fileAttachmentEntity.getCaseId(), userId, errorList);
 
-
-
          json = getString(100, String.valueOf(fileAttachmentId));
          WebSocketServer.sendInfo(json, String.valueOf(userId));
      }catch (Exception e){
          e.printStackTrace();
      }
-        return result;
+        return fileIdList;
     }
 
     void saveOrigin(Object[] tableInfos,FileTemplateDto fileTemplateDto,Long fileSeq){

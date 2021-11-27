@@ -35,6 +35,14 @@
             mppid2errorid = #{mppid2errorid}
     </select>
 
+    <select id = "countRecordByFileDetail" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT count(distinct mppid2errorid)  cont
+        FROM
+            file_parsing_failed
+        WHERE
+            file_detail_id = #{fileDetailId}
+    </select>
+
     <select id = "selectMppTableName" parameterType="java.lang.Long" resultType="java.lang.String">
         SELECT disconnect table_name  tableName
         FROM

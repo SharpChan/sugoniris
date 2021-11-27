@@ -1,10 +1,7 @@
 package com.sugon.iris.sugonlistener.common;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
-import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondomain.dtos.configDtos.ConfigDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.configEntities.ConfigEntity;
-import com.sugon.iris.sugonservice.service.configService.ConfigService;
 import com.sugon.iris.sugonservice.service.kafkaService.KafkaStartStopService;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
@@ -13,7 +10,6 @@ import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,9 +20,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import javax.sql.DataSource;
-import java.sql.DatabaseMetaData;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -119,6 +112,8 @@ public class CommonConfigurationListener implements ServletContextListener {
                                 System.out.println("*********************************");
                                 System.out.println("消费响应：msgId : " + messageExt.getMsgId() + ",  msgBody : " + msg + ", tag:" + tag + ", topic:" + topic);
                                 System.out.println("*********************************");
+
+
                             }
                             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
                         }

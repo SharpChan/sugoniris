@@ -96,6 +96,7 @@
 					<th>文件名称</th>
 					<th>文件类型</th>
 					<th>符合要求</th>
+					<th>重复数据量</th>
 					<th>总数据量</th>
 					<th>mpp表名</th>
 					<th>错误明细</th>
@@ -108,20 +109,21 @@
 					<td align="center">{{item.fileName}}</td>
 					<td align="center">{{item.fileType}}</td>
 					<td align="center">{{item.importRowCount}}</td>
+					<td align="center">{{(item.rowCount-item.importRowCount-item.errorItemCount) <0 ? 0:(item.rowCount-item.importRowCount-item.errorItemCount) }}</td>
 					<td align="center">{{item.rowCount}}</td>
 					<td align="center">{{item.tableName}}</td>
 					<td align="center">
-						<button ng-show="item.importRowCount != item.rowCount" type="button" ng-click="errorDetail(item.id)" class="btn btn-sm btn-warning">
+						<button ng-show="item.importRowCount != item.rowCount && item.errorItemCount != 0" type="button" ng-click="errorDetail(item.id)" class="btn btn-sm btn-warning">
 							<em class="fa fa-fw fa-lg fa-inbox"></em>
 						</button>
 					</td>
 					<td align="center">
-						<button ng-show="item.importRowCount != item.rowCount" type="button" ng-click="export(item)" class="btn btn-sm btn-warning">
+						<button ng-show="item.importRowCount != item.rowCount && item.errorItemCount != 0" type="button" ng-click="export(item)" class="btn btn-sm btn-warning">
 							<em class="fa fa-download"></em>
 						</button>
 					</td>
 					<td align="center">
-						<button ng-show="item.importRowCount != item.rowCount" type="button" ng-click="importFile(item.id)" class="btn btn-sm btn-warning">
+						<button ng-show="item.importRowCount != item.rowCount && item.errorItemCount != 0" type="button" ng-click="importFile(item.id)" class="btn btn-sm btn-warning">
 							<em class="fa fa-wrench"></em>
 						</button>
 					</td>

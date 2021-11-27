@@ -18,6 +18,8 @@ public interface FileParsingFailedMapper {
 
     int countRecord(Long mppid2errorid);
 
+    int countRecordByFileDetail (Long fileDetailId);
+
     String selectMppTableName(Long mppid2errorid);
 
     int deleteFileParsingFailedByMppid2erroridAndFileField(Long  mppid2errorid,Long fileTemplateDetailId);

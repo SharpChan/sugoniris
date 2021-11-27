@@ -4,6 +4,8 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessRepeatDto;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileParsingFailedEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.MppErrorInfoEntity;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +22,10 @@ public interface FileDoParsingService {
 
   void doRinse(FileTemplateDto fileTemplateDto,Object[] tableInfos, Long fileSeq, List<Error> errorList) throws IllegalAccessException;
 
-  void doRepeat(FileTemplateDto fileTemplateDto, Object[] tableInfos, List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList, List<Long> mppid2erroridDeleteList, String repeatSql);
+  void doRepeat(Long fileTemplateid, String tableName, List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList, List<Long> mppid2erroridDeleteList, String repeatSql);
 
   void deleteMysql(List<Long> mppid2erroridDeleteList);
+
+  void dealWithfailed(List<FileParsingFailedEntity> fileParsingFailedEntityListSql, List<MppErrorInfoEntity> mppErrorInfoEntityList);
 
 }

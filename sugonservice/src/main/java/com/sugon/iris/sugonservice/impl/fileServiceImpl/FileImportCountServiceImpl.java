@@ -103,9 +103,19 @@ public class FileImportCountServiceImpl implements FileImportCountService {
                     fileCaseDtoBean.getFileAttachmentDtoList().add(fileAttachmentDtoBean);
 
                     for(FileDetailDto fileDetailDtoBean : fileDetailDtoList){
+                         //已导入文件
                          if(fileDetailDtoBean.getFileAttachmentId().equals(fileAttachmentDtoBean.getId()) && fileDetailDtoBean.getHasImport()){
                              fileAttachmentDtoBean.getFileDetailDtoList().add(fileDetailDtoBean);
-                         }else if(fileDetailDtoBean.getFileAttachmentId().equals(fileAttachmentDtoBean.getId()) && !fileDetailDtoBean.getHasImport()){
+                             //获取导入错误的数据量
+                             int cou1 =  fileParsingFailedMapper.countRecordByFileDetail(fileDetailDtoBean.getId());
+                             fileDetailDtoBean.setErrorItemCount(cou1);
+                             //获取通过正则校验的数据数量
+                             String SQL = "select count(*) from "+fileDetailDtoBean.getTableName() +" where mppid2errorid = 0 and file_detail_id = "+fileDetailDtoBean.getId();
+                             int cou2 = mppMapper.mppSqlExecForSearchCount(SQL);
+                             fileDetailDtoBean.setImportRowCount(cou2);
+                         }
+                         //未导入文件
+                         else if(fileDetailDtoBean.getFileAttachmentId().equals(fileAttachmentDtoBean.getId()) && !fileDetailDtoBean.getHasImport()){
                              fileAttachmentDtoBean.getFileDetailDtoFailedList().add(fileDetailDtoBean);
                          }
                     }

@@ -41,7 +41,7 @@ public interface FolderService {
     /**
      * 进行固定数据补全
      */
-    void doFixedDefinedComplete(Long userId, Map<Long, Set<Long>> caseId2TemplateGroupIdsMap, List<Error> errorList);
+    void doFixedDefinedComplete(Long userId, Map<Long, Set<Long>> caseId2TemplateGroupIdsMap, List<Error> errorList) throws InterruptedException;
 
     int test();
 }

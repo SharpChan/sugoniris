@@ -21,13 +21,13 @@ public class Data2MppController {
     private static final String FAILED = "FAILED";
 
     @RequestMapping("/uploadFile")
-    public RestResult<Void> uploadFile(@RequestParam(name="userId",required = true) Long userId,@RequestParam(name="fileAttachmentId",required = true) Long fileAttachmentId) throws Exception {
+    public RestResult<List<Long>> uploadFile(@RequestParam(name="userId",required = true) Long userId,@RequestParam(name="fileAttachmentId",required = true) Long fileAttachmentId) throws Exception {
 
-        RestResult<Void> restResult = new RestResult();
+        RestResult<List<Long>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
 
         try {
-            fileParsingServiceImpl.fileParsing(userId,fileAttachmentId,errorList);
+            restResult.setObj( fileParsingServiceImpl.fileParsing(userId,fileAttachmentId,errorList));
         }catch(Exception e){
             e.printStackTrace();
         }

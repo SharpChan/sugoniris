@@ -47,7 +47,7 @@ public class FileFieldCompleteServiceImpl implements FileFieldCompleteService {
                       String[] arry = str.split("\\+\\+");
                       //通过id查字段信息
                     String dest = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(Long.parseLong(arry[0])).getFieldKey();
-                    String source = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(Long.parseLong(arry[0])).getFieldKey();
+                    String source = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(Long.parseLong(arry[1])).getFieldKey();
                     showRelation += dest+"++"+source+"--";
                 }
                 fileFieldCompleteDto.setShowRelation(showRelation);

@@ -12,24 +12,28 @@ import com.sugon.iris.sugondata.mybaties.mapper.db4.MppMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.fileBeans.FileInfoBean;
-import com.sugon.iris.sugondomain.beans.fileBeans.FileTemplateBean;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.declarDtos.DeclarationDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileAttachmentDto;
-import com.sugon.iris.sugondomain.dtos.fileDtos.FileDetailDto;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseDetailDto;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
+import com.sugon.iris.sugondomain.dtos.regularDtos.RegularDetailDto;
+import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessRepeatDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.*;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.MppErrorInfoEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugondomain.enums.FileType_Enum;
 import com.sugon.iris.sugondomain.enums.Peripheral_Enum;
+import com.sugon.iris.sugonservice.service.fileService.FileDoParsingService;
 import com.sugon.iris.sugonservice.service.fileService.FolderService;
 import com.sugon.iris.sugonservice.service.declarService.DeclarService;
-import io.swagger.models.auth.In;
+import com.sugon.iris.sugonservice.service.rinseBusinessService.RinseBusinessService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.validator.constraints.pl.REGON;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -44,8 +48,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.regex.Pattern;
 import com.jcraft.jsch.Session;
 
@@ -104,6 +107,21 @@ public class FolderServiceImpl implements FolderService {
     @Resource
     private FileTemplateGroupMapper fileTemplateGroupMapper;
 
+    @Resource
+    private RinseBusinessService rinseBusinessServiceImpl;
+
+    @Resource
+    private FileDoParsingService fileDoParsingServiceImpl;
+
+    @Resource
+    private FileRinseDetailMapper fileRinseDetailMapper;
+
+    @Resource
+    private FileRinseRegularMapper fileRinseRegularMapper;
+
+    @Resource
+    private RegularDetailMapper regularDetailMapper;
+
 
 
     @Override
@@ -131,7 +149,7 @@ public class FolderServiceImpl implements FolderService {
 
     //如果是压缩文件则进行解压
     @Override
-    public void decompress(User user,String[] selectedArr,List<Error> errorList)  {
+    public void decompress(User user,String[] selectedArr,List<Error> errorList) throws InterruptedException, IllegalAccessException {
         List<FileAttachmentEntity> fileAttachmentEntityListAll = new ArrayList<>();
         for(String id : selectedArr) {
             FileAttachmentEntity fleAttachmentEntity = new FileAttachmentEntity();
@@ -164,6 +182,10 @@ public class FolderServiceImpl implements FolderService {
         }catch (Exception e){
             errorList.add(new Error(ErrorCode_Enum.SUGON_SSH_001.getCode(),ErrorCode_Enum.SUGON_SSH_001.getMessage()));
         }
+
+        //存放解析文件的文件编号
+        List<Long>  fileIdList = new ArrayList<>();
+
         //linux系统
         if(!"1".equals(PublicUtils.getConfigMap().get("environment"))) {
             SSHServiceBs  sSHServiceBs = new SSHServiceBs(session);
@@ -173,7 +195,7 @@ public class FolderServiceImpl implements FolderService {
                         //linux解压文件
                         linuxUncompress(sSHServiceBs, fileAttachmentEntity);
                         //调用远程文件解析服务进行文件读取
-                        readData(user, errorList, fileAttachmentEntity);
+                        fileIdList = readData(user, errorList, fileAttachmentEntity);
                     }
                 }
             }catch (Exception e){
@@ -197,7 +219,7 @@ public class FolderServiceImpl implements FolderService {
                       //windows解压文件
                       windowsUncompress(fileAttachmentEntity);
                       //调用远程文件解析服务进行文件读取
-                      readData(user, errorList, fileAttachmentEntity);
+                      fileIdList = readData(user, errorList, fileAttachmentEntity);
                   }
               }
           }catch (Exception e){
@@ -207,7 +229,9 @@ public class FolderServiceImpl implements FolderService {
 
         //通过fileAttachmentEntityListAll组装入参map【key:caseId;value:模板组id】
         Map<Long,Set<Long>> caseId2TemplateGroupIdsMap = new HashMap<>();
+        Set<Long> caseIdSet = new HashSet<>();//获取所有的案件编号
         for(FileAttachmentEntity fileAttachmentEntity : fileAttachmentEntityListAll){
+            caseIdSet.add(fileAttachmentEntity.getCaseId());
             Set<Long> templateGroupIdList = caseId2TemplateGroupIdsMap.get(fileAttachmentEntity.getCaseId());
             if(CollectionUtils.isEmpty(templateGroupIdList)){
                 Set<Long>  templateGroupIdListNew = new HashSet<>();
@@ -219,6 +243,181 @@ public class FolderServiceImpl implements FolderService {
         }
         //进行固定补全
         this.doFixedDefinedComplete(user.getId(),caseId2TemplateGroupIdsMap,errorList);
+
+        //进行去重
+        this.doRemoveRepeat(caseIdSet,errorList);
+
+        //进行补全字段的正则校验
+        this.regularCompleteField(user.getId(),fileIdList,errorList);
+    }
+
+
+    private void regularCompleteField(Long userId,List<Long> fileIdList, List<Error> errorList) throws IllegalAccessException {
+
+        //校验不通过列表,存入mysql
+        List<FileParsingFailedEntity> fileParsingFailedEntityListSql = new ArrayList<>();
+
+        //存入mpp
+        List<MppErrorInfoEntity> mppErrorInfoEntityList = new ArrayList<>();
+
+            //通过文件id找出模板
+            for(Long fileId : fileIdList){
+                //获取文件信息
+                FileDetailEntity fileDetailEntity = fileDetailMapper.selectByPrimaryKey(fileId);
+                if(null == fileDetailEntity){
+                    continue;
+                }
+                //获取原始文件信息
+                FileAttachmentEntity fileAttachmentEntity = fileAttachmentMapper.selectFileAttachmentByPrimaryKey(fileDetailEntity.getFileAttachmentId());
+                //通过原始文件信息获取可配置补全信息
+                List<FileFieldCompleteEntity> fileFieldCompleteEntityList =   fileFieldCompleteMapper.selectFileFieldCompleteByTemplateGroupId(fileAttachmentEntity.getTemplateGroupId());
+                //获取补全字段和模板的对应关系，当前文件对应模板的可配置补全信息
+                Map<Long,FileTemplateEntity>  destField2Template = new HashMap<>();//放入map可以去重
+                for(FileFieldCompleteEntity fileFieldCompleteEntityBean : fileFieldCompleteEntityList){
+                    if(fileFieldCompleteEntityBean.getDestFileTemplateId() != fileDetailEntity.getFileTemplateId()){
+                         continue;
+                    }
+                    //通过查询字段名称
+                    FileTemplateEntity fileTemplateEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(fileFieldCompleteEntityBean.getDestFileTemplateId());
+
+                    destField2Template.put(fileFieldCompleteEntityBean.getFieldDest(), fileTemplateEntity);
+                }
+                if(CollectionUtils.isEmpty(destField2Template)){
+                   continue;
+                }
+
+                for(Map.Entry<Long,FileTemplateEntity> entry : destField2Template.entrySet()){
+                    //通过字段id，获取该字段的校验关系
+                    FileTemplateDetailEntity fileTemplateDetailEntity =  fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(entry.getKey());
+                    //获取清洗字段
+                    FileRinseDetailEntity fileRinseDetailEntity = fileRinseDetailMapper.selectByPrimaryKey(fileTemplateDetailEntity.getFileRinseDetailId());
+                    if(null == fileRinseDetailEntity || null == fileRinseDetailEntity.getId()){
+                        continue;
+                    }
+                    FileRinseDetailDto fileRinseDetailDto = new FileRinseDetailDto();
+                    PublicUtils.trans(fileRinseDetailEntity,fileRinseDetailDto);
+                    //获取正则表达式
+                    List<RegularDetailDto>  regularDetailDtoListY = new ArrayList<>();
+                    List<RegularDetailDto>  regularDetailDtoListN = new ArrayList<>();
+                    //获取正则表达式
+                    //获取清洗字段与正则表达式的对应关系
+                    List<FileRinseRegularEntity> fileRinseRegularEntityList = fileRinseRegularMapper.selectByFileRinseDetailId(fileRinseDetailEntity.getId());
+
+                    if(!CollectionUtils.isEmpty(fileRinseRegularEntityList)) {
+                        for (FileRinseRegularEntity fileRinseRegularEntity : fileRinseRegularEntityList) {
+                            if ("1".equals(fileRinseRegularEntity.getType())) {
+                                RegularDetailEntity regularDetailEntityY = regularDetailMapper.selectByPrimaryKey(fileRinseRegularEntity.getRegularDetailId());
+                                RegularDetailDto regularDetailDtoY = new RegularDetailDto();
+                                PublicUtils.trans(regularDetailEntityY, regularDetailDtoY);
+                                regularDetailDtoListY.add(regularDetailDtoY);
+                            }
+                            if ("2".equals(fileRinseRegularEntity.getType())) {
+                                RegularDetailEntity regularDetailEntityN = regularDetailMapper.selectByPrimaryKey(fileRinseRegularEntity.getRegularDetailId());
+                                RegularDetailDto regularDetailDtoN = new RegularDetailDto();
+                                PublicUtils.trans(regularDetailEntityN, regularDetailDtoN);
+                                regularDetailDtoListY.add(regularDetailDtoN);
+                            }
+                        }
+                    }
+
+                    String sql = "select id from " + fileDetailEntity.getTableName() +" where file_detail_id = "+fileId ;
+                    boolean flag = true;
+                    if(!CollectionUtils.isEmpty(regularDetailDtoListY)) {
+                        sql +=" and (";
+                        for (int i = 0; i < regularDetailDtoListY.size();i++) {
+                            if(i != regularDetailDtoListY.size()-1) {
+                                sql += fileTemplateDetailEntity.getFieldName() + " !~ '" + regularDetailDtoListY.get(i).getRegularValue() + "') and ('";
+                            }else{
+                                sql += fileTemplateDetailEntity.getFieldName() + " !~ '" + regularDetailDtoListY.get(i).getRegularValue()+"'";
+                            }
+                        }
+                        sql +=") ";
+                        flag = false;
+                    }
+
+                    if(!CollectionUtils.isEmpty(regularDetailDtoListN)) {
+                        sql +=" or (";
+                        for (int i = 0; i < regularDetailDtoListN.size(); i++) {
+                            if (i != regularDetailDtoListY.size() - 1) {
+                                sql += fileTemplateDetailEntity.getFieldName() + " ~ '" + regularDetailDtoListY.get(i).getRegularValue() + "') or ('";
+                            } else {
+                                sql += fileTemplateDetailEntity.getFieldName() + " ~ '" + regularDetailDtoListY.get(i).getRegularValue()+"'";
+                            }
+                        }
+                        sql += ")";
+                        flag = false;
+                    }
+
+                    if(flag){
+                        continue;
+                    }
+
+                    List<Long> idList =    mppMapper.mppSqlExecForSearchResInteger(sql);
+                    //错误信息入库
+                    for(Long id : idList){
+                        Long seq = mppErrorInfoMapper.selectErrorSeq();
+                        FileParsingFailedEntity fileParsingFailedEntitySql = new FileParsingFailedEntity();
+                        fileParsingFailedEntitySql.setRowNumber("补全字段");
+                        fileParsingFailedEntitySql.setFileDetailId(fileId);
+                        fileParsingFailedEntitySql.setFileTemplateId(entry.getValue().getId());
+                        fileParsingFailedEntitySql.setFileTemplateDetailId(entry.getKey());
+                        fileParsingFailedEntitySql.setContent("补全字段");
+                        fileParsingFailedEntitySql.setCaseId(fileDetailEntity.getCaseId());
+                        //mpp表名是唯一的
+                        fileParsingFailedEntitySql.setTableName(fileDetailEntity.getTableName());
+                        fileParsingFailedEntitySql.setMark(false);
+                        fileParsingFailedEntitySql.setMppId2ErrorId(seq);
+                        fileParsingFailedEntitySql.setFileAttachmentId(fileDetailEntity.getFileAttachmentId());
+                        fileParsingFailedEntitySql.setUserId(userId);
+                        fileParsingFailedEntityListSql.add(fileParsingFailedEntitySql);
+
+                        MppErrorInfoEntity mppErrorInfoEntity = new MppErrorInfoEntity();
+                        mppErrorInfoEntity.setFileAttachmentId(fileDetailEntity.getFileAttachmentId());
+                        mppErrorInfoEntity.setFileDetailId(fileId);
+                        mppErrorInfoEntity.setFileRinseDetailId(fileRinseDetailDto.getId());
+                        mppErrorInfoEntity.setMppid2errorid(seq);
+                        mppErrorInfoEntity.setFileCaseId(fileDetailEntity.getCaseId());
+                        mppErrorInfoEntity.setMppTableName(fileDetailEntity.getTableName());
+                        mppErrorInfoEntityList.add(mppErrorInfoEntity);
+                    }
+
+                }
+            }
+            if(!CollectionUtils.isEmpty(fileParsingFailedEntityListSql)) {
+                fileDoParsingServiceImpl.dealWithfailed(fileParsingFailedEntityListSql,mppErrorInfoEntityList);
+            }
+    }
+
+    //进行去重
+    private void doRemoveRepeat( Set<Long> caseIdSet, List<Error> errorList) throws IllegalAccessException {
+
+        //放入子线程中删除
+        List<Long> mppid2erroridDeleteList = new ArrayList<>();
+
+        for (Long caseId : caseIdSet) {
+            //获取该案件下所有的表
+            FileTableEntity fileTableEntity4Sql = new FileTableEntity();
+            fileTableEntity4Sql.setCaseId(caseId);
+            List<FileTableEntity> fileTableEntityList =  fileTableMapper.findFileTableList(fileTableEntity4Sql);
+            for(FileTableEntity fileTableEntityBean : fileTableEntityList){
+                   //通过表获取模板
+                FileTemplateEntity fileTemplateEntity =  fileTemplateMapper.selectFileTemplateByPrimaryKey(fileTableEntityBean.getFileTemplateId());
+
+                //通过模板获取去重配置
+                List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList = rinseBusinessServiceImpl.getRepetBussList(fileTemplateEntity.getId(),errorList);
+                if(CollectionUtils.isEmpty(rinseBusinessRepeatDtoList)){
+                    continue;
+                }
+
+                String repeatSql = "select c.* from (select a.*  from " +
+                        "(select row_number() OVER(PARTITION BY _&condition&_   order by mppid2errorid) AS rownum,b.* " +
+                        "  from "+fileTableEntityBean.getTableName()+" b ) a ) c where rownum > 1";
+
+                fileDoParsingServiceImpl.doRepeat(fileTableEntityBean.getId(),fileTableEntityBean.getTableName(),rinseBusinessRepeatDtoList,mppid2erroridDeleteList,repeatSql);
+            }
+        }
+
+        fileDoParsingServiceImpl.deleteMysql(mppid2erroridDeleteList);
     }
 
     /**
@@ -227,10 +426,8 @@ public class FolderServiceImpl implements FolderService {
      * @param  caseId2TemplateGroupIdsMap  key:caseId;value:模板组id
      */
     @Override
-    public void doFixedDefinedComplete(Long userId, Map<Long,Set<Long>> caseId2TemplateGroupIdsMap, List<Error> errorList) {
+    public void doFixedDefinedComplete(Long userId, Map<Long,Set<Long>> caseId2TemplateGroupIdsMap, List<Error> errorList) throws InterruptedException {
            for (Map.Entry<Long, Set<Long>> entry : caseId2TemplateGroupIdsMap.entrySet()) {
-               //mpp  error_info 进行统一删除
-               List<String> mppid2erroridList = new ArrayList<>();
                Long caseId = entry.getKey();
                List<String> tableNames = getTableNames(caseId);
 
@@ -280,10 +477,18 @@ public class FolderServiceImpl implements FolderService {
 
                        //查询出需要补全的数据
                        for (String strSource : fieldSourceFieldNameList) {
-                           String sql_01 = "select id ,mppid2errorid,"+sourceFields[3] +fieldDestFieldName +" from "+destTable +" where "+fieldDestFieldName +"=''";
-                           //需要补全的数据
-                           List<Map<String,Object>> list = mppMapper.mppSqlExecForSearchRtMapList(sql_01);
-                           for(Map map : list){
+                           String sql_01 = "select distinct " + sourceFields[3]  + " from " + destTable + " where " + fieldDestFieldName + "=''";
+                           //需要补全的数据   //进行批量补全
+                           List<Map<String, Object>> list = mppMapper.mppSqlExecForSearchRtMapList(sql_01);
+                           //有执行先后顺序要求，无法并发执行
+                           for(Map<String, Object> map : list){
+                               //对map进行遍历获取where条件
+                               String whereStr = "";
+                               for(Map.Entry<String, Object> entry_02 : map.entrySet()){
+                                   whereStr += entry_02.getKey()+" = '"+entry_02.getValue()+"'"+" and ";
+                               }
+                               whereStr = whereStr + fieldDestFieldName +"=''";
+
                                //获得查询源表的条件
                                String condi = "";
                                for(int i = 0;i<sourceList.size();i++){
@@ -308,34 +513,19 @@ public class FolderServiceImpl implements FolderService {
                                String sql_02 = "select count( distinct "+strSource+") from "+sourceTable  +" where "+condi+" and "+strSource+"!=''";
                                Integer resCount = mppMapper.mppSqlExecForSearchCount(sql_02);
                                if(resCount >1 || resCount == 0){
-                                    continue;
+                                   continue;
                                }
                                //获取源数据
                                String sql_03 = "select  distinct "+strSource+" from "+sourceTable  +" where "+condi+" and "+strSource+"!=''";
                                List<Map<String,Object>> listSource = mppMapper.mppSqlExecForSearchRtMapList(sql_03);
                                //进行数据补全
-                               String updateSQL = "Update "+destTable+" set "+fieldDestFieldName+"= '"+listSource.get(0).get(strSource)+"' where id = " +map.get("id");
+                               String updateSQL = "Update "+destTable+" set "+fieldDestFieldName+"= '"+listSource.get(0).get(strSource)+"' where "+whereStr;
                                mppMapper.mppSqlExec(updateSQL);
-                               //通过字段id和mppid2errorid把表file_parsing_failed对应数据删除
-                               String mppid2errorid = map.get("mppid2errorid").toString();
-                               if("0".equals(mppid2errorid)){
-                                  continue;
-                               }
-                               List<FileParsingFailedEntity> fileParsingFailedEntityList_01 = getFileParsingFailedEntities(fieldDest, mppid2errorid);
-                               if(!CollectionUtils.isEmpty(fileParsingFailedEntityList_01)) {
-                                   fileParsingFailedMapper.deleteFileParsingFailedByMppid2erroridAndFileField(Long.parseLong(mppid2errorid), fieldDest);
-                               }
-                               //查看file_parsing_failed对应的表 相应的mppid2errorid 数据是否都已经删除，删除的话，把mpp error_info对应的数据删除
-                               FileParsingFailedEntity fileParsingFailedEntity = new FileParsingFailedEntity();
-                               fileParsingFailedEntity.setMppId2ErrorId(Long.parseLong(mppid2errorid));
-                               List<FileParsingFailedEntity> fileParsingFailedEntityList_02 = fileParsingFailedMapper.selectFileParsingFailedList(fileParsingFailedEntity);
-                               if(CollectionUtils.isEmpty(fileParsingFailedEntityList_02)){
-                                   mppid2erroridList.add(mppid2errorid);
-                               }
                            }
                        }
                    }
                }
+               /*导入时补全字段不做正则判断，所以注销
                if(!CollectionUtils.isEmpty(mppid2erroridList)){
                    //删除错误记录信息表
                    ExecutorService fileParsingFailedInsert = Executors.newFixedThreadPool(mppid2erroridList.size() / 1000 + 1);
@@ -358,9 +548,15 @@ public class FolderServiceImpl implements FolderService {
                            mppid2erroridListPackage = new ArrayList<>();
                        }
                    }
-               }
+               }*/
            }
        }
+
+   private void mppSqlExec (String tableName,String sql){
+       synchronized(tableName) {
+           mppMapper.mppSqlExec(sql);
+       }
+   }
 
     private List<String> getTableNames(Long caseId) {
         //获取该案件下的所有Mpp表名
@@ -453,7 +649,7 @@ public class FolderServiceImpl implements FolderService {
         //源放非空判断
         String sourceFields3 = "";
 
-        //目标查询字段
+        //目标关联查询字段
         String sourceFields4 = "";
         for(String str : fieldRelationArr){
             String[] fieldArr = str.split("\\+\\+");
@@ -472,7 +668,7 @@ public class FolderServiceImpl implements FolderService {
         sourceFields[0] = sourceFields1;
         sourceFields[1] = sourceFields2;
         sourceFields[2] = sourceFields3;
-        sourceFields[3] = sourceFields4;
+        sourceFields[3] = sourceFields4.substring(0,sourceFields4.lastIndexOf(","));
         return sourceFields;
     }
 
@@ -527,7 +723,7 @@ public class FolderServiceImpl implements FolderService {
         });
     }
 
-    private void readData(User user, List<Error> errorList, FileAttachmentEntity fileAttachmentEntity) {
+    private List<Long> readData(User user, List<Error> errorList, FileAttachmentEntity fileAttachmentEntity) {
         //远程调用进行数据同步
         //获取远程调用路径
         String url = null;
@@ -548,14 +744,15 @@ public class FolderServiceImpl implements FolderService {
         String resultRemote= restTemplate.postForEntity(url, httpEntity, String.class).getBody();
 
         Gson gson = new Gson();
-        RestResult<Void> response = gson.fromJson(resultRemote, new TypeToken<RestResult<Void>>(){}.getType());
-
+        RestResult<List<Long>> response = gson.fromJson(resultRemote, new TypeToken<RestResult<List<Long>>>(){}.getType());
+        List<Long> fileIdList = response.getObj();
         if(!CollectionUtils.isEmpty(response.getErrorList())){
             errorList.addAll(response.getErrorList());
         }
         //修改数据同步状态
         fileAttachmentEntity.setHasImport(true);
         fileAttachmentMapper.updateFileAttachment(fileAttachmentEntity);
+        return fileIdList;
     }
 
     //linux下解压文件

@@ -2,6 +2,7 @@ package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileDetailMapper;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.FileFieldCompleteMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileParsingFailedMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateDetailMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppErrorInfoMapper;
@@ -15,6 +16,7 @@ import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.dtos.regularDtos.RegularDetailDto;
 import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.*;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileFieldCompleteEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileParsingFailedEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.MppErrorInfoEntity;
@@ -67,6 +69,9 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
     @Resource
     private FileTemplateDetailMapper fileTemplateDetailMapper;
 
+    @Resource
+    private FileFieldCompleteMapper fileFieldCompleteMapper;
+
     /**
      *
      * @param caeId : 案件编号
@@ -81,8 +86,11 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
     @Override
     public void doParsingCsv(Long userId,Long caeId, FileTemplateDto fileTemplateDto, File file, Object[] tableInfos,
                              String insertSql,Map<Long, FileRinseDetailDto>  regularMap, Long fileSeq, Long fileAttachmentId,List<Error> errorList) throws IOException {
+        try {
+            //获取模板的目标补全字段
+      Set<Long> fieldDestList = getFieldDestList(fileTemplateDto);
 
-  try {
+
       String fileType = "csv";
       //数据总数
       Integer rowCount = 0;
@@ -145,7 +153,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                   List<RegularDetailDto> regularDetailDtoListY = null;
                   //任意一个进行排除
                   List<RegularDetailDto> regularDetailDtoListN = null;
-                  if (null != fileRinseDetailDto) {
+                  if (null != fileRinseDetailDto && !fieldDestList.contains(entry.getKey())) {//如果是补全配置的 目标 字段，则不在这里进行正则校验
 
                       regularDetailDtoListY = fileRinseDetailDto.getRegularDetailDtoListY();
 
@@ -276,6 +284,20 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         errorList.add(new Error(ErrorCode_Enum.FILE_01_016.getCode(), ErrorCode_Enum.FILE_01_016.getMessage(),e.toString()));
         e.printStackTrace();
      }
+    }
+
+    private Set<Long> getFieldDestList(FileTemplateDto fileTemplateDto) {
+        //通过模板，获取补全目标取值字段
+        Set<Long>  fieldDestList = new HashSet<>();//目标字段集合
+        FileFieldCompleteEntity fileFieldCompleteEntity4Sql = new FileFieldCompleteEntity();
+        fileFieldCompleteEntity4Sql.setDestFileTemplateId(fileTemplateDto.getId());
+        List<FileFieldCompleteEntity> fileFieldCompleteEntityList = fileFieldCompleteMapper.selectFileFieldCompleteList(fileFieldCompleteEntity4Sql);
+        if(!CollectionUtils.isEmpty(fileFieldCompleteEntityList)){
+            for(FileFieldCompleteEntity fileFieldCompleteEntityBean : fileFieldCompleteEntityList){
+                fieldDestList.add(fileFieldCompleteEntityBean.getFieldDest());
+            }
+        }
+        return fieldDestList;
     }
 
     private boolean checkFieldSize(Long userId, Long caeId, FileTemplateDto fileTemplateDto, File file, Object[] tableInfos, Long fileSeq, Long fileAttachmentId, List<Error> errorList, String fileType, Map<Long, Integer> feildRefIndexMap, List<CsvRow> rows) {
@@ -493,7 +515,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
     public void doRinse(FileTemplateDto fileTemplateDto, Object[] tableInfos , Long fileSeq , List<Error> errorList) throws IllegalAccessException {
         //通过模板id获取清洗信息
         List<RinseBusinessNullDto> rinseBusinessNullDtoList = rinseBusinessServiceImpl.getNullBussList(fileTemplateDto.getId(),errorList);
-        List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList = rinseBusinessServiceImpl.getRepetBussList(fileTemplateDto.getId(),errorList);
+        //List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList = rinseBusinessServiceImpl.getRepetBussList(fileTemplateDto.getId(),errorList);
         List<RinseBusinessReplaceDto> rinseBusinessReplaceDtoList = rinseBusinessServiceImpl.getReplaceBussList(fileTemplateDto.getId(),errorList);
         List<RinseBusinessSuffixDto>  rinseBusinessSuffixDtoList = rinseBusinessServiceImpl.getSuffixBussList(fileTemplateDto.getId(),errorList);
         List<RinseBusinessPrefixDto>  rinseBusinessPrefixDtoList = rinseBusinessServiceImpl.getPrefixBussList(fileTemplateDto.getId(),errorList);
@@ -520,21 +542,13 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
               }
         }
 
-        /**
-         * 去重
-         */
-        //通过校验部分去重
+        //整表去重
         /*
         String repeatSql = "select c.* from (select a.*  from " +
                 "(select row_number() OVER(PARTITION BY _&condition&_   order by mppid2errorid) AS rownum,b.* " +
-                "  from "+tableInfos[0]+" b  where file_detail_id = "+fileSeq+" ) a ) c where rownum > 1";
-        */
-        //整表去重
-        String repeatSql = "select c.* from (select a.*  from " +
-                "(select row_number() OVER(PARTITION BY _&condition&_   order by mppid2errorid) AS rownum,b.* " +
                 "  from "+tableInfos[0]+" b ) a ) c where rownum > 1";
-        doRepeat(fileTemplateDto, tableInfos, rinseBusinessRepeatDtoList, mppid2erroridDeleteList, repeatSql);
-
+        doRepeat(fileTemplateDto.getId(), tableInfos[0].toString(), rinseBusinessRepeatDtoList, mppid2erroridDeleteList, repeatSql);
+        */
         /**
          * 字段关键字进行替换
          */
@@ -596,14 +610,14 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         });
     }
 
-    public void doRepeat(FileTemplateDto fileTemplateDto, Object[] tableInfos, List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList, List<Long> mppid2erroridDeleteList, String repeatSql) {
+    public void doRepeat(Long fileTemplateid, String tableName, List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList, List<Long> mppid2erroridDeleteList, String repeatSql) {
         String repeatCondition = "";
         if(!CollectionUtils.isEmpty(rinseBusinessRepeatDtoList)){
             //组装orderBy排序部分
             //通过模板id获取所有的字段，把有清洗字段id的保留，用于组装
             List<FileTemplateDetailEntity> fileTemplateDetailEntityHasRinseList = new ArrayList<>();
             FileTemplateDetailEntity fileTemplateDetailEntity4Sql = new FileTemplateDetailEntity();
-            fileTemplateDetailEntity4Sql.setTemplateId(fileTemplateDto.getId());
+            fileTemplateDetailEntity4Sql.setTemplateId(fileTemplateid);
             List<FileTemplateDetailEntity> fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntity4Sql);
             for(FileTemplateDetailEntity fileTemplateDetailEntity : fileTemplateDetailEntityList){
                if(null != fileTemplateDetailEntity.getFileRinseDetailId()){
@@ -632,7 +646,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     for(Map map : mapList) {
                         String idStr = map.get("id")+"";
                         Long id = Long.parseLong(idStr);
-                        String deleteSql = "DELETE FROM "+tableInfos[0]+" WHERE id = "+id;
+                        String deleteSql = "DELETE FROM "+tableName+" WHERE id = "+id;
                         mppMapper.mppSqlExec(deleteSql);
                         Long mppid2errorid = (Long)map.get("mppid2errorid");
                         if(null != mppid2errorid && mppid2errorid != 0){
@@ -653,12 +667,13 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                 }
 
                 //文件信息表减去  通过正则校验的数量
+                /*
                 for(Map.Entry<String,Integer> entry : fileDetailRowCountReduceMap.entrySet()){
                     //通过file_detail_id 获取文件信息
                     FileDetailEntity fileDetailEntity = fileDetailMapper.selectByPrimaryKey(Long.parseLong(entry.getKey()));
                     fileDetailEntity.setImportRowCount(fileDetailEntity.getImportRowCount()-entry.getValue());
                     fileDetailMapper.updateByPrimaryKey(fileDetailEntity);
-                }
+                }*/
 
             }
         }
@@ -707,7 +722,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         fileDetailMapper.fileDetailInsert(fileDetailEntityfSql);
     }
 
-    private void dealWithfailed(List<FileParsingFailedEntity> fileParsingFailedEntityListSql, List<MppErrorInfoEntity> mppErrorInfoEntityList) {
+    public void dealWithfailed(List<FileParsingFailedEntity> fileParsingFailedEntityListSql, List<MppErrorInfoEntity> mppErrorInfoEntityList) {
         ExecutorService fileParsingFailedInsert = Executors.newFixedThreadPool(5);
         List<Callable<Integer>> cList = new ArrayList<>();  //定义添加线程的集合
         Callable<Integer> task = null;  //创建单个线程
@@ -729,7 +744,6 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                        fileParsingFailedMapper.fileParsingFailedInsert(vector);
                     }
                 });
-
             }
         }
 
@@ -754,26 +768,26 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         }
     }
 
-    //获取csv和排序字段的对应关系
+    //获取csv、excel和排序字段的对应关系
     private boolean getFeildRefIndex(List<FileTemplateDetailDto> fileTemplateDetailDtoList, Map<Long, Integer> feildRefIndex, List<String> headList) {
         boolean result = false;
         if(!CollectionUtils.isEmpty(fileTemplateDetailDtoList) && !CollectionUtils.isEmpty(headList) ){
-            for(FileTemplateDetailDto feild : fileTemplateDetailDtoList){
-                feildRefIndex.put(feild.getId(),null);//没有对应的表头也要保留到map中，为insertsql保留所有字段
+            for(int j =0;j< fileTemplateDetailDtoList.size();j++){
+                feildRefIndex.put(fileTemplateDetailDtoList.get(j).getId(),null);//没有对应的表头也要保留到map中，为insertsql保留所有字段
                 String[] excludeList = null;
                 String[] keyList = null;
-                if(StringUtils.isNotEmpty(feild.getExclude())) {
-                    excludeList = feild.getExclude().split("&&");
+                if(StringUtils.isNotEmpty(fileTemplateDetailDtoList.get(j).getExclude())) {
+                    excludeList = fileTemplateDetailDtoList.get(j).getExclude().split("&&");
                 }
-                if(StringUtils.isNotEmpty(feild.getFieldKey())) {
-                    keyList = feild.getFieldKey().split("&&");
+                if(StringUtils.isNotEmpty(fileTemplateDetailDtoList.get(j).getFieldKey())) {
+                    keyList = fileTemplateDetailDtoList.get(j).getFieldKey().split("&&");
                 }
-                 for(int i=0;i<headList.size();i++){
+                goto_for: for(int i=0;i<headList.size();i++){
                     //关键字排除
                     if(null != excludeList && excludeList.length>0 ){
                         for(String exclude:excludeList){
                             if(StringUtils.isNotEmpty(exclude) && headList.get(i).contains(exclude.trim())){
-                                continue;
+                                break  goto_for;
                             }
                         }
                     }
@@ -781,7 +795,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     if(null != keyList && keyList.length>0 ){
                         for(String key:keyList){
                             if(StringUtils.isNotEmpty(key) && headList.get(i).contains(key.trim())){
-                                feildRefIndex.put(feild.getId(),i);
+                                feildRefIndex.put(fileTemplateDetailDtoList.get(j).getId(),i);
                                 result = true;
                                 break ;
                             }
