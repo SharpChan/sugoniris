@@ -38,7 +38,7 @@ public class UserGroupDaoImpl implements UserGroupDao {
     public List<Long> getGroupUserIdList(Long userId,List<Error> errorList) {
         List<Long> userIdList = null;
         try{
-            String sql = "select user_id from sys_user_group_detail where user_group_id in " +
+            String sql = "select distinct user_id from sys_user_group_detail where user_group_id in " +
                     "(select user_group_id from sys_user_group_detail where user_id="+userId+")";
             userIdList = ds1JdbcTemplate.queryForList(sql, Long.class);
         }catch(Exception e){
