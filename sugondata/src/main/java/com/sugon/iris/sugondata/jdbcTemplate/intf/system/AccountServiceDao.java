@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface AccountServiceDao {
 
-    List<UserEntity> getUserEntitys (Long id,String email,String password,Integer flag, List<Error> errorList);
+    List<UserEntity> getUserEntitys (Long id,String userName,String password,Integer flag,String policeno, List<Error> errorList);
 
     List<UserEntity> getUserEntitysForCheck(String keyWord,Integer flag, List<Error> errorList);
 

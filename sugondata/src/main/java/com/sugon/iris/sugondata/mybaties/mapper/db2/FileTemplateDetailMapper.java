@@ -18,5 +18,5 @@ public interface FileTemplateDetailMapper {
 
     FileTemplateDetailEntity selectFileTemplateDetailByPrimary(Long id);
 
-   List<FileTemplateDetailEntity>  selectFileTemplateDetailByTemplateId(Long templateId);
+    List<FileTemplateDetailEntity>  selectFileTemplateDetailByTemplateId(Long templateId);
 }

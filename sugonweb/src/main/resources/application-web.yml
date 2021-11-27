@@ -21,6 +21,8 @@ spring:
       #uri: bolt://192.168.217.137:7687
       #username: neo4j
       #password: neo4j
+  application:
+    name: sogonWeb
 
 server:
   port: 8090

@@ -31,7 +31,7 @@ public class AccountServiceImpl implements AccountService {
       try {
           UserEntity user = new UserEntity();
           PublicUtils.trans(userDto, user);
-          List<UserEntity> userEntityList = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),null,null,errorList);
+          List<UserEntity> userEntityList = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),null,null,null,errorList);
           if(null != userEntityList && userEntityList.size()>0){
               errorList.add(new Error("{iris-00-001}","已经注册请直接登录！",""));
               return result;
@@ -45,12 +45,12 @@ public class AccountServiceImpl implements AccountService {
   }
 
     public User getUserInfo(UserDto userDto, List<Error> errorList) throws IllegalAccessException {
-        List<UserEntity> userEntityList_01 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),null,null,errorList);
+        List<UserEntity> userEntityList_01 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),null,null,null,errorList);
         if(CollectionUtils.isEmpty(userEntityList_01)){
             errorList.add(new Error(ErrorCode_Enum.SYS_02_000.getCode(),"请先注册账户",""));
             return null;
         }
-        List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),userDto.getPassword(),null,errorList);
+        List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),userDto.getPassword(),null,null,errorList);
         if(CollectionUtils.isEmpty(userEntityList_02)){
             errorList.add(new Error(ErrorCode_Enum.IRIS_00_003.getCode(),"邮箱或密码错误",""));
             return null;

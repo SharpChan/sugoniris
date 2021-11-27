@@ -4,6 +4,8 @@ spring:
     host: 192.168.217.142
     password: root
     port: 6379
+  application:
+    name: sogonFileRest
 
 server:
   port: 8668

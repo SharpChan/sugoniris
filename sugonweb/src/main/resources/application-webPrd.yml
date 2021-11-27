@@ -16,5 +16,7 @@ spring:
     multipart:
       max-file-size: 2048MB
       max-request-size: 4000MB
+  application:
+    name: sogonWeb
 server:
   port: 8090

@@ -31,7 +31,7 @@ public class AccountServiceDaoImpl implements AccountServiceDao {
         return this.ds1JdbcTemplate;
     }
 
-    public List<UserEntity> getUserEntitys (Long id,String userName,String password,Integer flag, List<Error> errorList){
+    public List<UserEntity> getUserEntitys (Long id,String userName,String password,Integer flag,String policeno, List<Error> errorList){
         List<UserEntity>  userEntityList = null;
         try{
             String sql = "select id,username,password,imageurl,createtime,updatetime,flag from sys_user where 1 = 1 ";
@@ -46,6 +46,9 @@ public class AccountServiceDaoImpl implements AccountServiceDao {
             }
             if(null != flag){
                 sql = sql+" and flag = "+flag+"";
+            }
+            if(!StringUtils.isEmpty(policeno)){
+                sql = sql+" and policeno = "+policeno+"";
             }
             userEntityList = ds1JdbcTemplate.query(sql,new BeanPropertyRowMapper<>(UserEntity.class));
         }catch(Exception e){

@@ -3,13 +3,15 @@ package com.sugon.iris.sugonlistener.common;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.configEntities.ConfigEntity;
 import com.sugon.iris.sugonservice.service.kafkaService.KafkaStartStopService;
+import com.sugon.iris.sugonservice.service.rocketMqService.DealWithCrawlerService;
+import lombok.SneakyThrows;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
-import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.client.consumer.listener.*;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,11 +31,20 @@ import java.util.List;
 @Configuration
 @EnableScheduling   // 2.开启定时任务
 public class CommonConfigurationListener implements ServletContextListener {
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private KafkaStartStopService kafkaStartStopService;
+
+    @Autowired
+    private DealWithCrawlerService dealWithCrawlerService;
+
+    @Value("${spring.application.name}")
+    private String appName ;
+
+
 
 
     @Override
@@ -79,7 +90,7 @@ public class CommonConfigurationListener implements ServletContextListener {
                    PublicUtils.rocketMqConsumer = null;
                }
             }
-            if("1".equals(PublicUtils.getConfigMap().get("rocketMq.consumer.onOff"))){//进行开启
+            if("1".equals(PublicUtils.getConfigMap().get("rocketMq.consumer.onOff")) && appName.equals("sogonFileRest")){//进行开启
                 if(PublicUtils.rocketMqConsumer == null ){//当前是关闭状态
                     String rocketMq_NameSvrAddr = PublicUtils.getConfigMap().get("rocketMq.NameSvrAddr");
 
@@ -101,23 +112,37 @@ public class CommonConfigurationListener implements ServletContextListener {
                     consumer.subscribe(topic, "*");
 
                     // 消费者端启动消息监听，一旦生产者发送消息被监听到，就打印消息，和rabbitmq中的handlerDelivery类似
+                    /*并发消费
                     consumer.registerMessageListener(new MessageListenerConcurrently() {
 
+                        @SneakyThrows
                         @Override
                         public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
                             for (MessageExt messageExt : msgs) {
                                 String topic = messageExt.getTopic();
                                 String tag = messageExt.getTags();
                                 String msg = new String(messageExt.getBody());
-                                System.out.println("*********************************");
-                                System.out.println("消费响应：msgId : " + messageExt.getMsgId() + ",  msgBody : " + msg + ", tag:" + tag + ", topic:" + topic);
-                                System.out.println("*********************************");
-
-
+                                //System.out.println("*********************************");
+                                //System.out.println("消费响应：msgId : " + messageExt.getMsgId() + ",  msgBody : " + msg + ", tag:" + tag + ", topic:" + topic);
+                                //System.out.println("*********************************");
+                                dealWithCrawlerService.dealWithBankData(msg);
                             }
                             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
                         }
                     });
+                    */
+
+                    consumer.registerMessageListener(new MessageListenerOrderly(){
+                           @SneakyThrows
+                           @Override
+                           public ConsumeOrderlyStatus consumeMessage(List<MessageExt> msgs, ConsumeOrderlyContext consumeOrderlyContext) {
+                               for(MessageExt messageExt : msgs){
+                                   String msg = new String(messageExt.getBody());
+                                   dealWithCrawlerService.dealWithBankData(msg);
+                               }
+                                   return ConsumeOrderlyStatus.SUCCESS;
+                             }
+                     });
                     PublicUtils.rocketMqConsumer = consumer;
                     consumer.start();
                 }
