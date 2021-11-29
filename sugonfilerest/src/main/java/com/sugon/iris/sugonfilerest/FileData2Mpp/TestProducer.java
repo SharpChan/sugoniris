@@ -15,7 +15,7 @@ import java.util.Map;
 public class TestProducer {
 
     public static void main(String[] args) throws MQClientException, UnsupportedEncodingException, InterruptedException {
-    // 需要一个producer group名字作为构造方法的参数，这里为producer1
+        // 需要一个producer group名字作为构造方法的参数，这里为producer1
         DefaultMQProducer producer = new DefaultMQProducer("producer1");
 
         // 设置NameServer地址,此处应改为实际NameServer地址，多个地址之间用；分隔
@@ -27,40 +27,69 @@ public class TestProducer {
         producer.setCreateTopicKey("AUTO_CREATE_TOPIC_KEY");
         producer.start();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1; i++) {
             try {
                 // topic 主题名称
                 // pull 临时值 在消费者消费的时候 可以根据msg类型进行消费
                 // body 内容
 
                 Map<String,Object> map = new HashMap<>();
-                String token = "32045406202111081541272021-11-26 18:11:30";
+                String token = "32045406202111081541272021-11-30 23:11:30";
                 map.put("token",token);
                 map.put("policeno","1234567");
 
-                List<Map<String,String>> list = new ArrayList<>();
-                Map<String,String> map3_1 = new HashMap<>();
-                map3_1.put("a1","b1");
-                map3_1.put("a2","b2");
-                map3_1.put("a3","b3");
-                list.add(map3_1);
-                Map<String,String> map3_2 = new HashMap<>();
-                map3_2.put("a1","b1");
-                map3_2.put("a2","b2");
-                map3_2.put("a3","b3");
-                list.add(map3_2);
-                Map<String,String> map3_3 = new HashMap<>();
-                map3_3.put("a1","b1");
-                map3_3.put("a2","b2");
-                map3_3.put("a3","b3");
-                list.add(map3_3);
+                List<Map<String,String>> list_01 = new ArrayList<>();
+                Map<String,String> map3_1_1 = new HashMap<>();
+                map3_1_1.put("khmc","张三");
+                map3_1_1.put("zzlx","身份证");
+                map3_1_1.put("lxdh","18761707610");
+                map3_1_1.put("zzh","320683198810192038");
+                list_01.add(map3_1_1);
+                Map<String,String> map3_1_2 = new HashMap<>();
+                map3_1_2.put("khmc","李四");
+                map3_1_2.put("zzlx","身份证");
+                map3_1_2.put("lxdh","18761707611");
+                map3_1_2.put("zzh","320683198810192039");
+                list_01.add(map3_1_2);
+                Map<String,String> map3_1_3 = new HashMap<>();
+                map3_1_3.put("khmc","王五");
+                map3_1_3.put("zzlx","身份证");
+                map3_1_3.put("lxdh","18761707612");
+                map3_1_3.put("zzh","320683198810192039");
+                list_01.add(map3_1_3);
 
-                Map<String ,List<Map<String,String>>> map2 = new HashMap();
-                map2.put("19",list);
-                map2.put("20",list);
-                map2.put("21",list);
 
-                map.put("3204540620211108154127",map2);
+                List<Map<String,String>> list_02 = new ArrayList<>();
+                Map<String,String> map3_2_1 = new HashMap<>();
+                map3_2_1.put("khmc","张三");
+                map3_2_1.put("zzlx","身份证");
+                map3_2_1.put("zzdz","aaaa");
+                map3_2_1.put("zzhm","320683198810192038");
+                list_02.add(map3_2_1);
+                Map<String,String> map3_2_2 = new HashMap<>();
+                map3_2_2.put("khmc","李四");
+                map3_2_2.put("zzlx","身份证");
+                map3_2_2.put("zzdz","bbbb");
+                map3_2_2.put("zzhm","320683198810192039");
+                list_02.add(map3_2_2);
+                Map<String,String> map3_2_3 = new HashMap<>();
+                map3_2_3.put("khmc","王五");
+                map3_2_3.put("zzlx","身份证");
+                map3_2_3.put("zzdz","cccc");
+                map3_2_3.put("zzhm","320683198810192039");
+                list_02.add(map3_2_3);
+
+                Map<String ,List<Map<String,String>>> map2_1 = new HashMap();
+                map2_1.put("19",list_01);
+
+                Map<String ,List<Map<String,String>>> map2_2 = new HashMap();
+                map2_2.put("20",list_02);
+
+                List<Map>  listAll = new ArrayList<>();
+                listAll.add(map2_1);
+                listAll.add(map2_2);
+
+                map.put("3204540620211108154127",listAll);
                 Gson gson = new Gson();
                 String mapJson =  gson.toJson(map);
 

@@ -102,7 +102,8 @@ public class CommonConfigurationListener implements ServletContextListener {
 
                     // 设置消费者组
                     DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(consumerGroup);
-
+                    //最大重试次数
+                    consumer.setMaxReconsumeTimes(0);
                     consumer.setVipChannelEnabled(false);
                     consumer.setNamesrvAddr(rocketMq_NameSvrAddr);
                     // 设置消费者端消息拉取策略，表示从哪里开始消费

@@ -12,7 +12,7 @@ import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 import org.springframework.context.annotation.Primary;
 
-@Configuration
+//@Configuration
 public class GaussConfig {
 
     @Primary

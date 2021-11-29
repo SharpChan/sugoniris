@@ -265,7 +265,7 @@ public class FileParsingServiceImpl implements FileParsingService {
 
          //进行外切http/websocket 数据清洗
          //通过caseId案件编号获取http/websocket地址
-         this.doUserDefinedRinse(fileAttachmentEntity.getCaseId(), userId, errorList);
+         //this.doUserDefinedRinse(fileAttachmentEntity.getCaseId(), userId, errorList);
 
          json = getString(100, String.valueOf(fileAttachmentId));
          WebSocketServer.sendInfo(json, String.valueOf(userId));
@@ -301,6 +301,9 @@ public class FileParsingServiceImpl implements FileParsingService {
     //进行自定义算法清洗
     public void doUserDefinedRinse(Long caseId, Long userId, List<Error> errorList) {
         FileCaseEntity fileCaseEntity =  fileCaseMapper.selectFileCaseByPrimaryKey(caseId);
+        if(null == fileCaseEntity){
+           return;
+        }
         String rinseUrl = fileCaseEntity.getRinseUrl();
         if(StringUtils.isEmpty(rinseUrl)){
             return;

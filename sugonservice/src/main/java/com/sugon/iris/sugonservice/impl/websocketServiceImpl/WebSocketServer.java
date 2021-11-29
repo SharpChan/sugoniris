@@ -100,7 +100,7 @@ public class WebSocketServer {
         if(StringUtils.isNotBlank(userId)&&webSocketMap.containsKey(userId)){
             webSocketMap.get(userId).sendMessage(message);
         }else{
-            log.error("用户"+userId+",不在线！");
+            //log.error("用户"+userId+",不在线！");
         }
     }
 

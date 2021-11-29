@@ -97,7 +97,7 @@ public class WebsocketRinseServer {
         if(StringUtils.isNotBlank(userId)&&webSocketMap.containsKey(userId)){
             webSocketMap.get(userId).sendMessage(message);
         }else{
-            LOGGER.error("用户"+userId+",不在线！");
+           // LOGGER.error("用户"+userId+",不在线！");
         }
     }
 

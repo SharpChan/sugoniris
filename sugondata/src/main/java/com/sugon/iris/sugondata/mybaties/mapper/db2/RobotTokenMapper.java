@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Update;
 public interface RobotTokenMapper {
 
     //插入
-    @Insert("insert into robot_token(token,date,case_id,policeno) values(#{token},#{date},#{caseId},#{policeno})")
+    @Insert("insert into robot_token(token,date,caseId,policeno) values(#{token},#{date},#{caseId},#{policeno})")
     public int insertRobotToken(RebotEntity rebotEntity);
 
     //通过id查询
@@ -19,8 +19,14 @@ public interface RobotTokenMapper {
     @Select("select * from robot_token where token = #{token}")
     public RebotEntity selectRobotTokenByToken(String token);
 
-    //修改
-    @Update("update robot_token set date =#{date} where token = #{token}")
-    public RebotEntity updateRobotTokenByToken(String  token);
+    //修改token
+    @Update("update robot_token set token =#{token} where token = #{token}")
+    public int updateRobotTokenByToken(String  token);
 
+    //修改时间
+    @Update("update robot_token set date =#{date},caseId = #{caseId} where token = #{token}")
+    public int updateRobotDateByToken(String  token,String date,Long caseId);
+
+    @Update("update robot_token set caseId = #{caseId} where token = #{token}")
+    public int updateRobotDateCaseIdByToken(String  token,Long caseId);
 }

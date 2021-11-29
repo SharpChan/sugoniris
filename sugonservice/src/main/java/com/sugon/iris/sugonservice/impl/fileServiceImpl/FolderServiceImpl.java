@@ -7,6 +7,7 @@ import com.sugon.iris.sugoncommon.fileUtils.ZipUtil;
 import com.sugon.iris.sugoncommon.publicUtils.PublicRuleUtils;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.*;
+import com.sugon.iris.sugondata.mybaties.mapper.db4.JymxMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppErrorInfoMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
@@ -16,11 +17,11 @@ import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.declarDtos.DeclarationDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileAttachmentDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileRinseDetailDto;
-import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
 import com.sugon.iris.sugondomain.dtos.regularDtos.RegularDetailDto;
 import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.RinseBusinessRepeatDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.*;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.MppErrorInfoEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.calculate.JymxEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugondomain.enums.FileType_Enum;
 import com.sugon.iris.sugondomain.enums.Peripheral_Enum;
@@ -33,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.validator.constraints.pl.REGON;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -47,8 +47,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.regex.Pattern;
 import com.jcraft.jsch.Session;
 
@@ -121,6 +121,9 @@ public class FolderServiceImpl implements FolderService {
 
     @Resource
     private RegularDetailMapper regularDetailMapper;
+
+    @Resource
+    private JymxMapper jymxMapper;
 
 
 
@@ -244,11 +247,130 @@ public class FolderServiceImpl implements FolderService {
         //进行固定补全
         this.doFixedDefinedComplete(user.getId(),caseId2TemplateGroupIdsMap,errorList);
 
+        //通过余额进行补全
+        this.doFixedCompleteByRemaining(caseIdSet,errorList);
+
         //进行去重
         this.doRemoveRepeat(caseIdSet,errorList);
 
         //进行补全字段的正则校验
         this.regularCompleteField(user.getId(),fileIdList,errorList);
+    }
+
+    private void doFixedCompleteByRemaining(Set<Long> caseIdSet,List<Error>  errorList){
+         for(Long caseId : caseIdSet){
+               //通过caseId获取所有的表
+             FileTableEntity fileTableEntity4Sql = new FileTableEntity();
+             fileTableEntity4Sql.setCaseId(caseId);
+             List<FileTableEntity> fileTableEntityList =  fileTableMapper.findFileTableList(fileTableEntity4Sql);
+             if(CollectionUtils.isEmpty(fileTableEntityList)){
+                    return;
+             }
+             String str =  PublicUtils.getConfigMap().get("bank_jymx_id");
+             if(StringUtils.isEmpty(str)){
+                 str = "21";
+             }
+             for(FileTableEntity fileTableEntity : fileTableEntityList){
+                 if(fileTableEntity.getFileTemplateId() == Long.parseLong(str.trim())){
+                        String tableName = fileTableEntity.getTableName();
+                        //获取卡号为空的账号
+                        List<String> jyzhList =  jymxMapper.selectJyzh(tableName);
+                        for(String jyzh : jyzhList) {
+
+                            //下面查询的数据排序编号一样
+                            //该账号下所有数据
+                            List<JymxEntity> jymxEntityListJyzhAll = jymxMapper.selectJymxMapperAllByJyzh(tableName,jyzh);
+                            //交易卡号为空，需要补全的
+                            List<JymxEntity> jymxEntityListForJykh = jymxMapper.selecJymxMapperForJykh(tableName,jyzh);
+                            if(CollectionUtils.isEmpty(jymxEntityListJyzhAll) || CollectionUtils.isEmpty(jymxEntityListForJykh)){
+                               return;
+                            }
+
+                            //把jymxEntityListJyzhAll变成map【行数号，对象】
+                            Map<Integer,JymxEntity> map = new HashMap<>();
+                            for(JymxEntity jymxEntity : jymxEntityListJyzhAll){
+                                map.put(jymxEntity.getRownum(),jymxEntity);
+                            }
+
+                            Set<JymxEntity> jymxEntitySetForJykh = new HashSet<>(jymxEntityListForJykh);
+                     start: for(JymxEntity jymxEntity : jymxEntitySetForJykh){
+                                   //向上找
+                               List<JymxEntity> needListForward = new ArrayList<>();
+                               String jykhForward = this.forward(jymxEntity,map,needListForward);
+                               if(StringUtils.isNotBlank(jykhForward)){
+                                  //进行修改
+                                   for(JymxEntity jymxEntityBean : needListForward) {
+                                       jymxMapper.UpdateJykh(tableName, jykhForward, jymxEntityBean.getId());
+                                   }
+                               }else{
+                                  //向下找
+                                   List<JymxEntity> needListNext = new ArrayList<>();
+                                   String jykhNext = this.next(jymxEntity,map,needListNext);
+                                   if(StringUtils.isNotBlank(jykhNext)){
+                                       //进行修改
+                                       for(JymxEntity jymxEntityBean : needListNext) {
+                                           jymxMapper.UpdateJykh(tableName, jykhNext, jymxEntityBean.getId());
+                                       }
+                                   }else{
+                                       break start;
+                                   }
+                               }
+                            }
+                        }
+                 }
+             }
+         }
+    }
+
+    //递归遍历,向上遍历
+    private String forward (JymxEntity jymxEntity,Map<Integer,JymxEntity> map,List<JymxEntity>  needList){
+              //需要补全卡号的对象
+              needList.add(jymxEntity);
+              if(null != map.get(jymxEntity.getRownum() - 1)) {
+                  JymxEntity previous = map.get(jymxEntity.getRownum() - 1);
+                  //如果是并发问题导致的相等
+                  if (jymxEntity.equals(map.get(jymxEntity.getRownum() - 1))) {
+                      forward(previous,map,needList);
+                  }
+
+                  //通过金额计算有依赖关系
+                  BigDecimal previousJyye = new BigDecimal(previous.getJyye());//上一条交易余额
+                  BigDecimal thisJyje = new BigDecimal(jymxEntity.getJyje());//当前交易金额
+                  BigDecimal thisJyye  = new BigDecimal(jymxEntity.getJyye());//当前交易余额
+                  if( previousJyye.add(thisJyje).compareTo(thisJyye) == 0){
+                      if(StringUtils.isNotBlank(previous.getJykh())){
+                          return previous.getJykh();
+                      }else{
+                          forward(previous,map,needList);
+                      }
+                  }
+              }
+              return null;
+    }
+
+    //递归遍历,向下遍历
+    private String next (JymxEntity jymxEntity,Map<Integer,JymxEntity> map,List<JymxEntity>  needList){
+        //需要补全卡号的对象
+        needList.add(jymxEntity);
+        if(null != map.get(jymxEntity.getRownum() + 1)) {
+            JymxEntity next = map.get(jymxEntity.getRownum() + 1);
+            //如果是并发问题导致的相等
+            if (jymxEntity.equals(map.get(jymxEntity.getRownum() + 1))) {
+                forward(next,map,needList);
+            }
+            //通过金额计算有依赖关系
+            BigDecimal previousJyye = new BigDecimal(next.getJyye());//上一条交易余额
+            BigDecimal thisJyje = new BigDecimal(jymxEntity.getJyje());//当前交易金额
+            BigDecimal thisJyye  = new BigDecimal(jymxEntity.getJyye());//当前交易余额
+            if( previousJyye.add(thisJyje).compareTo(thisJyye) == 0){
+                if(StringUtils.isNotBlank(next.getJykh())){
+                    return next.getJykh();
+                }else{
+                    forward(next,map,needList);
+                }
+            }
+        }
+        return null;
     }
 
 
@@ -326,7 +448,7 @@ public class FolderServiceImpl implements FolderService {
                         sql +=" and (";
                         for (int i = 0; i < regularDetailDtoListY.size();i++) {
                             if(i != regularDetailDtoListY.size()-1) {
-                                sql += fileTemplateDetailEntity.getFieldName() + " !~ '" + regularDetailDtoListY.get(i).getRegularValue() + "') and ('";
+                                sql += fileTemplateDetailEntity.getFieldName() + " !~ '" + regularDetailDtoListY.get(i).getRegularValue() + "') and (";
                             }else{
                                 sql += fileTemplateDetailEntity.getFieldName() + " !~ '" + regularDetailDtoListY.get(i).getRegularValue()+"'";
                             }
@@ -339,12 +461,12 @@ public class FolderServiceImpl implements FolderService {
                         sql +=" or (";
                         for (int i = 0; i < regularDetailDtoListN.size(); i++) {
                             if (i != regularDetailDtoListY.size() - 1) {
-                                sql += fileTemplateDetailEntity.getFieldName() + " ~ '" + regularDetailDtoListY.get(i).getRegularValue() + "') or ('";
+                                sql += fileTemplateDetailEntity.getFieldName() + " ~ '" + regularDetailDtoListY.get(i).getRegularValue() + "') or (";
                             } else {
                                 sql += fileTemplateDetailEntity.getFieldName() + " ~ '" + regularDetailDtoListY.get(i).getRegularValue()+"'";
                             }
                         }
-                        sql += ")";
+                        sql += ") ";
                         flag = false;
                     }
 
