@@ -1,31 +1,36 @@
 package com.sugon.iris.sugondata.config.GaussDBConfig;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.sql.SQLException;
-import org.postgresql.copy.CopyManager;
-import org.postgresql.core.BaseConnection;
 import org.springframework.context.annotation.Primary;
 
-//@Configuration
+@Configuration
 public class GaussConfig {
+
+    @Value("datasource.druid.db4.driverClassName")
+    private String driverClassName;
+
+    @Value("datasource.druid.db4.username")
+    private String username;
+
+    @Value("datasource.druid.db4.password")
+    private String password;
+
+    @Value("datasource.druid.db4.jdbc-url")
+    private String jdbcUrl;
+
+
 
     @Primary
     @Bean(name = "GaussDbConnection")
    public Connection  getMppConfig(){
-       String urls = new String("jdbc:postgresql://192.168.217.140:5432/iris?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC"); //数据库URL
-       String username = new String("postgres");            //用户名
-       String password = new String("123456");             //密码
-       String driver = "org.postgresql.Driver";
        Connection conn = null;
        try {
-           Class.forName(driver);
-           conn = DriverManager.getConnection(urls, username, password);
+           Class.forName(driverClassName);
+           conn = DriverManager.getConnection(jdbcUrl, username, password);
        }catch (Exception e){
            e.printStackTrace();
        }

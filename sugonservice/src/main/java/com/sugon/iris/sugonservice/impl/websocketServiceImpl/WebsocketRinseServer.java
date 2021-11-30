@@ -77,7 +77,7 @@ public class WebsocketRinseServer {
                 Gson gson = new Gson();
                 WebSocketRequestDto<Long> webSocketRequestDto = gson.fromJson(message, new TypeToken<WebSocketRequestDto<Long>>(){}.getType());
                 if(SZ_JZ_RinseType_Enum.RINSE_01.getCode().equals(webSocketRequestDto.getBusinessId())){
-                    dataRinseServiceImpl.completeRinse(userId,webSocketRequestDto.getParam());
+                    //dataRinseServiceImpl.completeRinse(userId,webSocketRequestDto.getParam());
                 }
                 //传送给对应toUserId用户的websocket
                 if(!webSocketMap.containsKey(String.valueOf(webSocketRequestDto.getUserId()))){

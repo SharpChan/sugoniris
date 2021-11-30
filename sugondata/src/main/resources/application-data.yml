@@ -69,9 +69,12 @@ datasource:
     #连接华为mpp
     db4:
       driverClassName: org.postgresql.Driver
-      username: postgres
-      password: 123456
-      jdbc-url: jdbc:postgresql://192.168.217.140:5432/iris?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+      #username: postgres
+      #password: 123456
+      #jdbc-url: jdbc:postgresql://192.168.217.140:5432/iris?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+      username: gaussdb
+      password: Shuguang_szga
+      jdbc-url: jdbc:postgresql://192.168.217.137:20001/postgres?useUnicode=true&characterEncoding=utf-8
       type: com.alibaba.druid.pool.DruidDataSource
       initialSize: 20
       minIdle: 2

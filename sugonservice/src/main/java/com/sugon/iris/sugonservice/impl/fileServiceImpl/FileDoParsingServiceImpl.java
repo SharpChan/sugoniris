@@ -536,7 +536,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                   nullSql = "set " + fileTemplateDetailEntity.getFieldName() + "='" + rinseBusinessNullDtoList.get(i).getValue() + "' ";
                   whereSql  = fileTemplateDetailEntity.getFieldName() +" is null or "+
                                   fileTemplateDetailEntity.getFieldName()+"= 'null' or  trim("+
-                                  fileTemplateDetailEntity.getFieldName()+")='' and  file_detail_id ="+fileSeq;
+                                  fileTemplateDetailEntity.getFieldName()+") is null and  file_detail_id ="+fileSeq;
                   sql = sql.replace("_&condition&_",nullSql + " where  "+whereSql);
                   mppMapper.mppSqlExec(sql);
               }

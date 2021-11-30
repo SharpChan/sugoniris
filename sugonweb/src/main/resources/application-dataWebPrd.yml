@@ -43,7 +43,7 @@ datasource:
         testWhileIdle: true
         testOnBorrow: true
         testOnReturn: false
-        maxWait: 6000
+        maxWait: 600000
         filters: stat,slf4j
 
           #备用

@@ -11,8 +11,6 @@ public interface MppMapper {
 
     Integer mppSqlExecForSearchCount(String sql);
 
-
-
     List<String> mppSqlExecForSearch(String sql);
 
     List<Long>  mppSqlExecForSearchResInteger(String sql);

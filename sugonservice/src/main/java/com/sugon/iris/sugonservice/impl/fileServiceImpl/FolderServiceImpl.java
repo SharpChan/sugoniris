@@ -1,5 +1,6 @@
 package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.google.gson.Gson;
 import com.sugon.iris.sugoncommon.SSHRemote.SSHConfig;
 import com.sugon.iris.sugoncommon.SSHRemote.SSHServiceBs;
@@ -153,6 +154,7 @@ public class FolderServiceImpl implements FolderService {
     //如果是压缩文件则进行解压
     @Override
     public void decompress(User user,String[] selectedArr,List<Error> errorList) throws InterruptedException, IllegalAccessException {
+        log.info("进行解压");
         List<FileAttachmentEntity> fileAttachmentEntityListAll = new ArrayList<>();
         for(String id : selectedArr) {
             FileAttachmentEntity fleAttachmentEntity = new FileAttachmentEntity();
@@ -244,17 +246,22 @@ public class FolderServiceImpl implements FolderService {
                 templateGroupIdList.add(fileAttachmentEntity.getCaseId());
             }
         }
+        log.info("补全开始");
         //进行固定补全
         this.doFixedDefinedComplete(user.getId(),caseId2TemplateGroupIdsMap,errorList);
-
+        log.info("补全结束");
         //通过余额进行补全
+        log.info("余额补全开始");
         this.doFixedCompleteByRemaining(caseIdSet,errorList);
-
+        log.info("余额补全结束");
         //进行去重
+        log.info("去重开始");
         this.doRemoveRepeat(caseIdSet,errorList);
-
+        log.info("去重结束");
         //进行补全字段的正则校验
+        log.info("补全字段的正则校验开始");
         this.regularCompleteField(user.getId(),fileIdList,errorList);
+        log.info("补全字段的正则校验结束");
     }
 
     private void doFixedCompleteByRemaining(Set<Long> caseIdSet,List<Error>  errorList){
@@ -273,6 +280,8 @@ public class FolderServiceImpl implements FolderService {
              for(FileTableEntity fileTableEntity : fileTableEntityList){
                  if(fileTableEntity.getFileTemplateId() == Long.parseLong(str.trim())){
                         String tableName = fileTableEntity.getTableName();
+
+                        //1.补卡号
                         //获取卡号为空的账号
                         List<String> jyzhList =  jymxMapper.selectJyzh(tableName);
                         for(String jyzh : jyzhList) {
@@ -280,7 +289,7 @@ public class FolderServiceImpl implements FolderService {
                             //下面查询的数据排序编号一样
                             //该账号下所有数据
                             List<JymxEntity> jymxEntityListJyzhAll = jymxMapper.selectJymxMapperAllByJyzh(tableName,jyzh);
-                            //交易卡号为空，需要补全的
+                            //该账号下交易卡号为空，需要补全的
                             List<JymxEntity> jymxEntityListForJykh = jymxMapper.selecJymxMapperForJykh(tableName,jyzh);
                             if(CollectionUtils.isEmpty(jymxEntityListJyzhAll) || CollectionUtils.isEmpty(jymxEntityListForJykh)){
                                return;
@@ -291,12 +300,12 @@ public class FolderServiceImpl implements FolderService {
                             for(JymxEntity jymxEntity : jymxEntityListJyzhAll){
                                 map.put(jymxEntity.getRownum(),jymxEntity);
                             }
-
+                            //去重减少循环遍历的次数
                             Set<JymxEntity> jymxEntitySetForJykh = new HashSet<>(jymxEntityListForJykh);
                      start: for(JymxEntity jymxEntity : jymxEntitySetForJykh){
                                    //向上找
                                List<JymxEntity> needListForward = new ArrayList<>();
-                               String jykhForward = this.forward(jymxEntity,map,needListForward);
+                               String jykhForward = this.forwardForJykh(jymxEntity,map,needListForward);
                                if(StringUtils.isNotBlank(jykhForward)){
                                   //进行修改
                                    for(JymxEntity jymxEntityBean : needListForward) {
@@ -305,7 +314,7 @@ public class FolderServiceImpl implements FolderService {
                                }else{
                                   //向下找
                                    List<JymxEntity> needListNext = new ArrayList<>();
-                                   String jykhNext = this.next(jymxEntity,map,needListNext);
+                                   String jykhNext = this.nextForJykh(jymxEntity,map,needListNext);
                                    if(StringUtils.isNotBlank(jykhNext)){
                                        //进行修改
                                        for(JymxEntity jymxEntityBean : needListNext) {
@@ -317,20 +326,67 @@ public class FolderServiceImpl implements FolderService {
                                }
                             }
                         }
+
+                     //2.补账号
+                     //获取账号为空的卡号
+                     List<String> jykhList =  jymxMapper.selectJykh(tableName);
+                     for(String jykh : jykhList) {
+                         //下面查询的数据排序编号一样
+                         //该卡号下所有数据
+                         List<JymxEntity> jymxEntityListJykhAll = jymxMapper.selectJymxMapperAllByJykh(tableName,jykh);
+                         //该卡号下交易账号为空，需要补全的
+                         List<JymxEntity> jymxEntityListForJyzh = jymxMapper.selectJymxMapperForJyzh(tableName,jykh);
+                         if(CollectionUtils.isEmpty(jymxEntityListJykhAll) || CollectionUtils.isEmpty(jymxEntityListForJyzh)){
+                             return;
+                         }
+                         //把jymxEntityListJyzhAll变成map【行数号，对象】
+                         Map<Integer,JymxEntity> map = new HashMap<>();
+                         for(JymxEntity jymxEntity : jymxEntityListJykhAll){
+                             map.put(jymxEntity.getRownum(),jymxEntity);
+                         }
+
+                         //去重减少循环遍历的次数
+                         Set<JymxEntity> jymxEntitySetForJyzh = new HashSet<>(jymxEntityListForJyzh);
+
+                         start: for(JymxEntity jymxEntity : jymxEntitySetForJyzh){
+                             //向上找
+                             List<JymxEntity> needListForward = new ArrayList<>();
+                             String jyzhForward = this.forwardForJyzh(jymxEntity,map,needListForward);
+                             if(StringUtils.isNotBlank(jyzhForward)){
+                                 //进行修改
+                                 for(JymxEntity jymxEntityBean : needListForward) {
+                                     jymxMapper.UpdateJyzh(tableName, jyzhForward, jymxEntityBean.getId());
+                                 }
+                             }else{
+                                 //向下找
+                                 List<JymxEntity> needListNext = new ArrayList<>();
+                                 String jyzhNext = this.nextForJyzh(jymxEntity,map,needListNext);
+                                 if(StringUtils.isNotBlank(jyzhNext)){
+                                     //进行修改
+                                     for(JymxEntity jymxEntityBean : needListNext) {
+                                         jymxMapper.UpdateJyzh(tableName, jyzhNext, jymxEntityBean.getId());
+                                     }
+                                 }else{
+                                     break start;
+                                 }
+                             }
+                         }
+                     }
+
                  }
              }
          }
     }
 
-    //递归遍历,向上遍历
-    private String forward (JymxEntity jymxEntity,Map<Integer,JymxEntity> map,List<JymxEntity>  needList){
+    //递归遍历,向上遍历,补全校验卡号
+    private String forwardForJykh(JymxEntity jymxEntity, Map<Integer,JymxEntity> map, List<JymxEntity>  needList){
               //需要补全卡号的对象
               needList.add(jymxEntity);
               if(null != map.get(jymxEntity.getRownum() - 1)) {
                   JymxEntity previous = map.get(jymxEntity.getRownum() - 1);
                   //如果是并发问题导致的相等
                   if (jymxEntity.equals(map.get(jymxEntity.getRownum() - 1))) {
-                      forward(previous,map,needList);
+                      forwardForJykh(previous,map,needList);
                   }
 
                   //通过金额计算有依赖关系
@@ -341,22 +397,48 @@ public class FolderServiceImpl implements FolderService {
                       if(StringUtils.isNotBlank(previous.getJykh())){
                           return previous.getJykh();
                       }else{
-                          forward(previous,map,needList);
+                          forwardForJykh(previous,map,needList);
                       }
                   }
               }
               return null;
     }
 
-    //递归遍历,向下遍历
-    private String next (JymxEntity jymxEntity,Map<Integer,JymxEntity> map,List<JymxEntity>  needList){
+    //递归遍历,向上遍历，补全账号
+    private String forwardForJyzh(JymxEntity jymxEntity, Map<Integer,JymxEntity> map, List<JymxEntity>  needList){
+        //需要补全卡号的对象
+        needList.add(jymxEntity);
+        if(null != map.get(jymxEntity.getRownum() - 1)) {
+            JymxEntity previous = map.get(jymxEntity.getRownum() - 1);
+            //如果是并发问题导致的相等
+            if (jymxEntity.equals(map.get(jymxEntity.getRownum() - 1))) {
+                forwardForJyzh(previous,map,needList);
+            }
+
+            //通过金额计算有依赖关系
+            BigDecimal previousJyye = new BigDecimal(previous.getJyye());//上一条交易余额
+            BigDecimal thisJyje = new BigDecimal(jymxEntity.getJyje());//当前交易金额
+            BigDecimal thisJyye  = new BigDecimal(jymxEntity.getJyye());//当前交易余额
+            if( previousJyye.add(thisJyje).compareTo(thisJyye) == 0){
+                if(StringUtils.isNotBlank(previous.getJyzh())){
+                    return previous.getJyzh();
+                }else{
+                    forwardForJyzh(previous,map,needList);
+                }
+            }
+        }
+        return null;
+    }
+
+    //递归遍历,向下遍历,补全校验卡号
+    private String nextForJykh(JymxEntity jymxEntity, Map<Integer,JymxEntity> map, List<JymxEntity>  needList){
         //需要补全卡号的对象
         needList.add(jymxEntity);
         if(null != map.get(jymxEntity.getRownum() + 1)) {
             JymxEntity next = map.get(jymxEntity.getRownum() + 1);
             //如果是并发问题导致的相等
             if (jymxEntity.equals(map.get(jymxEntity.getRownum() + 1))) {
-                forward(next,map,needList);
+                nextForJykh(next,map,needList);
             }
             //通过金额计算有依赖关系
             BigDecimal previousJyye = new BigDecimal(next.getJyye());//上一条交易余额
@@ -366,7 +448,32 @@ public class FolderServiceImpl implements FolderService {
                 if(StringUtils.isNotBlank(next.getJykh())){
                     return next.getJykh();
                 }else{
-                    forward(next,map,needList);
+                    nextForJykh(next,map,needList);
+                }
+            }
+        }
+        return null;
+    }
+
+    //递归遍历,向下遍历，补全账号
+    private String nextForJyzh(JymxEntity jymxEntity, Map<Integer,JymxEntity> map, List<JymxEntity>  needList){
+        //需要补全卡号的对象
+        needList.add(jymxEntity);
+        if(null != map.get(jymxEntity.getRownum() + 1)) {
+            JymxEntity next = map.get(jymxEntity.getRownum() + 1);
+            //如果是并发问题导致的相等
+            if (jymxEntity.equals(map.get(jymxEntity.getRownum() + 1))) {
+                nextForJyzh(next,map,needList);
+            }
+            //通过金额计算有依赖关系
+            BigDecimal previousJyye = new BigDecimal(next.getJyye());//上一条交易余额
+            BigDecimal thisJyje = new BigDecimal(jymxEntity.getJyje());//当前交易金额
+            BigDecimal thisJyye  = new BigDecimal(jymxEntity.getJyye());//当前交易余额
+            if( previousJyye.add(thisJyje).compareTo(thisJyye) == 0){
+                if(StringUtils.isNotBlank(next.getJyzh())){
+                    return next.getJyzh();
+                }else{
+                    nextForJyzh(next,map,needList);
                 }
             }
         }
@@ -549,104 +656,107 @@ public class FolderServiceImpl implements FolderService {
      */
     @Override
     public void doFixedDefinedComplete(Long userId, Map<Long,Set<Long>> caseId2TemplateGroupIdsMap, List<Error> errorList) throws InterruptedException {
-           for (Map.Entry<Long, Set<Long>> entry : caseId2TemplateGroupIdsMap.entrySet()) {
-               Long caseId = entry.getKey();
-               List<String> tableNames = getTableNames(caseId);
+        try {
+            for (Map.Entry<Long, Set<Long>> entry : caseId2TemplateGroupIdsMap.entrySet()) {
+                Long caseId = entry.getKey();
+                List<String> tableNames = getTableNames(caseId);
+                Set<Long> TemplateGroupIdSet = entry.getValue();
+                for (Long templateGroupId : TemplateGroupIdSet){
+                    //通过模板组id，获取补全配置
+                    List<FileFieldCompleteEntity> fileFieldCompleteEntityList = fileFieldCompleteMapper.selectFileFieldCompleteByTemplateGroupId(templateGroupId);
+                    //进行排序
+                    this.fileFieldCompleteEntityListSort(fileFieldCompleteEntityList);
+                    for (FileFieldCompleteEntity fileFieldCompleteEntity : fileFieldCompleteEntityList) {
+                        //目地模板id
+                        Long destFileTemplateId = fileFieldCompleteEntity.getDestFileTemplateId();
+                        //目地模板
+                        FileTemplateEntity fileTemplateDestEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(destFileTemplateId);
+                        //目地表
+                        String destTable = "base_" + fileTemplateDestEntity.getTablePrefix() + "_" + caseId + "_" + userId;
+                        if (!tableNames.contains(destTable)) {
+                            continue;
+                        }
+                        //源模板id
+                        Long sourceFileTemplateId = fileFieldCompleteEntity.getSourceFileTemplateId();
+                        //源模板
+                        FileTemplateEntity fileTemplateSourceEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(sourceFileTemplateId);
+                        String sourceTable = "base_" + fileTemplateSourceEntity.getTablePrefix() + "_" + caseId + "_" + userId;
+                        if (!tableNames.contains(sourceTable)) {
+                            continue;
+                        }
+                        //关联关系
+                        //String relations = getFieldRelation4Sql(fileFieldCompleteEntity);
+                        //源关联字段/目标字段相关信息
+                        Map<String, String> source2Destmap = new HashMap<>();
+                        List<String> sourceList = new ArrayList<>();
+                        List<String> destList = new ArrayList<>();
+                        String[] sourceFields = getDestAndSourceFields(fileFieldCompleteEntity, source2Destmap, sourceList, destList);
+                        //取值字段
+                        String fieldSource = fileFieldCompleteEntity.getFieldSource();
+                        String[] fieldSourceArr = fieldSource.split("\\+\\+");
+                        List<String> fieldSourceFieldNameList = new ArrayList<>();
+                        for (String str : fieldSourceArr) {
+                            FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(Long.parseLong(str));
+                            fieldSourceFieldNameList.add(fileTemplateDetailEntity.getFieldName());
+                        }
+                        //目标字段
+                        Long fieldDest = fileFieldCompleteEntity.getFieldDest();
+                        FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(fieldDest);
+                        String fieldDestFieldName = fileTemplateDetailEntity.getFieldName();
+                        //查询出需要补全的数据
+                        for (String strSource : fieldSourceFieldNameList) {
+                            String sql_01 = "select distinct " + sourceFields[3] + " from " + destTable + " where " + fieldDestFieldName + " is null ";
+                            //需要补全的数据   //进行批量补全
+                            List<Map<String, Object>> list = mppMapper.mppSqlExecForSearchRtMapList(sql_01);
+                            //有执行先后顺序要求，无法并发执行
+                            for (Map<String, Object> map : list) {
+                                if(null == map){
+                                    log.info("map存在null");
+                                    continue;
+                                }
+                                //对map进行遍历获取where条件
+                                String whereStr = "";
+                                for (Map.Entry<String, Object> entry_02 : map.entrySet()) {
+                                    whereStr += entry_02.getKey() + " = '" + entry_02.getValue() + "'" + " and ";
+                                }
+                                whereStr = whereStr + fieldDestFieldName + " is null ";
 
-               Set<Long> TemplateGroupIdSet = entry.getValue();
-               for (Long templateGroupId : TemplateGroupIdSet) {
-                   //通过模板组id，获取补全配置
-                   List<FileFieldCompleteEntity> fileFieldCompleteEntityList = fileFieldCompleteMapper.selectFileFieldCompleteByTemplateGroupId(templateGroupId);
-                   //进行排序
-                   this.fileFieldCompleteEntityListSort(fileFieldCompleteEntityList);
-                   for (FileFieldCompleteEntity fileFieldCompleteEntity : fileFieldCompleteEntityList) {
-                       //目地模板id
-                       Long destFileTemplateId = fileFieldCompleteEntity.getDestFileTemplateId();
-                       //目地模板
-                       FileTemplateEntity fileTemplateDestEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(destFileTemplateId);
-                       //目地表
-                       String destTable = "base_" + fileTemplateDestEntity.getTablePrefix() + "_" + caseId + "_" + userId;
-                       if(!tableNames.contains(destTable)){
-                                continue;
-                       }
-                       //源模板id
-                       Long sourceFileTemplateId = fileFieldCompleteEntity.getSourceFileTemplateId();
-                       //源模板
-                       FileTemplateEntity fileTemplateSourceEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(sourceFileTemplateId);
-                       String sourceTable = "base_" + fileTemplateSourceEntity.getTablePrefix() + "_" + caseId + "_" + userId;
-                       if(!tableNames.contains(sourceTable)){
-                           continue;
-                       }
-                       //关联关系
-                       //String relations = getFieldRelation4Sql(fileFieldCompleteEntity);
-                       //源关联字段/目标字段相关信息
-                       Map<String,String> source2Destmap = new HashMap<>();
-                       List<String> sourceList = new ArrayList<>();
-                       List<String> destList = new ArrayList<>();
-                       String[] sourceFields = getDestAndSourceFields(fileFieldCompleteEntity,source2Destmap,sourceList,destList);
-                       //取值字段
-                       String fieldSource = fileFieldCompleteEntity.getFieldSource();
-                       String[] fieldSourceArr = fieldSource.split("\\+\\+");
-                       List<String> fieldSourceFieldNameList = new ArrayList<>();
-                       for (String str : fieldSourceArr) {
-                           FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(Long.parseLong(str));
-                           fieldSourceFieldNameList.add(fileTemplateDetailEntity.getFieldName());
-                       }
-                       //目标字段
-                       Long fieldDest = fileFieldCompleteEntity.getFieldDest();
-                       FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(fieldDest);
-                       String fieldDestFieldName = fileTemplateDetailEntity.getFieldName();
-
-                       //查询出需要补全的数据
-                       for (String strSource : fieldSourceFieldNameList) {
-                           String sql_01 = "select distinct " + sourceFields[3]  + " from " + destTable + " where " + fieldDestFieldName + "=''";
-                           //需要补全的数据   //进行批量补全
-                           List<Map<String, Object>> list = mppMapper.mppSqlExecForSearchRtMapList(sql_01);
-                           //有执行先后顺序要求，无法并发执行
-                           for(Map<String, Object> map : list){
-                               //对map进行遍历获取where条件
-                               String whereStr = "";
-                               for(Map.Entry<String, Object> entry_02 : map.entrySet()){
-                                   whereStr += entry_02.getKey()+" = '"+entry_02.getValue()+"'"+" and ";
-                               }
-                               whereStr = whereStr + fieldDestFieldName +"=''";
-
-                               //获得查询源表的条件
-                               String condi = "";
-                               for(int i = 0;i<sourceList.size();i++){
-                                   //只有一个关联字段,源表关联字段不允许为空
-                                   if(sourceList.size() == 1) {
-                                       if (i == sourceList.size() - 1) {
-                                           condi +=sourceList.get(i)+" != '' and "+ sourceList.get(i) + " = '" + map.get(source2Destmap.get(sourceList.get(i))) + "'";
-                                       } else {
-                                           condi +=sourceList.get(i)+" != '' and "+ sourceList.get(i) + " = '" + map.get(source2Destmap.get(sourceList.get(i))) + "' and ";
-                                       }
-                                   }
-                                   //有多个关联字段
-                                   else{
-                                       if (i == sourceList.size() - 1) {
-                                           condi += sourceList.get(i) + " = '" + map.get(source2Destmap.get(sourceList.get(i))) + "'";
-                                       } else {
-                                           condi += sourceList.get(i) + " = '" + map.get(source2Destmap.get(sourceList.get(i))) + "' and ";
-                                       }
-                                   }
-                               }
-                               //判断是否有多个对应数据，有多个的话，不补全，跳过
-                               String sql_02 = "select count( distinct "+strSource+") from "+sourceTable  +" where "+condi+" and "+strSource+"!=''";
-                               Integer resCount = mppMapper.mppSqlExecForSearchCount(sql_02);
-                               if(resCount >1 || resCount == 0){
-                                   continue;
-                               }
-                               //获取源数据
-                               String sql_03 = "select  distinct "+strSource+" from "+sourceTable  +" where "+condi+" and "+strSource+"!=''";
-                               List<Map<String,Object>> listSource = mppMapper.mppSqlExecForSearchRtMapList(sql_03);
-                               //进行数据补全
-                               String updateSQL = "Update "+destTable+" set "+fieldDestFieldName+"= '"+listSource.get(0).get(strSource)+"' where "+whereStr;
-                               mppMapper.mppSqlExec(updateSQL);
-                           }
-                       }
-                   }
-               }
+                                //获得查询源表的条件
+                                String condi = "";
+                                for (int i = 0; i < sourceList.size(); i++) {
+                                    //只有一个关联字段,源表关联字段不允许为空
+                                    if (sourceList.size() == 1) {
+                                        if (i == sourceList.size() - 1) {
+                                            condi += sourceList.get(i) + " is not null and " + sourceList.get(i) + " = '" + map.get(source2Destmap.get(sourceList.get(i))) + "'";
+                                        } else {
+                                            condi += sourceList.get(i) + " is not null and " + sourceList.get(i) + " = '" + map.get(source2Destmap.get(sourceList.get(i))) + "' and ";
+                                        }
+                                    }
+                                    //有多个关联字段
+                                    else {
+                                        if (i == sourceList.size() - 1) {
+                                            condi += sourceList.get(i) + " = '" + map.get(source2Destmap.get(sourceList.get(i))) + "'";
+                                        } else {
+                                            condi += sourceList.get(i) + " = '" + map.get(source2Destmap.get(sourceList.get(i))) + "' and ";
+                                        }
+                                    }
+                                }
+                                //判断是否有多个对应数据，有多个的话，不补全，跳过
+                                String sql_02 = "select count( distinct " + strSource + ") from " + sourceTable + " where " + condi + " and " + strSource + " is not null ";
+                                Integer resCount = mppMapper.mppSqlExecForSearchCount(sql_02);
+                                if (resCount > 1 || resCount == 0) {
+                                    continue;
+                                }
+                                //获取源数据
+                                String sql_03 = "select  distinct " + strSource + " from " + sourceTable + " where " + condi + " and " + strSource + " is not null ";
+                                List<Map<String, Object>> listSource = mppMapper.mppSqlExecForSearchRtMapList(sql_03);
+                                //进行数据补全
+                                String updateSQL = "Update " + destTable + " set " + fieldDestFieldName + "= '" + listSource.get(0).get(strSource) + "' where " + whereStr;
+                                mppMapper.mppSqlExec(updateSQL);
+                            }
+                        }
+                    }
+                }
                /*导入时补全字段不做正则判断，所以注销
                if(!CollectionUtils.isEmpty(mppid2erroridList)){
                    //删除错误记录信息表
@@ -671,7 +781,11 @@ public class FolderServiceImpl implements FolderService {
                        }
                    }
                }*/
-           }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_SUGON_001.getCode(),ErrorCode_Enum.SYS_SUGON_001.getMessage(),e.toString()));
+        }
        }
 
    private void mppSqlExec (String tableName,String sql){
@@ -741,7 +855,7 @@ public class FolderServiceImpl implements FolderService {
             FileTemplateDetailEntity source = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(Long.parseLong(fieldArr[1]));
             sourceFields1 += " c."+source.getFieldName() + ",";
             sourceFields2 +=  source.getFieldName() + ",";
-            sourceFields3 +=  source.getFieldName() + "!='' and ";
+            sourceFields3 +=  source.getFieldName() + "  is not null  and ";
             sourceFields4 +=  dest.getFieldName()+",";
         }
         sourceFields[0] = sourceFields1;
@@ -781,7 +895,7 @@ public class FolderServiceImpl implements FolderService {
             FileTemplateDetailEntity source = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(Long.parseLong(fieldArr[1]));
             sourceFields1 += " c."+source.getFieldName() + ",";
             sourceFields2 +=  source.getFieldName() + ",";
-            sourceFields3 +=  source.getFieldName() + "!='' and ";
+            sourceFields3 +=  source.getFieldName() + "  is not null  and ";
             sourceFields4 +=  dest.getFieldName()+",";
             map.put(source.getFieldName(),dest.getFieldName());
             sourceList.add(source.getFieldName());
@@ -1004,6 +1118,7 @@ public class FolderServiceImpl implements FolderService {
                 //如果是经侦角色，则默认模板组
                 if(user.isEconomicUser()){
                     fileAttachmentEntity.setTemplateGroupId(1L);
+                    fileAttachmentEntity.setTemplateGroupName("模板组-经侦");
                 }
                 fileAttachmentEntityList.add(fileAttachmentEntity);
 
