@@ -1,6 +1,8 @@
 package com.sugon.iris.sugondata.mybaties.mapper.db4;
 
 
+import org.apache.ibatis.annotations.Select;
+
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
@@ -16,4 +18,7 @@ public interface MppMapper {
     List<Long>  mppSqlExecForSearchResInteger(String sql);
 
     List<Map<String,Object>> mppSqlExecForSearchRtMapList(String sql);
+
+    @Select("select nextval(#{seq})")
+    public Long selectSeq(String seq);
 }

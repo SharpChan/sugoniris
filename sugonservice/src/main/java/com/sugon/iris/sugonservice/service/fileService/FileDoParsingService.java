@@ -9,6 +9,7 @@ import com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.MppErrorInfoEntity
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -22,10 +23,10 @@ public interface FileDoParsingService {
 
   void doRinse(FileTemplateDto fileTemplateDto,Object[] tableInfos, Long fileSeq, List<Error> errorList) throws IllegalAccessException;
 
-  void doRepeat(Long fileTemplateid, String tableName, List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList, List<Long> mppid2erroridDeleteList, String repeatSql);
+  void doRepeat(Long fileTemplateid, String tableName, List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList, List<Long> mppid2erroridDeleteList, String repeatSql) throws InterruptedException;
 
   void deleteMysql(List<Long> mppid2erroridDeleteList);
 
-  void dealWithfailed(List<FileParsingFailedEntity> fileParsingFailedEntityListSql, List<MppErrorInfoEntity> mppErrorInfoEntityList);
+  void dealWithfailed(List<FileParsingFailedEntity> fileParsingFailedEntityListSql, StringBuffer errorBuffer) throws IOException, SQLException;
 
 }

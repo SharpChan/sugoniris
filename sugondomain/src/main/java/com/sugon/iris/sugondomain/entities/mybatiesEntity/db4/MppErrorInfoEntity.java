@@ -5,4 +5,9 @@ import lombok.Data;
 
 @Data
 public class MppErrorInfoEntity extends MppErrorInfoBean {
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

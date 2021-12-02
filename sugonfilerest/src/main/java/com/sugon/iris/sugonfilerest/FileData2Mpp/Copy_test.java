@@ -42,7 +42,7 @@ public class Copy_test {
             cm = new CopyManager((BaseConnection) con);
             StringBuffer tuples = new StringBuffer();
             for (int j = 0; j < 3; j++) {
-                tuples.append(quote + "1" + quote + delimter + quote + "a" + quote+ delimter + quote + "1" + quote+"\n");
+                tuples.append(quote + "1" + quote + delimter + quote + "a" + quote+ delimter + quote + "" + quote+"\n");
             }
             sr = new StringReader(tuples.toString());
             long rows = cm.copyIn(sql, sr);// 执行copy入库

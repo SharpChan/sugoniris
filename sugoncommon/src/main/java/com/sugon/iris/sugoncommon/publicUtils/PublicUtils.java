@@ -1,6 +1,8 @@
 package com.sugon.iris.sugoncommon.publicUtils;
 
 import com.google.common.collect.Lists;
+import com.sugon.iris.sugondomain.beans.fileBeans.FileTemplateDetailBean;
+import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
@@ -114,6 +116,26 @@ public  class PublicUtils {
         Collections.sort(fileTemplateDetailEntityList, new Comparator<FileTemplateDetailEntity>() {
             @Override
             public int compare(FileTemplateDetailEntity bean1, FileTemplateDetailEntity bean2) {
+                int diff = Integer.parseInt(bean1.getSortNo()) - Integer.parseInt(bean2.getSortNo());
+                if (diff > 0) {
+                    return 1;
+                }else if (diff < 0) {
+                    return -1;
+                }
+                return 0; //相等为0
+            }
+        });
+    }
+
+    /**
+     * 对模板字段进行排序
+     * @param fileTemplateDetailDtoList
+     */
+    public static void fileTemplateDetailDtoListSort(List<FileTemplateDetailDto> fileTemplateDetailDtoList) {
+        //用排序字段对字段列表进行排序
+        Collections.sort(fileTemplateDetailDtoList, new Comparator<FileTemplateDetailDto>() {
+            @Override
+            public int compare(FileTemplateDetailDto bean1, FileTemplateDetailDto bean2) {
                 int diff = Integer.parseInt(bean1.getSortNo()) - Integer.parseInt(bean2.getSortNo());
                 if (diff > 0) {
                     return 1;

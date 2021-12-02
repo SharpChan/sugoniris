@@ -84,9 +84,9 @@ public class TableRecordSearchServiceImpl implements TableRecordSearchService {
         String sqlStr = "";
         for(FileTemplateDto fileTemplateDto : fileTemplateDtoList){
             if(!CollectionUtils.isEmpty(fileTemplateDto.getFileTemplateDetailDtoList())){
-                String  unitStr = "select result from (select  concat(";
                 //获取表名
                 for(FileTableEntity fileTableEntity : fileTableEntityList){
+                    String  unitStr = "select result from (select  concat(";
                      if (fileTemplateDto.getId().equals(fileTableEntity.getFileTemplateId())){
                          int k = 0;
                          for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDto.getFileTemplateDetailDtoList()){
@@ -99,6 +99,7 @@ public class TableRecordSearchServiceImpl implements TableRecordSearchService {
                          unitStr +=") as result from "+fileTableEntity.getTableName()+") a  where 1=1  "+conditionNew;
                          //进行查询
                         List<String>  resultList = mppMapper.mppSqlExecForSearch(unitStr);
+                         unitStr = "";
                         if(CollectionUtils.isEmpty(resultList)){
                              continue;
                         }

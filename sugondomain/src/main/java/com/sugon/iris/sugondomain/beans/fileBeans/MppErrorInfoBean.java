@@ -47,4 +47,15 @@ public class MppErrorInfoBean {
      */
     @ApiModelProperty(value="对应数据的表名")
     private String mppTableName;
+
+    @Override
+    public String toString() {
+        return  "$"+id +"$"+"|"+
+                "$"+fileAttachmentId+"$"+"|"+
+                "$"+fileDetailId +"$"+"|"+
+                "$"+mppid2errorid +"$"+"|"+
+                "$"+fileRinseDetailId +"$"+"|"+
+                "$"+fileCaseId+"$"+"|"+
+                "$"+mppTableName +"$"+"\n";
+    }
 }

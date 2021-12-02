@@ -1,6 +1,5 @@
 package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
-import cn.hutool.core.collection.CollUtil;
 import com.google.gson.Gson;
 import com.sugon.iris.sugoncommon.SSHRemote.SSHConfig;
 import com.sugon.iris.sugoncommon.SSHRemote.SSHServiceBs;
@@ -49,6 +48,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.*;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Pattern;
 import com.jcraft.jsch.Session;
@@ -153,7 +153,7 @@ public class FolderServiceImpl implements FolderService {
 
     //如果是压缩文件则进行解压
     @Override
-    public void decompress(User user,String[] selectedArr,List<Error> errorList) throws InterruptedException, IllegalAccessException {
+    public void decompress(User user,String[] selectedArr,List<Error> errorList) throws InterruptedException, IllegalAccessException, IOException, SQLException {
         log.info("进行解压");
         List<FileAttachmentEntity> fileAttachmentEntityListAll = new ArrayList<>();
         for(String id : selectedArr) {
@@ -481,13 +481,14 @@ public class FolderServiceImpl implements FolderService {
     }
 
 
-    private void regularCompleteField(Long userId,List<Long> fileIdList, List<Error> errorList) throws IllegalAccessException {
+    private void regularCompleteField(Long userId,List<Long> fileIdList, List<Error> errorList) throws IllegalAccessException, IOException, SQLException {
 
         //校验不通过列表,存入mysql
         List<FileParsingFailedEntity> fileParsingFailedEntityListSql = new ArrayList<>();
 
         //存入mpp
-        List<MppErrorInfoEntity> mppErrorInfoEntityList = new ArrayList<>();
+        //List<MppErrorInfoEntity> mppErrorInfoEntityList = new ArrayList<>();
+        StringBuffer errorBuffer = new StringBuffer();
 
             //通过文件id找出模板
             for(Long fileId : fileIdList){
@@ -607,18 +608,22 @@ public class FolderServiceImpl implements FolderService {
                         mppErrorInfoEntity.setMppid2errorid(seq);
                         mppErrorInfoEntity.setFileCaseId(fileDetailEntity.getCaseId());
                         mppErrorInfoEntity.setMppTableName(fileDetailEntity.getTableName());
-                        mppErrorInfoEntityList.add(mppErrorInfoEntity);
+                        //mppErrorInfoEntityList.add(mppErrorInfoEntity);
+                        //error_info_id_seq
+                        Long idSeq = mppMapper.selectSeq("error_info_id_seq");
+                        mppErrorInfoEntity.setId(idSeq);
+                        errorBuffer.append(mppErrorInfoEntity.toString());
                     }
 
                 }
             }
             if(!CollectionUtils.isEmpty(fileParsingFailedEntityListSql)) {
-                fileDoParsingServiceImpl.dealWithfailed(fileParsingFailedEntityListSql,mppErrorInfoEntityList);
+                fileDoParsingServiceImpl.dealWithfailed(fileParsingFailedEntityListSql,errorBuffer);
             }
     }
 
     //进行去重
-    private void doRemoveRepeat( Set<Long> caseIdSet, List<Error> errorList) throws IllegalAccessException {
+    private void doRemoveRepeat( Set<Long> caseIdSet, List<Error> errorList) throws IllegalAccessException, InterruptedException {
 
         //放入子线程中删除
         List<Long> mppid2erroridDeleteList = new ArrayList<>();

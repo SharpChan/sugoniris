@@ -200,6 +200,10 @@ public class FileParsingServiceImpl implements FileParsingService {
                  public String call() throws Exception {
                      FileTemplateDto fileTemplateDto = entry.getKey();
                      List<File> fileList4Template = entry.getValue();
+
+                     //给字段排序
+                     PublicUtils.fileTemplateDetailDtoListSort(fileTemplateDto.getFileTemplateDetailDtoList());
+
                      //index[0] :tableName ;index[01: tableId
                      Object[] tableInfos = createMppTable(userId, fileAttachmentEntity, fileTemplateDto);
                      String insertSql = getInsertSql(fileAttachmentEntity.getId(), fileAttachmentEntity.getCaseId(), fileTemplateDto.getFileTemplateDetailDtoList(), (String) tableInfos[0], fileTemplateDto.getId());
@@ -364,6 +368,7 @@ public class FileParsingServiceImpl implements FileParsingService {
     //组装插入数据语句
     private String getInsertSql(Long fileAttachmentId ,Long caseId,List<FileTemplateDetailDto> fileTemplateDetailDtoList, String tableName,Long fileTemplateId) {
         //组装insertSql语句
+   /*
         String sqlInsert = "insert into "+tableName+"(";
         String  sqlValues = "";
         for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDetailDtoList){
@@ -374,6 +379,20 @@ public class FileParsingServiceImpl implements FileParsingService {
         sqlValues += "'"+fileTemplateId+"','"+caseId+"','"+fileAttachmentId+"','&&xx_file_detail_id_xx&&',"+"'&&xx_mppId2ErrorId_xx&&'";
         sqlInsert +=") values(" +sqlValues+");";
         return sqlInsert;
+   */
+
+
+        StringBuilder sqlInsertBuilder = new StringBuilder();
+        sqlInsertBuilder.append("$&&xx_").append("id").append("_xx&&$").append("|");
+        for(FileTemplateDetailDto fileTemplateDetailDto :  fileTemplateDetailDtoList){
+            sqlInsertBuilder.append("$&&").append(fileTemplateDetailDto.getId()).append("&&$").append("|");
+        }
+        sqlInsertBuilder.append("$&&xx_").append("mppId2ErrorId").append("_xx&&$").append("|");
+        sqlInsertBuilder.append("$&&xx_").append("file_detail_id").append("_xx&&$").append("|");
+        sqlInsertBuilder.append("$").append(fileTemplateId).append("$").append("|");
+        sqlInsertBuilder.append("$").append(fileAttachmentId).append("$").append("|");
+        sqlInsertBuilder.append("$").append(caseId).append("$").append("\n");
+        return sqlInsertBuilder.toString();
     }
 
     /**
@@ -395,14 +414,14 @@ public class FileParsingServiceImpl implements FileParsingService {
             String origin_tableName = "origin_" + fileTemplateDto.getTablePrefix() + "_" + fileAttachmentEntity.getCaseId()+"_"+userId;
             tableInfos[0] = tableName;
             tableInfos[2] = origin_tableName;
-            String sqlCreate =  "CREATE TABLE "+tableName+" ( id serial not null,"+" mppId2ErrorId int8 NULL,"+" file_detail_id int4 NULL,"+" file_template_id int4 NULL,";
-            String origin_sqlCreate =  "CREATE TABLE "+origin_tableName+" ( id int4 not null,"+" file_detail_id int4 NULL,"+" file_template_id int4 NULL,";
+            String sqlCreate =  "CREATE TABLE "+tableName+" ( id serial not null,";
+            String origin_sqlCreate =  "CREATE TABLE "+origin_tableName+" ( id int4 not null,";
             for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDto.getFileTemplateDetailDtoList()){
                 sqlCreate += fileTemplateDetailDto.getFieldName() +" varchar NULL,";
                 origin_sqlCreate += fileTemplateDetailDto.getFieldName() +" varchar NULL,";
             }
-            sqlCreate += "file_attachment_id  varchar NULL,case_id varchar NULL);";
-            origin_sqlCreate += "file_attachment_id  varchar NULL,case_id varchar NULL);";
+            sqlCreate += " mppId2ErrorId int8 NULL, file_detail_id int4 NULL, file_template_id int4 NULL,file_attachment_id  varchar NULL,case_id varchar NULL);";
+            origin_sqlCreate += " file_detail_id int4 NULL, file_template_id int4 NULL ,file_attachment_id  varchar NULL,case_id varchar NULL);";
 
             String index_file_template_id = "CREATE INDEX "+tableName+"_mppid2errorid_idx ON "+tableName+" USING btree (file_template_id);";
             String index_case_id = "CREATE INDEX "+tableName+"_caseId_idx ON "+tableName+" USING btree (case_id);";
