@@ -34,13 +34,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import sun.rmi.runtime.Log;
-
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -50,6 +45,9 @@ import java.util.concurrent.*;
 @Slf4j
 @Service
 public class FileDoParsingServiceImpl implements FileDoParsingService {
+
+    public static final String quote = "^";
+    public static final String delimter = "|";
 
     @Resource
     private MppErrorInfoMapper mppErrorInfoMapper;
@@ -134,16 +132,18 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
 
             //创建多线程，一个模板创建一个线程,在子线程内分别入库
       int thread = 1;
-      if(rowCount > 5000){
-          thread = 3;
-      }
-      else if(rowCount > 20000){
+      if(rowCount > 4000){
+          thread = 2;
+      }else if(rowCount > 12000){
+          thread = 5;
+            }
+      else if(rowCount > 50000){
           thread = 8;
       }
 
       StringBuffer errorBuffer = new StringBuffer();
       //不开起多线程
-      if(thread == 1){
+     if(thread == 1){
           importRowCount = singleThreadedParsingCsv(userId, caeId, fileTemplateDto, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId, fieldDestList, importRowCount, feildRefIndexMap, rows, fileParsingFailedEntityListSql, errorBuffer);
       }
       //多线程
@@ -166,7 +166,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
      }
     }
 
-    private Integer multithreadedParsing(int thread,Long userId, Long caeId, FileTemplateDto fileTemplateDto, Object[] tableInfos, String insertSql, Map<Long, FileRinseDetailDto> regularMap, Long fileSeq, Long fileAttachmentId, Set<Long> fieldDestList, Integer importRowCount, Map<Long, Integer> feildRefIndexMap, List<CsvRow> rows, List<FileParsingFailedEntity> fileParsingFailedEntityListSql, StringBuffer errorBuffer) throws SQLException, IOException, InterruptedException {
+    private Integer multithreadedParsing(int thread,Long userId, Long caeId, FileTemplateDto fileTemplateDto, Object[] tableInfos, String insertSql, Map<Long, FileRinseDetailDto> regularMap, Long fileSeq, Long fileAttachmentId, Set<Long> fieldDestList, Integer importRowCount, Map<Long, Integer> feildRefIndexMap, List<CsvRow> rows, List<FileParsingFailedEntity> fileParsingFailedEntityListSql, StringBuffer errorBuffer) throws SQLException, IOException, InterruptedException, ExecutionException {
 
         ExecutorService executorService = Executors.newFixedThreadPool(thread);
 
@@ -273,7 +273,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                         mppErrorInfoEntity.setMppTableName((String)tableInfos[0]);
                         //mppErrorInfoEntityList.add(mppErrorInfoEntity);
                         Long idSeq = mppMapper.selectSeq("error_info_id_seq");
-                        errorBuffer.append("$").append(idSeq).append("$|").append(mppErrorInfoEntity.toString());
+                        mppErrorInfoEntity.setId(idSeq);
+                        errorBuffer.append(mppErrorInfoEntity.toString());
                         sqlInsertExec = sqlInsertExec.replace("&&xx_mppId2ErrorId_xx&&", String.valueOf(seq));
                     }
                 }
@@ -289,7 +290,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                 sqlInsertExec = sqlInsertExec.replace("&&xx_id_xx&&", String.valueOf(id));
                 tuples.append(sqlInsertExec);
                 k++;
-                if(k == 1999 || k == rows.size()-1) {
+                if(k == 4000 || i == rows.size()-1) {
+                    k =0 ;
                     StringBuffer tuplesBak = new StringBuffer(tuples);
                     tuples = new StringBuffer();
                     task = new Callable<Long>() {
@@ -301,12 +303,13 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                         }
                     };
                     cList.add(task);
+
                 }
             }
         }
         List<Future<Long>> results = executorService.invokeAll(cList, 30, TimeUnit.MINUTES); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
         for (Future<Long> str : results) {  //打印返回值
-            //log.info(str.get());
+            log.info(String.valueOf(str.get()));
         }
         executorService.shutdown();
         return importRowCount;
@@ -315,7 +318,6 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
     private Integer singleThreadedParsingCsv(Long userId, Long caeId, FileTemplateDto fileTemplateDto, Object[] tableInfos, String insertSql, Map<Long, FileRinseDetailDto> regularMap, Long fileSeq, Long fileAttachmentId, Set<Long> fieldDestList, Integer importRowCount, Map<Long, Integer> feildRefIndexMap, List<CsvRow> rows, List<FileParsingFailedEntity> fileParsingFailedEntityListSql, StringBuffer errorBuffer) throws SQLException, IOException {
         //对csv行进行遍历
         StringBuffer tuples = new StringBuffer();
-        int k = 0;
         for (int i = 1; i < rows.size(); i++) {
             if(CollectionUtils.isEmpty(rows.get(i).getFields())){
               continue;
@@ -411,7 +413,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                         mppErrorInfoEntity.setMppTableName((String)tableInfos[0]);
                         //mppErrorInfoEntityList.add(mppErrorInfoEntity);
                         Long idSeq = mppMapper.selectSeq("error_info_id_seq");
-                        errorBuffer.append("$").append(idSeq).append("$|").append(mppErrorInfoEntity.toString());
+                        mppErrorInfoEntity.setId(idSeq);
+                        errorBuffer.append(mppErrorInfoEntity.toString());
                         sqlInsertExec = sqlInsertExec.replace("&&xx_mppId2ErrorId_xx&&", String.valueOf(seq));
                     }
                 }
@@ -636,7 +639,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                             mppErrorInfoEntity.setMppTableName((String) tableInfos[0]);
                             //mppErrorInfoEntityList.add(mppErrorInfoEntity);
                             Long idSeq = mppMapper.selectSeq("error_info_id_seq");
-                            errorBuffer.append("$").append(idSeq).append("$|").append(mppErrorInfoEntity.toString());
+                            mppErrorInfoEntity.setId(idSeq);
+                            errorBuffer.append(mppErrorInfoEntity.toString());
                             sqlInsertExec = sqlInsertExec.replace("&&xx_mppId2ErrorId_xx&&", String.valueOf(seq));
                         }
                     }
@@ -669,6 +673,16 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
     }
 
     private Long saveToGaussdb(StringBuffer tuples, String tableName) throws SQLException, IOException {
+        ByteArrayInputStream stream = new ByteArrayInputStream(tuples.toString().getBytes());
+        Connection connection = new GaussConnection().getConnection();
+        CopyManager cm = new CopyManager((BaseConnection) connection);
+        String sql = "copy " + tableName + " from STDIN with (format 'CSV', delimiter '"+delimter+"', quote '"+quote+"')";
+        long records  = cm.copyIn(sql,stream);
+        connection.commit();
+        connection.close();
+        return records;
+
+       /*
         Connection connection = new GaussConnection().getConnection();
         CopyManager cm = new CopyManager((BaseConnection) connection);
         String sql = "copy " + tableName + " from STDIN with (format 'CSV', delimiter '|', quote '$')";
@@ -677,6 +691,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         connection.commit();
         connection.close();
         return records;
+        */
     }
 
 
@@ -760,51 +775,12 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
             }
         }
 
-        /**
-         * mysql数据集中多线程统一删除
-         */
-        deleteMysql(mppid2erroridDeleteList);
-
     }
 
-    public void deleteMysql(List<Long> mppid2erroridDeleteList) {
-        ExecutorService executorServiceSqlDelete = Executors.newFixedThreadPool(3);
-        executorServiceSqlDelete.execute(new Runnable() {
-            @Override
-            public void run() {
-                for(Long mppid2errorid :mppid2erroridDeleteList) {
-                    fileParsingFailedMapper.deleteFileParsingFailedByMppid2errorid(mppid2errorid);
-                }
-            }
-        });
-    }
-
-    public void doRepeat(Long fileTemplateid, String tableName, List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList, List<Long> mppid2erroridDeleteList, String repeatSql) throws InterruptedException {
+    public void doRepeat(String tableName, List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList, String repeatSql) throws InterruptedException, ExecutionException {
         String repeatCondition = "";
         if(!CollectionUtils.isEmpty(rinseBusinessRepeatDtoList)){
             //组装orderBy排序部分
-            //通过模板id获取所有的字段，把有清洗字段id的保留，用于组装
-            List<FileTemplateDetailEntity> fileTemplateDetailEntityHasRinseList = new ArrayList<>();
-            FileTemplateDetailEntity fileTemplateDetailEntity4Sql = new FileTemplateDetailEntity();
-            fileTemplateDetailEntity4Sql.setTemplateId(fileTemplateid);
-            List<FileTemplateDetailEntity> fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntity4Sql);
-            for(FileTemplateDetailEntity fileTemplateDetailEntity : fileTemplateDetailEntityList){
-               if(null != fileTemplateDetailEntity.getFileRinseDetailId()){
-                   fileTemplateDetailEntityHasRinseList.add(fileTemplateDetailEntity);
-               }
-            }
-
-            //进行多线程去重
-            //创建多线程，一个模板创建一个线程,在子线程内分别入库
-
-
-            ExecutorService executorService = Executors.newFixedThreadPool(rinseBusinessRepeatDtoList.size()/2 == 0 ? 1:rinseBusinessRepeatDtoList.size()/2);
-
-            List<Callable<Boolean>> cList = new ArrayList<>();  //定义添加线程的集合
-
-            Callable<Boolean> task = null;  //创建单个线程
-
-
             //进行去重
             for(RinseBusinessRepeatDto rinseBusinessRepeatDto : rinseBusinessRepeatDtoList) {
                 //通过id获取字段名
@@ -821,48 +797,68 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                 }
                 repeatSql = repeatSql.replace("_&condition&_",repeatCondition);
                 List<Map<String,Object>> mapList =  mppMapper.mppSqlExecForSearchRtMapList(repeatSql);
-                //key:file_detail_id ;value:需要减去的数量
-                Map<String,Integer> fileDetailRowCountReduceMap = new HashMap<>();
+
                 if(!CollectionUtils.isEmpty(mapList)){
+                    StringBuffer idsBuffer = new StringBuffer();
+                    StringBuffer mppid2erroridsBuffer = new StringBuffer();
+                    StringBuffer deleteSql = new StringBuffer("DELETE FROM  ").append(tableName).append("  WHERE id in  (");
+                    StringBuffer deleteErrorSql =new StringBuffer("DELETE FROM  &&_tableNmae_&&").append("  WHERE mppid2errorid in  (");
+                    List<Long> mppid2erroridList = new ArrayList<>();
                     for(Map map : mapList) {
+                        idsBuffer.append(map.get("id")).append(",");
+                        if(!map.get("mppid2errorid").toString().equals("0")) {
+                            mppid2erroridsBuffer.append(map.get("mppid2errorid")).append(",");
+                            mppid2erroridList.add((Long)map.get("mppid2errorid"));
+                        }
+                    }
+                    boolean flag = mppid2erroridsBuffer.length() > 0;
+                    //去除末尾的逗号
+                    idsBuffer.deleteCharAt(idsBuffer.length()-1).append(")");
+                    //去除末尾的逗号
+                    if(flag) {
+                        mppid2erroridsBuffer.deleteCharAt(mppid2erroridsBuffer.length() - 1).append(")");
+                    }
+                    deleteSql.append(idsBuffer);
+                    //删除重复的数据
+                    mppMapper.mppSqlExec(deleteSql.toString());
 
-                        task = new Callable<Boolean>() {
-                            @Override
-                            public Boolean call() throws Exception {
+                    //把错误信息表的数据一并删除
+                    if(flag) {
+                        String[] errorTables = {"error_info", "file_parsing_failed"};
+                        StringBuffer deleteErrorSqlBuffer = deleteErrorSql.append(mppid2erroridsBuffer);
+                        ExecutorService executorServiceSqlDelete = Executors.newFixedThreadPool(2);
 
-                                String idStr = map.get("id") + "";
-                                Long id = Long.parseLong(idStr);
-                                String deleteSql = "DELETE FROM " + tableName + " WHERE id = " + id;
-                                mppMapper.mppSqlExec(deleteSql);
-                                Long mppid2errorid = (Long) map.get("mppid2errorid");
-                                if (null != mppid2errorid && mppid2errorid != 0) {
-                                    mppErrorInfoMapper.deleteMppErrorInfoByMppid2errorid(mppid2errorid);
-                                    mppid2erroridDeleteList.add(mppid2errorid);
-                                    //fileParsingFailedMapper.deleteFileParsingFailedByMppid2errorid(mppid2errorid);
-                                } else {
-                                    //通过正则校验的重复数据也被删除了，需要 统计符合的导入数量上也要减去
-                                    if (fileDetailRowCountReduceMap.get(map.get("file_detail_id").toString()) == null) {
-                                        fileDetailRowCountReduceMap.put(map.get("file_detail_id").toString(), 1);
-                                    } else {
-                                        fileDetailRowCountReduceMap.put(map.get("file_detail_id").toString(),
-                                                fileDetailRowCountReduceMap.get(map.get("file_detail_id").toString()) + 1);
+                        for (String str : errorTables) {
+                            executorServiceSqlDelete.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if ("error_info".equals(str)) {
+
+                                        String deleteErrorSqlStr = deleteErrorSqlBuffer.toString().replace("&&_tableNmae_&&", str);
+
+                                        try {
+                                            mppMapper.mppSqlExec(deleteErrorSqlStr);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+
+                                    } else if ("file_parsing_failed".equals(str)) {
+                                        try {
+
+                                          fileParsingFailedMapper.deleteFileParsingFailedByMppid2erroridBatch(mppid2erroridList);
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                     }
                                 }
-                              return true;
-                            }
-                        };
-                        cList.add(task);
+                            });
+                        }
                     }
+
                 }
             }
-
-            List<Future<Boolean>> results = executorService.invokeAll(cList, 30, TimeUnit.MINUTES); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
-
-            for (Future<Boolean> str : results) {  //打印返回值
-                //log.info(str.get());
-            }
-            executorService.shutdown();
-
         }
     }
 
@@ -910,16 +906,26 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
     }
 
     public void dealWithfailed(List<FileParsingFailedEntity> fileParsingFailedEntityListSql, StringBuffer errorBuffer) throws IOException, SQLException {
-        ExecutorService fileParsingFailedInsert = Executors.newFixedThreadPool(5);
-        List<Callable<Integer>> cList = new ArrayList<>();  //定义添加线程的集合
-        Callable<Integer> task = null;  //创建单个线程
+        ExecutorService fileParsingFailedInsert = Executors.newFixedThreadPool(4);
+
+        //子线程错误数据入mpp库
+        fileParsingFailedInsert.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    saveToGaussdb(errorBuffer, "error_info");
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
 
         int errorPackage = 0;
         //进行分包存库
         List<FileParsingFailedEntity> fileParsingFailedEntityPackage = new ArrayList<>();
         for(int i =0 ;i<fileParsingFailedEntityListSql.size();i++){
             fileParsingFailedEntityPackage.add(fileParsingFailedEntityListSql.get(i));
-            if((++errorPackage == 10) || (i== fileParsingFailedEntityListSql.size()-1)){
+            if((++errorPackage == 500) || (i== fileParsingFailedEntityListSql.size()-1)){
                 errorPackage = 0;
                 //多线程避免脏读
                 Vector<FileParsingFailedEntity> vector = new Vector<>();
@@ -934,30 +940,6 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
             }
         }
 
-        //数据入库
-        saveToGaussdb(errorBuffer, "error_info");
-
-        //进行分包存库
-        /*
-        List<MppErrorInfoEntity> mppErrorInfoEntityListPackage = new ArrayList<>();
-        for(int i =0 ;i<mppErrorInfoEntityList.size();i++){
-            mppErrorInfoEntityListPackage.add(mppErrorInfoEntityList.get(i));
-            if((++errorPackage == 10) || (i== fileParsingFailedEntityListSql.size()-1)){
-                errorPackage = 0;
-                //多线程避免脏读
-                List<MppErrorInfoEntity> mppErrorInfoEntityInserttList  = new ArrayList<>();
-                mppErrorInfoEntityInserttList.addAll(mppErrorInfoEntityListPackage);
-                fileParsingFailedInsert.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        mppErrorInfoMapper.errorInfoListInsert(mppErrorInfoEntityInserttList);
-                    }
-                });
-                mppErrorInfoEntityListPackage = new ArrayList<>();
-            }
-        }
-        */
-        
 
     }
 

@@ -6,4 +6,9 @@ import lombok.Data;
 @Data
 public class UserDto extends User {
 
+    /**
+     * 原始密码
+     */
+    private String oldPassword;
+
 }

@@ -116,6 +116,26 @@ public class AccountResource {
         request.getSession().invalidate();
     }
 
+    @PostMapping("/account/restPassword")
+    public RestResult<Integer> restPassword(@Valid @RequestBody UserDto userDto) {
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(accountServiceImpl.restPassword(userDto, errorList));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("密码修改失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("密码修改成功");
+        }
+        return restResult;
+    }
+
+
     /*
     @PostMapping("/account/restPassword")
     @LogInCheck(doLock = true,doProcess = true)

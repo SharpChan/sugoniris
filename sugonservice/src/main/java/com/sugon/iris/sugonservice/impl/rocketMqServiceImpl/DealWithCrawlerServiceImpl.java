@@ -10,6 +10,7 @@ import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.Use
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.*;
 import com.sugon.iris.sugonservice.service.fileService.FileCaseService;
 import com.sugon.iris.sugonservice.service.fileService.FileParsingService;
+import com.sugon.iris.sugonservice.service.fileService.FolderService;
 import com.sugon.iris.sugonservice.service.rocketMqService.DealWithCrawlerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.io.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -52,8 +54,14 @@ public class DealWithCrawlerServiceImpl implements DealWithCrawlerService {
     @Resource
     private FileCaseService fileCaseServiceImpl;
 
+    @Resource
+    private FolderService folderServiceImpl;
+
+    @Resource
+    private FileDetailMapper fileDetailMapper;
+
     @Override
-    public void dealWithBankData(String message) throws IOException, NoSuchAlgorithmException, InterruptedException, ExecutionException, IllegalAccessException, ParseException {
+    public void dealWithBankData(String message){
         try {
             Gson gson = new Gson();
             Map<String, Object> map = gson.fromJson(message, Map.class);
@@ -62,9 +70,8 @@ public class DealWithCrawlerServiceImpl implements DealWithCrawlerService {
             String token = serialNumber.substring(0, 22);
             String date = serialNumber.substring(22);
             String policeno = map.get("policeno").toString();
-
-            List<Map<String, List<Map<String, String>>>> templateDdatas = (List<Map<String, List<Map<String, String>>>>) map.get(token);
-            if (CollectionUtils.isEmpty(templateDdatas)) {
+            Map<String, List<Map<String, String>>> template2DatasMap = (Map<String, List<Map<String, String>>>) map.get(token);
+            if (CollectionUtils.isEmpty(template2DatasMap)) {
                 return;
             }
             //创建用户
@@ -72,19 +79,57 @@ public class DealWithCrawlerServiceImpl implements DealWithCrawlerService {
             //案件创建
             Long caseId = createCase(userId, token, errorList);
             //初始化token 信息,如果同一个token 新来的数据的时间早于入库的时间，则直接舍弃
-            if (!initTokenInfo(templateDdatas, userId, token, caseId, date, policeno, errorList)) {
+            if (!initTokenInfo(template2DatasMap, userId, token, caseId, date, policeno, errorList)) {
                 return;
             }
             //创建文件夹
-            Long attAchmentId = createFolder(templateDdatas, userId, caseId);
+            List<FileAttachmentEntity> attAchmentList = createFolder(template2DatasMap, userId, caseId);
             //进行文件解析
-            fileParsingServiceImpl.fileParsing(userId, attAchmentId, errorList);
+            fileParsingServiceImpl.fileParsing(userId, attAchmentList.get(0).getId(), errorList);
+
+            //进行清洗
+            doRinse(errorList, userId, attAchmentList);
 
             //找出file_attachment信息，设置数据同步状态
             importStatus(token,userId);
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private void doRinse(List<Error> errorList, Long userId, List<FileAttachmentEntity> attAchmentList) throws InterruptedException, IllegalAccessException, IOException, SQLException, ExecutionException {
+        //通过fileAttachmentEntityListAll组装入参map【key:caseId;value:模板组id】
+        Map<Long, Set<Long>> caseId2TemplateGroupIdsMap = new HashMap<>();
+        Set<Long> caseIdSet = new HashSet<>();//获取所有的案件编号
+        for(FileAttachmentEntity fileAttachmentEntity : attAchmentList){
+            caseIdSet.add(fileAttachmentEntity.getCaseId());
+            Set<Long> templateGroupIdList = caseId2TemplateGroupIdsMap.get(fileAttachmentEntity.getCaseId());
+            if(CollectionUtils.isEmpty(templateGroupIdList)){
+                Set<Long>  templateGroupIdListNew = new HashSet<>();
+                templateGroupIdListNew.add(fileAttachmentEntity.getTemplateGroupId());
+                caseId2TemplateGroupIdsMap.put(fileAttachmentEntity.getCaseId(),templateGroupIdListNew);
+            }else{
+                templateGroupIdList.add(fileAttachmentEntity.getCaseId());
+            }
+        }
+        log.info("补全开始");
+        //进行固定补全
+        folderServiceImpl.doFixedDefinedCompleteInCahe(userId,caseId2TemplateGroupIdsMap,errorList);
+        log.info("补全结束");
+        //通过余额进行补全
+        log.info("余额补全开始");
+        folderServiceImpl.doFixedCompleteByRemaining(caseIdSet,errorList);
+        log.info("余额补全结束");
+        //进行去重
+        log.info("去重开始");
+        folderServiceImpl.doRemoveRepeat(caseIdSet,errorList);
+        log.info("去重结束");
+        //进行补全字段的正则校验
+        log.info("补全字段的正则校验开始");
+        //通过文件夹信息，获取里面的文件信息
+        List<Long> fileIdList = fileDetailMapper.getIdsByFileAttachmentId(attAchmentList.get(0).getId());
+        folderServiceImpl.regularCompleteField(userId,fileIdList,errorList);
+        log.info("补全字段的正则校验结束");
     }
 
     private void importStatus(String token,Long userId) {
@@ -101,7 +146,8 @@ public class DealWithCrawlerServiceImpl implements DealWithCrawlerService {
         }
     }
 
-    private Long createFolder(List<Map<String, List<Map<String, String>>>> templateDdatas, Long userId, Long caseId) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+    private List<FileAttachmentEntity> createFolder(Map<String, List<Map<String, String>>> template2Datasmap, Long userId, Long caseId) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         //创建文件夹
         String folderName = new Date().getTime()+""+new Random().nextInt(99);
         MessageDigest md = MessageDigest.getInstance("MD5");
@@ -123,7 +169,7 @@ public class DealWithCrawlerServiceImpl implements DealWithCrawlerService {
             folder.mkdirs();
         }
         //保存为csv文件
-        saveCsv(templateDdatas, uploadPath);
+        saveCsv(template2Datasmap, uploadPath);
         //文件夹信息入库
         return saveAttAchment(caseId, userId, md5, uploadPath);
     }
@@ -175,7 +221,7 @@ public class DealWithCrawlerServiceImpl implements DealWithCrawlerService {
     }
 
     //保存文件信息
-    private Long saveAttAchment(Long caseId, Long userId, String md5, String uploadPath) {
+    private List<FileAttachmentEntity> saveAttAchment(Long caseId, Long userId, String md5, String uploadPath) {
         List<FileAttachmentEntity> fileAttachmentEntityList = new ArrayList<>();
         FileAttachmentEntity fileAttachmentEntity = new FileAttachmentEntity();
         fileAttachmentEntity.setTemplateGroupName("模板组-经侦");
@@ -190,14 +236,13 @@ public class DealWithCrawlerServiceImpl implements DealWithCrawlerService {
         fileAttachmentEntity.setCaseId(caseId);
         fileAttachmentEntityList.add(fileAttachmentEntity);
         fileAttachmentMapper.batchFileAttachmentInsert(fileAttachmentEntityList);
-        return fileAttachmentEntity.getId();
+        return fileAttachmentEntityList;
     }
 
     //保存csv文件
-    private void saveCsv(List<Map<String, List<Map<String, String>>>> templateDatas, String uploadPath) {
+        private void saveCsv(Map<String, List<Map<String, String>>> map2, String uploadPath) {
         //进行解析,生成CSV文件并且保存到服务器
         int i = 1;
-        for(Map<String ,List<Map<String,String>>> map2 : templateDatas) {
             for (Map.Entry entry : map2.entrySet()) {    //模板层面
                 //1.模板id
                 String templateId = entry.getKey().toString();
@@ -275,11 +320,10 @@ public class DealWithCrawlerServiceImpl implements DealWithCrawlerService {
                     }
                 }
             }
-        }
     }
 
     //保存token信息
-    private boolean initTokenInfo(List<Map<String ,List<Map<String,String>>>> templateDdatas,Long userId,String token,Long caseId,String date,String policeno, List<Error> errorList ) throws ParseException, IllegalAccessException, IOException, NoSuchAlgorithmException, InterruptedException, ExecutionException {
+    private boolean initTokenInfo(Map<String ,List<Map<String,String>>> template2DatasMap,Long userId,String token,Long caseId,String date,String policeno, List<Error> errorList ) throws ParseException, IllegalAccessException, IOException, NoSuchAlgorithmException, InterruptedException, ExecutionException {
             try {
                 RebotEntity rebotEntity = robotTokenMapper.selectRobotTokenByToken(token);
                 if (null == rebotEntity) {
@@ -318,10 +362,14 @@ public class DealWithCrawlerServiceImpl implements DealWithCrawlerService {
                     robotTokenMapper.updateRobotDateByToken(token, date, caseId);
 
                     //创建文件夹
-                    Long attAchmentId = createFolder(templateDdatas, userId, caseId);
+                    List<FileAttachmentEntity> attAchmentList = createFolder(template2DatasMap, userId, caseId);
                     //进行文件解析
-                    fileParsingServiceImpl.fileParsing(userId, attAchmentId, errorList);
+                    fileParsingServiceImpl.fileParsing(userId,  attAchmentList.get(0).getId(), errorList);
 
+                    //进行清洗
+                    doRinse(errorList, userId, attAchmentList);
+
+                    //找出file_attachment信息，设置数据同步状态
                     importStatus(token,userId);
                     return false;
 

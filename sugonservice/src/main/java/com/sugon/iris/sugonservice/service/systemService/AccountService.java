@@ -15,6 +15,8 @@ public interface AccountService {
       */
      int saveAccount(UserDto userDto, List<Error> errorList);
 
+     int  restPassword(UserDto userDto, List<Error> errorList);
+
      /**
       * 登录后获取账户信息
       * @param userDto

@@ -44,6 +44,23 @@ public class AccountServiceImpl implements AccountService {
       return result;
   }
 
+    @Override
+    public int restPassword(UserDto userDto, List<Error> errorList) {
+        int i =0;
+        //通过原始密码和用户名查询用户是否存在
+        List<UserEntity> userEntityList_01 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),userDto.getOldPassword(),null,null,errorList);
+        if(CollectionUtils.isEmpty(userEntityList_01)){
+            errorList.add(new Error(ErrorCode_Enum.SYS_02_000.getCode(),"账号或密码错误",""));
+            i = 0;
+        }else if(userEntityList_01.size()>1){
+            errorList.add(new Error("iris-00-004","存在多个账户请联系管理员",""));
+            i =  userEntityList_01.size();
+        }else{
+            i = accountServiceDaoImpl.updateForPassword (userEntityList_01.get(0).getId(),userDto.getPassword(), errorList);
+        }
+        return 0;
+    }
+
     public User getUserInfo(UserDto userDto, List<Error> errorList) throws IllegalAccessException {
         List<UserEntity> userEntityList_01 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),null,null,null,errorList);
         if(CollectionUtils.isEmpty(userEntityList_01)){

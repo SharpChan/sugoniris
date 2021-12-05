@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -48,7 +47,7 @@ public class AccountServiceDaoImpl implements AccountServiceDao {
                 sql = sql+" and flag = "+flag+"";
             }
             if(!StringUtils.isEmpty(policeno)){
-                sql = sql+" and policeno = "+policeno+"";
+                sql = sql+" and policeno = '"+policeno+"'";
             }
             userEntityList = ds1JdbcTemplate.query(sql,new BeanPropertyRowMapper<>(UserEntity.class));
         }catch(Exception e){
@@ -182,6 +181,28 @@ public class AccountServiceDaoImpl implements AccountServiceDao {
         }
         return  result;
     }
+
+    /**
+     *修改用户密码
+     */
+    @Override
+    public  int updateForPassword (Long id,String password, List<Error> errorList){
+        int result=0;
+        String sql = "update sys_user set password = ? where id = "+id;
+        try{
+            result=ds1JdbcTemplate.update(sql, new PreparedStatementSetter(){
+                @Override
+                public void setValues(PreparedStatement ps) throws SQLException {
+                    ps.setString(1,password);
+                }
+            });
+        }catch(Exception e){
+            LOGGER.info("{}-{}","修改密码失败",e);
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"修改密码失败",e.toString()));
+        }
+        return  result;
+    }
+
     /**
      * 根据user表主键id物理删除用户
      * @param id

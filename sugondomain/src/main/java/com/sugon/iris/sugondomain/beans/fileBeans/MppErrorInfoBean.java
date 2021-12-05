@@ -6,6 +6,9 @@ import lombok.Data;
 @Data
 public class MppErrorInfoBean {
 
+    public static final String quote = "^";
+    public static final String delimter = "|";
+
     /**
      * 自增序列
      */
@@ -50,12 +53,12 @@ public class MppErrorInfoBean {
 
     @Override
     public String toString() {
-        return  "$"+id +"$"+"|"+
-                "$"+fileAttachmentId+"$"+"|"+
-                "$"+fileDetailId +"$"+"|"+
-                "$"+mppid2errorid +"$"+"|"+
-                "$"+fileRinseDetailId +"$"+"|"+
-                "$"+fileCaseId+"$"+"|"+
-                "$"+mppTableName +"$"+"\n";
+        return  quote + id                    +quote+delimter+
+                quote + fileAttachmentId      +quote+delimter+
+                quote + fileDetailId          +quote+delimter+
+                quote + mppid2errorid         +quote+delimter+
+                quote + fileRinseDetailId     +quote+delimter+
+                quote + fileCaseId            +quote+delimter+
+                quote + mppTableName          +quote+"\n";
     }
 }

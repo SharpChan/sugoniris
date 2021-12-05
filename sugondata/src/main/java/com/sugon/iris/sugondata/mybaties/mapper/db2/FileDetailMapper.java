@@ -19,4 +19,6 @@ public interface FileDetailMapper {
 
     int updateByPrimaryKey(FileDetailEntity fileDetailEntity);
 
+    List<Long> getIdsByFileAttachmentId(Long fileAttachmentId);
+
 }

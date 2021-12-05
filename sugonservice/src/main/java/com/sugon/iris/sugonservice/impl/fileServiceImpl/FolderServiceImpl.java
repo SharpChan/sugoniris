@@ -29,6 +29,7 @@ import com.sugon.iris.sugonservice.service.fileService.FileDoParsingService;
 import com.sugon.iris.sugonservice.service.fileService.FolderService;
 import com.sugon.iris.sugonservice.service.declarService.DeclarService;
 import com.sugon.iris.sugonservice.service.rinseBusinessService.RinseBusinessService;
+import io.swagger.models.auth.In;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -50,6 +51,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.regex.Pattern;
 import com.jcraft.jsch.Session;
 
@@ -153,7 +155,7 @@ public class FolderServiceImpl implements FolderService {
 
     //如果是压缩文件则进行解压
     @Override
-    public void decompress(User user,String[] selectedArr,List<Error> errorList) throws InterruptedException, IllegalAccessException, IOException, SQLException {
+    public void decompress(User user,String[] selectedArr,List<Error> errorList) throws InterruptedException, IllegalAccessException, IOException, SQLException, ExecutionException {
         log.info("进行解压");
         List<FileAttachmentEntity> fileAttachmentEntityListAll = new ArrayList<>();
         for(String id : selectedArr) {
@@ -248,7 +250,7 @@ public class FolderServiceImpl implements FolderService {
         }
         log.info("补全开始");
         //进行固定补全
-        this.doFixedDefinedComplete(user.getId(),caseId2TemplateGroupIdsMap,errorList);
+        this.doFixedDefinedCompleteInCahe(user.getId(),caseId2TemplateGroupIdsMap,errorList);
         log.info("补全结束");
         //通过余额进行补全
         log.info("余额补全开始");
@@ -264,7 +266,7 @@ public class FolderServiceImpl implements FolderService {
         log.info("补全字段的正则校验结束");
     }
 
-    private void doFixedCompleteByRemaining(Set<Long> caseIdSet,List<Error>  errorList){
+    public void doFixedCompleteByRemaining(Set<Long> caseIdSet,List<Error>  errorList){
          for(Long caseId : caseIdSet){
                //通过caseId获取所有的表
              FileTableEntity fileTableEntity4Sql = new FileTableEntity();
@@ -481,7 +483,7 @@ public class FolderServiceImpl implements FolderService {
     }
 
 
-    private void regularCompleteField(Long userId,List<Long> fileIdList, List<Error> errorList) throws IllegalAccessException, IOException, SQLException {
+    public void regularCompleteField(Long userId,List<Long> fileIdList, List<Error> errorList) throws IllegalAccessException, IOException, SQLException {
 
         //校验不通过列表,存入mysql
         List<FileParsingFailedEntity> fileParsingFailedEntityListSql = new ArrayList<>();
@@ -608,8 +610,6 @@ public class FolderServiceImpl implements FolderService {
                         mppErrorInfoEntity.setMppid2errorid(seq);
                         mppErrorInfoEntity.setFileCaseId(fileDetailEntity.getCaseId());
                         mppErrorInfoEntity.setMppTableName(fileDetailEntity.getTableName());
-                        //mppErrorInfoEntityList.add(mppErrorInfoEntity);
-                        //error_info_id_seq
                         Long idSeq = mppMapper.selectSeq("error_info_id_seq");
                         mppErrorInfoEntity.setId(idSeq);
                         errorBuffer.append(mppErrorInfoEntity.toString());
@@ -623,18 +623,16 @@ public class FolderServiceImpl implements FolderService {
     }
 
     //进行去重
-    private void doRemoveRepeat( Set<Long> caseIdSet, List<Error> errorList) throws IllegalAccessException, InterruptedException {
-
-        //放入子线程中删除
-        List<Long> mppid2erroridDeleteList = new ArrayList<>();
-
+    public void doRemoveRepeat( Set<Long> caseIdSet, List<Error> errorList) throws IllegalAccessException, InterruptedException, ExecutionException {
         for (Long caseId : caseIdSet) {
             //获取该案件下所有的表
             FileTableEntity fileTableEntity4Sql = new FileTableEntity();
             fileTableEntity4Sql.setCaseId(caseId);
             List<FileTableEntity> fileTableEntityList =  fileTableMapper.findFileTableList(fileTableEntity4Sql);
             for(FileTableEntity fileTableEntityBean : fileTableEntityList){
-                   //通过表获取模板
+                String repeatSql = "select c.* from (select a.*  from (select row_number() OVER(PARTITION BY _&condition&_   order by id) AS rownum,b.*   from  &&_tableName_&&  b ) a ) c where rownum > 1";
+
+                //通过表获取模板
                 FileTemplateEntity fileTemplateEntity =  fileTemplateMapper.selectFileTemplateByPrimaryKey(fileTableEntityBean.getFileTemplateId());
 
                 //通过模板获取去重配置
@@ -643,15 +641,11 @@ public class FolderServiceImpl implements FolderService {
                     continue;
                 }
 
-                String repeatSql = "select c.* from (select a.*  from " +
-                        "(select row_number() OVER(PARTITION BY _&condition&_   order by mppid2errorid) AS rownum,b.* " +
-                        "  from "+fileTableEntityBean.getTableName()+" b ) a ) c where rownum > 1";
+                repeatSql = repeatSql.replace("&&_tableName_&&",fileTableEntityBean.getTableName());
 
-                fileDoParsingServiceImpl.doRepeat(fileTableEntityBean.getId(),fileTableEntityBean.getTableName(),rinseBusinessRepeatDtoList,mppid2erroridDeleteList,repeatSql);
+                fileDoParsingServiceImpl.doRepeat(fileTableEntityBean.getTableName(),rinseBusinessRepeatDtoList,repeatSql);
             }
         }
-
-        fileDoParsingServiceImpl.deleteMysql(mppid2erroridDeleteList);
     }
 
     /**
@@ -661,7 +655,7 @@ public class FolderServiceImpl implements FolderService {
      */
     @Override
     public void doFixedDefinedComplete(Long userId, Map<Long,Set<Long>> caseId2TemplateGroupIdsMap, List<Error> errorList) throws InterruptedException {
-        try {
+       try {
             for (Map.Entry<Long, Set<Long>> entry : caseId2TemplateGroupIdsMap.entrySet()) {
                 Long caseId = entry.getKey();
                 List<String> tableNames = getTableNames(caseId);
@@ -671,6 +665,7 @@ public class FolderServiceImpl implements FolderService {
                     List<FileFieldCompleteEntity> fileFieldCompleteEntityList = fileFieldCompleteMapper.selectFileFieldCompleteByTemplateGroupId(templateGroupId);
                     //进行排序
                     this.fileFieldCompleteEntityListSort(fileFieldCompleteEntityList);
+
                     for (FileFieldCompleteEntity fileFieldCompleteEntity : fileFieldCompleteEntityList) {
                         //目地模板id
                         Long destFileTemplateId = fileFieldCompleteEntity.getDestFileTemplateId();
@@ -678,6 +673,7 @@ public class FolderServiceImpl implements FolderService {
                         FileTemplateEntity fileTemplateDestEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(destFileTemplateId);
                         //目地表
                         String destTable = "base_" + fileTemplateDestEntity.getTablePrefix() + "_" + caseId + "_" + userId;
+
                         if (!tableNames.contains(destTable)) {
                             continue;
                         }
@@ -700,6 +696,8 @@ public class FolderServiceImpl implements FolderService {
                         String fieldSource = fileFieldCompleteEntity.getFieldSource();
                         String[] fieldSourceArr = fieldSource.split("\\+\\+");
                         List<String> fieldSourceFieldNameList = new ArrayList<>();
+
+
                         for (String str : fieldSourceArr) {
                             FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(Long.parseLong(str));
                             fieldSourceFieldNameList.add(fileTemplateDetailEntity.getFieldName());
@@ -726,7 +724,7 @@ public class FolderServiceImpl implements FolderService {
                                 }
                                 whereStr = whereStr + fieldDestFieldName + " is null ";
 
-                                //获得查询源表的条件
+                                //获得查询源表的条件   sourceList：源关联字段集合
                                 String condi = "";
                                 for (int i = 0; i < sourceList.size(); i++) {
                                     //只有一个关联字段,源表关联字段不允许为空
@@ -762,30 +760,6 @@ public class FolderServiceImpl implements FolderService {
                         }
                     }
                 }
-               /*导入时补全字段不做正则判断，所以注销
-               if(!CollectionUtils.isEmpty(mppid2erroridList)){
-                   //删除错误记录信息表
-                   ExecutorService fileParsingFailedInsert = Executors.newFixedThreadPool(mppid2erroridList.size() / 1000 + 1);
-                   int errorPackage = 0;
-                   List<Long> mppid2erroridListPackage = new ArrayList<>();
-                   for (int i = 0; i < mppid2erroridList.size(); i++) {
-                       mppid2erroridListPackage.add(Long.parseLong(mppid2erroridList.get(i)));
-                       if ((++errorPackage == 2000) || (i == mppid2erroridList.size() - 1)) {
-                           errorPackage = 0;
-                           //多线程避免脏读
-                           List<Long> deleteList = new ArrayList<>();
-                           deleteList.addAll(mppid2erroridListPackage);
-                           fileParsingFailedInsert.execute(new Runnable() {
-                               @Override
-                               public void run() {
-                                   mppErrorInfoMapper.deleteErrorInfoListByMppid2errorid(deleteList);
-                                   fileParsingFailedMapper.deleteFileParsingFailedByMppid2erroridBatch(deleteList);
-                               }
-                           });
-                           mppid2erroridListPackage = new ArrayList<>();
-                       }
-                   }
-               }*/
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -793,7 +767,188 @@ public class FolderServiceImpl implements FolderService {
         }
        }
 
-   private void mppSqlExec (String tableName,String sql){
+    /**
+     * 进行固定数据补全
+     *
+     * @param  caseId2TemplateGroupIdsMap  key:caseId;value:模板组id
+     */
+    @Override
+    public void doFixedDefinedCompleteInCahe(Long userId, Map<Long,Set<Long>> caseId2TemplateGroupIdsMap, List<Error> errorList) throws InterruptedException {
+        try {
+            for (Map.Entry<Long, Set<Long>> entry : caseId2TemplateGroupIdsMap.entrySet()) {
+                Long caseId = entry.getKey();
+                List<String> tableNames = getTableNames(caseId);
+                Set<Long> TemplateGroupIdSet = entry.getValue();
+                for (Long templateGroupId : TemplateGroupIdSet){
+                    //通过模板组id，获取补全配置
+                    List<FileFieldCompleteEntity> fileFieldCompleteEntityList = fileFieldCompleteMapper.selectFileFieldCompleteByTemplateGroupId(templateGroupId);
+                    //进行排序
+                    this.fileFieldCompleteEntityListSort(fileFieldCompleteEntityList);
+
+
+
+                    List<String> updateSqlList = new ArrayList<>();
+
+                    for (FileFieldCompleteEntity fileFieldCompleteEntity : fileFieldCompleteEntityList) {
+                        //目地模板id
+                        Long destFileTemplateId = fileFieldCompleteEntity.getDestFileTemplateId();
+                        //目地模板
+                        FileTemplateEntity fileTemplateDestEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(destFileTemplateId);
+                        //目地表
+                        String destTable = "base_" + fileTemplateDestEntity.getTablePrefix() + "_" + caseId + "_" + userId;
+
+                        if (!tableNames.contains(destTable)) {
+                            continue;
+                        }
+                        //源模板id
+                        Long sourceFileTemplateId = fileFieldCompleteEntity.getSourceFileTemplateId();
+                        //源模板
+                        FileTemplateEntity fileTemplateSourceEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(sourceFileTemplateId);
+                        String sourceTable = "base_" + fileTemplateSourceEntity.getTablePrefix() + "_" + caseId + "_" + userId;
+                        if (!tableNames.contains(sourceTable)) {
+                            continue;
+                        }
+                        //关联关系
+                        //String relations = getFieldRelation4Sql(fileFieldCompleteEntity);
+                        //源关联字段/目标字段相关信息
+                        Map<String, String> source2Destmap = new HashMap<>();
+                        //源表关联字段集合
+                        List<String> sourceRelationList = new ArrayList<>();
+                        List<String> destList = new ArrayList<>();
+                        String[] sourceFields = getDestAndSourceFields(fileFieldCompleteEntity, source2Destmap, sourceRelationList, destList);
+                        //取值字段
+                        String fieldSource = fileFieldCompleteEntity.getFieldSource();
+                        String[] fieldSourceArr = fieldSource.split("\\+\\+");
+                        List<String> fieldSourceFieldNameList = new ArrayList<>();
+                        for (String str : fieldSourceArr) {
+                            FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(Long.parseLong(str));
+                            fieldSourceFieldNameList.add(fileTemplateDetailEntity.getFieldName());
+                        }
+                        //目标字段
+                        Long fieldDest = fileFieldCompleteEntity.getFieldDest();
+                        FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(fieldDest);
+                        String fieldDestFieldName = fileTemplateDetailEntity.getFieldName();
+
+                        //查询出需要补全的数据
+                        for (String strSource : fieldSourceFieldNameList) {
+
+                            //1源数据加载到内存
+                            String condiCahe = "";
+                            String mapKey = "";
+                            for (int i = 0; i < sourceRelationList.size(); i++) {
+                                //只有一个关联字段,源表关联字段不允许为空
+                                    if (i == sourceRelationList.size() - 1) {
+                                        condiCahe += sourceRelationList.get(i) + " is not null ";
+                                        mapKey += sourceRelationList.get(i);
+                                    } else {
+                                        condiCahe += sourceRelationList.get(i) + " is not null and ";
+                                        mapKey += sourceRelationList.get(i)+",";
+                                    }
+                            }
+
+
+                            //查询源数据并放入内存key:关联条件；value:记录
+                            //Map<String,Map<String, Object>> mapCahe = new HashMap<>();
+                            String sqlCahe = "select  distinct " + strSource +","+ mapKey +" from " + sourceTable + " where " + condiCahe + " and " + strSource + " is not null ";
+                            List<Map<String, Object>> listForCahe = mppMapper.mppSqlExecForSearchRtMapList(sqlCahe);
+                            if(CollectionUtils.isEmpty(listForCahe)){
+                                continue;
+                            }
+                            Map<String,Object[]> mapCahe = new HashMap<>();
+                            //有执行先后顺序要求，无法并发执行
+                            for (Map<String, Object> map : listForCahe) {
+
+                                String key = "";
+                                //对关联字段进行遍历
+                                for(String str : sourceRelationList){
+                                    key += map.get(str).toString();
+                                }
+                                if(mapCahe.get(key) != null){
+                                    mapCahe.get(key)[1] = false;
+                                }else{
+                                    Object[] arry = new Object[2];
+                                    arry[0] = map;
+                                    arry[1] = true;
+                                    mapCahe.put(key,arry);
+                                }
+                            }
+
+                            //源数据不存在
+                            if(CollectionUtils.isEmpty(mapCahe)){
+                               continue;
+                            }
+
+                            //2.查询出需要补全的数据
+                            String sql_01 = "select distinct " + sourceFields[3] + " from " + destTable + " where " + fieldDestFieldName + " is null ";
+                            //需要补全的数据   //进行批量补全
+                            List<Map<String, Object>> list = mppMapper.mppSqlExecForSearchRtMapList(sql_01);
+                            for (Map<String, Object> map : list) {
+                                if (null == map) {
+                                    log.info("map存在null");
+                                    continue;
+                                }
+
+                                //对map进行遍历获取where条件
+                                String whereStr = "";
+                                for (Map.Entry<String, Object> entry_02 : map.entrySet()) {
+                                    whereStr += entry_02.getKey() + " = '" + entry_02.getValue() + "'" + " and ";
+                                }
+                                whereStr = whereStr + fieldDestFieldName + " is null ";
+
+                                //获取取值的key：
+                                String[] arr = sourceFields[3].split(",");
+                                String key = "";
+                                for(String str : arr){
+                                   key += map.get(str);
+                                }
+                                //获取要补全的值
+                              if( null != mapCahe.get(key) && (boolean)mapCahe.get(key)[1]){//如果能找到值
+                                  //进行数据补全
+                                  String updateSQL = "Update " + destTable + " set " + fieldDestFieldName + "= '" + ((Map)mapCahe.get(key)[0]).get(strSource) + "' where " + whereStr+";";
+                                  updateSqlList.add(updateSQL);
+                                  //mppMapper.mppSqlExec(updateSQL);
+                              }
+                            }
+                        }
+                    }
+
+                    if(CollectionUtils.isEmpty(updateSqlList)){
+                        continue;
+                    }
+                    int thread = 2;
+                    if(updateSqlList.size()>10 && updateSqlList.size() < 20){
+                        thread = 3;
+                    }else{
+                        thread = 6;
+                    }
+                    //用于多线程更新
+                    ExecutorService executorService = Executors.newFixedThreadPool(thread);
+                    List<Callable<Integer>> cList = new ArrayList<>();  //定义添加线程的集合
+                    Callable<Integer> task = null;  //创建单个线程
+                    for(String updateStr : updateSqlList){
+
+                        task = new Callable<Integer>(){
+                            @Override
+                            public Integer call() throws Exception {
+                              return   mppMapper.mppSqlExec(updateStr);
+                            }
+                        };
+                        cList.add(task);
+                    }
+                    List<Future<Integer>> results = executorService.invokeAll(cList,5, TimeUnit.SECONDS); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
+                    for(Future<Integer> recordPer:results){  //打印返回值
+                        log.info(String.valueOf(recordPer.get()));
+                    }
+                    executorService.shutdown();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_SUGON_001.getCode(),ErrorCode_Enum.SYS_SUGON_001.getMessage(),e.toString()));
+        }
+    }
+
+    private void mppSqlExec (String tableName,String sql){
        synchronized(tableName) {
            mppMapper.mppSqlExec(sql);
        }
@@ -874,7 +1029,7 @@ public class FolderServiceImpl implements FolderService {
      *
      * @param fileFieldCompleteEntity
      * @param map  [source,dest]
-     * @param sourceList
+     * @param sourceList   源关联字段集合
      * @param destList
      * @return
      */

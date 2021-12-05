@@ -7076,6 +7076,112 @@ App.controller('RegisterFormController', ['$scope', '$http', '$state','myservice
 
 }]);
 
+App.controller('recoverFormController', ['$scope', '$http', '$state','myservice', function($scope, $http, $state,myservice) {
+
+    // bind here all data from the form
+    $scope.account = {};
+    // place the message if something goes wrong
+    $scope.authMsg = '';
+
+    var level = 0;
+
+    $scope.chkvalue = function() {
+        $scope.check_password = false;
+        if (myservice.isEmpty($scope.register.password) ||  $scope.register.password.length < 8){
+            $scope.check_password = true;
+            level = 1;
+        }else if(passwordLevel($scope.register.password)<3){
+            $scope.check_password = true;
+            level = 2;
+        }else if(passwordLevel($scope.register.password)<4){
+            $scope.check_password = false;
+            level = 3;
+        }else{
+            $scope.check_password = false;
+            level = 4;
+        }
+
+    }
+
+
+    function passwordLevel(password) {
+        var Modes = 0;
+        for (i = 0; i < password.length; i++) {
+            Modes |= CharMode(password.charCodeAt(i));
+        }
+        return bitTotal(Modes);
+        //CharMode函数
+        function CharMode(iN) {
+            if (iN >= 48 && iN <= 57)//数字
+                return 1;
+            if (iN >= 65 && iN <= 90) //大写字母
+                return 2;
+            if ((iN >= 97 && iN <= 122) || (iN >= 65 && iN <= 90))
+            //大小写
+                return 4;
+            else
+                return 8; //特殊字符
+        }
+        //bitTotal函数
+        function bitTotal(num) {
+            modes = 0;
+            for (i = 0; i < 4; i++) {
+                if (num & 1) modes++;
+                num >>>= 1;
+            }
+            return modes;
+        }
+    }
+
+    $scope.recover = function() {
+        alert(1111);
+        if(level <= 1){
+            return;
+        }
+        $scope.authMsg = '';
+        if( !angular.isDefined($scope.register.account_password_confirm)){
+            $scope.authMsg = '请再一次输入密码';
+            return;
+        }
+        oldMd5Password = md5($scope.account.oldPassword);
+        md5Password = md5($scope.register.password);
+        if($scope.recoverForm.$valid) {
+
+            $http
+                .post('api/account/restPassword',
+                    {
+                        userName: $scope.account.userName,
+                        oldPassword: oldMd5Password,
+                        password: md5Password
+                    }
+                )
+                .success(function(data) {
+                    // assumes if ok, response is an object with some data, if not, a string with error
+                    // customize according to your api
+                    jsonString = angular.toJson(data);
+                    response = angular.fromJson(jsonString);
+                    if ( response.flag != "SUCESS" ) {
+                        angular.forEach(response.errorList,function(e){
+                            $scope.authMsg += e.errorMessage;
+                        });
+                        $scope.authMsg += response.message;
+                    }else{
+                        $state.go('page.login');
+                    }
+                }, function(x) {
+                    $scope.authMsg = 'Server Request Error';
+                });
+        }
+        else {
+            $scope.recoverForm.account_password.$dirty = true;
+            $scope.recoverForm.account_agreed.$dirty = true;
+            $scope.check_password = false;
+
+        }
+    };
+
+}]);
+
 /**=========================================================
  * Module: angular-grid.js
  * Example for Angular Grid

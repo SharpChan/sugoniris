@@ -1,33 +1,48 @@
-<div class="block-center mt-xl wd-xl">
-      <!-- START panel-->
-      <div class="panel panel-dark panel-flat">
-         <div class="panel-heading text-center">
+<div ng-controller="recoverFormController" class="block-center mt-xl wd-xl">
+    <!-- START panel-->
+    <div class="panel panel-primary panel-flat">
+        <div class="panel-heading text-center">
             <a href="#">
-               <img src="app/img/logo.png" alt="Image" class="block-center img-rounded" />
+                <img src="app/img/logo.png" alt="Image" class="block-center img-rounded" />
             </a>
-         </div>
-         <div class="panel-body">
-            <p class="text-center pv">密码重置</p>
-            <form role="form" name="recoverForm" novalidate="" class="form-validate" action="/api/account/restPassword" method="POST">
-               <p class="text-center">填写您的邮件，收到如何重置密码的说明。</p>
-               <div class="form-group has-feedback">
-                  <label class="text-muted">邮箱地址</label>
-                  <input type="email" name="email" placeholder="Enter email" autocomplete="off" ng-model="recover.email" required="" class="form-control" />
-                  <span class="fa fa-envelope form-control-feedback text-muted"></span>
-                  <span ng-show="recoverForm.email.$dirty &amp;&amp; recoverForm.email.$error.required" class="text-danger">必填</span>
-                  <span ng-show="recoverForm.email.$dirty &amp;&amp; recoverForm.email.$error.email" class="text-danger">必须是邮箱地址</span>
-               </div>
-               <button type="submit" class="btn btn-danger btn-block" ng-disabled="recoverForm.email.$error.required  ||  recoverForm.email.$error.email">重置</button>
+        </div>
+        <div class="panel-body">
+            <p class="text-center pv">重置密码</p>
+            <form role="form" name="recoverForm" novalidate="" ng-submit="recover()" class="form-validate mb-lg">
+                <div class="form-group has-feedback">
+                    <label class="text-muted">用户名</label>
+                    <input type="text"  placeholder="用户名" autocomplete="off" ng-model="account.userName" required="true" class="form-control" />
+                    <span class="icon-user form-control-feedback text-muted"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="text-muted">原密码</label>
+                    <input type="text" placeholder="原密码" autocomplete="off" ng-model="account.oldPassword" required="true" class="form-control" />
+                    <span class="fa fa-envelope form-control-feedback text-muted"></span>
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="text-muted">新密码</label>
+                    <input id="id-password" type="password" name="account_password" ng-model="register.password" required="" class="form-control" ng-change="chkvalue()"  />
+                    <span class="fa fa-lock form-control-feedback text-muted"></span>
+                    <span ng-show="check_password" class="text-danger">8位以上数字，大写,小写字母，符号含有2种及以上</span>
+                </div>
+                <div class="form-group has-feedback">
+                    <label class="text-muted">再一次输入新密码</label>
+                    <input type="password" name="account_password_confirm" ng-model="register.account_password_confirm" ui-validate="'$value==register.password'" ui-validate-watch="'password'" class="form-control" />
+                    <span class="fa fa-lock form-control-feedback text-muted"></span>
+                    <span ng-show="recoverForm.account_password_confirm.$dirty &amp;&amp; recoverForm.account_password_confirm.$error.validator" class="text-danger">密码不匹配</span>
+                </div>
+                <div class="clearfix">
+                    <div class="checkbox c-checkbox pull-left mt0">
+                        <label>
+                            <input type="checkbox" required="" name="account_agreed" ng-model="account.agreed" />
+                            <span class="fa fa-check"></span>同意
+                        </label>
+                    </div>
+                </div>
+                <div ng-show="recoverForm.account_agreed.$dirty &amp;&amp; recoverForm.account_agreed.$error.required" class="text-danger">同意后才能修改密码</div>
+                <button type="submit" class="btn btn-block btn-primary mt-lg">修改密码</button>
             </form>
-         </div>
-      </div>
-      <!-- END panel-->
-      <div class="p-lg text-center">
-         <span>&copy;</span>
-         <span ng-bind="app.year"></span>
-         <span>-</span>
-         <span ng-bind="app.name"></span>
-         <br/>
-         <span ng-bind="app.description"></span>
-      </div>
-   </div>
+            <div ng-show="authMsg" class="alert alert-danger text-center">{{authMsg}}</div>
+        </div>
+    </div>
+</div>

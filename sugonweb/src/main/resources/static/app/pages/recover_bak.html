@@ -1,0 +1,33 @@
+<div class="block-center mt-xl wd-xl">
+      <!-- START panel-->
+      <div class="panel panel-dark panel-flat">
+         <div class="panel-heading text-center">
+            <a href="#">
+               <img src="app/img/logo.png" alt="Image" class="block-center img-rounded" />
+            </a>
+         </div>
+         <div class="panel-body">
+            <p class="text-center pv">密码重置</p>
+            <form role="form" name="recoverForm" novalidate="" class="form-validate" action="/api/account/restPassword" method="POST">
+               <p class="text-center">填写您的邮件，收到如何重置密码的说明。</p>
+               <div class="form-group has-feedback">
+                  <label class="text-muted">邮箱地址</label>
+                  <input type="email" name="email" placeholder="Enter email" autocomplete="off" ng-model="recover.email" required="" class="form-control" />
+                  <span class="fa fa-envelope form-control-feedback text-muted"></span>
+                  <span ng-show="recoverForm.email.$dirty &amp;&amp; recoverForm.email.$error.required" class="text-danger">必填</span>
+                  <span ng-show="recoverForm.email.$dirty &amp;&amp; recoverForm.email.$error.email" class="text-danger">必须是邮箱地址</span>
+               </div>
+               <button type="submit" class="btn btn-danger btn-block" ng-disabled="recoverForm.email.$error.required  ||  recoverForm.email.$error.email">重置</button>
+            </form>
+         </div>
+      </div>
+      <!-- END panel-->
+      <div class="p-lg text-center">
+         <span>&copy;</span>
+         <span ng-bind="app.year"></span>
+         <span>-</span>
+         <span ng-bind="app.name"></span>
+         <br/>
+         <span ng-bind="app.description"></span>
+      </div>
+   </div>

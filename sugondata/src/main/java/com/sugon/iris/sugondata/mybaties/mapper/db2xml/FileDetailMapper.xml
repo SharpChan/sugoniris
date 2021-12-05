@@ -90,6 +90,15 @@
         </if >
     </select>
 
+    <select id="getIdsByFileAttachmentId" parameterType="java.lang.Long"  resultType="java.lang.Long"  >
+        SELECT
+        id
+        FROM
+        file_detail
+        where
+        file_attachment_id = #{fileAttachmentId}
+    </select>
+
     <update id="updateByPrimaryKey" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileDetailEntity">
         update file_detail
         <set>

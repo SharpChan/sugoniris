@@ -37,7 +37,7 @@ public class Copy_test {
             String quote = "$";
             String delimter = "|";
 
-            String sql = "copy aaa from STDIN with (format 'CSV', delimiter '|', quote '$')";
+            String sql = "copy aaa from STDIN with (format 'CSV', delimiter ',', quote '\"')";
             System.out.println(sql);
             cm = new CopyManager((BaseConnection) con);
             StringBuffer tuples = new StringBuffer();
@@ -52,4 +52,6 @@ public class Copy_test {
             se.printStackTrace();
         }
     }
+
+
 }

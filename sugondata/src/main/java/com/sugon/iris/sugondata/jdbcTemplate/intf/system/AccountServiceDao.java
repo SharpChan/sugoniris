@@ -26,4 +26,6 @@ public interface AccountServiceDao {
 
     JdbcTemplate getJdbcTemplate();
 
+    int updateForPassword (Long id,String password, List<Error> errorList);
+
 }

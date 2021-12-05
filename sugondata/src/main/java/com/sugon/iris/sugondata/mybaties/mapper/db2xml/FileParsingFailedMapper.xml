@@ -172,6 +172,7 @@
         </where>
     </delete>
 
+
     <delete id="deleteFileParsingFailedByFileAttachmentId">
         DELETE
         FROM

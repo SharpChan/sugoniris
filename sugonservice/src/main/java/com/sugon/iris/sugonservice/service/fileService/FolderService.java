@@ -6,9 +6,11 @@ import com.sugon.iris.sugondomain.dtos.fileDtos.FileAttachmentDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 public interface FolderService {
 
@@ -44,4 +46,12 @@ public interface FolderService {
     void doFixedDefinedComplete(Long userId, Map<Long, Set<Long>> caseId2TemplateGroupIdsMap, List<Error> errorList) throws InterruptedException;
 
     int test();
+
+    void doFixedCompleteByRemaining(Set<Long> caseIdSet,List<Error>  errorList);
+
+    void doRemoveRepeat( Set<Long> caseIdSet, List<Error> errorList) throws IllegalAccessException, InterruptedException, ExecutionException;
+
+    void regularCompleteField(Long userId,List<Long> fileIdList, List<Error> errorList) throws IllegalAccessException, IOException, SQLException;
+
+    void doFixedDefinedCompleteInCahe(Long userId, Map<Long,Set<Long>> caseId2TemplateGroupIdsMap, List<Error> errorList) throws InterruptedException;
 }

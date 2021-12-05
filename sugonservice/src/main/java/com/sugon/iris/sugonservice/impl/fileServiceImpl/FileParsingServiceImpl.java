@@ -38,6 +38,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class FileParsingServiceImpl implements FileParsingService {
 
+    public static final String quote = "^";
+    public static final String delimter = "|";
+
     @Resource
     private FileAttachmentMapper fileAttachmentMapper;
 
@@ -383,15 +386,15 @@ public class FileParsingServiceImpl implements FileParsingService {
 
 
         StringBuilder sqlInsertBuilder = new StringBuilder();
-        sqlInsertBuilder.append("$&&xx_").append("id").append("_xx&&$").append("|");
+        sqlInsertBuilder.append(quote).append("&&xx_").append("id").append("_xx&&").append(quote).append(delimter);
         for(FileTemplateDetailDto fileTemplateDetailDto :  fileTemplateDetailDtoList){
-            sqlInsertBuilder.append("$&&").append(fileTemplateDetailDto.getId()).append("&&$").append("|");
+            sqlInsertBuilder.append(quote).append("&&").append(fileTemplateDetailDto.getId()).append("&&").append(quote).append(delimter);
         }
-        sqlInsertBuilder.append("$&&xx_").append("mppId2ErrorId").append("_xx&&$").append("|");
-        sqlInsertBuilder.append("$&&xx_").append("file_detail_id").append("_xx&&$").append("|");
-        sqlInsertBuilder.append("$").append(fileTemplateId).append("$").append("|");
-        sqlInsertBuilder.append("$").append(fileAttachmentId).append("$").append("|");
-        sqlInsertBuilder.append("$").append(caseId).append("$").append("\n");
+        sqlInsertBuilder.append(quote).append("&&xx_").append("mppId2ErrorId").append("_xx&&").append(quote).append(delimter);
+        sqlInsertBuilder.append(quote).append("&&xx_").append("file_detail_id").append("_xx&&").append(quote).append(delimter);
+        sqlInsertBuilder.append(quote).append(fileTemplateId).append(quote).append(delimter);
+        sqlInsertBuilder.append(quote).append(fileAttachmentId).append(quote).append(delimter);
+        sqlInsertBuilder.append(quote).append(caseId).append(quote).append("\n");
         return sqlInsertBuilder.toString();
     }
 

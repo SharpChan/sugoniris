@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public interface FileDoParsingService {
 
@@ -23,9 +24,7 @@ public interface FileDoParsingService {
 
   void doRinse(FileTemplateDto fileTemplateDto,Object[] tableInfos, Long fileSeq, List<Error> errorList) throws IllegalAccessException;
 
-  void doRepeat(Long fileTemplateid, String tableName, List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList, List<Long> mppid2erroridDeleteList, String repeatSql) throws InterruptedException;
-
-  void deleteMysql(List<Long> mppid2erroridDeleteList);
+  void doRepeat( String tableName, List<RinseBusinessRepeatDto> rinseBusinessRepeatDtoList, String repeatSql) throws InterruptedException, ExecutionException;
 
   void dealWithfailed(List<FileParsingFailedEntity> fileParsingFailedEntityListSql, StringBuffer errorBuffer) throws IOException, SQLException;
 
