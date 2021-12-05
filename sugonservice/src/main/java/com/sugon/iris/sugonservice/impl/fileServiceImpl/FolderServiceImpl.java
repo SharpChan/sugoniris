@@ -935,7 +935,7 @@ public class FolderServiceImpl implements FolderService {
                         };
                         cList.add(task);
                     }
-                    List<Future<Integer>> results = executorService.invokeAll(cList,5, TimeUnit.SECONDS); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
+                    List<Future<Integer>> results = executorService.invokeAll(cList,5, TimeUnit.MINUTES); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
                     for(Future<Integer> recordPer:results){  //打印返回值
                         log.info(String.valueOf(recordPer.get()));
                     }
