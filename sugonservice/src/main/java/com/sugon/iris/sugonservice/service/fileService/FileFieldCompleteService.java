@@ -12,4 +12,6 @@ public interface FileFieldCompleteService {
 
     int removeFileFieldComplete(Long id , List<Error> errorList);
 
+    boolean modifyCompletesSortNoById(Long id,String sortNo, List<Error> errorList);
+
 }

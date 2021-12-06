@@ -62,6 +62,7 @@
         <if test="sortNo!=null  and sortNo != ''">
             and sort_no = #{sortNo}
         </if >
+         order by cast(sort_no as SIGNED)
     </select>
 
 
@@ -81,6 +82,14 @@
              #{sortNo,jdbcType=VARCHAR}
              )
     </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileFieldCompleteEntity">
+        update file_field_complete
+        <set>
+            sort_no = #{sortNo}
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 
     <!--删除-->
     <delete id="deleteFieldCompleteById">

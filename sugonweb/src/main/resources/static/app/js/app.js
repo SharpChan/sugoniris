@@ -45,7 +45,7 @@ App.run(["$rootScope", "$state", "$stateParams",  '$window', '$templateCache','$
   // Scope Globals
   // ----------------------------------- 
   $rootScope.app = {
-    name: 'iris',
+    name: 'Sugon',
     description: 'Angular Bootstrap Admin Template',
     year: ((new Date()).getFullYear()),
       searchKey: '',
@@ -4644,9 +4644,11 @@ App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
     myservice.dragFunc("cnDiv");
     myservice.dragFunc("fieldCompleteDetail");
     myservice.dragFunc("fieldCompleteAdd");
+    myservice.dragFunc("modifySortNoDiv");
     $("#cnDiv").hide();
     $("#fieldCompleteDetail").hide();
     $("#fieldCompleteAdd").hide();
+    $("#modifySortNoDiv").hide();
 
     //单个勾选去勾选
     $scope.selectOne = function (item) {
@@ -5025,6 +5027,43 @@ App.controller("fileTemplateGroupController", function ($http,$timeout,$scope,
     $scope.closeFieldCompleteAdd = function(){
         $("#fieldCompleteAdd").hide();
     }
+    
+    $scope.modifyFieldCompleteSortNo = function (id,sortNo) {
+        $scope.mod_sortNo_id = id;
+        $("#modifySortNoDiv").show();
+        $scope.mod_sortNo = sortNo;
+    }
+    $scope.mod_sortNoChange = function () {
+            var reg=/^[0-9]{1,3}$/;
+            if(!reg.test($scope.mod_sortNo)){
+                $scope.mod_sortNo = "";
+                alert("请填写0-999数字！");
+            }
+    }
+    $scope.modifySortNo = function () {
+
+        var url = "/fileTemplateGroup/modifyCompletesSortNoById?id="+$scope.mod_sortNo_id +"&sortNo="+$scope.mod_sortNo;
+
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+            alert("排序编号修改成功！");
+            $scope.showFileFieldCompletes($scope.groupId_2,$scope.groupName_2);
+            $("#modifySortNoDiv").hide();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+    
+    $scope.closeModifySortNoDiv = function () {
+        $("#modifySortNoDiv").hide();
+    }
+    
 });
 
 App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootScope,

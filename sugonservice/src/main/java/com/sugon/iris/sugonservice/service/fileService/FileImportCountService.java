@@ -9,10 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface FileImportCountService {
 
-     List<FileCaseDto> getImportCount(FileCaseDto fileCaseDto,List<Error> errorList) throws IllegalAccessException;
+     List<FileCaseDto> getImportCount(FileCaseDto fileCaseDto,List<Error> errorList) throws IllegalAccessException, InterruptedException, ExecutionException;
 
      List<FileParsingFailedDto> getFileParsingFailed(Long userId,Long fileDetailId,List<Error> errorList) throws IllegalAccessException;
 

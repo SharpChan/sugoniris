@@ -15,4 +15,6 @@ public interface FileFieldCompleteMapper {
     int deleteFieldCompleteById(Long id);
 
     List<FileFieldCompleteEntity> selectFileFieldCompleteByTemplateGroupId(Long templateGroupId);
+
+    int updateByPrimaryKey(FileFieldCompleteEntity fileFieldCompleteEntity);
 }

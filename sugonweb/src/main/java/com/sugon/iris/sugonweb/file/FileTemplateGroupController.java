@@ -156,6 +156,28 @@ public class FileTemplateGroupController {
         return restResult;
     }
 
+    @PostMapping("/modifyCompletesSortNoById")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过id修改排序编号")
+    @ApiImplicitParam(name = "groupId", value = "模板组id")
+    public RestResult<Boolean> modifyCompletesSortNoById(@RequestParam(value = "id") Long id,@RequestParam(value = "sortNo") String sortNo){
+        RestResult<Boolean> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(fileFieldCompleteServiceImpl.modifyCompletesSortNoById(id,sortNo,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
     @PostMapping("/removeFileFieldComplete")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过模板组id获取数据补全配置信息")

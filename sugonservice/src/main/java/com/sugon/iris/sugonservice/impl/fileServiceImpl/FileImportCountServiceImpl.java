@@ -14,6 +14,7 @@ import com.sugon.iris.sugonservice.service.fileService.FileCaseService;
 import com.sugon.iris.sugonservice.service.fileService.FileImportCountService;
 import com.sugon.iris.sugonservice.service.fileService.FolderService;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -26,9 +27,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+@Slf4j
 @Service
 public class FileImportCountServiceImpl implements FileImportCountService {
 
@@ -70,7 +73,7 @@ public class FileImportCountServiceImpl implements FileImportCountService {
 
 
     @Override
-    public List<FileCaseDto> getImportCount(FileCaseDto fileCaseDto,List<Error> errorList) throws IllegalAccessException {
+    public List<FileCaseDto> getImportCount(FileCaseDto fileCaseDto,List<Error> errorList) throws IllegalAccessException, InterruptedException, ExecutionException {
         List<FileCaseDto> fileCaseDtoList = null;
         List<FileAttachmentDto> fileAttachmentDtoList = null;
         List<FileDetailDto>  fileDetailDtoList = new ArrayList<>();
@@ -97,31 +100,51 @@ public class FileImportCountServiceImpl implements FileImportCountService {
         }catch (Exception e){
             e.printStackTrace();
         }
-        for(FileCaseDto fileCaseDtoBean :  fileCaseDtoList){
-            for(FileAttachmentDto fileAttachmentDtoBean : fileAttachmentDtoList){
-                if(fileCaseDtoBean.getId().equals(fileAttachmentDtoBean.getCaseId())){
-                    fileCaseDtoBean.getFileAttachmentDtoList().add(fileAttachmentDtoBean);
 
-                    for(FileDetailDto fileDetailDtoBean : fileDetailDtoList){
-                         //已导入文件
-                         if(fileDetailDtoBean.getFileAttachmentId().equals(fileAttachmentDtoBean.getId()) && fileDetailDtoBean.getHasImport()){
-                             fileAttachmentDtoBean.getFileDetailDtoList().add(fileDetailDtoBean);
-                             //获取导入错误的数据量
-                             int cou1 =  fileParsingFailedMapper.countRecordByFileDetail(fileDetailDtoBean.getId());
-                             fileDetailDtoBean.setErrorItemCount(cou1);
-                             //获取通过正则校验的数据数量
-                             String SQL = "select count(*) from "+fileDetailDtoBean.getTableName() +" where mppid2errorid = 0 and file_detail_id = "+fileDetailDtoBean.getId();
-                             int cou2 = mppMapper.mppSqlExecForSearchCount(SQL);
-                             fileDetailDtoBean.setImportRowCount(cou2);
-                         }
-                         //未导入文件
-                         else if(fileDetailDtoBean.getFileAttachmentId().equals(fileAttachmentDtoBean.getId()) && !fileDetailDtoBean.getHasImport()){
-                             fileAttachmentDtoBean.getFileDetailDtoFailedList().add(fileDetailDtoBean);
-                         }
+        //用于多线程更新
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        List<Callable<Boolean>> cList = new ArrayList<>();  //定义添加线程的集合
+        Callable<Boolean> task = null;  //创建单个线程
+        List<FileAttachmentDto> fileAttachmentDtoListFinal = fileAttachmentDtoList;
+        for(FileCaseDto fileCaseDtoBean :  fileCaseDtoList){
+
+            task = new Callable<Boolean>(){
+                @Override
+                public Boolean call() throws Exception {
+
+                    for (FileAttachmentDto fileAttachmentDtoBean : fileAttachmentDtoListFinal) {
+                        if (fileCaseDtoBean.getId().equals(fileAttachmentDtoBean.getCaseId())) {
+                            fileCaseDtoBean.getFileAttachmentDtoList().add(fileAttachmentDtoBean);
+
+                            for (FileDetailDto fileDetailDtoBean : fileDetailDtoList) {
+                                //已导入文件
+                                if (fileDetailDtoBean.getFileAttachmentId().equals(fileAttachmentDtoBean.getId()) && fileDetailDtoBean.getHasImport()) {
+                                    fileAttachmentDtoBean.getFileDetailDtoList().add(fileDetailDtoBean);
+                                    //获取导入错误的数据量
+                                    int cou1 = fileParsingFailedMapper.countRecordByFileDetail(fileDetailDtoBean.getId());
+                                    fileDetailDtoBean.setErrorItemCount(cou1);
+                                    //获取通过正则校验的数据数量
+                                    String SQL = "select count(*) from " + fileDetailDtoBean.getTableName() + " where mppid2errorid = 0 and file_detail_id = " + fileDetailDtoBean.getId();
+                                    int cou2 = mppMapper.mppSqlExecForSearchCount(SQL);
+                                    fileDetailDtoBean.setImportRowCount(cou2);
+                                }
+                                //未导入文件
+                                else if (fileDetailDtoBean.getFileAttachmentId().equals(fileAttachmentDtoBean.getId()) && !fileDetailDtoBean.getHasImport()) {
+                                    fileAttachmentDtoBean.getFileDetailDtoFailedList().add(fileDetailDtoBean);
+                                }
+                            }
+                        }
                     }
+                    return true;
                 }
-            }
+            };
+            cList.add(task);
         }
+        List<Future<Boolean>> results = executorService.invokeAll(cList,5, TimeUnit.MINUTES); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
+        for(Future<Boolean> recordPer:results){  //打印返回值
+            log.info(String.valueOf(recordPer.get()));
+        }
+        executorService.shutdown();
         for(FileCaseDto fileCaseDtoBean :  fileCaseDtoList){
             fileCaseDtoBean.rowCount();
         }
@@ -440,7 +463,9 @@ public class FileImportCountServiceImpl implements FileImportCountService {
                 for(Map.Entry<Long, Integer> entry : feildIdRefIndexMap.entrySet()){
                     //把所有的单元格变为string类型
                     row.getCell(entry.getValue()).setCellType(Cell.CELL_TYPE_STRING);
-                    insertSqlExec = insertSqlExec.replace("&&"+entry.getKey()+"&&",row.getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", ""));
+                    //insertSqlExec = insertSqlExec.replace("&&"+entry.getKey()+"&&",row.getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", ""));
+                    insertSqlExec = insertSqlExec.replace("&&"+entry.getKey()+"&&",row.getCell(entry.getValue()).getStringCellValue().trim());
+
                 }
                 mppMapper.mppSqlExec(insertSqlExec);
                 k++;

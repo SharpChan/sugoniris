@@ -313,7 +313,8 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
                         public List<Map<String, Object>> call() throws Exception {
                             int offSet = start + g*perSize;
                             String sbStr = sbSql.toString();
-                            sbStr += " from " + sbTableName.toString() + " where mppid2errorid = '0' "+" LIMIT " + perSize + " OFFSET " + offSet;
+                            //sbStr += " from " + sbTableName.toString() + " where mppid2errorid = '0' "+" LIMIT " + perSize + " OFFSET " + offSet;
+                            sbStr += " from " + sbTableName.toString() +" LIMIT " + perSize + " OFFSET " + offSet;
                             List<Map<String, Object>> records = mppMapper.mppSqlExecForSearchRtMapList(sbStr);
                             return records;
                         }

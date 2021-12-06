@@ -228,7 +228,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     }
                     checkRegular = checkRegularY && checkRegularN;
                     mppId2ErrorId_flag = checkRegular && mppId2ErrorId_flag;
-                    sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
+                    //sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
+                    sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).trim());
 
                     //校验不通过
                     if (!checkRegular) {
@@ -368,7 +369,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     }
                     checkRegular = checkRegularY && checkRegularN;
                     mppId2ErrorId_flag = checkRegular && mppId2ErrorId_flag;
-                    sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
+                    //sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
+                    sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).trim());
 
                     //校验不通过
                     if (!checkRegular) {
@@ -596,7 +598,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                         mppId2ErrorId_flag = checkRegular && mppId2ErrorId_flag;
 
                         //基础sql
-                        sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == sheet.getRow(i).getCell(entry.getValue())) ? "" : sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", ""));
+                        //sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == sheet.getRow(i).getCell(entry.getValue())) ? "" : sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", ""));
+                        sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == sheet.getRow(i).getCell(entry.getValue())) ? "" : sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().trim());
 
                         //校验不通过
                         if (!checkRegular) {

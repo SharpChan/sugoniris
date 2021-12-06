@@ -116,6 +116,7 @@
                     <th>目标字段</th>
                     <th>取值字段</th>
                     <th>排序编号</th>
+                    <th>修改</th>
                     <th>删除</th>
                 </tr>
                 </thead>
@@ -128,6 +129,11 @@
                     <td align="left">{{item.fieldDestName}}</td>
                     <td align="left">{{item.fieldSourceName}}</td>
                     <td align="left">{{item.sortNo}}</td>
+                    <td align="center">
+                        <button type="button" ng-click="modifyFieldCompleteSortNo(item.id,item.sortNo)" class="btn btn-sm btn-danger">
+                            <em class="fa fa-upload"></em>
+                        </button>
+                    </td>
                     <td align="center">
                         <button type="button" ng-click="deleteFieldComplete(item.id)" class="btn btn-sm btn-danger">
                             <em class="fa fa-trash-o"></em>
@@ -368,6 +374,22 @@
                          </div>
                      </div>
                  </div>
+            </div>
+        </div>
+    </div>
+    <div id = "modifySortNoDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 250px; z-index: 9999;">
+        <div id = "modifySortNoDivheader" class="panel-heading topnavbar">
+            修改排序编号
+            <input type="button" value="关闭" style="margin-left:200px" class="btn btn-default" ng-click="closeModifySortNoDiv();" >
+        </div>
+        <div class="panel-body">
+            <div  class="form-group" style="top: 20px;width: 250px" >
+                <span>请填写排序编号<input placeholder="必填" class="form-control" type="text" ng-change="mod_sortNoChange();" ng-model="mod_sortNo"></span>
+            </div>
+            <div  class="form-group" style="top: 100px;width: 250px" >
+                <div align="right" style="margin-top:20px">
+                    <input type="button" value="修改"  class="btn btn-primary topnavbar" ng-click="modifySortNo();">
+                </div>
             </div>
         </div>
     </div>

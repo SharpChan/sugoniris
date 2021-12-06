@@ -103,4 +103,19 @@ public class FileFieldCompleteServiceImpl implements FileFieldCompleteService {
         }
         return i;
     }
+
+    @Override
+    public boolean modifyCompletesSortNoById(Long id, String sortNo, List<Error> errorList) {
+
+        FileFieldCompleteEntity fileFieldCompleteEntity = new FileFieldCompleteEntity();
+        fileFieldCompleteEntity.setId(id);
+        fileFieldCompleteEntity.setSortNo(sortNo);
+        try {
+            fileFieldCompleteMapper.updateByPrimaryKey(fileFieldCompleteEntity);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),ErrorCode_Enum.SYS_DB_001.getMessage()));
+        }
+        return false;
+    }
 }
