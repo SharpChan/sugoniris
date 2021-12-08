@@ -724,8 +724,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                   whereSql  = fileTemplateDetailEntity.getFieldName() +" is null or "+
                                   fileTemplateDetailEntity.getFieldName()+"= 'null' or  trim("+
                                   fileTemplateDetailEntity.getFieldName()+") is null and  file_detail_id ="+fileSeq;
-                  sql = sql.replace("_&condition&_",nullSql + " where  "+whereSql);
-                  mppMapper.mppSqlExec(sql);
+                  String  sqlExe = sql.replace("_&condition&_",nullSql + " where  "+whereSql);
+                  mppMapper.mppSqlExec(sqlExe);
               }
         }
 
@@ -745,8 +745,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                 FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessReplaceDto.getFileTemplateDetailId());
                 String condition = fileTemplateDetailEntity.getFieldName() + "=regexp_replace("+fileTemplateDetailEntity.getFieldName()+",'"+rinseBusinessReplaceDto.getKey()+"','"+rinseBusinessReplaceDto.getValue()+"')" +
                                    "where "+fileTemplateDetailEntity.getFieldName()+" ~ '" +rinseBusinessReplaceDto.getKey()+"' and file_detail_id="+fileSeq;
-                replaceSql = replaceSql.replace("_&condition&_",condition);
-                mppMapper.mppSqlExec(replaceSql);
+                String  sqlExe = replaceSql.replace("_&condition&_",condition);
+                mppMapper.mppSqlExec(sqlExe);
             }
         }
 
@@ -759,8 +759,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                 FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessSuffixDto.getFileTemplateDetailId());
                 String condition = fileTemplateDetailEntity.getFieldName() + "=  reverse(substr(reverse("+fileTemplateDetailEntity.getFieldName()+"),position('"+rinseBusinessSuffixDto.getSuffix()+"' in reverse("+fileTemplateDetailEntity.getFieldName()+"))+length('"+rinseBusinessSuffixDto.getSuffix()+"')))"+
                                    " where "+fileTemplateDetailEntity.getFieldName()+" like '%" +rinseBusinessSuffixDto.getSuffix()+"%' and file_detail_id="+fileSeq;
-                suffixSql = suffixSql.replace("_&condition&_",condition);
-                mppMapper.mppSqlExec(suffixSql);
+                String  sqlExe = suffixSql.replace("_&condition&_",condition);
+                mppMapper.mppSqlExec(sqlExe);
             }
         }
 
@@ -773,8 +773,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                 FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessPrefixDto.getFileTemplateDetailId());
                 String condition = fileTemplateDetailEntity.getFieldName() + "=   substring("+fileTemplateDetailEntity.getFieldName()+",position('"+rinseBusinessPrefixDto.getPrefix() + "' in "+  fileTemplateDetailEntity.getFieldName()+")+length('"+rinseBusinessPrefixDto.getPrefix()+"'))"+
                         " where "+fileTemplateDetailEntity.getFieldName()+" like '%" +rinseBusinessPrefixDto.getPrefix()+"%' and file_detail_id="+fileSeq;
-                prefixSql = prefixSql.replace("_&condition&_",condition);
-                mppMapper.mppSqlExec(prefixSql);
+                String  sqlExe = prefixSql.replace("_&condition&_",condition);
+                mppMapper.mppSqlExec(sqlExe);
             }
         }
 

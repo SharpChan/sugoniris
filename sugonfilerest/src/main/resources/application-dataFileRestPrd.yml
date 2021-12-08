@@ -65,17 +65,17 @@ datasource:
       filters: stat,slf4j #wall,
       #连接华为mpp
     db4:
-      driverClassName: com.huawei.gauss200.jdbc.Driver
+      driverClassName: org.postgresql.Driver
       username: shuguang
       password: Shuguang_szga
-      jdbc-url: jdbc:gaussdb://50.73.126.6:20001/szga_edw?useUnicode=true&characterEncoding=utf-8
+      jdbc-url: jdbc:postgresql://50.73.126.6:20001/szga_edw?useUnicode=true&characterEncoding=utf-8
       type: com.alibaba.druid.pool.DruidDataSource
       initialSize: 2
       minIdle: 2
-      maxActive: 200
+      maxActive: 10
       validationQuery: SELECT 1 as a
       testWhileIdle: true
       testOnBorrow: true
       testOnReturn: false
-      maxWait: 6000000
+      maxWait: 600000
       filters: stat,slf4j #wall,

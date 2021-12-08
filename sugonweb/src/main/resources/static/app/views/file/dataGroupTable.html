@@ -42,7 +42,7 @@
 
         <input id="{{item.id}},{{item.pid}}"  type="checkbox" ng-model="item.isChecked" class="check-box" ng-if="canChecked" ng-change="itemChange(item,treeData)">
 
-
+        <h5>案件编号</h5>
         <span class='text-field' ng-click="warpCallback('itemClicked', item, $event);" >{{item[textField]}}</span>
         <ul ng-if="!isLeaf(item)"
             ng-show="item.$$isExpend"

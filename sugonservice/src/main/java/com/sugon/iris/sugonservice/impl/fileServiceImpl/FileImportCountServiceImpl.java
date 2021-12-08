@@ -140,9 +140,15 @@ public class FileImportCountServiceImpl implements FileImportCountService {
             };
             cList.add(task);
         }
-        List<Future<Boolean>> results = executorService.invokeAll(cList,5, TimeUnit.MINUTES); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
+        List<Future<Boolean>> results = executorService.invokeAll(cList,30, TimeUnit.SECONDS); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
         for(Future<Boolean> recordPer:results){  //打印返回值
-            log.info(String.valueOf(recordPer.get()));
+            try {
+                log.info(String.valueOf(recordPer.get()));
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                continue;
+            }
         }
         executorService.shutdown();
         for(FileCaseDto fileCaseDtoBean :  fileCaseDtoList){

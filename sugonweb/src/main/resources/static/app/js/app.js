@@ -2923,6 +2923,7 @@ App.controller("fileImportCountController", function ($http,$timeout,$scope,$sta
             myservice.errors(temp);
             $scope.obj = temp.obj;
             $("#pleaseWait").hide();
+            $scope.kedian = true;
             //$scope.obj =  myservice.setSerialNumber(temp.obj);
         }).error(function(data)
         {

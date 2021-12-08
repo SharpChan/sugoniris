@@ -3,7 +3,6 @@ package com.sugon.iris.sugondata.mybaties.mapper.db4;
 
 import org.apache.ibatis.annotations.Select;
 
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 
