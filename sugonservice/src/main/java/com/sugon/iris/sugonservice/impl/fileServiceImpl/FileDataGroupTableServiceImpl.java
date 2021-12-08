@@ -55,6 +55,7 @@ public class FileDataGroupTableServiceImpl implements FileDataGroupTableService 
             menuDtoCase.setName(fileCaseEntityBean.getCaseName());
             List<MenuDto> submenu = new ArrayList<>();
             menuDtoCase.setSubmenu(submenu);
+            menuDtoCase.setId(fileCaseEntityBean.getId());
             for(FileTableEntity fileTableEntityBean : fileTableEntityList){
                 if(fileTableEntityBean.getCaseId().equals(fileCaseEntityBean.getId())){
                     MenuDto menuDtoTable = new MenuDto();

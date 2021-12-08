@@ -112,6 +112,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('actualCenter/mcgc.html'),
           resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
       })
+      .state('app.tupu1', {
+          url: '/tupu1',
+          title: 'Tupu1',
+          templateUrl: helper.basepath('actualCenter/tupu1.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
       .state('app.dataMerge', {
           url: '/dataMerge',
           title: 'DataMerge',
@@ -12194,6 +12200,183 @@ App.directive('treeView',[function(){
                 })
             }
 
+            var deleteNodes = [];
+            function deleteNode(item,allNode){
+                //和item平级的全部去掉勾选则父节点也去掉勾选。
+                //1.找出所有子节点去掉勾选
+                angular.forEach(allNode,function (e) {
+                    if(item.id == e.fatherId){
+                        if(!(e.isChecked == null || e.isChecked == undefined || e.isChecked == false)){
+                            deleteNodes.push(e);
+                            e.isChecked = false;
+
+                            deleteNode(e,allNode);
+                        }
+                    }
+                })
+            }
+
+            function OwnerMenuDto(ownerId,menuId){
+                var o = new Object();
+                o.ownerId = ownerId;
+                o.menuId = menuId;
+                return o;
+            }
+
+
+            $scope.itemChange = function(item,tree){
+                //如果变化的那个变成勾选状态则他的父级依次递归都勾选，并且记录改变的项
+                if(item.isChecked){
+                    newNodeAdd = [];
+                    newNodeAdd.push(item);
+                    getAllNode(tree,allNode,null);
+                    doCheck(item,allNode);
+
+                    var OwnerMenuDtoArr = []
+                    angular.forEach(newNodeAdd,function (e) {
+                        if(null != e.id){
+                            console.log(e.id);
+                            OwnerMenuDtoArr.push(OwnerMenuDto($scope.paramOne,e.id));
+                        }
+                    });
+                    $http.post($scope.addUrl,OwnerMenuDtoArr).success(function(data)
+                    {
+                        var jsonString = angular.toJson(data);
+                        var temp = angular.fromJson(jsonString);
+                        myservice.errors(temp);
+                    }).error(function(data)
+                    {
+                        alert("会话已经断开或者检查网络是否正常！");
+                    });
+                }else{
+                    deleteNodes = [];
+                    deleteNodes.push(item);
+                    deleteNode(item,allNode);
+
+                    var OwnerMenuDtoArr = []
+                    angular.forEach(deleteNodes,function (e) {
+
+                        if(null != e.id){
+                            OwnerMenuDtoArr.push(OwnerMenuDto($scope.paramOne,e.id));
+                        }
+
+                    });
+                    $http.post($scope.deleteUrl,OwnerMenuDtoArr).success(function(data)
+                    {
+                        var jsonString = angular.toJson(data);
+                        var temp = angular.fromJson(jsonString);
+                        myservice.errors(temp);
+                    }).error(function(data)
+                    {
+                        alert("会话已经断开或者检查网络是否正常！");
+                    });
+                }
+            };
+        }]
+    };
+}]);
+
+
+App.directive('treeView2',[function(){
+
+    return {
+        restrict: 'E',
+        templateUrl: 'treeView.html',
+        scope: {
+            treeData: '=',
+            canChecked: '=',
+            textField: '@',
+            itemClicked: '&',
+            itemCheckedChanged: '&',
+            itemTemplateUrl: '@',
+            deleteUrl: '@',
+            addUrl: '@',
+            paramOne: '@'
+        },
+        controller:['$scope', '$http','myservice',function($scope,$http,myservice){
+            $scope.itemExpended = function(item, $event){
+                item.$$isExpend = ! item.$$isExpend;
+                $event.stopPropagation();
+            };
+
+            $scope.getItemIcon = function(item){
+                var isLeaf = $scope.isLeaf(item);
+
+                if(isLeaf){
+                    return 'fa fa-leaf';
+                }
+
+                return item.$$isExpend ? 'fa fa-minus': 'fa fa-plus';
+            };
+
+            $scope.isLeaf = function(item){
+                return !item.submenu || !item.submenu.length;
+            };
+
+            $scope.chk = function(callback , item){
+                var itemId = item.id;
+
+            };
+
+            $scope.warpCallback = function(callback, item, $event){
+                ($scope[callback] || angular.noop)({
+                    $item:item,
+                    $event:$event
+                });
+            };
+
+            function setAllExpanFlag(tree,flag){
+                angular.forEach(tree,function(e){
+                    e.$$isExpend = flag;
+                    if(e.submenu){
+                        setAllExpanFlag(e.submenu,flag);
+                    }
+                });
+            }
+            $scope.expandAll = function (tree) {
+                setAllExpanFlag(tree,true);
+            }
+
+            $scope.collapseAll = function (tree) {
+                setAllExpanFlag(tree,false);
+            }
+
+
+            //递归获取所有的节点
+            var allNode=[];
+            function getAllNode(tree,allNode,father) {
+                angular.forEach(tree,function(e){
+                    if(father){
+                        e.fatherId = father.id;
+                    }
+                    allNode.push(e);
+                    if(e.submenu && e.submenu.length>0){
+                        e.childSize = e.submenu.length;
+                        getAllNode(e.submenu,allNode,e);
+                    }else{
+                        e.childSize = 0;
+                    }
+                });
+            }
+
+            //新增节点
+            var newNodeAdd = [];
+            //递归把已勾选的所有父节点进行勾选,并找出新增勾选
+            function doCheck(item,allNode) {
+                angular.forEach(allNode,function (e) {
+                    if(e.id == item.fatherId){
+                        if(e.isChecked == null || e.isChecked == undefined || e.isChecked == false){
+                            newNodeAdd.push(e);
+                        }
+                        e.isChecked = true;
+                        if(e.id){
+                            doCheck(e,allNode);
+                        }
+                    }
+                })
+            }
+
+            //删除节点
             var deleteNodes = [];
             function deleteNode(item,allNode){
                 //和item平级的全部去掉勾选则父节点也去掉勾选。

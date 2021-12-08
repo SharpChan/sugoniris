@@ -20,10 +20,9 @@
         <input type="hidden"   type="text" ng-model="deleteUrl_1" >
         <input type="hidden"   type="text" ng-model="addUrl_1" >
         <input type="hidden"   type="text" ng-model="param_1" >
-        <tree-view tree-data="demo.tree" text-field="name" value-field='id'  delete-url="{{deleteUrl_1}}" add-url="{{addUrl_1}}"  param-one="{{param_1}}"
+        <tree-view2 tree-data="demo.tree" text-field="name" value-field='id'  delete-url="{{deleteUrl_1}}" add-url="{{addUrl_1}}"  param-one="{{param_1}}"
                    item-clicked="demo.itemClicked($item)" item-checked-changed="demo.itemCheckedChanged($item)" can-checked="true" >
-
-        </tree-view>
+        </tree-view2>
     </div>
 
     <script type="text/ng-template" id="treeView.html">
@@ -42,7 +41,6 @@
 
         <input id="{{item.id}},{{item.pid}}"  type="checkbox" ng-model="item.isChecked" class="check-box" ng-if="canChecked" ng-change="itemChange(item,treeData)">
 
-        <h5>案件编号</h5>
         <span class='text-field' ng-click="warpCallback('itemClicked', item, $event);" >{{item[textField]}}</span>
         <ul ng-if="!isLeaf(item)"
             ng-show="item.$$isExpend"
