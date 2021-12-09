@@ -77,7 +77,7 @@ public class FileDataGroupTableController {
 
     @PostMapping("/deleteFileDataGroupTables")
     @LogInCheck(doLock = true,doProcess = true)
-    @ApiOperation(value = "删除数组和数据表的绑定关系")
+    @ApiOperation(value = "删除数据组和数据表的绑定关系")
     @ApiImplicitParam(name = "fileUserTableList", value = "除数组和数据表的绑定关系")
     public RestResult<Integer> deleteFileDataGroupTables(@CurrentUser User user, @RequestBody List<OwnerMenuDto> fileUserTableList){
         RestResult<Integer> restResult = new RestResult();

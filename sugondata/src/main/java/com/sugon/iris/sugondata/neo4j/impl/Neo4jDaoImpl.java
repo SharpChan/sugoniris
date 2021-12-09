@@ -93,7 +93,7 @@ public class Neo4jDaoImpl implements Neo4jDao {
     }
 
     @Override
-    public Elements getRelations(
+    public Elements  getRelations(
                                    String relationship,
                                    String relationId,
                                    Map<String,String> map) {
