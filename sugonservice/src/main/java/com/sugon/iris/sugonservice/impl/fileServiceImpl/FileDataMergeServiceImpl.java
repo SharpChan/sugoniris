@@ -2,18 +2,12 @@ package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
 import com.sugon.iris.sugoncommon.fileUtils.CsvExportUtil;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
-import com.sugon.iris.sugondata.mybaties.mapper.db2.FileCaseMapper;
-import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTableMapper;
-import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateDetailMapper;
-import com.sugon.iris.sugondata.mybaties.mapper.db2.FileTemplateMapper;
+import com.sugon.iris.sugondata.mybaties.mapper.db2.*;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.fileBeans.ExcelRow;
 import com.sugon.iris.sugondomain.dtos.fileDtos.*;
-import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileCaseEntity;
-import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTableEntity;
-import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
-import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.*;
 import com.sugon.iris.sugonservice.service.excelService.ExcelService;
 import com.sugon.iris.sugonservice.service.fileService.FileDataMergeService;
 import com.sugon.iris.sugonservice.service.fileService.FileParsingService;
@@ -57,6 +51,12 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
 
     @Resource
     private FileParsingService fileParsingServiceImpl;
+
+    @Resource
+    private RinseBusinessIpMapper rinseBusinessIpMapper;
+
+    @Resource
+    private RinseBusinessPhoneMapper rinseBusinessPhoneMapper;
 
     private static final String baseSql_with_rinses = " (select row_number() OVER(PARTITION BY a.id ) AS rownum,a.*,b.*  from &&_tableName_&& a left join error_info b \n" +
             " on a.mppid2errorid = b.mppid2errorid) c where c.rownum = 1 and c.file_rinse_detail_id  not in(&&_rinses_&&) or c.file_rinse_detail_id is null";
@@ -113,6 +113,36 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
         MppTableDto mppTableDto = new MppTableDto();
         //通过模板id获取表字段
         List<FileTemplateDetailEntity> fileTemplateDetailEntityList = getFileTemplateDetailEntities(mppSearchDto);
+
+        //表字段新增ip解析字段
+        List<RinseBusinessIpEntity> rinseBusinessIpEntityList =  rinseBusinessIpMapper.getRinseBusinessIpListByTemplateId(mppSearchDto.getFileTemlateId());
+        if(!CollectionUtils.isEmpty(rinseBusinessIpEntityList)){
+            for(RinseBusinessIpEntity rinseBusinessIpEntity : rinseBusinessIpEntityList) {
+                FileTemplateDetailEntity fileTemplateDetailEntity =  fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessIpEntity.getFileTemplateDetailId());
+
+                FileTemplateDetailEntity fileTemplateDetailEntityCountry = new FileTemplateDetailEntity();
+                fileTemplateDetailEntityCountry.setFieldName(fileTemplateDetailEntity.getFieldName()+"_country");
+                fileTemplateDetailEntityCountry.setFieldKey(fileTemplateDetailEntity.getFieldKey()+"_省市");
+                FileTemplateDetailEntity fileTemplateDetailEntityArea = new FileTemplateDetailEntity();
+                fileTemplateDetailEntityArea.setFieldName(fileTemplateDetailEntity.getFieldName()+"_area");
+                fileTemplateDetailEntityArea.setFieldKey(fileTemplateDetailEntity.getFieldKey()+"_运营商");
+
+                fileTemplateDetailEntityList.add(fileTemplateDetailEntityCountry);
+                fileTemplateDetailEntityList.add(fileTemplateDetailEntityArea);
+            }
+        }
+        //表字段新增电话解析字段
+        List<RinseBusinessPhoneEntity> rinseBusinessPhoneEntityList = rinseBusinessPhoneMapper.getRinseBusinessPhoneListByTemplateId(mppSearchDto.getFileTemlateId());
+        if(!CollectionUtils.isEmpty(rinseBusinessPhoneEntityList)){
+            for(RinseBusinessPhoneEntity rinseBusinessPhoneEntity : rinseBusinessPhoneEntityList){
+                FileTemplateDetailEntity fileTemplateDetailEntity =  fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessPhoneEntity.getFileTemplateDetailId());
+                FileTemplateDetailEntity fileTemplateDetailEntityPhoneInfo = new FileTemplateDetailEntity();
+                fileTemplateDetailEntityPhoneInfo.setFieldKey(fileTemplateDetailEntity.getFieldKey()+"_电话号码信息");
+                fileTemplateDetailEntityPhoneInfo.setFieldName(fileTemplateDetailEntity.getFieldName()+"_description");
+                fileTemplateDetailEntityList.add(fileTemplateDetailEntityPhoneInfo);
+            }
+        }
+
         //设置表头，组装sql语句
         String sqlSelect = getString(mppTableDto, fileTemplateDetailEntityList);
         String rinses = "";

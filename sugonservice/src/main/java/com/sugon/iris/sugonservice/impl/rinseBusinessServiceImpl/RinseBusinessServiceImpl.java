@@ -33,6 +33,12 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
     @Resource
     private RinseBusinessPrefixMapper rinseBusinessPrefixMapper;
 
+    @Resource
+    private RinseBusinessIpMapper rinseBusinessIpMapper;
+
+    @Resource
+    private RinseBusinessPhoneMapper rinseBusinessPhoneMapper;
+
     @Override
     public int saveRinseBusinessRepeat(RinseBusinessRepeatDto rinseBusinessRepeatDto, List<Error> errorList) {
         int result = 0;
@@ -95,6 +101,32 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
             result = rinseBusinessPrefixMapper.saveRinseBusinessPrefix(rinseBusinessPrefixEntity4Sql);
         }catch (Exception e){
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"插入表rinse_business_prefix出错",e.toString()));
+        }
+        return result;
+    }
+
+    @Override
+    public int saveRinseBusinessIp(RinseBusinessIpDto rinseBusinessIpDto, List<Error> errorList) throws IllegalAccessException {
+        int result = 0;
+        RinseBusinessIpEntity rinseBusinessIpEntity4Sql = new RinseBusinessIpEntity();
+        PublicUtils.trans(rinseBusinessIpDto,rinseBusinessIpEntity4Sql);
+        try {
+            result = rinseBusinessIpMapper.saveRinseBusinessIp(rinseBusinessIpEntity4Sql);
+        }catch (Exception e){
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"请不要重复配置",e.toString()));
+        }
+        return result;
+    }
+
+    @Override
+    public int saveRinseBusinessPhone(RinseBusinessPhoneDto rinseBusinessPhoneDto, List<Error> errorList) throws IllegalAccessException {
+        int result = 0;
+        RinseBusinessPhoneEntity rinseBusinessPhoneEntity4Sql = new RinseBusinessPhoneEntity();
+        PublicUtils.trans(rinseBusinessPhoneDto,rinseBusinessPhoneEntity4Sql);
+        try {
+            result = rinseBusinessPhoneMapper.saveRinseBusinessPhone(rinseBusinessPhoneEntity4Sql);
+        }catch (Exception e){
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"请不要重复配置",e.toString()));
         }
         return result;
     }
@@ -204,6 +236,46 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
     }
 
     @Override
+    public List<RinseBusinessIpDto> getIpBussList(Long fileTemplateId, List<Error> errorList) throws IllegalAccessException {
+        List<RinseBusinessIpDto> rinseBusinessIpDtoList = new ArrayList<>();
+        List<RinseBusinessIpEntity> rinseBusinessIpEntityList = null;
+        try {
+            rinseBusinessIpEntityList = rinseBusinessIpMapper.getRinseBusinessIpListByTemplateId(fileTemplateId);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表rinse_business_Ip出错",e.toString()));
+        }
+        for(RinseBusinessIpEntity rinseBusinessIpEntity : rinseBusinessIpEntityList){
+            RinseBusinessIpDto rinseBusinessIpDto = new RinseBusinessIpDto();
+            PublicUtils.trans(rinseBusinessIpEntity,rinseBusinessIpDto);
+            FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessIpDto.getFileTemplateDetailId());
+            rinseBusinessIpDto.setFileTemplateDetailKey(fileTemplateDetailEntity.getFieldKey());
+            rinseBusinessIpDtoList.add(rinseBusinessIpDto);
+        }
+        return rinseBusinessIpDtoList;
+    }
+
+    @Override
+    public List<RinseBusinessPhoneDto> getPhoneBussList(Long fileTemplateId, List<Error> errorList) throws IllegalAccessException {
+        List<RinseBusinessPhoneDto> rinseBusinessPhoneDtoList = new ArrayList<>();
+        List<RinseBusinessPhoneEntity> rinseBusinessPhoneEntityList = null;
+        try {
+            rinseBusinessPhoneEntityList = rinseBusinessPhoneMapper.getRinseBusinessPhoneListByTemplateId(fileTemplateId);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表rinse_business_Phone出错",e.toString()));
+        }
+        for(RinseBusinessPhoneEntity rinseBusinessPhoneEntity : rinseBusinessPhoneEntityList){
+            RinseBusinessPhoneDto rinseBusinessPhoneDto = new RinseBusinessPhoneDto();
+            PublicUtils.trans(rinseBusinessPhoneEntity,rinseBusinessPhoneDto);
+            FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessPhoneDto.getFileTemplateDetailId());
+            rinseBusinessPhoneDto.setFileTemplateDetailKey(fileTemplateDetailEntity.getFieldKey());
+            rinseBusinessPhoneDtoList.add(rinseBusinessPhoneDto);
+        }
+        return rinseBusinessPhoneDtoList;
+    }
+
+    @Override
     public int deleteRinseBusinessRepeatById(Long id, List<Error> errorList) throws IllegalAccessException {
         int result= 0;
         try {
@@ -259,6 +331,30 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
         }catch (Exception e){
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表rinse_business_prefix出错",e.toString()));
+        }
+        return result;
+    }
+
+    @Override
+    public int deleteRinseBusinessIpById(Long id, List<Error> errorList) throws IllegalAccessException {
+        int result= 0;
+        try {
+            result =  rinseBusinessIpMapper.deleteByPrimaryKey(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表rinse_business_ip出错",e.toString()));
+        }
+        return result;
+    }
+
+    @Override
+    public int deleteRinseBusinessPhoneById(Long id, List<Error> errorList) throws IllegalAccessException {
+        int result= 0;
+        try {
+            result =  rinseBusinessPhoneMapper.deleteByPrimaryKey(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表rinse_business_Phone出错",e.toString()));
         }
         return result;
     }

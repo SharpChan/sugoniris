@@ -1,5 +1,6 @@
 package com.sugon.iris.sugonlistener.common;
 
+import com.sugon.iris.sugoncommon.ipAddress.IPSeeker;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.configEntities.ConfigEntity;
 import com.sugon.iris.sugonservice.service.kafkaService.KafkaStartStopService;
@@ -22,6 +23,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -147,6 +149,18 @@ public class CommonConfigurationListener implements ServletContextListener {
                     PublicUtils.rocketMqConsumer = consumer;
                     consumer.start();
                 }
+            }
+
+            //读取ip数据
+            String src = "";
+            if (PublicUtils.getConfigMap().get("environment").equals("1")){
+                src = "C:\\dat";
+            } else{
+                src = "/user/local/service/dat";
+            }
+            if(null == PublicUtils.iPSeeker) {
+                IPSeeker ip = new IPSeeker("qqwry.dat", src);
+                PublicUtils.iPSeeker = ip;
             }
         } catch (Exception e) {
             e.printStackTrace ();

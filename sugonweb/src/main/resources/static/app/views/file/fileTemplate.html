@@ -417,6 +417,38 @@
                         </table>
                     </div>
                 </div>
+
+                <div  class="panel-body">
+                    <div class="panel-heading  topnavbar">
+                        <strong style="color: #FFF">电话解析</strong>
+                        <div align="right" style="margin-top:-20px;">
+                            <input type="button" value="新增" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="addPhoneBuss()" >
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+                            <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>字段</th>
+                                <th>删除</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="item in phoneBusinessList">
+                                <td align="center" style="width:50px">{{item.no}}</td>
+                                <td align="left" style="width:150px">{{item.fileTemplateDetailKey}}</td>
+                                <td>
+                                    <button type="button" ng-click="deletePhone(item.id)" class="btn btn-sm btn-danger">
+                                        <em class="fa fa-trash-o"></em>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
             <!--右半部分-->
             <div style="margin-left:5px;width: 49%" class="input-group panel">
@@ -485,6 +517,38 @@
                         </table>
                     </div>
                 </div>
+
+                <div  class="panel-body">
+                    <div class="panel-heading  topnavbar">
+                        <strong style="color: #FFF">ip地址解析</strong>
+                        <div align="right" style="margin-top:-20px;">
+                            <input type="button" value="新增" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="addIpBuss()" >
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+                            <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>字段</th>
+                                <th>删除</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="item in ipBusinessList">
+                                <td align="center" style="width:50px">{{item.no}}</td>
+                                <td align="left" style="width:150px">{{item.fileTemplateDetailKey}}</td>
+                                <td>
+                                    <button type="button" ng-click="deleteIp(item.id)" class="btn btn-sm btn-danger">
+                                        <em class="fa fa-trash-o"></em>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -594,6 +658,44 @@
             <div  class="form-group" style="margin-top:120px;width: 420px" >
                 <div align="right" style="margin-top:10px">
                     <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="savePrefixBussDivDetail();" >
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id = "cnIpBussDivDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 450px; height: 350px; z-index: 9999;overflow-y:auto;">
+        <div id = "cnIpBussDivDetailheader" class="panel-heading topnavbar">
+            添加<input type="button" value="关闭" style="margin-left:350px" class="btn btn-default" ng-click="closeIpBussDivDetail();" >
+        </div>
+        <div class="panel-body">
+            <div  class="form-group" style="top: 20px;width: 400px" ng-init="availableCategories=[]">
+                <ui-select multiple="" ng-model="template.categoriesIp" theme="bootstrap" ng-disabled="disabled" class="mb-lg">
+                    <ui-select-match placeholder="字段">{{$item.substring(0,$item.lastIndexOf("::"))}}</ui-select-match>
+                    <ui-select-choices repeat="cell in availableCategories track by $index">{{ cell.substring(0,cell.lastIndexOf("::"))}}</ui-select-choices>
+                </ui-select>
+            </div>
+            <div  class="form-group" style="margin-top:120px;width: 420px" >
+                <div align="right" style="margin-top:10px">
+                    <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="saveIpBussDivDetail();" >
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id = "cnPhoneBussDivDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 450px; height: 350px; z-index: 9999;overflow-y:auto;">
+        <div id = "cnPhoneBussDivDetailheader" class="panel-heading topnavbar">
+            添加<input type="button" value="关闭" style="margin-left:350px" class="btn btn-default" ng-click="closePhoneBussDivDetail();" >
+        </div>
+        <div class="panel-body">
+            <div  class="form-group" style="top: 20px;width: 400px" ng-init="availableCategories=[]">
+                <ui-select multiple="" ng-model="template.categoriesPhone" theme="bootstrap" ng-disabled="disabled" class="mb-lg">
+                    <ui-select-match placeholder="字段">{{$item.substring(0,$item.lastIndexOf("::"))}}</ui-select-match>
+                    <ui-select-choices repeat="cell in availableCategories track by $index">{{ cell.substring(0,cell.lastIndexOf("::"))}}</ui-select-choices>
+                </ui-select>
+            </div>
+            <div  class="form-group" style="margin-top:120px;width: 420px" >
+                <div align="right" style="margin-top:10px">
+                    <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="savePhoneBussDivDetail();" >
                 </div>
             </div>
         </div>

@@ -135,5 +135,9 @@
     <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.18.16" level="project" />
     <orderEntry type="library" name="Maven: com.huawei:gsjdbc200:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.postgresql:postgresql:42.2.3" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.libphonenumber:libphonenumber:8.12.39" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.libphonenumber:carrier:1.165" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.libphonenumber:geocoder:2.175" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.libphonenumber:prefixmapper:2.175" level="project" />
   </component>
 </module>

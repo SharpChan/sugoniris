@@ -1,5 +1,7 @@
 package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
+import com.sugon.iris.sugoncommon.phoneNo.PhoneUtil;
+import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 import com.sugon.iris.sugondata.config.GaussDBConfig.GaussConnection;
@@ -48,6 +50,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
 
     public static final String quote = "^";
     public static final String delimter = "|";
+    public static final String ipRex = "((25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)\\.){3}(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)$";
 
     @Resource
     private MppErrorInfoMapper mppErrorInfoMapper;
@@ -85,7 +88,8 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
      */
     @Override
     public void doParsingCsv( Long userId,Long caeId, FileTemplateDto fileTemplateDto, File file, Object[] tableInfos,
-                             String insertSql,Map<Long, FileRinseDetailDto>  regularMap, Long fileSeq, Long fileAttachmentId,List<Error> errorList) throws IOException {
+                             String insertSql,Map<Long, FileRinseDetailDto>  regularMap, Long fileSeq,
+                              Long fileAttachmentId,Set<Long>ipSet,Set<Long> phoneSet,List<Error> errorList) throws IOException {
         try {
             //获取模板的目标补全字段
       Set<Long> fieldDestList = getFieldDestList(fileTemplateDto);
@@ -144,11 +148,17 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
       StringBuffer errorBuffer = new StringBuffer();
       //不开起多线程
      if(thread == 1){
-          importRowCount = singleThreadedParsingCsv(userId, caeId, fileTemplateDto, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId, fieldDestList, importRowCount, feildRefIndexMap, rows, fileParsingFailedEntityListSql, errorBuffer);
+          importRowCount = singleThreadedParsingCsv(userId, caeId, fileTemplateDto, tableInfos, insertSql,
+                                                   regularMap, fileSeq, fileAttachmentId, fieldDestList,
+                                                   importRowCount, feildRefIndexMap, rows, fileParsingFailedEntityListSql,
+                                                   errorBuffer,ipSet,phoneSet);
       }
       //多线程
       else{
-          importRowCount = multithreadedParsing(thread,userId, caeId, fileTemplateDto, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId, fieldDestList, importRowCount, feildRefIndexMap, rows, fileParsingFailedEntityListSql, errorBuffer);
+          importRowCount = multithreadedParsing(thread,userId, caeId, fileTemplateDto, tableInfos, insertSql,
+                                                regularMap, fileSeq, fileAttachmentId, fieldDestList,
+                                                importRowCount, feildRefIndexMap, rows, fileParsingFailedEntityListSql,
+                                                errorBuffer,ipSet,phoneSet);
 
       }
 
@@ -166,7 +176,12 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
      }
     }
 
-    private Integer multithreadedParsing(int thread,Long userId, Long caeId, FileTemplateDto fileTemplateDto, Object[] tableInfos, String insertSql, Map<Long, FileRinseDetailDto> regularMap, Long fileSeq, Long fileAttachmentId, Set<Long> fieldDestList, Integer importRowCount, Map<Long, Integer> feildRefIndexMap, List<CsvRow> rows, List<FileParsingFailedEntity> fileParsingFailedEntityListSql, StringBuffer errorBuffer) throws SQLException, IOException, InterruptedException, ExecutionException {
+    private Integer multithreadedParsing(int thread,Long userId, Long caeId, FileTemplateDto fileTemplateDto, Object[] tableInfos,
+                                         String insertSql, Map<Long, FileRinseDetailDto> regularMap, Long fileSeq,
+                                         Long fileAttachmentId, Set<Long> fieldDestList, Integer importRowCount,
+                                         Map<Long, Integer> feildRefIndexMap, List<CsvRow> rows,
+                                         List<FileParsingFailedEntity> fileParsingFailedEntityListSql,
+                                         StringBuffer errorBuffer,Set<Long>ipSet,Set<Long> phoneSet) throws SQLException, IOException, InterruptedException, ExecutionException {
 
         ExecutorService executorService = Executors.newFixedThreadPool(thread);
 
@@ -316,7 +331,11 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
         return importRowCount;
     }
 
-    private Integer singleThreadedParsingCsv(Long userId, Long caeId, FileTemplateDto fileTemplateDto, Object[] tableInfos, String insertSql, Map<Long, FileRinseDetailDto> regularMap, Long fileSeq, Long fileAttachmentId, Set<Long> fieldDestList, Integer importRowCount, Map<Long, Integer> feildRefIndexMap, List<CsvRow> rows, List<FileParsingFailedEntity> fileParsingFailedEntityListSql, StringBuffer errorBuffer) throws SQLException, IOException {
+    private Integer singleThreadedParsingCsv(Long userId, Long caeId, FileTemplateDto fileTemplateDto, Object[] tableInfos, String insertSql,
+                                             Map<Long, FileRinseDetailDto> regularMap, Long fileSeq, Long fileAttachmentId,
+                                             Set<Long> fieldDestList, Integer importRowCount, Map<Long, Integer> feildRefIndexMap,
+                                             List<CsvRow> rows, List<FileParsingFailedEntity> fileParsingFailedEntityListSql,
+                                             StringBuffer errorBuffer,Set<Long>ipSet,Set<Long> phoneSet) throws SQLException, IOException {
         //对csv行进行遍历
         StringBuffer tuples = new StringBuffer();
         for (int i = 1; i < rows.size(); i++) {
@@ -371,6 +390,25 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     mppId2ErrorId_flag = checkRegular && mppId2ErrorId_flag;
                     //sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
                     sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).trim());
+
+                    //判断模板字段是否需要ip解析
+                    if(ipSet.contains(entry.getKey())){
+                        if(StringUtils.isNotBlank(rows.get(i).getField(entry.getValue())) && rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "").matches(ipRex)){
+                            String value = rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "");
+                            String country =  PublicUtils.iPSeeker.getIPLocation(value).getCountry();
+                            String area = PublicUtils.iPSeeker.getIPLocation(value).getArea();
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipCountry_xx&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : country);
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipArea_xx&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : area);
+                        }
+                    }
+
+                    //判断模板字段是否需要电话解析
+                    if(phoneSet.contains(entry.getKey())){
+                        if(StringUtils.isNotBlank(rows.get(i).getField(entry.getValue())) ) {
+                            String description = PhoneUtil.getDescription(rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_phoneInfo_xx&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : description);
+                        }
+                    }
 
                     //校验不通过
                     if (!checkRegular) {

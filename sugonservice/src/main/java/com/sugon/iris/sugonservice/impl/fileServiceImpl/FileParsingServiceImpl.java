@@ -2,6 +2,7 @@ package com.sugon.iris.sugonservice.impl.fileServiceImpl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.google.gson.Gson;
+import com.sugon.iris.sugoncommon.phoneNo.PhoneUtil;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.*;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppMapper;
@@ -85,6 +86,12 @@ public class FileParsingServiceImpl implements FileParsingService {
 
     @Resource
     private FileOriginTableMapper fileOriginTableMapper;
+
+    @Resource
+    private RinseBusinessIpMapper rinseBusinessIpMapper;
+
+    @Resource
+    private RinseBusinessPhoneMapper rinseBusinessPhoneMapper;
 
     @Override
     public void test(Long userId) throws IOException {
@@ -186,6 +193,19 @@ public class FileParsingServiceImpl implements FileParsingService {
              return fileIdList;
          }
 
+         //获取所有的ip解析配置
+         List<RinseBusinessIpEntity>  allRinseBusinessIpEntityList = rinseBusinessIpMapper.getAllRinseBusinessIpList();
+         Set<Long> ipSet = new HashSet<>();
+         for(RinseBusinessIpEntity rinseBusinessIpEntity : allRinseBusinessIpEntityList){
+             ipSet.add(rinseBusinessIpEntity.getFileTemplateDetailId());
+         }
+         //获取所有的电话解析配置
+         List<RinseBusinessPhoneEntity> allRinseBusinessPhoneEntityList = rinseBusinessPhoneMapper.getAllRinseBusinessPhoneList();
+         Set<Long> phoneSet = new HashSet<>();
+         for(RinseBusinessPhoneEntity rinseBusinessPhoneEntity : allRinseBusinessPhoneEntityList){
+             phoneSet.add(rinseBusinessPhoneEntity.getFileTemplateDetailId());
+         }
+
          //创建多线程，一个模板创建一个线程,在子线程内分别入库
          ExecutorService executorService = Executors.newFixedThreadPool(mapTemplate2File.size());
 
@@ -208,8 +228,8 @@ public class FileParsingServiceImpl implements FileParsingService {
                      PublicUtils.fileTemplateDetailDtoListSort(fileTemplateDto.getFileTemplateDetailDtoList());
 
                      //index[0] :tableName ;index[01: tableId
-                     Object[] tableInfos = createMppTable(userId, fileAttachmentEntity, fileTemplateDto);
-                     String insertSql = getInsertSql(fileAttachmentEntity.getId(), fileAttachmentEntity.getCaseId(), fileTemplateDto.getFileTemplateDetailDtoList(), (String) tableInfos[0], fileTemplateDto.getId());
+                     Object[] tableInfos = createMppTable(userId, fileAttachmentEntity, fileTemplateDto,allRinseBusinessIpEntityList,allRinseBusinessPhoneEntityList);
+                     String insertSql = getInsertSql(fileAttachmentEntity.getId(), fileAttachmentEntity.getCaseId(), fileTemplateDto.getFileTemplateDetailDtoList(), (String) tableInfos[0], fileTemplateDto.getId(),allRinseBusinessIpEntityList,allRinseBusinessPhoneEntityList);
 
                      //key:模板字段id编号；value：正则表达式列表；用于导入前数据校验
                      Map<Long, FileRinseDetailDto> regularMap = new HashMap<>();
@@ -230,7 +250,7 @@ public class FileParsingServiceImpl implements FileParsingService {
                              csvCount.incrementAndGet();
                              try {
                                  fileDoParsingServiceImpl.doParsingCsv(userId, fileAttachmentEntity.getCaseId(),
-                                         fileTemplateDto, file, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId, errorList);
+                                         fileTemplateDto, file, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId,ipSet,phoneSet, errorList);
 
                              } catch (IOException e) {
                                  e.printStackTrace();
@@ -369,7 +389,8 @@ public class FileParsingServiceImpl implements FileParsingService {
     }
 
     //组装插入数据语句
-    private String getInsertSql(Long fileAttachmentId ,Long caseId,List<FileTemplateDetailDto> fileTemplateDetailDtoList, String tableName,Long fileTemplateId) {
+    private String getInsertSql(Long fileAttachmentId ,Long caseId,List<FileTemplateDetailDto> fileTemplateDetailDtoList, String tableName,
+                                Long fileTemplateId,List<RinseBusinessIpEntity>  allRinseBusinessIpEntityList,List<RinseBusinessPhoneEntity> allRinseBusinessPhoneEntityList) {
         //组装insertSql语句
    /*
         String sqlInsert = "insert into "+tableName+"(";
@@ -390,6 +411,40 @@ public class FileParsingServiceImpl implements FileParsingService {
         for(FileTemplateDetailDto fileTemplateDetailDto :  fileTemplateDetailDtoList){
             sqlInsertBuilder.append(quote).append("&&").append(fileTemplateDetailDto.getId()).append("&&").append(quote).append(delimter);
         }
+
+        //获取当前模板配置的ip地址解析信息
+        List<RinseBusinessIpEntity> rinseBusinessIpEntityList =  new ArrayList<>();
+        if(!CollectionUtils.isEmpty(allRinseBusinessIpEntityList)) {
+            for (RinseBusinessIpEntity rinseBusinessIpEntity : allRinseBusinessIpEntityList) {
+                if (fileTemplateId.equals(rinseBusinessIpEntity.getFileTemplateId())) {
+                    rinseBusinessIpEntityList.add(rinseBusinessIpEntity);
+                }
+            }
+        }
+        //获取当前模板的电话号码解析信息
+        List<RinseBusinessPhoneEntity> rinseBusinessPhoneEntityList = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(allRinseBusinessPhoneEntityList)) {
+            for (RinseBusinessPhoneEntity rinseBusinessPhoneEntity : allRinseBusinessPhoneEntityList) {
+                if (fileTemplateId.equals(rinseBusinessPhoneEntity.getFileTemplateId())) {
+                    rinseBusinessPhoneEntityList.add(rinseBusinessPhoneEntity);
+                }
+            }
+        }
+
+
+        if(!CollectionUtils.isEmpty(rinseBusinessIpEntityList)){
+              for(RinseBusinessIpEntity rinseBusinessIpEntity : rinseBusinessIpEntityList){
+                  sqlInsertBuilder.append(quote).append("&&xx_").append(rinseBusinessIpEntity.getFileTemplateDetailId()).append("_ipCountry").append("_xx&&").append(quote).append(delimter);
+                  sqlInsertBuilder.append(quote).append("&&xx_").append(rinseBusinessIpEntity.getFileTemplateDetailId()).append("_ipArea").append("_xx&&").append(quote).append(delimter);
+              }
+        }
+
+        if(!CollectionUtils.isEmpty(rinseBusinessPhoneEntityList)){
+              for(RinseBusinessPhoneEntity rinseBusinessPhoneEntity : rinseBusinessPhoneEntityList){
+                  sqlInsertBuilder.append(quote).append("&&xx_").append(rinseBusinessPhoneEntity.getFileTemplateDetailId()).append("_phoneInfo").append("_xx&&").append(quote).append(delimter);
+              }
+        }
+
         sqlInsertBuilder.append(quote).append("&&xx_").append("mppId2ErrorId").append("_xx&&").append(quote).append(delimter);
         sqlInsertBuilder.append(quote).append("&&xx_").append("file_detail_id").append("_xx&&").append(quote).append(delimter);
         sqlInsertBuilder.append(quote).append(fileTemplateId).append(quote).append(delimter);
@@ -405,7 +460,7 @@ public class FileParsingServiceImpl implements FileParsingService {
      * @param fileTemplateDto
      * @return   index[0] :tableName ;index[01: tableId
      */
-    private Object[] createMppTable(Long userId,FileAttachmentEntity fileAttachmentEntity, FileTemplateDto fileTemplateDto) {
+    private Object[] createMppTable(Long userId,FileAttachmentEntity fileAttachmentEntity, FileTemplateDto fileTemplateDto,List<RinseBusinessIpEntity>  allRinseBusinessIpEntityList,List<RinseBusinessPhoneEntity> allRinseBusinessPhoneEntityList) {
         Object[] tableInfos = new Object[3];
         //如果之前已经存库则获取表名
         FileTableEntity fileTableEntity = getMppTableName(fileAttachmentEntity.getCaseId(), fileTemplateDto.getId());
@@ -423,6 +478,26 @@ public class FileParsingServiceImpl implements FileParsingService {
                 sqlCreate += fileTemplateDetailDto.getFieldName() +" varchar NULL,";
                 origin_sqlCreate += fileTemplateDetailDto.getFieldName() +" varchar NULL,";
             }
+
+            //ip解析产生的字段
+            if(!CollectionUtils.isEmpty(allRinseBusinessIpEntityList)) {
+                for (RinseBusinessIpEntity rinseBusinessIpEntity : allRinseBusinessIpEntityList) {
+                    if(rinseBusinessIpEntity.getFileTemplateId().equals(fileTemplateDto.getId())){
+                        sqlCreate += rinseBusinessIpEntity.getFieldName()+"_country  varchar NULL,";
+                        sqlCreate += rinseBusinessIpEntity.getFieldName()+"_area  varchar NULL,";
+                    }
+                }
+            }
+
+            //电话号码解析产生的字段
+            if(!CollectionUtils.isEmpty(allRinseBusinessPhoneEntityList)) {
+                for (RinseBusinessPhoneEntity rinseBusinessPhoneEntity : allRinseBusinessPhoneEntityList) {
+                    if(rinseBusinessPhoneEntity.getFileTemplateId().equals(fileTemplateDto.getId())){
+                        sqlCreate += rinseBusinessPhoneEntity.getFieldName()+"_description  varchar NULL,";
+                    }
+                }
+            }
+
             sqlCreate += " mppId2ErrorId int8 NULL, file_detail_id int4 NULL, file_template_id int4 NULL,file_attachment_id  varchar NULL,case_id varchar NULL);";
             origin_sqlCreate += " file_detail_id int4 NULL, file_template_id int4 NULL ,file_attachment_id  varchar NULL,case_id varchar NULL);";
 

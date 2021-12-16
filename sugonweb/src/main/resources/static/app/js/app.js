@@ -5114,6 +5114,8 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
     myservice.dragFunc("cnReplaceBussDivDetail");
     myservice.dragFunc("cnSuffixBussDivDetail");
     myservice.dragFunc("cnPrefixBussDivDetail");
+    myservice.dragFunc("cnIpBussDivDetail");
+    myservice.dragFunc("cnPhoneBussDivDetail");
     $("#cnDiv").hide();
     $("#cnDivUpdate").hide();
     $("#cnDivDetail").hide();
@@ -5124,7 +5126,8 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
     $("#cnReplaceBussDivDetail").hide();
     $("#cnSuffixBussDivDetail").hide();
     $("#cnPrefixBussDivDetail").hide();
-
+    $("#cnIpBussDivDetail").hide();
+    $("#cnPhoneBussDivDetail").hide();
     loadDictionary1 = function(){
         var url = "/fileRinse/getFileRinses";
         $http.post(url).success(function(data)
@@ -5569,6 +5572,8 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         $scope.getReplaceBussDivDetailList();
         $scope.getSuffixBussDivDetailList();
         $scope.getPrefixBussDivDetailList();
+        $scope.getIpBussDivDetailList();
+        $scope.getPhoneBussDivDetailList();
     }
     $scope.closeCnDivRinseBusiness = function(){
         $("#cnDivRinseBusiness").hide();
@@ -5577,6 +5582,8 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         $("#cnNullBussDivDetail").hide();
         $("#cnSuffixBussDivDetail").hide();
         $("#cnPrefixBussDivDetail").hide();
+        $("#cnIpBussDivDetail").hide();
+        $("#cnPhoneBussDivDetail").hide();
     }
     $scope.template = {};
     $scope.detailForRinseBusiness = function (item) {
@@ -5630,6 +5637,16 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         $scope.prefix = "";
     }
 
+    $scope.addIpBuss = function (){
+        $("#cnIpBussDivDetail").show();
+        $scope.template.categoriesIp = [];
+    }
+
+    $scope.addPhoneBuss = function (){
+        $("#cnPhoneBussDivDetail").show();
+        $scope.template.categoriesPhone = [];
+    }
+
     $scope.closeRepetBussDivDetail = function () {
         $("#cnRepetBussDivDetail").hide();
     }
@@ -5649,6 +5666,15 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
     $scope.closePrefixBussDivDetail = function () {
         $("#cnPrefixBussDivDetail").hide();
     }
+
+    $scope.closeIpBussDivDetail = function () {
+        $("#cnIpBussDivDetail").hide();
+    }
+
+    $scope.closePhoneBussDivDetail = function () {
+        $("#cnPhoneBussDivDetail").hide();
+    }
+
 
     $scope.saveRepetBussDivDetail = function (){
         if(myservice.isEmpty($scope.template.categoriesRepet)){
@@ -5815,6 +5841,62 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         $("#cnPrefixBussDivDetail").hide();
     }
 
+    $scope.saveIpBussDivDetail = function (){
+        if(myservice.isEmpty($scope.template.categoriesIp)){
+            alert("请先选择字段！");
+            return;
+        }
+        var url = "/fileTemplate/saveIpBuss";
+        angular.forEach($scope.template.categoriesIp,function (e) {
+            var field = e.substring(e.lastIndexOf("::")+2);
+            var params = {
+                fileTemplateId : $scope.fileTemplateId,
+                fileTemplateDetailId : field
+            }
+
+            $http.post(url,params).success(function(data)
+            {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+
+                $scope.getIpBussDivDetailList();
+            }).error(function(data)
+            {
+                alert("会话已经断开或者检查网络是否正常！");
+            });
+        });
+        $("#cnIpBussDivDetail").hide();
+    }
+
+    $scope.savePhoneBussDivDetail = function (){
+        if(myservice.isEmpty($scope.template.categoriesPhone)){
+            alert("请先选择字段！");
+            return;
+        }
+        var url = "/fileTemplate/savePhoneBuss";
+        angular.forEach($scope.template.categoriesPhone,function (e) {
+            var field = e.substring(e.lastIndexOf("::")+2);
+            var params = {
+                fileTemplateId : $scope.fileTemplateId,
+                fileTemplateDetailId : field
+            }
+
+            $http.post(url,params).success(function(data)
+            {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+
+                $scope.getPhoneBussDivDetailList();
+            }).error(function(data)
+            {
+                alert("会话已经断开或者检查网络是否正常！");
+            });
+        });
+        $("#cnPhoneBussDivDetail").hide();
+    }
+
     $scope.getRepetBussDivDetailList = function(){
         var url ="/fileTemplate/getRepetBussList?fileTemplateId="+$scope.fileTemplateId;
         $http.post(url).success(function(data)
@@ -5886,7 +5968,35 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             alert("会话已经断开或者检查网络是否正常！");
         });
     }
-    
+
+    $scope.getIpBussDivDetailList = function () {
+        var url ="/fileTemplate/getIpBussList?fileTemplateId="+$scope.fileTemplateId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.ipBusinessList = myservice.setSerialNumber(temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.getPhoneBussDivDetailList = function () {
+        var url ="/fileTemplate/getPhoneBussList?fileTemplateId="+$scope.fileTemplateId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.phoneBusinessList = myservice.setSerialNumber(temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
     $scope.deleteRepet = function (id) {
         var url = "/fileTemplate/deleteRepetById?id="+id;
         $http.post(url).success(function(data)
@@ -5951,6 +6061,34 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
             $scope.getPrefixBussDivDetailList();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.deleteIp = function (id) {
+        var url = "/fileTemplate/deleteIpById?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.getIpBussDivDetailList();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.deletePhone = function (id) {
+        var url = "/fileTemplate/deletePhoneById?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.getPhoneBussDivDetailList();
         }).error(function(data)
         {
             alert("会话已经断开或者检查网络是否正常！");
@@ -12214,7 +12352,7 @@ App.directive('treeView2',[function(){
                                 }
                                 h.isChecked = true;
                             }
-                            if(h.submenu){
+                            if(h.submenu && h.submenu.length>0){
                                 doCheckChildren(h,allNode);
                             }
                         });
@@ -12259,9 +12397,6 @@ App.directive('treeView2',[function(){
                     }
 
                     newNodeAdd = [];
-
-
-                    console.log(item.fatherId);
                     if(item.fatherId){
                         newNodeAdd.push(item);
                     }
@@ -12270,7 +12405,6 @@ App.directive('treeView2',[function(){
                     var OwnerMenuDtoArr = []
                     angular.forEach(newNodeAdd,function (e) {
                         if(null != e.id){
-                            console.log(e.id);
                             OwnerMenuDtoArr.push(OwnerMenuDto($scope.paramOne,e.id));
                         }
                     });
@@ -12418,15 +12552,13 @@ App.directive('treeView',[function(){
                         }
                     }
                 });
-
                doCheckChildren(item,allNode);
             }
 
             function doCheckChildren (item,allNode){
                 //把儿子也勾上
                 angular.forEach(allNode,function (e) {
-                    console.log(item.submenu);
-                    if(item.submenu){
+                    if(item.submenu.length>0){
                         angular.forEach(item.submenu,function (h) {
                             if(e.id == h.id){
                                 //是他的儿子，儿子也打钩
@@ -12435,7 +12567,7 @@ App.directive('treeView',[function(){
                                 }
                                 h.isChecked = true;
                             }
-                            if(h.submenu){
+                            if(h.submenu && h.submenu.length>0){
                                 doCheckChildren(h,allNode);
                             }
                         });

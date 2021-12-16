@@ -485,6 +485,56 @@ public class FileTemplateController {
     }
 
     /**
+     * 查询ip解析
+     */
+    @PostMapping("/getIpBussList")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "ip解析信息")
+    @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
+    public   RestResult<List<RinseBusinessIpDto>>   getIpBussList(@RequestParam(value = "fileTemplateId") Long  fileTemplateId){
+        RestResult<List<RinseBusinessIpDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.getIpBussList(fileTemplateId,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 查询Phone解析
+     */
+    @PostMapping("/getPhoneBussList")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "Phone解析信息")
+    @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
+    public   RestResult<List<RinseBusinessPhoneDto>>   getPhoneBussList(@RequestParam(value = "fileTemplateId") Long  fileTemplateId){
+        RestResult<List<RinseBusinessPhoneDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.getPhoneBussList(fileTemplateId,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
      * 保存后缀替换
      */
     @PostMapping("/saveSuffixBuss")
@@ -521,6 +571,56 @@ public class FileTemplateController {
         List<Error> errorList = new ArrayList<>();
         try {
             restResult.setObj(rinseBusinessService.saveRinseBusinessPrefix(rinseBusinessPrefixDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 保存ip解析
+     */
+    @PostMapping("/saveIpBuss")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "保存解析ip地址信息")
+    @ApiImplicitParam(name = "rinseBusinessIpDto", value = "ip地址信息")
+    public   RestResult<Integer>   saveIpBuss( @RequestBody RinseBusinessIpDto rinseBusinessIpDto){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.saveRinseBusinessIp(rinseBusinessIpDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 保存电话解析
+     */
+    @PostMapping("/savePhoneBuss")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "保存后缀替换信息")
+    @ApiImplicitParam(name = "rinseBusinessPhoneDto", value = "电话信息")
+    public   RestResult<Integer>   savePhoneBuss( @RequestBody RinseBusinessPhoneDto rinseBusinessPhoneDto){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.saveRinseBusinessPhone(rinseBusinessPhoneDto,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -615,7 +715,7 @@ public class FileTemplateController {
     @PostMapping("/deleteSuffixById")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "后缀替换信息删除")
-    @ApiImplicitParam(name = "id", value = "替换id")
+    @ApiImplicitParam(name = "id", value = "id")
     public   RestResult<Integer>   deleteSuffixById( @RequestParam(value = "id") Long  id ){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -640,12 +740,62 @@ public class FileTemplateController {
     @PostMapping("/deletePrefixById")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "后缀替换信息删除")
-    @ApiImplicitParam(name = "id", value = "替换id")
+    @ApiImplicitParam(name = "id", value = "id")
     public   RestResult<Integer>   deletePrefixById( @RequestParam(value = "id") Long  id ){
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try {
             restResult.setObj(rinseBusinessService.deleteRinseBusinessPrefixById(id,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 删除ip解析
+     */
+    @PostMapping("/deleteIpById")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "ip解析信息删除")
+    @ApiImplicitParam(name = "id", value = "id")
+    public   RestResult<Integer>   deleteIpById( @RequestParam(value = "id") Long  id ){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.deleteRinseBusinessIpById(id,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 删除电话解析
+     */
+    @PostMapping("/deletePhoneById")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "Phone解析信息删除")
+    @ApiImplicitParam(name = "id", value = "id")
+    public   RestResult<Integer>   deletePhoneById( @RequestParam(value = "id") Long  id ){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.deleteRinseBusinessPhoneById(id,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

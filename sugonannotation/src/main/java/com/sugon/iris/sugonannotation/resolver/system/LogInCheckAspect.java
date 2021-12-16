@@ -4,8 +4,6 @@ import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -25,7 +23,6 @@ import java.util.Set;
 @Component
 @Lazy(false)
 public class LogInCheckAspect {
-    private final Logger logger =  LogManager.getLogger(LogInCheckAspect.class);
     /**
      * 定义切入点：对要拦截的方法进行定义与限制，如包、类
      *

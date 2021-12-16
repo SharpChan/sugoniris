@@ -1,6 +1,7 @@
 package com.sugon.iris.sugoncommon.publicUtils;
 
 import com.google.common.collect.Lists;
+import com.sugon.iris.sugoncommon.ipAddress.IPSeeker;
 import com.sugon.iris.sugondomain.beans.fileBeans.FileTemplateDetailBean;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
@@ -44,6 +45,8 @@ public  class PublicUtils {
 
     //rocketMq生产者
     public static DefaultMQProducer  rocketMqProducer;
+
+    public static IPSeeker iPSeeker;
 
     public static <T,K> K trans(T tin, K tout) throws IllegalAccessException {
         if(null == tin || tin instanceof Collection){
