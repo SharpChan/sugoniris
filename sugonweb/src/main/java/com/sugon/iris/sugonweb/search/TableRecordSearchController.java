@@ -1,5 +1,6 @@
 package com.sugon.iris.sugonweb.search;
 
+import com.sugon.iris.sugonannotation.annotation.system.BussLog;
 import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
 import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
@@ -29,6 +30,7 @@ public class TableRecordSearchController {
     private TableRecordSearchService tableRecordSearchServiceImpl;
 
     @RequestMapping("/searchAllTables")
+    @BussLog
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过条件获取查询结果")
     @ApiImplicitParam(name = "condition", value = "查询条件")

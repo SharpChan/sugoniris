@@ -1,5 +1,6 @@
 package com.sugon.iris.sugonweb.file;
 
+import com.sugon.iris.sugonannotation.annotation.system.BussLog;
 import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
 import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
@@ -98,6 +99,7 @@ public class FileDataMergeController {
     }
 
     @PostMapping("/getCsv")
+    @BussLog
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过mpp表信息导出csv")
     @ApiImplicitParam(name = "mppSearchDto", value = "mpp表信息")
@@ -116,6 +118,7 @@ public class FileDataMergeController {
      * @param caseId
      */
     @GetMapping("/mergeExport")
+    @BussLog
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过mpp表信息导出excel压缩包")
     @ApiImplicitParam(name = "caseId", value = "案件编号")

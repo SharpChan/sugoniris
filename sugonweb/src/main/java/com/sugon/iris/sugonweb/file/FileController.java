@@ -1,5 +1,6 @@
 package com.sugon.iris.sugonweb.file;
 
+import com.sugon.iris.sugonannotation.annotation.system.BussLog;
 import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
 import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
@@ -61,6 +62,7 @@ public class FileController {
     }
 
     @PostMapping("/uploadFile")
+    @BussLog
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "文件上传")
     @ApiImplicitParam(name = "caseId", value = "案件id")
@@ -133,6 +135,7 @@ public class FileController {
     }
 
     @PostMapping("/deleteFile")
+    @BussLog
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "删除原始文件")
     @ApiImplicitParam(name = "selected", value = "选中的原始文件")

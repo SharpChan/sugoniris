@@ -34,3 +34,17 @@ swagger:
   application-version: 1.0
   application-description: springfox swagger 3.0整合Demo
   try-host: http://localhost:${server.port}
+
+
+#定时任务调度
+xxl:
+  job:
+    admin:
+      addresses: http://192.168.217.90:8090/xxl-job-admin/
+    executor:
+      ip:
+      port: 9999
+      logpath: /home/centos/logs/xxl-job/jobhandler
+      logretentiondays: -1
+      appname: ams-training-xxl-job
+    accessToken:

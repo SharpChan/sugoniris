@@ -327,6 +327,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('system/whiteList.html'),
           resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'taginput','inputmask','localytics.directives','codemirror', 'moment', 'ui.bootstrap-slider', 'ngWig')
       })
+      .state('app.bussLog', {
+          url: '/bussLog',
+          title: 'bussLog',
+          templateUrl: helper.basepath('system/bussLog.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select', 'taginput','inputmask','localytics.directives','codemirror', 'moment', 'ui.bootstrap-slider', 'ngWig')
+      })
     .state('app.dashboard', {
         url: '/dashboard',
         title: 'Dashboard',
@@ -6925,6 +6931,37 @@ App.controller("whiteListController", function ($http,$timeout,$scope,
         });
     }
 
+});
+
+//访问白名单
+App.controller("bussLogController", function ($http,$timeout,$scope,
+                                                myservice){
+    $("#pleaseWait").hide();
+    myservice.loginLockCheck();
+
+    $scope.query = function () {
+        $("#pleaseWait").show();
+        var url = "/bussLog/queryLogs";
+        $http.post(url).success(function (data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }else{
+                var i = 1;
+                angular.forEach(temp.obj,function(item){
+                    item.no = i++;
+                });
+                $scope.obj=temp.obj;
+            }
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            $("#pleaseWait").hide();
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
 });
 
 //用户审核

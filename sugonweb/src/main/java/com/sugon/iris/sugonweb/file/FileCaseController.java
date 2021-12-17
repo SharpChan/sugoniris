@@ -1,6 +1,7 @@
 package com.sugon.iris.sugonweb.file;
 
 
+import com.sugon.iris.sugonannotation.annotation.system.BussLog;
 import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
 import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
@@ -28,7 +29,9 @@ public class FileCaseController {
     @Resource
     private FileCaseService fileCaseServiceImpl;
 
+
     @PostMapping("/saveCase")
+    @BussLog
     @LogInCheck(doLock = true,doProcess = true)
     @ApiImplicitParam(name = "fileCaseDto", value = "案件信息")
     @ApiOperation(value = "案件保存")
@@ -51,6 +54,7 @@ public class FileCaseController {
     }
 
     @PostMapping("/getCases")
+    @BussLog
     @LogInCheck(doLock = true,doProcess = true)
     @ApiImplicitParam(name = "fileCaseDto", value = "案件信息")
     @ApiOperation(value = "获取案件")
@@ -96,6 +100,7 @@ public class FileCaseController {
     }
 
     @PostMapping("/deleteCase")
+    @BussLog
     @LogInCheck(doLock = true,doProcess = true)
     @ApiImplicitParam(name = "selected", value = "已选择的案件id")
     @ApiOperation(value = "案件删除")

@@ -1,6 +1,7 @@
 package com.sugon.iris.sugonweb.system;
 
 
+import com.sugon.iris.sugonannotation.annotation.system.BussLog;
 import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
 import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
@@ -74,6 +75,7 @@ public class AccountResource {
 
     @ApiOperation(value = "用户登录")
     @PostMapping("/account/login")
+    @BussLog
     @ResponseStatus(HttpStatus.CREATED)
     @ApiImplicitParam(name = "UserDto", value = "用户信息")
     public RestResult<User> login(@Valid @RequestBody UserDto userDto, HttpServletResponse response, HttpSession session) throws UnsupportedEncodingException {
@@ -109,6 +111,7 @@ public class AccountResource {
 
     //说明是什么方法(可以理解为方法注释)
     @PostMapping("/account/logOut")
+    @BussLog
     @ApiOperation(value = "用户退出")
     public void logOut( HttpServletRequest request){
         MySessionContext myc= MySessionContext.getInstance();
@@ -117,6 +120,7 @@ public class AccountResource {
     }
 
     @PostMapping("/account/restPassword")
+    @BussLog
     public RestResult<Integer> restPassword(@Valid @RequestBody UserDto userDto) {
         RestResult<Integer> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
@@ -232,6 +236,7 @@ public class AccountResource {
 
 
     @PostMapping("/account/userCheck")
+    @BussLog
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "用户校验")
     public RestResult<Integer> userCheck(@RequestParam(value = "id") long  id,@RequestParam(value = "flag") int flag){
@@ -277,6 +282,7 @@ public class AccountResource {
 
 
     @PostMapping("/account/deleteUser")
+    @BussLog
     @LogInCheck(doLock = true,doProcess = true)
     @ApiImplicitParam(name = "id", value = "用户id")
     @ApiOperation(value = "用户删除")

@@ -1,5 +1,6 @@
 package com.sugon.iris.sugonweb.system;
 
+import com.sugon.iris.sugonannotation.annotation.system.BussLog;
 import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
 import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
@@ -32,6 +33,7 @@ public class ConfigController {
     private ConfigService configServiceImpl;
 
     @PostMapping("/saveConfig")
+    @BussLog
     @LogInCheck(doLock = true,doProcess = true)
     @ApiImplicitParam(name = "configDto", value = "配置信息")
     @ApiOperation(value = "配置信息新增")
@@ -106,6 +108,7 @@ public class ConfigController {
     //说明是什么方法(可以理解为方法注释)
     @ApiOperation(value = "配置信息删除")
     @PostMapping("/deleteConfig")
+    @BussLog
     @LogInCheck(doLock = true,doProcess = true)
     public RestResult<Integer> deleteConfig(@RequestParam(value = "id") Long id) {
         RestResult<Integer> restResult = new RestResult();

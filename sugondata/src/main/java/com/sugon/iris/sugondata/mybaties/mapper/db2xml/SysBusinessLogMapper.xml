@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db2.SysBusinessLogMapper" >
+
+    <!--结果集-->
+    <resultMap id="ResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.BusinessLogEntity" >
+        <result column="id" property="id" jdbcType="BIGINT" />
+        <result column="user_id" property="userId" jdbcType="BIGINT" />
+        <result column="user_name" property="userName" jdbcType="VARCHAR" />
+        <result column="business" property="business" jdbcType="VARCHAR" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="access_time" property="accessTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List" >
+        id,user_id,user_name,business,ip,access_time
+    </sql>
+
+    <select id="getAllBusinessLogs"  resultMap="ResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from sys_business_log limit 1000
+    </select>
+
+    <!--单个插入-->
+    <insert id="saveBusinessLog" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.BusinessLogEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into sys_business_log
+        (<include refid="Base_Column_List" />)
+        values
+        (
+        #{id,jdbcType=BIGINT},
+        #{userId,jdbcType=BIGINT},
+        #{userName,jdbcType=VARCHAR},
+        #{business,jdbcType=VARCHAR},
+        #{ip,jdbcType=VARCHAR},
+        #{accessTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+</mapper>
