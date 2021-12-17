@@ -246,6 +246,26 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     //sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
                     sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).trim());
 
+                    //判断模板字段是否需要ip解析
+                    if(ipSet.contains(entry.getKey())){
+                        if(StringUtils.isNotBlank(rows.get(i).getField(entry.getValue())) && rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "").matches(ipRex)){
+                            String value = rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "");
+                            String country =  PublicUtils.iPSeeker.getIPLocation(value).getCountry();
+                            String area = PublicUtils.iPSeeker.getIPLocation(value).getArea();
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipCountry_xx&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : country);
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipArea_xx&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : area);
+                        }
+                    }
+
+                    //判断模板字段是否需要电话解析
+                    if(phoneSet.contains(entry.getKey())){
+                        if(StringUtils.isNotBlank(rows.get(i).getField(entry.getValue())) ) {
+                            String description = PhoneUtil.getDescription(rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_phoneInfo_xx&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : description);
+                        }
+                    }
+
+
                     //校验不通过
                     if (!checkRegular) {
                         //检查excel的行号是否已经有了，有了用之前的mppid2errorid
@@ -523,7 +543,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
      */
     @Override
     public void doParsingExcel(Long userId,Long caeId, FileTemplateDto fileTemplateDto, File file, Object[] tableInfos,
-                               String insertSql,Map<Long, FileRinseDetailDto>  regularMap, Long fileSeq, Long fileAttachmentId,List<Error> errorList) throws IOException, InvalidFormatException {
+                               String insertSql,Map<Long, FileRinseDetailDto>  regularMap, Long fileSeq, Long fileAttachmentId,Set<Long> ipSet, Set<Long> phoneSet, List<Error> errorList) throws IOException, InvalidFormatException {
         try {
 
             //获取模板的目标补全字段
@@ -638,6 +658,26 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                         //基础sql
                         //sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == sheet.getRow(i).getCell(entry.getValue())) ? "" : sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", ""));
                         sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == sheet.getRow(i).getCell(entry.getValue())) ? "" : sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().trim());
+
+                        //判断模板字段是否需要ip解析
+                        if(ipSet.contains(entry.getKey())){
+                            if(StringUtils.isNotBlank(sheet.getRow(i).getCell(entry.getValue()).getStringCellValue()) && sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", "").matches(ipRex)){
+                                String value = sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", "");
+                                String country =  PublicUtils.iPSeeker.getIPLocation(value).getCountry();
+                                String area = PublicUtils.iPSeeker.getIPLocation(value).getArea();
+                                sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipCountry_xx&&", (null == entry.getValue() || null == sheet.getRow(i).getCell(entry.getValue()).getStringCellValue()) ? "" : country);
+                                sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipArea_xx&&", (null == entry.getValue() || null == sheet.getRow(i).getCell(entry.getValue()).getStringCellValue()) ? "" : area);
+                            }
+                        }
+
+                        //判断模板字段是否需要电话解析
+                        if(phoneSet.contains(entry.getKey())){
+                            if(StringUtils.isNotBlank(sheet.getRow(i).getCell(entry.getValue()).getStringCellValue()) ) {
+                                String description = PhoneUtil.getDescription(sheet.getRow(i).getCell(entry.getValue()).getStringCellValue().replaceAll("\\s*", ""));
+                                sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_phoneInfo_xx&&", (null == entry.getValue() || null == sheet.getRow(i).getCell(entry.getValue()).getStringCellValue()) ? "" : description);
+                            }
+                        }
+
 
                         //校验不通过
                         if (!checkRegular) {

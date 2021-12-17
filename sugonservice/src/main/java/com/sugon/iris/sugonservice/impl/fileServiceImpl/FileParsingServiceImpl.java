@@ -260,7 +260,7 @@ public class FileParsingServiceImpl implements FileParsingService {
                              xlsCount.incrementAndGet();
                              try {
                                  fileDoParsingServiceImpl.doParsingExcel(userId, fileAttachmentEntity.getCaseId(),
-                                         fileTemplateDto, file, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId, errorList);
+                                         fileTemplateDto, file, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId,ipSet,phoneSet, errorList);
                              } catch (Exception e) {
                                  e.printStackTrace();
                              }

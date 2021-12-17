@@ -27,7 +27,6 @@ public class BussLogAspect {
     @Resource
     private SysBusinessLogMapper sysBusinessLogMapper;
 
-
     @Around(value = "@annotation(com.sugon.iris.sugonannotation.annotation.system.BussLog) && @annotation(bussLog)")
     public RestResult<Object> begin(ProceedingJoinPoint pdj, BussLog bussLog) throws Throwable {
         Object[] args = pdj.getArgs();
