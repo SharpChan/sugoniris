@@ -243,7 +243,7 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
             rinseBusinessIpEntityList = rinseBusinessIpMapper.getRinseBusinessIpListByTemplateId(fileTemplateId);
         }catch (Exception e){
             e.printStackTrace();
-            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表rinse_business_Ip出错",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表rinse_business_ip出错",e.toString()));
         }
         for(RinseBusinessIpEntity rinseBusinessIpEntity : rinseBusinessIpEntityList){
             RinseBusinessIpDto rinseBusinessIpDto = new RinseBusinessIpDto();

@@ -18,7 +18,7 @@
     <select id="getRinseBusinessIpListByTemplateId"  resultMap="ResultMap" >
         select
         <include refid="Base_Column_List" />
-        from rinse_business_Ip
+        from rinse_business_ip
         where
         file_template_id = #{fileTemplateId,jdbcType=BIGINT}
     </select>
@@ -26,12 +26,12 @@
     <select id="getAllRinseBusinessIpList"  resultMap="ResultMap" >
         select
         a.id,a.file_template_id,a.file_template_detail_id,b.field_name
-        from rinse_business_Ip a left join file_template_detail b on a.file_template_detail_id = b.id
+        from rinse_business_ip a left join file_template_detail b on a.file_template_detail_id = b.id
     </select>
 
     <!--单个插入-->
     <insert id="saveRinseBusinessIp" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RinseBusinessIpEntity" useGeneratedKeys="true" keyProperty="id">
-        insert into rinse_business_Ip
+        insert into rinse_business_ip
         (<include refid="Base_Column_List" />)
         values
         (
@@ -42,7 +42,7 @@
     </insert>
 
     <delete id="deleteByPrimaryKey">
-        delete from rinse_business_Ip
+        delete from rinse_business_ip
         where id = #{id,jdbcType=BIGINT}
     </delete>
 </mapper>

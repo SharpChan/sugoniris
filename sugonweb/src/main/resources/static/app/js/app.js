@@ -118,6 +118,12 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('actualCenter/tupu1.html'),
           resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
       })
+      .state('app.xxlJob', {
+          url: '/xxlJob',
+          title: 'xxlJob',
+          templateUrl: helper.basepath('actualCenter/xxlJob.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
       .state('app.dataMerge', {
           url: '/dataMerge',
           title: 'DataMerge',
@@ -1358,7 +1364,7 @@ App.service('myservice', function($window,$state,$http) {
 
 App.controller("mcgcController", function ($http,$timeout,$scope,$sce,
                                                 myservice) {
-
+    myservice.loginLockCheck();
     var url = '/actualCenter/getMcgcUrl';
     $scope.skip = function(){
         $('.hide').removeClass('hide'); // 打开模态框
@@ -1374,6 +1380,12 @@ App.controller("mcgcController", function ($http,$timeout,$scope,$sce,
         });
     }
     $scope.skip();
+})
+
+App.controller("xxljobController", function ($http,$timeout,$scope,$sce,
+                                           myservice) {
+    myservice.loginLockCheck();
+
 })
 
 App.controller("dataMergeController", function ($http,$timeout,$scope,
@@ -6940,6 +6952,17 @@ App.controller("bussLogController", function ($http,$timeout,$scope,
     myservice.loginLockCheck();
 
     $scope.query = function () {
+        var parm = {
+            cc: "ccc",
+            bb: "bbb",
+            dd: false
+        }
+        console.log(parm.dd===undefined);
+        console.log(parm.dd==null);
+        if(!parm.dd){
+            console.log(true);
+        }
+
         $("#pleaseWait").show();
         var url = "/bussLog/queryLogs";
         $http.post(url).success(function (data)

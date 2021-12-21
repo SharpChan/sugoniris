@@ -51,7 +51,9 @@ public class BussLogAspect {
         businessLog.setAccessTime(timestamp);
         businessLog.setIp(ip);
         businessLog.setBusiness( BusinessLog_Enum.getEnumByUrl(a3).getName());
-        sysBusinessLogMapper.saveBusinessLog(businessLog);
+        if(obj != null && ! (null == obj.getId())) {
+            sysBusinessLogMapper.saveBusinessLog(businessLog);
+        }
         }catch (Exception e){
             e.printStackTrace();
         }

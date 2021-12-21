@@ -185,7 +185,7 @@ public class MenuServiceDaoImpl implements MenuServiceDao {
             }, keyHolder);
         }catch (Exception e){
             LOGGER.info("{}-{}","插入表menu失败",e);
-            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"插入user表出错",e.toString()));
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"插入表menu失败",e.toString()));
         }
         menuEntity.setId(keyHolder.getKey().longValue());
         return result;

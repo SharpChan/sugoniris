@@ -156,7 +156,7 @@ public class CommonConfigurationListener implements ServletContextListener {
             if (PublicUtils.getConfigMap().get("environment").equals("1")){
                 src = "C:\\dat";
             } else{
-                src = "/user/local/service/dat";
+                src = "/usr/local/services/dat";
             }
             if(null == PublicUtils.iPSeeker) {
                 IPSeeker ip = new IPSeeker("qqwry.dat", src);
