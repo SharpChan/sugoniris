@@ -926,18 +926,28 @@ public class FolderServiceImpl implements FolderService {
                     List<Callable<Integer>> cList = new ArrayList<>();  //定义添加线程的集合
                     Callable<Integer> task = null;  //创建单个线程
                     for(String updateStr : updateSqlList){
-
                         task = new Callable<Integer>(){
                             @Override
                             public Integer call() throws Exception {
-                              return   mppMapper.mppSqlExec(updateStr);
+                                int i = 0;
+                                try{
+                                 i =   mppMapper.mppSqlExec(updateStr);
+                                }catch (Exception e){
+                                    log.info("updateStr:"+updateStr);
+                                    e.printStackTrace();
+                                }
+                              return i;
                             }
                         };
                         cList.add(task);
                     }
-                    List<Future<Integer>> results = executorService.invokeAll(cList,5, TimeUnit.MINUTES); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
+                    List<Future<Integer>> results = executorService.invokeAll(cList,120, TimeUnit.SECONDS); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
                     for(Future<Integer> recordPer:results){  //打印返回值
-                        log.info(String.valueOf(recordPer.get()));
+                        try {
+                            log.info(String.valueOf(recordPer.get()));
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
                     executorService.shutdown();
                 }

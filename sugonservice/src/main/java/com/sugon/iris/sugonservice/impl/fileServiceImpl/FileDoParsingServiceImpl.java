@@ -119,9 +119,10 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
       boolean flag = getFeildRefIndex(fileTemplateDto.getFileTemplateDetailDtoList(), feildRefIndexMap, headList);
 
       //校验列数是否匹配
+        /*
       if (checkFieldSize(userId, caeId, fileTemplateDto, file, tableInfos, fileSeq, fileAttachmentId, errorList, fileType, feildRefIndexMap, rows)) {
           return;
-      }
+      }*/
 
       //如果没有匹配到数据,utf8-也解析一次。满足的情况下进行覆盖
       if (!flag) {
@@ -197,10 +198,26 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
             if(CollectionUtils.isEmpty(rows.get(i).getFields())){
                 continue;
             }
+
+            //当前行的列数
+            int columCount = rows.get(i).getFields().size();
+
             if (!CollectionUtils.isEmpty(feildRefIndexMap)) {
                 boolean mppId2ErrorId_flag = true;
                 String sqlInsertExec = insertSql;
                 for (Map.Entry<Long, Integer> entry : feildRefIndexMap.entrySet()) {
+
+                    //判断列索引是否超出边界
+                    boolean outOfIndex = false;
+                    if(null != entry.getValue()){
+
+                        outOfIndex = entry.getValue()+1 > columCount;
+
+                    }
+                    //对应单元格的值
+                    String  cellValue = null == entry.getValue() ||  outOfIndex ? "":rows.get(i).getField(entry.getValue());
+
+
                     FileRinseDetailDto fileRinseDetailDto = regularMap.get(entry.getKey());
                     //任意一个满足
                     List<RegularDetailDto> regularDetailDtoListY = null;
@@ -223,7 +240,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     boolean checkRegularY = false;
                     if (!CollectionUtils.isEmpty(regularDetailDtoListY)) {
                         for (RegularDetailDto regularDetailDto : regularDetailDtoListY) {
-                            if (rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
+                            if (cellValue.replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
                                 checkRegularY = true;
                                 break;//只要匹配一个就跳出
                             }
@@ -235,7 +252,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     boolean checkRegularN = true;
                     if (!CollectionUtils.isEmpty(regularDetailDtoListN)) {
                         for (RegularDetailDto regularDetailDto : regularDetailDtoListN) {
-                            if (rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
+                            if (cellValue.replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
                                 checkRegularN = false;
                                 break;//只要匹配一个就跳出
                             }
@@ -243,25 +260,24 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     }
                     checkRegular = checkRegularY && checkRegularN;
                     mppId2ErrorId_flag = checkRegular && mppId2ErrorId_flag;
-                    //sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
-                    sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).trim());
+                    sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == cellValue) ? "" : cellValue.trim());
 
                     //判断模板字段是否需要ip解析
                     if(ipSet.contains(entry.getKey())){
-                        if(StringUtils.isNotBlank(rows.get(i).getField(entry.getValue())) && rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "").matches(ipRex)){
-                            String value = rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "");
+                        if(StringUtils.isNotBlank(cellValue) && cellValue.replaceAll("\\s*", "").matches(ipRex)){
+                            String value = cellValue.replaceAll("\\s*", "");
                             String country =  PublicUtils.iPSeeker.getIPLocation(value).getCountry();
                             String area = PublicUtils.iPSeeker.getIPLocation(value).getArea();
-                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipCountry_xx&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : country);
-                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipArea_xx&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : area);
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipCountry_xx&&", (null == entry.getValue() || null == cellValue) ? "" : country);
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipArea_xx&&", (null == entry.getValue() || null == cellValue) ? "" : area);
                         }
                     }
 
                     //判断模板字段是否需要电话解析
                     if(phoneSet.contains(entry.getKey())){
-                        if(StringUtils.isNotBlank(rows.get(i).getField(entry.getValue())) ) {
-                            String description = PhoneUtil.getDescription(rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
-                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_phoneInfo_xx&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : description);
+                        if(StringUtils.isNotBlank(cellValue) ) {
+                            String description = PhoneUtil.getDescription(cellValue.replaceAll("\\s*", ""));
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_phoneInfo_xx&&", (null == entry.getValue() || null == cellValue) ? "" : description);
                         }
                     }
 
@@ -290,7 +306,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                         fileParsingFailedEntitySql.setFileDetailId(fileSeq);
                         fileParsingFailedEntitySql.setFileTemplateId(fileTemplateDto.getId());
                         fileParsingFailedEntitySql.setFileTemplateDetailId(entry.getKey());
-                        fileParsingFailedEntitySql.setContent(rows.get(i).getField(entry.getValue()));
+                        fileParsingFailedEntitySql.setContent(cellValue);
                         fileParsingFailedEntitySql.setCaseId(caeId);
                         //mpp表名是唯一的
                         fileParsingFailedEntitySql.setTableName((String) tableInfos[0]);
@@ -362,10 +378,25 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
             if(CollectionUtils.isEmpty(rows.get(i).getFields())){
               continue;
             }
+
+            //当前行的列数
+            int columCount = rows.get(i).getFields().size();
+
             if (!CollectionUtils.isEmpty(feildRefIndexMap)) {
                 boolean mppId2ErrorId_flag = true;
                 String sqlInsertExec = insertSql;
                 for (Map.Entry<Long, Integer> entry : feildRefIndexMap.entrySet()) {
+
+                    //判断列索引是否超出边界
+                    boolean outOfIndex = false;
+                    if(null != entry.getValue()){
+
+                        outOfIndex = entry.getValue()+1 > columCount;
+
+                    }
+                    //对应单元格的值
+                    String  cellValue = null == entry.getValue() ||  outOfIndex ? "":rows.get(i).getField(entry.getValue());
+
                     FileRinseDetailDto fileRinseDetailDto = regularMap.get(entry.getKey());
                     //任意一个满足
                     List<RegularDetailDto> regularDetailDtoListY = null;
@@ -388,7 +419,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     boolean checkRegularY = false;
                     if (!CollectionUtils.isEmpty(regularDetailDtoListY)) {
                         for (RegularDetailDto regularDetailDto : regularDetailDtoListY) {
-                            if (rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
+                            if (cellValue.replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
                                 checkRegularY = true;
                                 break;//只要匹配一个就跳出
                             }
@@ -400,7 +431,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     boolean checkRegularN = true;
                     if (!CollectionUtils.isEmpty(regularDetailDtoListN)) {
                         for (RegularDetailDto regularDetailDto : regularDetailDtoListN) {
-                            if (rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
+                            if (cellValue.replaceAll("\\s*", "").matches(regularDetailDto.getRegularValue().trim())) {
                                 checkRegularN = false;
                                 break;//只要匹配一个就跳出
                             }
@@ -408,25 +439,24 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                     }
                     checkRegular = checkRegularY && checkRegularN;
                     mppId2ErrorId_flag = checkRegular && mppId2ErrorId_flag;
-                    //sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
-                    sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : rows.get(i).getField(entry.getValue()).trim());
+                    sqlInsertExec = sqlInsertExec.replace("&&" + entry.getKey() + "&&", (null == entry.getValue() || null == cellValue) ? "" : cellValue.trim());
 
-                    //判断模板字段是否需要ip解析
+                    //判断模板字段是否需要ip解析     entry://key:模板字段id，value:csv列索引
                     if(ipSet.contains(entry.getKey())){
-                        if(StringUtils.isNotBlank(rows.get(i).getField(entry.getValue())) && rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "").matches(ipRex)){
-                            String value = rows.get(i).getField(entry.getValue()).replaceAll("\\s*", "");
+                        if(StringUtils.isNotBlank(cellValue) && cellValue.replaceAll("\\s*", "").matches(ipRex)){
+                            String value = cellValue.replaceAll("\\s*", "");
                             String country =  PublicUtils.iPSeeker.getIPLocation(value).getCountry();
                             String area = PublicUtils.iPSeeker.getIPLocation(value).getArea();
-                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipCountry_xx&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : country);
-                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipArea_xx&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : area);
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipCountry_xx&&", (null == entry.getValue() || null == cellValue) ? "" : country);
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_ipArea_xx&&", (null == entry.getValue() || null == cellValue) ? "" : area);
                         }
                     }
 
                     //判断模板字段是否需要电话解析
                     if(phoneSet.contains(entry.getKey())){
-                        if(StringUtils.isNotBlank(rows.get(i).getField(entry.getValue())) ) {
-                            String description = PhoneUtil.getDescription(rows.get(i).getField(entry.getValue()).replaceAll("\\s*", ""));
-                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_phoneInfo_xx&&", (null == entry.getValue() || null == rows.get(i).getField(entry.getValue())) ? "" : description);
+                        if(StringUtils.isNotBlank(cellValue) ) {
+                            String description = PhoneUtil.getDescription(cellValue.replaceAll("\\s*", ""));
+                            sqlInsertExec = sqlInsertExec.replace("&&xx_" + entry.getKey() + "_phoneInfo_xx&&", (null == entry.getValue() || null == cellValue) ? "" : description);
                         }
                     }
 
@@ -454,7 +484,7 @@ public class FileDoParsingServiceImpl implements FileDoParsingService {
                         fileParsingFailedEntitySql.setFileDetailId(fileSeq);
                         fileParsingFailedEntitySql.setFileTemplateId(fileTemplateDto.getId());
                         fileParsingFailedEntitySql.setFileTemplateDetailId(entry.getKey());
-                        fileParsingFailedEntitySql.setContent(rows.get(i).getField(entry.getValue()));
+                        fileParsingFailedEntitySql.setContent(cellValue);
                         fileParsingFailedEntitySql.setCaseId(caeId);
                         //mpp表名是唯一的
                         fileParsingFailedEntitySql.setTableName((String) tableInfos[0]);

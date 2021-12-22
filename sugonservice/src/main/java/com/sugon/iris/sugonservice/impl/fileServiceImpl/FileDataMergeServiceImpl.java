@@ -12,6 +12,7 @@ import com.sugon.iris.sugonservice.service.excelService.ExcelService;
 import com.sugon.iris.sugonservice.service.fileService.FileDataMergeService;
 import com.sugon.iris.sugonservice.service.fileService.FileParsingService;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ import java.util.concurrent.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+@Slf4j
 @Service
 public class FileDataMergeServiceImpl implements FileDataMergeService{
 
@@ -295,7 +297,8 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
             List<FileTemplateDetailEntity> fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntity4Sql);
             PublicUtils.fileTemplateDetailEntityListSort(fileTemplateDetailEntityList);
             //获取总数据量
-            String sqlCount = "select count(*)  "+" from "+fileTableEntityBean.getTableName() + " where mppid2errorid = '0'";
+            //String sqlCount = "select count(*)  "+" from "+fileTableEntityBean.getTableName() + " where mppid2errorid = '0'";
+            String sqlCount = "select count(*)  "+" from "+fileTableEntityBean.getTableName();
             int count = Integer.parseInt(mppMapper.mppSqlExecForSearch(sqlCount).get(0));
             int excelSize = Integer.parseInt(PublicUtils.getConfigMap().get("mergeExport").replaceAll("\\s*",""));
             int times = count/excelSize;
@@ -361,6 +364,9 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
                 executorService.shutdown();
 
                 for (Map map : records) {
+                    if(null == map){
+                      continue;
+                    }
                     ExcelRow excelRow = new ExcelRow();
                     for (String str : fieldNameList) {
                         excelRow.getFields().add(map.get(str) + "");

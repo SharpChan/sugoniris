@@ -69,7 +69,7 @@ public class AccountServiceImpl implements AccountService {
         }
         List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),userDto.getPassword(),null,null,errorList);
         if(CollectionUtils.isEmpty(userEntityList_02)){
-            errorList.add(new Error(ErrorCode_Enum.IRIS_00_003.getCode(),"邮箱或密码错误",""));
+            errorList.add(new Error(ErrorCode_Enum.IRIS_00_003.getCode(),"用户名或密码错误",""));
             return null;
         }else if(userEntityList_02.size()>1){
             errorList.add(new Error("iris-00-004","存在多个账户请联系管理员",""));
