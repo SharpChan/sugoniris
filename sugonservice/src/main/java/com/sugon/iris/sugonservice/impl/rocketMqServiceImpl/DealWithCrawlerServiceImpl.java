@@ -177,7 +177,7 @@ public class DealWithCrawlerServiceImpl implements DealWithCrawlerService {
     //创建用户
     private Long createUser(String policeno, List<Error> errorList) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         //用警号查询用户
-        List<UserEntity> userEntityList = accountServiceDao.getUserEntitys(null, null, null, null, policeno, errorList);
+        List<UserEntity> userEntityList = accountServiceDao.getUserEntitys(null, null, null, null,null, policeno, errorList);
         if(CollectionUtils.isEmpty(userEntityList)){
             //直接内置用户，用户名和密码都是警号
             UserEntity user = new UserEntity();
@@ -191,7 +191,7 @@ public class DealWithCrawlerServiceImpl implements DealWithCrawlerService {
             user.setPassword(password);
             user.setPoliceNo(policeno);
             accountServiceDao.insertAccount(user, errorList);
-            List<UserEntity> userEntityList2 = accountServiceDao.getUserEntitys(null, null, null, null, policeno, errorList);
+            List<UserEntity> userEntityList2 = accountServiceDao.getUserEntitys(null, null, null, null,null, policeno, errorList);
             return userEntityList2.get(0).getId();
         }
         return userEntityList.get(0).getId();

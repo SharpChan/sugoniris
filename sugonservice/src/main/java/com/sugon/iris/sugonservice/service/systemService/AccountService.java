@@ -25,6 +25,8 @@ public interface AccountService {
       */
      User getUserInfo(UserDto userDto, List<Error> errorList) throws IllegalAccessException;
 
+     User getUserInfoForCa(UserDto userDto, List<Error> errorList) throws IllegalAccessException;
+
      int updateUser(UserDto userDto, List<Error> errorList) throws IllegalAccessException;
 
      List<User> getUserInfoCheck(String keyWord,Integer flag, List<Error> errorList ) throws IllegalAccessException;

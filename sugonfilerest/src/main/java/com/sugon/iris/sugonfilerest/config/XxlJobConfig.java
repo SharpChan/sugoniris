@@ -1,4 +1,4 @@
-package com.sugon.iris.sugonweb.config;
+package com.sugon.iris.sugonfilerest.config;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;

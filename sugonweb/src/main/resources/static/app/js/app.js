@@ -7162,6 +7162,18 @@ App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore
         }
 
     };
+
+    $scope.loginForCa = function() {
+        var url = "/api/account/loginForCa";
+        $http.post(url, params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+
+    }
 }]);
 
 App.controller('UnlockFormController', function($scope,$http,$state,myservice) {

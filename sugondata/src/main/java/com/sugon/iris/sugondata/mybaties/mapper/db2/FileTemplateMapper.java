@@ -6,6 +6,8 @@ import java.util.List;
 public interface FileTemplateMapper {
     List<FileTemplateEntity> selectFileTemplateList(FileTemplateEntity fileTemplateEntity);
 
+    List<FileTemplateEntity>  selectFileTemplateForJingZhen();
+
     int fileTemplateInsert(FileTemplateEntity fileTemplateEntity);
 
     int updateFileTemplate(FileTemplateEntity fileTemplateEntity);

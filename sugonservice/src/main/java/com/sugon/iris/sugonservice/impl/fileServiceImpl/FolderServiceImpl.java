@@ -10,6 +10,7 @@ import com.sugon.iris.sugondata.mybaties.mapper.db2.*;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.JymxMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppErrorInfoMapper;
 import com.sugon.iris.sugondata.mybaties.mapper.db4.MppMapper;
+import com.sugon.iris.sugondata.service.DataCommonService;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.fileBeans.FileInfoBean;
@@ -127,6 +128,9 @@ public class FolderServiceImpl implements FolderService {
 
     @Resource
     private JymxMapper jymxMapper;
+
+    @Resource
+    private DataCommonService dataCommonService;
 
 
 
@@ -931,7 +935,7 @@ public class FolderServiceImpl implements FolderService {
                             public Integer call() throws Exception {
                                 int i = 0;
                                 try{
-                                 i =   mppMapper.mppSqlExec(updateStr);
+                                 i =   dataCommonService.mppSqlExec(updateStr);
                                 }catch (Exception e){
                                     log.info("updateStr:"+updateStr);
                                     e.printStackTrace();

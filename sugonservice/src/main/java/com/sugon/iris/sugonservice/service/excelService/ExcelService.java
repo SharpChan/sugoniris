@@ -11,4 +11,6 @@ public interface ExcelService {
     HSSFWorkbook getNewExcel(String id, List<ExcelRow> excelRowList);
 
     XSSFWorkbook getNewExcelX(String id, List<ExcelRow> excelRowList);
+
+    void getNewExcelXForSheet(XSSFWorkbook workbook , String sheetName, List<ExcelRow> excelRowList);
 }

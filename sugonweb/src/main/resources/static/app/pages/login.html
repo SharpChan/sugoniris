@@ -41,6 +41,12 @@
             </div>
             <button type="submit" class="btn btn-block btn-primary mt-lg">登录</button>
          </form>
+
+
+         <form role="form" ng-submit="loginForCa()" name="loginFormCa" novalidate="" class="form-validate mb-lg">
+            <button type="submit" class="btn btn-block btn-primary mt-lg">KEY登录</button>
+         </form>
+
          <div ng-show="authMsg" class="alert alert-danger text-center">{{authMsg}}</div>
          <p class="pt-lg text-center">需要注册吗?</p><a ui-sref="page.register" class="btn btn-block btn-default">注册</a>
       </div>

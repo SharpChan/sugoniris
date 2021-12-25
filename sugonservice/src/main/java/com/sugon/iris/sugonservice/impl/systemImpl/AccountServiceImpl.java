@@ -14,6 +14,8 @@ import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import java.util.ArrayList;
 import java.util.List;
 import com.sugon.iris.sugondomain.beans.system.User;
+import org.springframework.util.StringUtils;
+
 import javax.annotation.Resource;
 
 @Service
@@ -31,7 +33,7 @@ public class AccountServiceImpl implements AccountService {
       try {
           UserEntity user = new UserEntity();
           PublicUtils.trans(userDto, user);
-          List<UserEntity> userEntityList = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),null,null,null,errorList);
+          List<UserEntity> userEntityList = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),null,null,null,null,errorList);
           if(null != userEntityList && userEntityList.size()>0){
               errorList.add(new Error("{iris-00-001}","已经注册请直接登录！",""));
               return result;
@@ -48,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
     public int restPassword(UserDto userDto, List<Error> errorList) {
         int i =0;
         //通过原始密码和用户名查询用户是否存在
-        List<UserEntity> userEntityList_01 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),userDto.getOldPassword(),null,null,errorList);
+        List<UserEntity> userEntityList_01 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),userDto.getOldPassword(),null,null,null,errorList);
         if(CollectionUtils.isEmpty(userEntityList_01)){
             errorList.add(new Error(ErrorCode_Enum.SYS_02_000.getCode(),"账号或密码错误",""));
             i = 0;
@@ -62,12 +64,18 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public User getUserInfo(UserDto userDto, List<Error> errorList) throws IllegalAccessException {
-        List<UserEntity> userEntityList_01 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),null,null,null,errorList);
+
+        if(null == userDto || StringUtils.isEmpty(userDto.getPassword())){
+            errorList.add(new Error(ErrorCode_Enum.SYS_02_000.getCode(),"密码错误",""));
+            return null;
+        }
+
+        List<UserEntity> userEntityList_01 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),null,null,null,null,errorList);
         if(CollectionUtils.isEmpty(userEntityList_01)){
             errorList.add(new Error(ErrorCode_Enum.SYS_02_000.getCode(),"请先注册账户",""));
             return null;
         }
-        List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),userDto.getPassword(),null,null,errorList);
+        List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),userDto.getPassword(),null,null,null,errorList);
         if(CollectionUtils.isEmpty(userEntityList_02)){
             errorList.add(new Error(ErrorCode_Enum.IRIS_00_003.getCode(),"用户名或密码错误",""));
             return null;
@@ -97,6 +105,43 @@ public class AccountServiceImpl implements AccountService {
 
         return user;
     }
+
+    //Ca用户登录
+    public User getUserInfoForCa(UserDto userDto, List<Error> errorList) throws IllegalAccessException {
+
+        List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,null,null,userDto.getIdCard(),null,userDto.getPoliceNo(),errorList);
+        if(CollectionUtils.isEmpty(userEntityList_02)){
+            //ca登录用户不存在则自动注册
+            UserEntity userEntity = new UserEntity();
+            PublicUtils.trans(userDto, userEntity);
+
+        }else if(userEntityList_02.size()>1){
+            errorList.add(new Error("iris-00-004","存在多个账户请联系管理员",""));
+            return null;
+        }
+        User user = new User();
+        PublicUtils.trans(userEntityList_02.get(0), user);
+
+        //获取该用户加入的用户组
+        List<RoleEntity> roleEntityList =  roleServiceDaoImpl.getRolesByUserId(user.getId(),errorList);
+        int i = 0;
+        for(RoleEntity roleEntity : roleEntityList){
+            if(roleEntity.getId() == 1){
+                user.setSystemUser(true);
+                i ++;
+            }
+            if(roleEntity.getId() == 2){
+                user.setEconomicUser(true);
+                i ++;
+            }
+            if(i == 2){
+                break;
+            }
+        }
+
+        return user;
+    }
+
     public int updateUser(UserDto userDto, List<Error> errorList) throws IllegalAccessException {
         UserEntity user = new UserEntity();
         PublicUtils.trans(userDto, user);

@@ -25,4 +25,6 @@ public interface FileDataMergeService {
     void mergeExport(Long caseId, HttpServletResponse response) throws IOException, InterruptedException, ExecutionException;
 
     void mergeExportAsync(Long caseId, HttpServletResponse response) throws IOException, InterruptedException, ExecutionException;
+
+    void mergeExportAsyncForSheet(Long caseId, HttpServletResponse response) throws IOException, InterruptedException, ExecutionException;
 }

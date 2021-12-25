@@ -3,6 +3,7 @@ package com.sugon.iris.sugonweb.file;
 import com.sugon.iris.sugonannotation.annotation.system.BussLog;
 import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
 import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
+import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
@@ -124,7 +125,12 @@ public class FileDataMergeController {
     @ApiImplicitParam(name = "caseId", value = "案件编号")
     public void mergeExport(@CurrentUser User user, HttpServletResponse response,@RequestParam(value = "caseId") Long caseId){
         try{
-            fileDataMergeServiceImpl.mergeExportAsync(caseId,response);
+
+            if("1".equals(PublicUtils.getConfigMap().get("sheet"))){
+                fileDataMergeServiceImpl.mergeExportAsyncForSheet(caseId,response);
+            }else{
+                fileDataMergeServiceImpl.mergeExportAsync(caseId,response);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }

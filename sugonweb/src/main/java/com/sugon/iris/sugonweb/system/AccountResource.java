@@ -16,6 +16,7 @@ import com.sugon.iris.sugonservice.service.systemService.AccountService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.session.Session;
@@ -32,6 +33,7 @@ import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -84,6 +86,52 @@ public class AccountResource {
         User user = null;
         try {
              user = accountServiceImpl.getUserInfo(userDto, errorList);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        session .setAttribute("user",user);
+        restResult.setObj(user);
+        Cookie cookie = new Cookie("jsessionid", session.getId());
+        response.addCookie(cookie);
+        //以秒为单位，即在没有活动120分钟后，session将失效
+        //设置默认值30分钟
+        if(StringUtils.isEmpty(PublicUtils.getConfigMap().get("systemExpiration"))){
+            session.setMaxInactiveInterval(30*60);
+        }else {
+            session.setMaxInactiveInterval(Integer.parseInt(PublicUtils.getConfigMap().get("systemExpiration")) * 60);
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("登录失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("登录成功");
+        }
+        return restResult;
+    }
+
+    @ApiOperation(value = "用户登录")
+    @PostMapping("/account/loginForCa")
+    @BussLog
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiImplicitParam(name = "UserDto", value = "用户信息")
+    public RestResult<User> loginForCa(HttpServletResponse response,HttpServletRequest request, HttpSession session) throws UnsupportedEncodingException {
+        //警号
+        String code = request.getRemoteUser();
+        //身份证号
+        AttributePrincipal principal =(AttributePrincipal) request.getUserPrincipal();
+        Map m = principal.getAttributes();
+        String sfzh = String.valueOf(m.get("idcard"));
+
+        UserDto userDto = new UserDto();
+        userDto.setPoliceNo(code);
+        userDto.setIdCard(sfzh);
+
+        RestResult<User> restResult = new RestResult<User>();
+        List<Error> errorList = new ArrayList<>();
+        User user = null;
+        try {
+            user = accountServiceImpl.getUserInfoForCa(userDto, errorList);
         }catch (Exception e){
             e.printStackTrace();
         }

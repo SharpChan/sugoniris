@@ -53,6 +53,14 @@
         </if >
     </select>
 
+    <!--获取经侦模板下的所有模板信息-->
+    <select id="selectFileTemplateForJingZhen" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM iris.file_template a WHERE EXISTS
+        (SELECT id FROM file_template_group b WHERE a.id = b.template_id AND group_id='1')
+    </select>
+
     <!--批量插入-->
     <insert id="fileTemplateInsert" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateEntity" useGeneratedKeys="true" keyProperty="id">
         insert into file_template

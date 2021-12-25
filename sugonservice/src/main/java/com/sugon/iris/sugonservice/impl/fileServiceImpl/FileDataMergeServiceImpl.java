@@ -387,6 +387,113 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
         zipOutputStream.close();
     }
 
+    @Override
+    public void mergeExportAsyncForSheet(Long caseId, HttpServletResponse response) throws IOException, InterruptedException, ExecutionException {
+        //获取案件下面的表信息
+        FileTableEntity fileTableEntity = new FileTableEntity();
+        fileTableEntity.setCaseId(caseId);
+        List<FileTableEntity> fileTableEntityList = fileTableMapper.findFileTableList(fileTableEntity);
+
+        ZipOutputStream zipOutputStream = new ZipOutputStream(response.getOutputStream());
+        //组装excel
+        for(FileTableEntity fileTableEntityBean : fileTableEntityList){
+            FileTemplateDetailEntity fileTemplateDetailEntity4Sql = new FileTemplateDetailEntity();
+            fileTemplateDetailEntity4Sql.setTemplateId(fileTableEntityBean.getFileTemplateId());
+            List<FileTemplateDetailEntity> fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntity4Sql);
+            PublicUtils.fileTemplateDetailEntityListSort(fileTemplateDetailEntityList);
+            //获取总数据量
+            //String sqlCount = "select count(*)  "+" from "+fileTableEntityBean.getTableName() + " where mppid2errorid = '0'";
+            String sqlCount = "select count(*)  "+" from "+fileTableEntityBean.getTableName();
+            int count = Integer.parseInt(mppMapper.mppSqlExecForSearch(sqlCount).get(0));
+            int excelSize = Integer.parseInt(PublicUtils.getConfigMap().get("mergeExport").replaceAll("\\s*",""));
+            int times = count/excelSize;
+            if(count % excelSize >0){
+                times++;
+            }
+
+            XSSFWorkbook workbook = new XSSFWorkbook();
+            for(int j =0;j< times;j++) {
+                int start = j*excelSize;
+                List<ExcelRow> excelRowList = new ArrayList<>();
+                //设置表头,并组装查询sql
+                ExcelRow excelRowHead = new ExcelRow();
+                excelRowList.add(excelRowHead);
+                String sql = "select  ";
+                List<String> fieldNameList = new ArrayList<>();
+                int i = 0;
+                for (FileTemplateDetailEntity fileTemplateDetailEntity : fileTemplateDetailEntityList) {
+                    //设置表头
+                    excelRowHead.getFields().add(fileTemplateDetailEntity.getFieldKey());
+                    //获取值的顺序
+                    fieldNameList.add(fileTemplateDetailEntity.getFieldName());
+                    //组装sql
+                    if (i < fileTemplateDetailEntityList.size() - 1) {
+                        sql += fileTemplateDetailEntity.getFieldName() + ", ";
+                    } else {
+                        sql += fileTemplateDetailEntity.getFieldName();
+                    }
+                    i++;
+                }
+
+                //sql += " from " + fileTableEntityBean.getTableName() + " where mppid2errorid = '0' "+" LIMIT " + excelSize + " OFFSET " + start;
+                List<Map<String, Object>> records = new ArrayList<Map<String, Object>>();
+                int perSize =Integer.parseInt(PublicUtils.getConfigMap().get("executorServiceOutput"));
+                List<Integer> indexList = new ArrayList<>();
+                for(int k = 0;k<Integer.parseInt(PublicUtils.getConfigMap().get("mergeExport").replaceAll("\\s*",""))/perSize;k++){
+                    indexList.add(k);
+                }
+                ExecutorService executorService = Executors.newFixedThreadPool(Integer.parseInt(PublicUtils.getConfigMap().get("mergeExport").replaceAll("\\s*",""))/perSize);
+                List<Callable<List<Map<String, Object>>>> cList = new ArrayList<>();  //定义添加线程的集合
+                Callable<List<Map<String, Object>>> task = null;  //创建单个线程
+                StringBuffer sbSql = new StringBuffer(sql);
+                StringBuffer sbTableName = new StringBuffer(fileTableEntityBean.getTableName());
+                for(Integer g : indexList){
+                    task = new Callable<List<Map<String, Object>>>(){
+                        @Override
+                        public List<Map<String, Object>> call() throws Exception {
+                            int offSet = start + g*perSize;
+                            String sbStr = sbSql.toString();
+                            //sbStr += " from " + sbTableName.toString() + " where mppid2errorid = '0' "+" LIMIT " + perSize + " OFFSET " + offSet;
+                            sbStr += " from " + sbTableName.toString() +" LIMIT " + perSize + " OFFSET " + offSet;
+                            List<Map<String, Object>> records = mppMapper.mppSqlExecForSearchRtMapList(sbStr);
+                            return records;
+                        }
+                    };
+                    cList.add(task);
+                }
+                List<Future<List<Map<String, Object>>>> results = executorService.invokeAll(cList,30, TimeUnit.MINUTES); //执行所有创建的线程，并获取返回值（会把所有线程的返回值都返回）
+
+                for(Future<List<Map<String, Object>>> recordPer:results){  //打印返回值
+                    if(!CollectionUtils.isEmpty(recordPer.get())){
+                        records.addAll(recordPer.get());
+                    }
+                }
+                executorService.shutdown();
+
+                for (Map map : records) {
+                    if(null == map){
+                        continue;
+                    }
+                    ExcelRow excelRow = new ExcelRow();
+                    for (String str : fieldNameList) {
+                        excelRow.getFields().add(map.get(str) + "");
+                    }
+                    excelRowList.add(excelRow);
+                }
+                //3.组装excel
+                excelServiceImpl.getNewExcelXForSheet(workbook,j+1+"", excelRowList);
+            }
+            ByteOutputStream byteOutputStream = new ByteOutputStream();
+            workbook.write(byteOutputStream);
+            ZipEntry entry = new ZipEntry(fileTableEntityBean.getTitle()+ ".xlsx");
+            zipOutputStream.putNextEntry(entry);
+            byteOutputStream.writeTo(zipOutputStream);
+            byteOutputStream.close();
+            zipOutputStream.closeEntry();
+        }
+        zipOutputStream.close();
+    }
+
     private String getString(MppTableDto mppTableDto, List<FileTemplateDetailEntity> fileTemplateDetailEntityList) {
         //设置表头，组装sql语句
         List<FieldDto> cols = new ArrayList<>();
