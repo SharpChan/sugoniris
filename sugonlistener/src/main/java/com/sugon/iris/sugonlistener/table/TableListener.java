@@ -1,7 +1,6 @@
 package com.sugon.iris.sugonlistener.table;
 
-import com.sugon.iris.sugondata.jdbcTemplate.intf.system.TableInitServiceDao;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContextEvent;
@@ -9,10 +8,11 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 //@WebListener
+//@Configuration
 public class TableListener implements ServletContextListener {
 
-    @Autowired
-    private TableInitServiceDao TableInitServiceDaoImpl;
+    //@Autowired
+    //private TableInitServiceDao TableInitServiceDaoImpl;
 
 
     //项目启动执行,检查数据库有没有少表，少表的话自动添加
@@ -21,7 +21,7 @@ public class TableListener implements ServletContextListener {
         WebApplicationContextUtils.getRequiredWebApplicationContext(servletContextEvent.getServletContext())
                 .getAutowireCapableBeanFactory().autowireBean(this);
 
-        TableInitServiceDaoImpl.createTables();
+       // TableInitServiceDaoImpl.createTables();
     }
 
 

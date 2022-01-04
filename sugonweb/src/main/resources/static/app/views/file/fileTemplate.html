@@ -13,8 +13,9 @@
             </div>
             <div align="right" style="margin-top:-30px;">
                 <input type="button" value="查询" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="query();" />
-                <input type="button" value="删除模板" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="deleteSelected();" />
+                <input type="button" value="删除模板" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-confirm-click="deleteSelected();"   ng-confirm-message="确认删除模板吗？"/>
                 <input type="button" value="新增模板" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="add();" />
+                <input type="button" value="导入模板" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="importTxt();" />
             </div>
         </div>
 
@@ -59,6 +60,7 @@
                         <th>字段配置</th>
                         <th>固定清洗配置</th>
                         <th>删除</th>
+                        <th>导出</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -78,19 +80,24 @@
                                 <em class="fa fa-upload"></em>
                             </button>
                         </td>
-                        <td align="left">
+                        <td align="center">
                             <button type="button" ng-click="detail(item)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-plus"></em>
                             </button>
                         </td>
-                        <td align="left">
+                        <td align="center">
                             <button type="button" ng-click="rinseBusiness(item)" class="btn btn-sm btn-danger">
                                 <em class="fa fa-plus"></em>
                             </button>
                         </td>
                         <td align="left">
-                            <button  ng-show="item.userId != 1000000001 || userId == 1000000001" type="button" ng-click="deleteOne(item.id)" class="btn btn-sm btn-danger">
+                            <button  ng-show="item.userId != 1000000001 || userId == 1000000001" type="button" ng-confirm-click="deleteOne(item.id)" ng-confirm-message="确认删除该模板吗？" class="btn btn-sm btn-danger">
                                 <em class="fa fa-trash-o"></em>
+                            </button>
+                        </td>
+                        <td align="center">
+                            <button type="button" ng-click="downloadTemplateTXT(item.id)" class="btn btn-sm btn-primary">
+                                <strong style="color: #FFF">导出</strong>
                             </button>
                         </td>
                     </tr>
@@ -237,7 +244,7 @@
                         </button>
                     </td>
                     <td align="center">
-                        <button type="button" ng-click="deleteOneDetail(item.id)" class="btn btn-sm btn-danger">
+                        <button type="button" ng-confirm-click="deleteOneDetail(item.id)" ng-confirm-message="确认删除吗？" class="btn btn-sm btn-danger">
                             <em class="fa fa-trash-o"></em>
                         </button>
                     </td>
@@ -454,7 +461,7 @@
             <div style="margin-left:5px;width: 49%" class="input-group panel">
                 <div  class="panel-body">
                     <div class="panel-heading  topnavbar">
-                        <strong style="color: #FFF">null替换</strong>
+                        <strong style="color: #FFF">空值替换</strong>
                         <div align="right" style="margin-top:-20px;">
                             <input type="button" value="新增" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="addNullBuss()" >
                         </div>
@@ -540,6 +547,37 @@
                                 <td align="left" style="width:150px">{{item.fileTemplateDetailKey}}</td>
                                 <td>
                                     <button type="button" ng-click="deleteIp(item.id)" class="btn btn-sm btn-danger">
+                                        <em class="fa fa-trash-o"></em>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div  class="panel-body">
+                    <div class="panel-heading  topnavbar">
+                        <strong style="color: #FFF">身份证解析</strong>
+                        <div align="right" style="margin-top:-20px;">
+                            <input type="button" value="新增" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="addIdCardNoBuss()" >
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+                            <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>字段</th>
+                                <th>删除</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="item in idCardNoBusinessList">
+                                <td align="center" style="width:50px">{{item.no}}</td>
+                                <td align="left" style="width:150px">{{item.fileTemplateDetailKey}}</td>
+                                <td>
+                                    <button type="button" ng-click="deleteIdCardNo(item.id)" class="btn btn-sm btn-danger">
                                         <em class="fa fa-trash-o"></em>
                                     </button>
                                 </td>
@@ -698,6 +736,50 @@
                     <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="savePhoneBussDivDetail();" >
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id = "cnIdCardNoBussDivDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 450px; height: 350px; z-index: 9999;overflow-y:auto;">
+        <div id = "cnIdCardNoBussDivDetailheader" class="panel-heading topnavbar">
+            添加<input type="button" value="关闭" style="margin-left:350px" class="btn btn-default" ng-click="closeIdCardNoBussDivDetail();" >
+        </div>
+        <div class="panel-body">
+            <div  class="form-group" style="top: 20px;width: 400px" ng-init="availableCategories=[]">
+                <ui-select multiple="" ng-model="template.categoriesIdCardNo" theme="bootstrap" ng-disabled="disabled" class="mb-lg">
+                    <ui-select-match placeholder="字段">{{$item.substring(0,$item.lastIndexOf("::"))}}</ui-select-match>
+                    <ui-select-choices repeat="cell in availableCategories track by $index">{{ cell.substring(0,cell.lastIndexOf("::"))}}</ui-select-choices>
+                </ui-select>
+            </div>
+            <div  class="form-group" style="margin-top:120px;width: 420px" >
+                <div align="right" style="margin-top:10px">
+                    <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="saveIdCardNoBussDivDetail();" >
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id = "cnImportTxt" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 450px; height: 220px; z-index: 9999;overflow-y:auto;">
+        <div id = "cnImportTxtheader" class="panel-heading topnavbar">
+            上传模板<input type="button" value="关闭" style="margin-left:350px" class="btn btn-default" ng-click="closeCnImportTxt();" >
+        </div>
+        <div class="panel-body">
+            <form action="" method="post" enctype="multipart/form-data">
+                <table>
+                    <tr>
+                        <td>     上传文件     </td>
+                        <td>
+                            <input type="file" name="fileTxt"  id="txt1" />
+                        </td>
+                    </tr>
+                    <tr style="margin-top:120px ">
+                        <td colspan="2" align="right">
+                            <input class="btn btn-sm btn-primary" type="button" value="上传" ng-click="uploadTxt()"  />
+                            <input class="btn btn-sm btn-primary" type="reset" />
+                        </td>
+                    </tr>
+                </table>
+            </form>
         </div>
     </div>
 </div>

@@ -18,10 +18,10 @@ import java.util.concurrent.ExecutionException;
 public interface FileDoParsingService {
 
   void  doParsingCsv(Long userId, Long caeId, FileTemplateDto fileTemplateDto, File file, Object[] tableInfos, String insertSql,
-                     Map<Long, FileRinseDetailDto>  regularMap, Long fileSeq, Long fileAttachmentId, Set<Long> ipSet, Set<Long> phoneSet, List<Error> errorList) throws IOException;
+                     Map<Long, FileRinseDetailDto>  regularMap, Long fileSeq, Long fileAttachmentId, Set<Long> ipSet, Set<Long> phoneSet,Set<Long> idCardNoSet, List<Error> errorList) throws IOException;
 
   void  doParsingExcel(Long userId,Long caeId, FileTemplateDto fileTemplateDto, File file, Object[] tableInfos,
-                       String insertSql,Map<Long, FileRinseDetailDto>  regularMap, Long fileSeq, Long fileAttachmentId,Set<Long> ipSet, Set<Long> phoneSet, List<Error> errorList) throws IOException, InvalidFormatException;
+                       String insertSql,Map<Long, FileRinseDetailDto>  regularMap, Long fileSeq, Long fileAttachmentId,Set<Long> ipSet, Set<Long> phoneSet,Set<Long> idCardNoSet, List<Error> errorList) throws IOException, InvalidFormatException;
 
   void doRinse(FileTemplateDto fileTemplateDto,Object[] tableInfos, Long fileSeq, List<Error> errorList) throws IllegalAccessException;
 

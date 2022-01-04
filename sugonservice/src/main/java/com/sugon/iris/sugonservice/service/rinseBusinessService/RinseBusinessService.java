@@ -21,6 +21,8 @@ public interface RinseBusinessService {
 
     int saveRinseBusinessPhone(RinseBusinessPhoneDto rinseBusinessPhoneDto,List<Error> errorList) throws IllegalAccessException;
 
+    int saveRinseBusinessIdCardNo(RinseBusinessIdCardNoDto rinseBusinessIdCardNoDto,List<Error> errorList) throws IllegalAccessException;
+
     List<RinseBusinessRepeatDto> getRepetBussList(Long fileTemplateId, List<Error> errorList) throws IllegalAccessException;
 
     List<RinseBusinessNullDto> getNullBussList(Long fileTemplateId, List<Error> errorList) throws IllegalAccessException;
@@ -35,6 +37,8 @@ public interface RinseBusinessService {
 
     List<RinseBusinessPhoneDto> getPhoneBussList(Long fileTemplateId,List<Error> errorList) throws IllegalAccessException;
 
+    List<RinseBusinessIdCardNoDto> getIdCardNoBussList(Long fileTemplateId,List<Error> errorList) throws IllegalAccessException;
+
     int deleteRinseBusinessRepeatById(Long id, List<Error> errorList) throws IllegalAccessException;
 
     int deleteRinseBusinessNullById(Long id, List<Error> errorList) throws IllegalAccessException;
@@ -48,4 +52,6 @@ public interface RinseBusinessService {
     int deleteRinseBusinessIpById(Long id, List<Error> errorList) throws IllegalAccessException;
 
     int deleteRinseBusinessPhoneById(Long id, List<Error> errorList) throws IllegalAccessException;
+
+    int deleteRinseBusinessIdCardNoById(Long id, List<Error> errorList) throws IllegalAccessException;
 }

@@ -1,5 +1,6 @@
 package com.sugon.iris.sugonweb.file;
 
+import com.sugon.iris.sugonannotation.annotation.system.BussLog;
 import com.sugon.iris.sugonannotation.annotation.system.CurrentUser;
 import com.sugon.iris.sugonannotation.annotation.system.LogInCheck;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
@@ -8,6 +9,7 @@ import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.dtos.rinseBusinessDto.*;
+import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateDetailService;
 import com.sugon.iris.sugonservice.service.fileService.FileTemplateService;
 import com.sugon.iris.sugonservice.service.rinseBusinessService.RinseBusinessService;
@@ -16,8 +18,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -535,6 +540,32 @@ public class FileTemplateController {
     }
 
     /**
+     * 查询身份证解析
+     */
+    @PostMapping("/getIdCardNoBussList")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "IdCardNo解析信息")
+    @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
+    public   RestResult<List<RinseBusinessIdCardNoDto>>   getIdCardNoBussList(@RequestParam(value = "fileTemplateId") Long  fileTemplateId){
+        RestResult<List<RinseBusinessIdCardNoDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.getIdCardNoBussList(fileTemplateId,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+
+    /**
      * 保存后缀替换
      */
     @PostMapping("/saveSuffixBuss")
@@ -621,6 +652,31 @@ public class FileTemplateController {
         List<Error> errorList = new ArrayList<>();
         try {
             restResult.setObj(rinseBusinessService.saveRinseBusinessPhone(rinseBusinessPhoneDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 保存身份证解析
+     */
+    @PostMapping("/saveIdCardNoBuss")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "保存后缀替换信息")
+    @ApiImplicitParam(name = "rinseBusinessIdCardNoDto", value = "电话信息")
+    public   RestResult<Integer>   saveIdCardNoBuss( @RequestBody RinseBusinessIdCardNoDto rinseBusinessIdCardNoDto){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.saveRinseBusinessIdCardNo(rinseBusinessIdCardNoDto,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -797,6 +853,75 @@ public class FileTemplateController {
         try {
             restResult.setObj(rinseBusinessService.deleteRinseBusinessPhoneById(id,errorList));
         }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    /**
+     * 删除身份证解析
+     */
+    @PostMapping("/deleteIdCardNoById")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "Phone解析信息删除")
+    @ApiImplicitParam(name = "id", value = "id")
+    public   RestResult<Integer>   deleteIdCardNoById( @RequestParam(value = "id") Long  id ){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            restResult.setObj(rinseBusinessService.deleteRinseBusinessIdCardNoById(id,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @GetMapping("/downloadTemplateTXT")
+    @ApiOperation(value = "模板下载")
+    @ApiImplicitParam(name = "fileTemplateId", value = "模板id")
+    public RestResult<Void> downloadTemplateTXT(HttpServletResponse response,@RequestParam(value = "fileTemplateId") Long  fileTemplateId) throws IllegalAccessException{
+        RestResult<Void> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            fileTemplateServiceImpl.getTemplateTxt(response,fileTemplateId,errorList);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_SUGON_001.getCode(),ErrorCode_Enum.SYS_SUGON_001.getMessage()));
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setErrorList(errorList);
+        }
+        return restResult;
+    }
+
+    @PostMapping("/uploadFileTemplateTxt")
+    @BussLog
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "模板文件上传")
+    public RestResult<Boolean> uploadFile(@CurrentUser User user,  HttpServletRequest request, HttpServletResponse response) throws Exception {
+        RestResult<Boolean> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try {
+            request.setCharacterEncoding("UTF-8");
+            MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+            List<MultipartFile> files = multipartHttpServletRequest.getFiles("fileTxt");
+            restResult.setObj(fileTemplateServiceImpl.importTemplateTxt(files.get(0),user,errorList));
+        }catch(Exception e){
             e.printStackTrace();
         }
         if(!CollectionUtils.isEmpty(errorList)){

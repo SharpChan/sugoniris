@@ -1,6 +1,5 @@
 package com.sugon.iris.sugondomain.dtos.fileDtos;
 
-import com.sugon.iris.sugondomain.beans.fileBeans.FileTemplateDetailBean;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
@@ -8,7 +7,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class FileTemplateDetailDto extends FileTemplateDetailBean {
+public class FileTemplateDetailDto4Txt  {
+
+    /**
+     *字段名称
+     */
+    @ApiModelProperty(value="字段名称")
+    private String fieldName;
+
+    /**
+     *字段关键字&&进行分割
+     */
+    @ApiModelProperty(value="字段关键字&&进行分割")
+    private String fieldKey;
+
+    /**
+     *正则表达式&&进行分割
+     */
+    @ApiModelProperty(value="正则表达式&&进行分割")
+    private String regular;
+
+    /**
+     *排序字段
+     */
+    @ApiModelProperty(value="排序字段")
+    private String sortNo;
+
+    /**
+     *备注
+     */
+    @ApiModelProperty(value="备注")
+    private String comment;
+
+    /**
+     * 关键字排除&&进行分割
+     */
+    @ApiModelProperty(value="关键字排除&&进行分割")
+    private String exclude;
+
+    /**
+     *清洗类型字段id
+     */
+    @ApiModelProperty(value="清洗类型字段id")
+    private Long fileRinseDetailId;
+
 
     /**
      *清洗字段类型名称

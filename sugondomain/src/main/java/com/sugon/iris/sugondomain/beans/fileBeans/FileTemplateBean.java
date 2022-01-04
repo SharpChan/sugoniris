@@ -47,7 +47,7 @@ public class FileTemplateBean {
      *创建者
      */
     @ApiModelProperty(value="创建者")
-    private Long userId;
+    private  Long userId;
 
     /**
      * 关键字排除以&&分隔
@@ -60,7 +60,7 @@ public class FileTemplateBean {
      */
     @ApiModelProperty(value="创建时间呢")
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    private Date createTime = new Date();
+    private  Date createTime = new Date();
 
     /**
      *修改时间

@@ -110,7 +110,7 @@ public class AccountResource {
         return restResult;
     }
 
-    @ApiOperation(value = "用户登录")
+    @ApiOperation(value = "ca用户登录")
     @PostMapping("/account/loginForCa")
     @BussLog
     @ResponseStatus(HttpStatus.CREATED)

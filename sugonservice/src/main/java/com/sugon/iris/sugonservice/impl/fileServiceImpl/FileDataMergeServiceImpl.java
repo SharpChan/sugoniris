@@ -60,6 +60,9 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
     @Resource
     private RinseBusinessPhoneMapper rinseBusinessPhoneMapper;
 
+    @Resource
+    private RinseBusinessIdCardNoMapper rinseBusinessIdCardNoMapper;
+
     private static final String baseSql_with_rinses = " (select row_number() OVER(PARTITION BY a.id ) AS rownum,a.*,b.*  from &&_tableName_&& a left join error_info b \n" +
             " on a.mppid2errorid = b.mppid2errorid) c where c.rownum = 1 and c.file_rinse_detail_id  not in(&&_rinses_&&) or c.file_rinse_detail_id is null";
 
@@ -144,6 +147,39 @@ public class FileDataMergeServiceImpl implements FileDataMergeService{
                 fileTemplateDetailEntityList.add(fileTemplateDetailEntityPhoneInfo);
             }
         }
+
+        //表字段新增身份证号解析字段
+        List<RinseBusinessIdCardNoEntity> rinseBusinessIdCardNoEntityList = rinseBusinessIdCardNoMapper.getRinseBusinessIdCardNoListByTemplateId(mppSearchDto.getFileTemlateId());
+        if(!CollectionUtils.isEmpty(rinseBusinessIdCardNoEntityList)){
+            for(RinseBusinessIdCardNoEntity rinseBusinessIdCardNoEntity : rinseBusinessIdCardNoEntityList){
+                FileTemplateDetailEntity fileTemplateDetailEntity =  fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessIdCardNoEntity.getFileTemplateDetailId());
+                FileTemplateDetailEntity fileTemplateDetailEntityIdCardNoProvince = new FileTemplateDetailEntity();
+                fileTemplateDetailEntityIdCardNoProvince.setFieldKey(fileTemplateDetailEntity.getFieldKey()+"_省");
+                fileTemplateDetailEntityIdCardNoProvince.setFieldName(fileTemplateDetailEntity.getFieldName()+"_province");
+                fileTemplateDetailEntityList.add(fileTemplateDetailEntityIdCardNoProvince);
+
+                FileTemplateDetailEntity fileTemplateDetailEntityIdCardNoCity = new FileTemplateDetailEntity();
+                fileTemplateDetailEntityIdCardNoCity.setFieldKey(fileTemplateDetailEntity.getFieldKey()+"_市");
+                fileTemplateDetailEntityIdCardNoCity.setFieldName(fileTemplateDetailEntity.getFieldName()+"_city");
+                fileTemplateDetailEntityList.add(fileTemplateDetailEntityIdCardNoCity);
+
+                FileTemplateDetailEntity fileTemplateDetailEntityIdCardNoRegion = new FileTemplateDetailEntity();
+                fileTemplateDetailEntityIdCardNoRegion.setFieldKey(fileTemplateDetailEntity.getFieldKey()+"_区县");
+                fileTemplateDetailEntityIdCardNoRegion.setFieldName(fileTemplateDetailEntity.getFieldName()+"_region");
+                fileTemplateDetailEntityList.add(fileTemplateDetailEntityIdCardNoRegion);
+
+                FileTemplateDetailEntity fileTemplateDetailEntityIdCardNoBirthday = new FileTemplateDetailEntity();
+                fileTemplateDetailEntityIdCardNoBirthday.setFieldKey(fileTemplateDetailEntity.getFieldKey()+"_出生日期");
+                fileTemplateDetailEntityIdCardNoBirthday.setFieldName(fileTemplateDetailEntity.getFieldName()+"_birthday");
+                fileTemplateDetailEntityList.add(fileTemplateDetailEntityIdCardNoBirthday);
+
+                FileTemplateDetailEntity fileTemplateDetailEntityIdCardNoGender = new FileTemplateDetailEntity();
+                fileTemplateDetailEntityIdCardNoGender.setFieldKey(fileTemplateDetailEntity.getFieldKey()+"_性别");
+                fileTemplateDetailEntityIdCardNoGender.setFieldName(fileTemplateDetailEntity.getFieldName()+"_gender");
+                fileTemplateDetailEntityList.add(fileTemplateDetailEntityIdCardNoGender);
+            }
+        }
+
 
         //设置表头，组装sql语句
         String sqlSelect = getString(mppTableDto, fileTemplateDetailEntityList);

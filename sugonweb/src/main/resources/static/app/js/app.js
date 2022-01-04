@@ -5134,6 +5134,8 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
     myservice.dragFunc("cnPrefixBussDivDetail");
     myservice.dragFunc("cnIpBussDivDetail");
     myservice.dragFunc("cnPhoneBussDivDetail");
+    myservice.dragFunc("cnIdCardNoBussDivDetail");
+    myservice.dragFunc("cnImportTxt");
     $("#cnDiv").hide();
     $("#cnDivUpdate").hide();
     $("#cnDivDetail").hide();
@@ -5146,6 +5148,8 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
     $("#cnPrefixBussDivDetail").hide();
     $("#cnIpBussDivDetail").hide();
     $("#cnPhoneBussDivDetail").hide();
+    $("#cnIdCardNoBussDivDetail").hide();
+    $("#cnImportTxt").hide();
     loadDictionary1 = function(){
         var url = "/fileRinse/getFileRinses";
         $http.post(url).success(function(data)
@@ -5184,6 +5188,36 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         $scope.comment_2 = item.comment;
         $scope.templateId = item.id;
 
+    }
+
+    $scope.importTxt = function(){
+        $("#cnImportTxt").show();
+    }
+    $scope.closeCnImportTxt = function(){
+        $("#cnImportTxt").hide();
+    }
+
+    $scope.uploadTxt = function(){
+
+        mydata = document.getElementById("txt1").files[0];
+        formData = new FormData();
+        formData.append("fileTxt", mydata);
+
+        $.ajax({
+            contentType:"multipart/form-data",
+            url:"/fileTemplate/uploadFileTemplateTxt",
+            type:"POST",
+            data:formData,
+            dataType:"text",
+            processData: false, // 告诉jQuery不要去处理发送的数据
+            contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+            success: function(data){
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+                $scope.query();
+            }
+        });
     }
 
     $scope.updateSave = function(){
@@ -5370,6 +5404,12 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         {
             alert("会话已经断开或者检查网络是否正常！");
         });
+    }
+
+    $scope.downloadTemplateTXT = function (id){
+
+        var url = "/fileTemplate/downloadTemplateTXT?fileTemplateId="+id;
+        location.href = url
     }
    
     $scope.detail = function (item) {
@@ -5592,6 +5632,7 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         $scope.getPrefixBussDivDetailList();
         $scope.getIpBussDivDetailList();
         $scope.getPhoneBussDivDetailList();
+        $scope.getIdCardNoBussDivDetailList();
     }
     $scope.closeCnDivRinseBusiness = function(){
         $("#cnDivRinseBusiness").hide();
@@ -5602,6 +5643,7 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         $("#cnPrefixBussDivDetail").hide();
         $("#cnIpBussDivDetail").hide();
         $("#cnPhoneBussDivDetail").hide();
+        $("#cnIdCardNoBussDivDetail").hide();
     }
     $scope.template = {};
     $scope.detailForRinseBusiness = function (item) {
@@ -5665,6 +5707,11 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         $scope.template.categoriesPhone = [];
     }
 
+    $scope.addIdCardNoBuss = function (){
+        $("#cnIdCardNoBussDivDetail").show();
+        $scope.template.categoriesIdCardNo = [];
+    }
+
     $scope.closeRepetBussDivDetail = function () {
         $("#cnRepetBussDivDetail").hide();
     }
@@ -5691,6 +5738,10 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
 
     $scope.closePhoneBussDivDetail = function () {
         $("#cnPhoneBussDivDetail").hide();
+    }
+
+    $scope.closeIdCardNoBussDivDetail = function () {
+        $("#cnIdCardNoBussDivDetail").hide();
     }
 
 
@@ -5915,6 +5966,34 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         $("#cnPhoneBussDivDetail").hide();
     }
 
+    $scope.saveIdCardNoBussDivDetail = function (){
+        if(myservice.isEmpty($scope.template.categoriesIdCardNo)){
+            alert("请先选择字段！");
+            return;
+        }
+        var url = "/fileTemplate/saveIdCardNoBuss";
+        angular.forEach($scope.template.categoriesIdCardNo,function (e) {
+            var field = e.substring(e.lastIndexOf("::")+2);
+            var params = {
+                fileTemplateId : $scope.fileTemplateId,
+                fileTemplateDetailId : field
+            }
+
+            $http.post(url,params).success(function(data)
+            {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+
+                $scope.getIdCardNoBussDivDetailList();
+            }).error(function(data)
+            {
+                alert("会话已经断开或者检查网络是否正常！");
+            });
+        });
+        $("#cnIdCardNoBussDivDetail").hide();
+    }
+
     $scope.getRepetBussDivDetailList = function(){
         var url ="/fileTemplate/getRepetBussList?fileTemplateId="+$scope.fileTemplateId;
         $http.post(url).success(function(data)
@@ -6015,6 +6094,20 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
         });
     }
 
+    $scope.getIdCardNoBussDivDetailList = function () {
+        var url ="/fileTemplate/getIdCardNoBussList?fileTemplateId="+$scope.fileTemplateId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.idCardNoBusinessList = myservice.setSerialNumber(temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
     $scope.deleteRepet = function (id) {
         var url = "/fileTemplate/deleteRepetById?id="+id;
         $http.post(url).success(function(data)
@@ -6107,6 +6200,20 @@ App.controller("fileTemplateController", function ($http,$timeout,$scope,$rootSc
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
             $scope.getPhoneBussDivDetailList();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.deleteIdCardNo = function (id) {
+        var url = "/fileTemplate/deleteIdCardNoById?id="+id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.getIdCardNoBussDivDetailList();
         }).error(function(data)
         {
             alert("会话已经断开或者检查网络是否正常！");
@@ -7143,9 +7250,11 @@ App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore
                         })
                     }else{
                         myservice.setCookie("irisEmail",$scope.account.email);
-                        $localStorage.userName=$scope.account.userName;
+                        //$localStorage.userName=$scope.account.userName;
+                        $localStorage.userName=response.obj.userName;
                         $localStorage.userId = response.obj.id;
-                        $rootScope.user.name = $scope.account.userName;
+                        //$rootScope.user.name = $scope.account.userName;
+                        $rootScope.user.name = response.obj.userName;
                         $rootScope.user.id = response.obj.id;
                         $state.go('app.dashboard');
                     }
@@ -7169,6 +7278,13 @@ App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
+
+            $localStorage.userName=temp.obj.userName;
+            $localStorage.userId = temp.obj.id;
+            $rootScope.user.name = temp.obj.userName;;
+            $rootScope.user.id = temp.obj.id;
+            $state.go('app.dashboard');
+
         }).error(function (data) {
             alert("请检查必填项是否填写！");
         });
@@ -12146,6 +12262,31 @@ App.controller('WordCloudController', ['$scope', function ($scope) {
 
 }]);
 
+
+App.directive('ngConfirmClick', ["$parse","$interpolate",function ($parse,$interpolate) {
+    return {
+        restrict:"A",
+        priority:-1,
+        compile:function(ele,attr){
+            var fn = $parse(attr.ngConfirmClick, null,  true);
+            return function ngEventHandler(scope, ele) {
+                ele.on('click', function (event) {
+                    var callback = function () {
+                        fn(scope, {$event: "confirm"});
+                    };
+                    var message = $interpolate(attr.ngConfirmMessage)(scope) || 'Are you sure?';
+                    if(confirm(message)) {
+                        if (scope.$root.$$phase) {
+                            scope.$evalAsync(callback);
+                        } else {
+                            scope.$apply(callback);
+                        }
+                    }
+                });
+            }
+        }
+    }
+}]);
 
 /**=========================================================
  * Module: anchor.js

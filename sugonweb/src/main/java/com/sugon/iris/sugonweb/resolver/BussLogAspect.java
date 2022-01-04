@@ -1,6 +1,7 @@
 package com.sugon.iris.sugonweb.resolver;
 
 import com.sugon.iris.sugonannotation.annotation.system.BussLog;
+import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.SysBusinessLogMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
@@ -62,12 +63,12 @@ public class BussLogAspect {
         businessLog.setAccessTime(timestamp);
         businessLog.setIp(ip);
         BusinessLog_Enum bsEnum = BusinessLog_Enum.getEnumByUrl(a3);
-        businessLog.setBusiness( bsEnum.getName());
-        if(obj != null && ! (null == obj.getId())) {
+        if(obj != null && ! (null == obj.getId()) && null != bsEnum) {
+            businessLog.setBusiness( bsEnum.getName());
             sysBusinessLogMapper.saveBusinessLog(businessLog);
-
-
-
+            if(PublicUtils.getConfigMap().get("environment").equals("0")){
+                systemLogsForPost( obj, businessLog, bsEnum);
+            }
         }
         }catch (Exception e){
             e.printStackTrace();
@@ -76,10 +77,8 @@ public class BussLogAspect {
         return restResult;
     }
 
-    private void systemLogsForPost(User obj,String ip,BusinessLogEntity businessLog,BusinessLog_Enum bsEnum) throws IOException {
-
+    private void systemLogsForPost(User obj,BusinessLogEntity businessLog,BusinessLog_Enum bsEnum) throws IOException {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
         String url = "http://10.35.142.136:8000/api/rzsj/acceptLogs";
         Map<String, Object> paramMap = new HashMap<>();
         Aspt aspt = new Aspt();
@@ -111,9 +110,9 @@ public class BussLogAspect {
         xStream.autodetectAnnotations(true); //自动检测注解
         xStream.processAnnotations(Aspt.class); //应用Bean类的注解
         String toXML = xStream.toXML(aspt);
-        paramMap.put("xtid","320500");
+        toXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+toXML;
+        paramMap.put("xtid","320500020003");
         paramMap.put("logsXml",toXML);
         httpClientServiceImpl.postOtherSystem(url,paramMap);
     }
-
 }

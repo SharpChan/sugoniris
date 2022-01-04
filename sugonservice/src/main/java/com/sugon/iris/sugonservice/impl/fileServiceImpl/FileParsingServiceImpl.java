@@ -93,6 +93,9 @@ public class FileParsingServiceImpl implements FileParsingService {
     @Resource
     private RinseBusinessPhoneMapper rinseBusinessPhoneMapper;
 
+    @Resource
+    private RinseBusinessIdCardNoMapper rinseBusinessIdCardNoMapper;
+
     @Override
     public void test(Long userId) throws IOException {
         for(int i =0 ; i <100;i++) {
@@ -205,6 +208,12 @@ public class FileParsingServiceImpl implements FileParsingService {
          for(RinseBusinessPhoneEntity rinseBusinessPhoneEntity : allRinseBusinessPhoneEntityList){
              phoneSet.add(rinseBusinessPhoneEntity.getFileTemplateDetailId());
          }
+         //获取所有身份证号解析配置
+         List<RinseBusinessIdCardNoEntity> allRinseBusinessIdCardNoEntityList = rinseBusinessIdCardNoMapper.getAllRinseBusinessIdCardNoList();
+         Set<Long> idCardNoSet = new HashSet<>();
+         for(RinseBusinessIdCardNoEntity rinseBusinessIdCardNoEntity : allRinseBusinessIdCardNoEntityList){
+             idCardNoSet.add(rinseBusinessIdCardNoEntity.getFileTemplateDetailId());
+         }
 
          //创建多线程，一个模板创建一个线程,在子线程内分别入库
          ExecutorService executorService = Executors.newFixedThreadPool(mapTemplate2File.size());
@@ -228,8 +237,11 @@ public class FileParsingServiceImpl implements FileParsingService {
                      PublicUtils.fileTemplateDetailDtoListSort(fileTemplateDto.getFileTemplateDetailDtoList());
 
                      //index[0] :tableName ;index[01: tableId
-                     Object[] tableInfos = createMppTable(userId, fileAttachmentEntity, fileTemplateDto,allRinseBusinessIpEntityList,allRinseBusinessPhoneEntityList);
-                     String insertSql = getInsertSql(fileAttachmentEntity.getId(), fileAttachmentEntity.getCaseId(), fileTemplateDto.getFileTemplateDetailDtoList(), (String) tableInfos[0], fileTemplateDto.getId(),allRinseBusinessIpEntityList,allRinseBusinessPhoneEntityList);
+                     Object[] tableInfos = createMppTable(userId, fileAttachmentEntity, fileTemplateDto,allRinseBusinessIpEntityList,allRinseBusinessPhoneEntityList,allRinseBusinessIdCardNoEntityList);
+                     String insertSql = getInsertSql(fileAttachmentEntity.getId(), fileAttachmentEntity.getCaseId(),
+                                                     fileTemplateDto.getFileTemplateDetailDtoList(), (String) tableInfos[0],
+                                                     fileTemplateDto.getId(),allRinseBusinessIpEntityList,allRinseBusinessPhoneEntityList,
+                                                     allRinseBusinessIdCardNoEntityList);
 
                      //key:模板字段id编号；value：正则表达式列表；用于导入前数据校验
                      Map<Long, FileRinseDetailDto> regularMap = new HashMap<>();
@@ -250,7 +262,7 @@ public class FileParsingServiceImpl implements FileParsingService {
                              csvCount.incrementAndGet();
                              try {
                                  fileDoParsingServiceImpl.doParsingCsv(userId, fileAttachmentEntity.getCaseId(),
-                                         fileTemplateDto, file, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId,ipSet,phoneSet, errorList);
+                                         fileTemplateDto, file, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId,ipSet,phoneSet,idCardNoSet, errorList);
 
                              } catch (IOException e) {
                                  e.printStackTrace();
@@ -260,7 +272,7 @@ public class FileParsingServiceImpl implements FileParsingService {
                              xlsCount.incrementAndGet();
                              try {
                                  fileDoParsingServiceImpl.doParsingExcel(userId, fileAttachmentEntity.getCaseId(),
-                                         fileTemplateDto, file, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId,ipSet,phoneSet, errorList);
+                                         fileTemplateDto, file, tableInfos, insertSql, regularMap, fileSeq, fileAttachmentId,ipSet,phoneSet, idCardNoSet,errorList);
                              } catch (Exception e) {
                                  e.printStackTrace();
                              }
@@ -390,7 +402,8 @@ public class FileParsingServiceImpl implements FileParsingService {
 
     //组装插入数据语句
     private String getInsertSql(Long fileAttachmentId ,Long caseId,List<FileTemplateDetailDto> fileTemplateDetailDtoList, String tableName,
-                                Long fileTemplateId,List<RinseBusinessIpEntity>  allRinseBusinessIpEntityList,List<RinseBusinessPhoneEntity> allRinseBusinessPhoneEntityList) {
+                                Long fileTemplateId,List<RinseBusinessIpEntity>  allRinseBusinessIpEntityList,List<RinseBusinessPhoneEntity> allRinseBusinessPhoneEntityList,
+                                List<RinseBusinessIdCardNoEntity> allRinseBusinessIdCardNoEntityList) {
         //组装insertSql语句
    /*
         String sqlInsert = "insert into "+tableName+"(";
@@ -431,6 +444,16 @@ public class FileParsingServiceImpl implements FileParsingService {
             }
         }
 
+        //获取当前模板的身份证号码解析信息
+        List<RinseBusinessIdCardNoEntity> rinseBusinessIdCardNoEntityList = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(allRinseBusinessIdCardNoEntityList)) {
+            for (RinseBusinessIdCardNoEntity rinseBusinessIdCardNoEntity : allRinseBusinessIdCardNoEntityList) {
+                if (fileTemplateId.equals(rinseBusinessIdCardNoEntity.getFileTemplateId())) {
+                    rinseBusinessIdCardNoEntityList.add(rinseBusinessIdCardNoEntity);
+                }
+            }
+        }
+
 
         if(!CollectionUtils.isEmpty(rinseBusinessIpEntityList)){
               for(RinseBusinessIpEntity rinseBusinessIpEntity : rinseBusinessIpEntityList){
@@ -443,6 +466,16 @@ public class FileParsingServiceImpl implements FileParsingService {
               for(RinseBusinessPhoneEntity rinseBusinessPhoneEntity : rinseBusinessPhoneEntityList){
                   sqlInsertBuilder.append(quote).append("&&xx_").append(rinseBusinessPhoneEntity.getFileTemplateDetailId()).append("_phoneInfo").append("_xx&&").append(quote).append(delimter);
               }
+        }
+
+        if(!CollectionUtils.isEmpty(rinseBusinessIdCardNoEntityList)){
+            for(RinseBusinessIdCardNoEntity rinseBusinessIdCardNoEntity : rinseBusinessIdCardNoEntityList){
+                sqlInsertBuilder.append(quote).append("&&xx_").append(rinseBusinessIdCardNoEntity.getFileTemplateDetailId()).append("_IdCardNo_Province").append("_xx&&").append(quote).append(delimter);
+                sqlInsertBuilder.append(quote).append("&&xx_").append(rinseBusinessIdCardNoEntity.getFileTemplateDetailId()).append("_IdCardNo_City").append("_xx&&").append(quote).append(delimter);
+                sqlInsertBuilder.append(quote).append("&&xx_").append(rinseBusinessIdCardNoEntity.getFileTemplateDetailId()).append("_IdCardNo_Region").append("_xx&&").append(quote).append(delimter);
+                sqlInsertBuilder.append(quote).append("&&xx_").append(rinseBusinessIdCardNoEntity.getFileTemplateDetailId()).append("_IdCardNo_Birthday").append("_xx&&").append(quote).append(delimter);
+                sqlInsertBuilder.append(quote).append("&&xx_").append(rinseBusinessIdCardNoEntity.getFileTemplateDetailId()).append("_IdCardNo_Gender").append("_xx&&").append(quote).append(delimter);
+            }
         }
 
         sqlInsertBuilder.append(quote).append("&&xx_").append("mppId2ErrorId").append("_xx&&").append(quote).append(delimter);
@@ -460,7 +493,10 @@ public class FileParsingServiceImpl implements FileParsingService {
      * @param fileTemplateDto
      * @return   index[0] :tableName ;index[01: tableId
      */
-    private Object[] createMppTable(Long userId,FileAttachmentEntity fileAttachmentEntity, FileTemplateDto fileTemplateDto,List<RinseBusinessIpEntity>  allRinseBusinessIpEntityList,List<RinseBusinessPhoneEntity> allRinseBusinessPhoneEntityList) {
+    private Object[] createMppTable(Long userId,FileAttachmentEntity fileAttachmentEntity, FileTemplateDto fileTemplateDto,
+                                    List<RinseBusinessIpEntity>  allRinseBusinessIpEntityList,
+                                    List<RinseBusinessPhoneEntity> allRinseBusinessPhoneEntityList,
+                                    List<RinseBusinessIdCardNoEntity> allRinseBusinessIdCardNoEntityList) {
         Object[] tableInfos = new Object[3];
         //如果之前已经存库则获取表名
         FileTableEntity fileTableEntity = getMppTableName(fileAttachmentEntity.getCaseId(), fileTemplateDto.getId());
@@ -495,6 +531,19 @@ public class FileParsingServiceImpl implements FileParsingService {
                     if(rinseBusinessPhoneEntity.getFileTemplateId().equals(fileTemplateDto.getId())){
                         sqlCreate += rinseBusinessPhoneEntity.getFieldName()+"_description  varchar NULL,";
                     }
+                }
+            }
+
+            //身份证号解析产生的字段
+            if(!CollectionUtils.isEmpty(allRinseBusinessIdCardNoEntityList)){
+                for(RinseBusinessIdCardNoEntity rinseBusinessIdCardNoEntity : allRinseBusinessIdCardNoEntityList){
+                   if(rinseBusinessIdCardNoEntity.getFileTemplateId().equals(fileTemplateDto.getId())){
+                       sqlCreate += rinseBusinessIdCardNoEntity.getFieldName()+"_province  varchar NULL,";
+                       sqlCreate += rinseBusinessIdCardNoEntity.getFieldName()+"_city  varchar NULL,";
+                       sqlCreate += rinseBusinessIdCardNoEntity.getFieldName()+"_region  varchar NULL,";
+                       sqlCreate += rinseBusinessIdCardNoEntity.getFieldName()+"_birthday  varchar NULL,";
+                       sqlCreate += rinseBusinessIdCardNoEntity.getFieldName()+"_gender  varchar NULL,";
+                   }
                 }
             }
 

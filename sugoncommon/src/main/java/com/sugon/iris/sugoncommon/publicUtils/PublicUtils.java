@@ -5,6 +5,7 @@ import com.sugon.iris.sugoncommon.ipAddress.IPSeeker;
 import com.sugon.iris.sugondomain.beans.fileBeans.FileTemplateDetailBean;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.PoliceInfoEntity;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.springframework.util.CollectionUtils;
@@ -47,6 +48,9 @@ public  class PublicUtils {
     public static DefaultMQProducer  rocketMqProducer;
 
     public static IPSeeker iPSeeker;
+
+    //所有的民警信息  key:警号+身份证号；value：PoliceInfoEntity
+    public static Map<String,PoliceInfoEntity>  policeInfoMap;
 
     public static <T,K> K trans(T tin, K tout) throws IllegalAccessException {
         if(null == tin || tin instanceof Collection){

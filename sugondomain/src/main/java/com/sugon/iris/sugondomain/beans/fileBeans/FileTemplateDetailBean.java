@@ -67,14 +67,14 @@ public class FileTemplateDetailBean {
      */
     @ApiModelProperty(value="创建时间呢")
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    private Date createTime = new Date();
+    private  Date createTime = new Date();
 
     /**
      *修改时间
      */
     @ApiModelProperty(value="修改时间")
     @JsonFormat(shape=JsonFormat.Shape.STRING,pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    private Date updateTime = new Date();
+    private  Date updateTime = new Date();
 
     /**
      *清洗类型字段id

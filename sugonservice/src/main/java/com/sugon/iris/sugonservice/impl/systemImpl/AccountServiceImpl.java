@@ -6,18 +6,21 @@ import com.sugon.iris.sugondata.jdbcTemplate.intf.system.RoleServiceDao;
 import com.sugon.iris.sugondomain.dtos.systemDtos.UserDto;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.RoleEntity;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.PoliceInfoEntity;
 import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugonservice.service.systemService.AccountService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import com.sugon.iris.sugondomain.beans.system.User;
 import org.springframework.util.StringUtils;
-
 import javax.annotation.Resource;
 
+@Slf4j
 @Service
 public class AccountServiceImpl implements AccountService {
 
@@ -109,12 +112,20 @@ public class AccountServiceImpl implements AccountService {
     //Ca用户登录
     public User getUserInfoForCa(UserDto userDto, List<Error> errorList) throws IllegalAccessException {
 
+        //校验用户是否存在
+        Map<String,PoliceInfoEntity> policeInfoMap  = PublicUtils.policeInfoMap;
+        if(policeInfoMap.get(userDto.getPoliceNo()+userDto.getIdCard()) == null){
+            errorList.add(new Error(ErrorCode_Enum.IRIS_00_003.getCode(),"key用户不存在，或者还未进行用户同步！",""));
+            return null;
+        }
+
+
         List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,null,null,userDto.getIdCard(),null,userDto.getPoliceNo(),errorList);
         if(CollectionUtils.isEmpty(userEntityList_02)){
             //ca登录用户不存在则自动注册
             UserEntity userEntity = new UserEntity();
             PublicUtils.trans(userDto, userEntity);
-
+            accountServiceDaoImpl.insertAccount(userEntity,errorList);
         }else if(userEntityList_02.size()>1){
             errorList.add(new Error("iris-00-004","存在多个账户请联系管理员",""));
             return null;

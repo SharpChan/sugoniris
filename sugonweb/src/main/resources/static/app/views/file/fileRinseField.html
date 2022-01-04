@@ -134,6 +134,7 @@
                 <thead>
                 <tr>
                     <th>序号</th>
+                    <th>id号</th>
                     <th>类型名称</th>
                     <th>正则匹配</th>
                     <th>正则排除</th>
@@ -144,6 +145,7 @@
                 <tbody>
                 <tr ng-repeat="item in details">
                     <td>{{item.no}}</td>
+                    <td>{{item.id}}</td>
                     <td>{{item.typeName}}</td>
                     <td align="left">
                         <ul ng-repeat="regularShow in item.regularShowDtoListY">

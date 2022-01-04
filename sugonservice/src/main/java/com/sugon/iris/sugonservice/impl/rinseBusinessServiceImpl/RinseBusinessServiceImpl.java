@@ -39,6 +39,9 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
     @Resource
     private RinseBusinessPhoneMapper rinseBusinessPhoneMapper;
 
+    @Resource
+    private RinseBusinessIdCardNoMapper rinseBusinessIdCardNoMapper;
+
     @Override
     public int saveRinseBusinessRepeat(RinseBusinessRepeatDto rinseBusinessRepeatDto, List<Error> errorList) {
         int result = 0;
@@ -125,6 +128,19 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
         PublicUtils.trans(rinseBusinessPhoneDto,rinseBusinessPhoneEntity4Sql);
         try {
             result = rinseBusinessPhoneMapper.saveRinseBusinessPhone(rinseBusinessPhoneEntity4Sql);
+        }catch (Exception e){
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"请不要重复配置",e.toString()));
+        }
+        return result;
+    }
+
+    @Override
+    public int saveRinseBusinessIdCardNo(RinseBusinessIdCardNoDto rinseBusinessIdCardNoDto, List<Error> errorList) throws IllegalAccessException {
+        int result = 0;
+        RinseBusinessIdCardNoEntity rinseBusinessIdCardNoEntity4Sql = new RinseBusinessIdCardNoEntity();
+        PublicUtils.trans(rinseBusinessIdCardNoDto,rinseBusinessIdCardNoEntity4Sql);
+        try {
+            result = rinseBusinessIdCardNoMapper.saveRinseBusinessIdCardNo(rinseBusinessIdCardNoEntity4Sql);
         }catch (Exception e){
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"请不要重复配置",e.toString()));
         }
@@ -275,6 +291,28 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
         return rinseBusinessPhoneDtoList;
     }
 
+
+
+    @Override
+    public List<RinseBusinessIdCardNoDto> getIdCardNoBussList(Long fileTemplateId, List<Error> errorList) throws IllegalAccessException {
+        List<RinseBusinessIdCardNoDto> rinseBusinessIdCardNoDtoList = new ArrayList<>();
+        List<RinseBusinessIdCardNoEntity> rinseBusinessIdCardNoEntityList = null;
+        try {
+            rinseBusinessIdCardNoEntityList = rinseBusinessIdCardNoMapper.getRinseBusinessIdCardNoListByTemplateId(fileTemplateId);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询表rinse_business_IdCardNo出错",e.toString()));
+        }
+        for(RinseBusinessIdCardNoEntity rinseBusinessIdCardNoEntity : rinseBusinessIdCardNoEntityList){
+            RinseBusinessIdCardNoDto rinseBusinessIdCardNoDto = new RinseBusinessIdCardNoDto();
+            PublicUtils.trans(rinseBusinessIdCardNoEntity,rinseBusinessIdCardNoDto);
+            FileTemplateDetailEntity fileTemplateDetailEntity = fileTemplateDetailMapper.selectFileTemplateDetailByPrimary(rinseBusinessIdCardNoDto.getFileTemplateDetailId());
+            rinseBusinessIdCardNoDto.setFileTemplateDetailKey(fileTemplateDetailEntity.getFieldKey());
+            rinseBusinessIdCardNoDtoList.add(rinseBusinessIdCardNoDto);
+        }
+        return rinseBusinessIdCardNoDtoList;
+    }
+
     @Override
     public int deleteRinseBusinessRepeatById(Long id, List<Error> errorList) throws IllegalAccessException {
         int result= 0;
@@ -355,6 +393,18 @@ public class RinseBusinessServiceImpl implements RinseBusinessService {
         }catch (Exception e){
             e.printStackTrace();
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表rinse_business_Phone出错",e.toString()));
+        }
+        return result;
+    }
+
+    @Override
+    public int deleteRinseBusinessIdCardNoById(Long id, List<Error> errorList) throws IllegalAccessException {
+        int result= 0;
+        try {
+            result =  rinseBusinessIdCardNoMapper.deleteByPrimaryKey(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"删除表rinse_business_idCardNo出错",e.toString()));
         }
         return result;
     }

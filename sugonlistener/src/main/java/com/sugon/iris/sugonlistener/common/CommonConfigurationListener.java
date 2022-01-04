@@ -2,7 +2,9 @@ package com.sugon.iris.sugonlistener.common;
 
 import com.sugon.iris.sugoncommon.ipAddress.IPSeeker;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
+import com.sugon.iris.sugondata.mybaties.mapper.db4.UserCheckMapper;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.configEntities.ConfigEntity;
+import com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.PoliceInfoEntity;
 import com.sugon.iris.sugonservice.service.kafkaService.KafkaStartStopService;
 import com.sugon.iris.sugonservice.service.rocketMqService.DealWithCrawlerService;
 import lombok.SneakyThrows;
@@ -10,7 +12,6 @@ import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.*;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -20,11 +21,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import javax.annotation.Resource;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -42,6 +46,9 @@ public class CommonConfigurationListener implements ServletContextListener {
 
     @Autowired
     private DealWithCrawlerService dealWithCrawlerService;
+
+    @Resource
+    private UserCheckMapper userCheckMapper;
 
     @Value("${spring.application.name}")
     private String appName ;
@@ -67,7 +74,7 @@ public class CommonConfigurationListener implements ServletContextListener {
 
     }
 
-    @Scheduled(fixedRate=1000)
+    @Scheduled(fixedRate=3000)
   public void getConfigBean() throws Exception{
         java.sql.Connection connection = null;
         try {
@@ -170,7 +177,29 @@ public class CommonConfigurationListener implements ServletContextListener {
             }
         }
   }
+    @Scheduled(fixedRate=86400000)
+    public void getPoliceInfo() throws Exception{
 
+        try {
+            if ("0".equals(PublicUtils.getConfigMap().get("environment"))) {
+                List<PoliceInfoEntity> policeInfoEntityList = userCheckMapper.findAllPoliceInfo();
+                Map<String,PoliceInfoEntity> policeInfoMap = new HashMap<>();
+                for(PoliceInfoEntity policeInfoEntity : policeInfoEntityList){
+                    policeInfoMap.put(policeInfoEntity.getJinghao()+policeInfoEntity.getSfzh(),policeInfoEntity);
+                }
+                PublicUtils.policeInfoMap = policeInfoMap;
+            }else if("1".equals(PublicUtils.getConfigMap().get("environment"))){
+                List<PoliceInfoEntity> policeInfoEntityList = userCheckMapper.findAllPoliceInfoDev();
+                Map<String,PoliceInfoEntity> policeInfoMap = new HashMap<>();
+                for(PoliceInfoEntity policeInfoEntity : policeInfoEntityList){
+                    policeInfoMap.put(policeInfoEntity.getJinghao()+policeInfoEntity.getSfzh(),policeInfoEntity);
+                }
+                PublicUtils.policeInfoMap = policeInfoMap;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     /**
      * kafka启动和停止
      * 不配置默认开启
