@@ -20,7 +20,7 @@
     <select id="getAllBusinessLogs"  resultMap="ResultMap" >
         select
         <include refid="Base_Column_List" />
-        from sys_business_log limit 1000
+        from sys_business_log order by id desc  limit 1000
     </select>
 
     <!--单个插入-->

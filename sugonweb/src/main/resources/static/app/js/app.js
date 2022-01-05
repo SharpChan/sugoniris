@@ -7274,7 +7274,7 @@ App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore
 
     $scope.loginForCa = function() {
         var url = "/api/account/loginForCa";
-        $http.post(url, params).success(function (data) {
+        $http.post(url).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);

@@ -120,7 +120,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
 
-        List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,null,null,userDto.getIdCard(),null,userDto.getPoliceNo(),errorList);
+        List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,null,null,null,null,userDto.getPoliceNo(),errorList);
         if(CollectionUtils.isEmpty(userEntityList_02)){
             //ca登录用户不存在则自动注册
             UserEntity userEntity = new UserEntity();
@@ -149,7 +149,6 @@ public class AccountServiceImpl implements AccountService {
                 break;
             }
         }
-
         return user;
     }
 

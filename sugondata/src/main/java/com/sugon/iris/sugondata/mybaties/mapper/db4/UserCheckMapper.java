@@ -8,10 +8,10 @@ public interface UserCheckMapper {
 
 
     //查询
-    @Select("select wybs,jinghao,xm,sfzh,sfzybs from tdata.std_per_tydlpt_t_sys_user_core ")
+    @Select("select wybs,jinghao,xm,sfzh,sfqybs from tdata.std_per_tydlpt_t_sys_user_core ")
     public List<PoliceInfoEntity> findAllPoliceInfo();
 
     //查询
-    @Select("select wybs,jinghao,xm,sfzh,sfzybs from std_per_tydlpt_t_sys_user_core ")
+    @Select("select wybs,jinghao,xm,sfzh,sfqybs from std_per_tydlpt_t_sys_user_core ")
     public List<PoliceInfoEntity> findAllPoliceInfoDev();
 }

@@ -23,7 +23,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -77,17 +76,18 @@ public class BussLogAspect {
         return restResult;
     }
 
-    private void systemLogsForPost(User obj,BusinessLogEntity businessLog,BusinessLog_Enum bsEnum) throws IOException {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private void systemLogsForPost(User obj,BusinessLogEntity businessLog,BusinessLog_Enum bsEnum) throws Exception {
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
         String url = "http://10.35.142.136:8000/api/rzsj/acceptLogs";
         Map<String, Object> paramMap = new HashMap<>();
         Aspt aspt = new Aspt();
         List<Log> logs = new ArrayList<>();
+        aspt.setVersion("1.0");
+        aspt.setRegID("320500020003");
         aspt.setLogs(logs);
         Log log = new Log();
         logs.add(log);
-        log.setRzid("");
-        log.setXtid("");
+        log.setXtid("320500020003");
         log.setXtmc("经济犯罪多维分析系统");
         log.setMkid(bsEnum.getId());
         log.setMkmc(bsEnum.getName());
@@ -97,11 +97,11 @@ public class BussLogAspect {
         log.setYhsfzh(obj.getIdCard());
         log.setYhdwdm("");
         log.setYhdwmc("");
-        log.setZddz("");
+        log.setZddz(businessLog.getIp());
         log.setCzlx("1");
-        log.setCzti("");
+        log.setCztj("");
         log.setCzsj(df.format(businessLog.getAccessTime()));
-        log.setCzjg("");
+        log.setCzjg("1");
         log.setCznr("");
         log.setSbyy("");
         log.setYwxtrzid("");

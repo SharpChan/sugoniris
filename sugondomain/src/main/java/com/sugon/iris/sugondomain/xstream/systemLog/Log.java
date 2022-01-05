@@ -11,9 +11,6 @@ import lombok.NoArgsConstructor;
 @XStreamAlias("Log")
 public class Log {
 
-    @XStreamAlias("rzid")
-    private String rzid;
-
     @XStreamAlias("xtid")
     private String xtid;
 
@@ -50,8 +47,8 @@ public class Log {
     @XStreamAlias("czlx")
     private String  czlx;
 
-    @XStreamAlias("czti")
-    private String  czti;
+    @XStreamAlias("cztj")
+    private String  cztj;
 
     @XStreamAlias("czsj")
     private String  czsj;
