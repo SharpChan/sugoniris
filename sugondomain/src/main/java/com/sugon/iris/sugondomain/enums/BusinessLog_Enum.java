@@ -43,6 +43,10 @@ public enum BusinessLog_Enum {
         return id;
     }
 
+    public String getCzlx(){
+        return czlx;
+    }
+
 
     public static BusinessLog_Enum getEnumByUrl(String url){
         for(BusinessLog_Enum c: BusinessLog_Enum.values()){

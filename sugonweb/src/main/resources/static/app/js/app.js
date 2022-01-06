@@ -1382,6 +1382,27 @@ App.controller("mcgcController", function ($http,$timeout,$scope,$sce,
     $scope.skip();
 })
 
+App.controller("dashBoardController",['$http','$timeout','$scope','$rootScope','$localStorage','myservice',function ($http,$timeout,$scope,$rootScope,$localStorage,
+                                                                             myservice){
+    myservice.loginLockCheck();
+    var url = 'api/account/getUserInfo4Ca';
+    $scope.skip = function(){
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $localStorage.userName=temp.obj.userName;
+            $localStorage.userId = temp.obj.id;
+            $rootScope.user.name = temp.obj.userName;
+            $rootScope.user.id = temp.obj.id;
+
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+    }
+    $scope.skip();
+}]);
+
 App.controller("xxljobController", function ($http,$timeout,$scope,$sce,
                                            myservice) {
     myservice.loginLockCheck();
@@ -7050,6 +7071,21 @@ App.controller("whiteListController", function ($http,$timeout,$scope,
         });
     }
 
+    $scope.test = function () {
+        var url = "/account/getUserInfo4CaTest";
+        $http.get(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            if(temp.flag == "FAILED"){
+                myservice.errors(temp);
+            }
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
 });
 
 //访问白名单
@@ -7273,22 +7309,8 @@ App.controller('LoginFormController', ['$scope', '$http', '$state','$cookieStore
     };
 
     $scope.loginForCa = function() {
-        var url = "/api/account/loginForCa";
-        $http.post(url).success(function (data) {
-            var jsonString = angular.toJson(data);
-            var temp = angular.fromJson(jsonString);
-            myservice.errors(temp);
-
-            $localStorage.userName=temp.obj.userName;
-            $localStorage.userId = temp.obj.id;
-            $rootScope.user.name = temp.obj.userName;;
-            $rootScope.user.id = temp.obj.id;
-            $state.go('app.dashboard');
-
-        }).error(function (data) {
-            alert("请检查必填项是否填写！");
-        });
-
+        var url =  window.location.protocol+"//" +window.location.host+ "/account/loginForCa";
+        window.location.href = url;
     }
 }]);
 

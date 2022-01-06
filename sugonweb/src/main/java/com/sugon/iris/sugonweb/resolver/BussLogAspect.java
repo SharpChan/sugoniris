@@ -98,7 +98,7 @@ public class BussLogAspect {
         log.setYhdwdm("");
         log.setYhdwmc("");
         log.setZddz(businessLog.getIp());
-        log.setCzlx("1");
+        log.setCzlx(bsEnum.getCzlx());
         log.setCztj("");
         log.setCzsj(df.format(businessLog.getAccessTime()));
         log.setCzjg("1");

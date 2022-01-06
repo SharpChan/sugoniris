@@ -29,7 +29,7 @@ public class FilterAndListenerRegisterConfig {
 		FilterRegistrationBean registration = new FilterRegistrationBean();
 		registration.setFilter(new org.jasig.cas.client.session.SingleSignOutFilter());
 		//registration.addUrlPatterns("/a/cas/login_cas");
-		registration.addUrlPatterns("/api/account/loginForCa");
+		registration.addUrlPatterns("/account/loginForCa");
         //registration.addInitParameter("exclusions", "/api/v1/*,*.js,*.gif,*.jpg,*.jpeg,*.png,*.css,*.ico,*.json,*.TTF,*.map,*.woff2,*.pdf");
 		registration.setName("singleSignOutFilter");
 		registration.setOrder(0);
@@ -43,7 +43,7 @@ public class FilterAndListenerRegisterConfig {
 		logger.info("***************AuthenticationFilter**************************");
 		FilterRegistrationBean registration = new FilterRegistrationBean();
 		registration.setFilter(new org.jasig.cas.client.authentication.AuthenticationFilter());
-		registration.addUrlPatterns("/api/account/loginForCa");
+		registration.addUrlPatterns("/account/loginForCa");
 		registration.setName("authenticationFilter");
 		registration.setOrder(1);
 		// 添加不需要过滤的格式信息.
@@ -59,7 +59,7 @@ public class FilterAndListenerRegisterConfig {
 		logger.info("***************Cas20ProxyReceivingTicketValidationFilter**************************");
 		FilterRegistrationBean registration = new FilterRegistrationBean();
 		registration.setFilter(new org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter());
-		registration.addUrlPatterns("/api/account/loginForCa");
+		registration.addUrlPatterns("/account/loginForCa");
 		registration.setName("cas20ProxyReceivingTicketValidationFilter");
 		registration.setOrder(2);
 		// 更换为自己的服务器地址
@@ -75,7 +75,7 @@ public class FilterAndListenerRegisterConfig {
 		logger.info("***************HttpServletRequestWrapperFilter**************************");
 		FilterRegistrationBean registration = new FilterRegistrationBean();
 		registration.setFilter(new org.jasig.cas.client.util.HttpServletRequestWrapperFilter());
-		registration.addUrlPatterns("/api/account/loginForCa");
+		registration.addUrlPatterns("/account/loginForCa");
 		registration.setName("httpServletRequestWrapperFilter");
 		registration.setOrder(3);
 		return registration;
@@ -88,7 +88,7 @@ public class FilterAndListenerRegisterConfig {
 		logger.info("***************AssertionThreadLocalFilter**************************");
 		FilterRegistrationBean registration = new FilterRegistrationBean();
 		registration.setFilter(new org.jasig.cas.client.util.AssertionThreadLocalFilter());
-		registration.addUrlPatterns("/api/account/loginForCa");
+		registration.addUrlPatterns("/account/loginForCa");
 		registration.setName("assertionThreadLocalFilter");
 		registration.setOrder(4);
 		return registration;

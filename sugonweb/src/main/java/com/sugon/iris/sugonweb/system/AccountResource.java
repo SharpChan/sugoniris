@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,52 +111,19 @@ public class AccountResource {
         return restResult;
     }
 
-    @ApiOperation(value = "ca用户登录")
-    @PostMapping("/account/loginForCa")
-    @BussLog
-    @ResponseStatus(HttpStatus.CREATED)
-    @ApiImplicitParam(name = "UserDto", value = "用户信息")
-    public RestResult<User> loginForCa(HttpServletResponse response,HttpServletRequest request, HttpSession session) throws UnsupportedEncodingException {
-        //警号
-        String code = request.getRemoteUser();
-        //身份证号
-        AttributePrincipal principal =(AttributePrincipal) request.getUserPrincipal();
-        Map m = principal.getAttributes();
-        String sfzh = String.valueOf(m.get("idcard"));
 
-        UserDto userDto = new UserDto();
-        userDto.setPoliceNo(code);
-        userDto.setIdCard(sfzh);
 
-        RestResult<User> restResult = new RestResult<User>();
+    //获取当前用户信息
+    @PostMapping("/account/getUserInfo4Ca")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取用户信息")
+    public RestResult<User> getUserInfo4Ca(@CurrentUser User user){
+        RestResult<User> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
-        User user = null;
-        try {
-            user = accountServiceImpl.getUserInfoForCa(userDto, errorList);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        session .setAttribute("user",user);
+        restResult.setErrorList(errorList);
         restResult.setObj(user);
-        Cookie cookie = new Cookie("jsessionid", session.getId());
-        response.addCookie(cookie);
-        //以秒为单位，即在没有活动120分钟后，session将失效
-        //设置默认值30分钟
-        if(StringUtils.isEmpty(PublicUtils.getConfigMap().get("systemExpiration"))){
-            session.setMaxInactiveInterval(30*60);
-        }else {
-            session.setMaxInactiveInterval(Integer.parseInt(PublicUtils.getConfigMap().get("systemExpiration")) * 60);
-        }
-        if(!CollectionUtils.isEmpty(errorList)){
-            restResult.setFlag(FAILED);
-            restResult.setMessage("登录失败！");
-            restResult.setErrorList(errorList);
-        }else{
-            restResult.setMessage("登录成功");
-        }
         return restResult;
     }
-
 
     //说明是什么方法(可以理解为方法注释)
     @PostMapping("/account/logOut")
