@@ -1,12 +1,15 @@
 package com.sugon.iris.sugonweb.resolver;
 
+import com.alibaba.fastjson.JSON;
 import com.sugon.iris.sugonannotation.annotation.system.BussLog;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import com.sugon.iris.sugondata.mybaties.mapper.db2.SysBusinessLogMapper;
+import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.beans.baseBeans.RestResult;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.BusinessLogEntity;
 import com.sugon.iris.sugondomain.enums.BusinessLog_Enum;
+import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
 import com.sugon.iris.sugondomain.xstream.systemLog.Aspt;
 import com.sugon.iris.sugondomain.xstream.systemLog.Log;
 import com.sugon.iris.sugonservice.service.httpClientService.HttpClientService;
@@ -18,6 +21,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
@@ -41,12 +45,28 @@ public class BussLogAspect {
     @Around(value = "@annotation(com.sugon.iris.sugonannotation.annotation.system.BussLog) && @annotation(bussLog)")
     public RestResult<Object> begin(ProceedingJoinPoint pdj, BussLog bussLog) throws Throwable {
         Object[] args = pdj.getArgs();
-
-        try {
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request =servletRequestAttributes.getRequest();
-        HttpSession session =request.getSession();
-        User obj = (User)session.getAttribute("user");
+
+        String cztj = JSON.toJSONString( request.getParameterMap());
+
+        HttpSession session = null;
+        User obj = null;
+
+        try {
+            session = request.getSession();
+            obj = (User) session.getAttribute("user");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        RestResult<Object> restResult = (RestResult<Object>) pdj.proceed(args);
+
+        try {
+        if(null == obj){
+           obj = (User)session.getAttribute("user");
+        }
+
         String url = request.getRequestURL().toString();
         String a1 = url.substring(url.lastIndexOf("/"));
         url = url.replace(a1,"");
@@ -66,17 +86,27 @@ public class BussLogAspect {
             businessLog.setBusiness( bsEnum.getName());
             sysBusinessLogMapper.saveBusinessLog(businessLog);
             if(PublicUtils.getConfigMap().get("environment").equals("0")){
-                systemLogsForPost( obj, businessLog, bsEnum);
+                try {
+                    systemLogsForPost( obj, businessLog, bsEnum,cztj);
+                }catch (Exception e){
+                    if(null != restResult) {
+                        if (CollectionUtils.isEmpty(restResult.getErrorList())) {
+                            List<Error> errorList = new ArrayList<>();
+                            errorList.add(new Error(ErrorCode_Enum.SYS_03_000.getCode(), ErrorCode_Enum.SYS_03_000.getMessage()));
+                        } else {
+                            restResult.getErrorList().add(new Error(ErrorCode_Enum.SYS_03_000.getCode(), ErrorCode_Enum.SYS_03_000.getMessage()));
+                        }
+                    }
+                }
             }
         }
         }catch (Exception e){
             e.printStackTrace();
         }
-        RestResult<Object> restResult = (RestResult<Object>) pdj.proceed(args);
         return restResult;
     }
 
-    private void systemLogsForPost(User obj,BusinessLogEntity businessLog,BusinessLog_Enum bsEnum) throws Exception {
+    private void systemLogsForPost(User obj,BusinessLogEntity businessLog,BusinessLog_Enum bsEnum,String cztj) throws Exception {
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
         String url = "http://10.35.142.136:8000/api/rzsj/acceptLogs";
         Map<String, Object> paramMap = new HashMap<>();
@@ -92,11 +122,11 @@ public class BussLogAspect {
         log.setMkid(bsEnum.getId());
         log.setMkmc(bsEnum.getName());
         log.setYhzh(obj.getUserName());
-        log.setYhxm("");
+        log.setYhxm(obj.getXm());
         log.setYhjh(obj.getPoliceNo());
         log.setYhsfzh(obj.getIdCard());
-        log.setYhdwdm("");
-        log.setYhdwmc("");
+        log.setYhdwdm(obj.getXtyhbmbh());
+        log.setYhdwmc(obj.getXtyhbmmc());
         log.setZddz(businessLog.getIp());
         log.setCzlx(bsEnum.getCzlx());
         log.setCztj("");

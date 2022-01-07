@@ -1387,6 +1387,7 @@ App.controller("dashBoardController",['$http','$timeout','$scope','$rootScope','
     myservice.loginLockCheck();
     var url = 'api/account/getUserInfo4Ca';
     $scope.skip = function(){
+        $('.hide').removeClass('hide'); // 打开模态框
         $http.post(url).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
@@ -7072,7 +7073,7 @@ App.controller("whiteListController", function ($http,$timeout,$scope,
     }
 
     $scope.test = function () {
-        var url = "/account/getUserInfo4CaTest";
+        var url = "/account/loginForCaTest?code=111111&sfzh=320683198810192058";
         $http.get(url).success(function(data)
         {
             var jsonString = angular.toJson(data);

@@ -80,4 +80,20 @@ public class User implements Serializable {
      */
     @ApiModelProperty(value="是否为经侦用户")
     private boolean isEconomicUser;
+
+    /**
+     *姓名
+     */
+    @ApiModelProperty(value="姓名")
+    private String xm;
+
+    /**
+     * 用户单位代码
+     */
+    private String  xtyhbmbh;
+
+    /**
+     * 用户单位名称
+     */
+    private String  xtyhbmmc;
 }

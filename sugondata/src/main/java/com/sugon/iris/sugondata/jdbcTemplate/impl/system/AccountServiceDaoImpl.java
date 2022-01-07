@@ -10,13 +10,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
+
+import java.sql.*;
 import java.util.Date;
 import java.util.List;
 @Service
@@ -85,53 +86,52 @@ public class AccountServiceDaoImpl implements AccountServiceDao {
      * @param errorList
      * @return
      */
-    @Transactional
+    //@Transactional
     @Override
     public int insertAccount(UserEntity user, List<Error> errorList){
         int result=0;
-        String sql = "insert into sys_user(id,username,id_card,password,imageurl,createTime,flag,policeNo) values(?,?,?,?,?,?,?,?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        String sql = "insert into sys_user(username,id_card,password,imageurl,createTime,flag,policeNo) values(?,?,?,?,?,?,?)";
         try{
-            result=ds1JdbcTemplate.update(sql, new PreparedStatementSetter(){
+            ds1JdbcTemplate.update(new PreparedStatementCreator() {
                 @Override
-                public void setValues(PreparedStatement ps) throws SQLException {
-                    if(null != user.getId()) {
-                        ps.setLong(1, user.getId());
-                    }else{
-                        ps.setNull(1, Types.BIGINT);
-                    }
+                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                    PreparedStatement ps  = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                     if(!StringUtils.isEmpty(user.getUserName())) {
-                        ps.setString(2, user.getUserName());
+                        ps.setString(1, user.getUserName());
+                    }else{
+                        ps.setNull(1,Types.VARCHAR);
+                    }
+                    if(!StringUtils.isEmpty(user.getIdCard())) {
+                        ps.setString(2, user.getIdCard());
                     }else{
                         ps.setNull(2,Types.VARCHAR);
                     }
-                    if(!StringUtils.isEmpty(user.getIdCard())) {
-                        ps.setString(3, user.getIdCard());
+                    if(!StringUtils.isEmpty(user.getPassword())){
+                        ps.setString(3, user.getPassword());
                     }else{
                         ps.setNull(3,Types.VARCHAR);
                     }
-                    if(!StringUtils.isEmpty(user.getPassword())){
-                        ps.setString(4, user.getPassword());
+                    if(!StringUtils.isEmpty(user.getImageUrl())) {
+                        ps.setString(4, user.getImageUrl());
                     }else{
                         ps.setNull(4,Types.VARCHAR);
                     }
-                    if(!StringUtils.isEmpty(user.getImageUrl())) {
-                        ps.setString(5, user.getImageUrl());
+                    ps.setTimestamp(5, new Timestamp(user.getCreateTime().getTime()));
+                    ps.setInt(6,user.getFlag());
+                    if(!StringUtils.isEmpty(user.getPoliceNo())){
+                        ps.setString(7, user.getPoliceNo());
                     }else{
-                        ps.setNull(5,Types.VARCHAR);
+                        ps.setNull(7,Types.VARCHAR);
                     }
-                        ps.setTimestamp(6, new Timestamp(user.getCreateTime().getTime()));
-                        ps.setInt(7,user.getFlag());
-                        if(!StringUtils.isEmpty(user.getPoliceNo())){
-                            ps.setString(8, user.getPoliceNo());
-                        }else{
-                            ps.setNull(8,Types.VARCHAR);
-                        }
+                    return ps;
                 }
-            });
-        }catch(Exception e){
+            }, keyHolder);
+        }catch (Exception e){
             LOGGER.info("{}-{}","插入表user失败",e);
             errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"注册信息存在重复！",e.toString()));
         }
+        user.setId(keyHolder.getKey().longValue());
         return result;
     }
 

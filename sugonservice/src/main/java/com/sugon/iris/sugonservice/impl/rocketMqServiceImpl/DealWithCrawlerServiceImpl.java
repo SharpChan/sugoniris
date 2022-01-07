@@ -191,8 +191,7 @@ public class DealWithCrawlerServiceImpl implements DealWithCrawlerService {
             user.setPassword(password);
             user.setPoliceNo(policeno);
             accountServiceDao.insertAccount(user, errorList);
-            List<UserEntity> userEntityList2 = accountServiceDao.getUserEntitys(null, null, null, null,null, policeno, errorList);
-            return userEntityList2.get(0).getId();
+            return user.getId();
         }
         return userEntityList.get(0).getId();
     }

@@ -30,18 +30,22 @@ public class AccountServiceImpl implements AccountService {
     @Resource
     private RoleServiceDao roleServiceDaoImpl;
 
-
   public int saveAccount(UserDto userDto, List<Error> errorList){
+
       int result = 0;
+      if(StringUtils.isEmpty(userDto.getPassword())){
+          errorList.add(new Error(ErrorCode_Enum.IRIS_00_005.getCode(),ErrorCode_Enum.IRIS_00_005.getMessage(),""));
+          return result;
+      }
       try {
           UserEntity user = new UserEntity();
           PublicUtils.trans(userDto, user);
           List<UserEntity> userEntityList = accountServiceDaoImpl.getUserEntitys(null,userDto.getUserName(),null,null,null,null,errorList);
           if(null != userEntityList && userEntityList.size()>0){
-              errorList.add(new Error("{iris-00-001}","已经注册请直接登录！",""));
+              errorList.add(new Error(ErrorCode_Enum.IRIS_00_001.getCode(),ErrorCode_Enum.IRIS_00_001.getMessage(),""));
               return result;
           }
-          user.setId(accountServiceDaoImpl.getUser_seq(errorList));
+          //user.setId(accountServiceDaoImpl.getUser_seq(errorList));
           result = accountServiceDaoImpl.insertAccount(user, errorList);
       }catch(Exception e){
           e.printStackTrace();
@@ -111,42 +115,53 @@ public class AccountServiceImpl implements AccountService {
 
     //Ca用户登录
     public User getUserInfoForCa(UserDto userDto, List<Error> errorList) throws IllegalAccessException {
-
         //校验用户是否存在
         Map<String,PoliceInfoEntity> policeInfoMap  = PublicUtils.policeInfoMap;
-        if(policeInfoMap.get(userDto.getPoliceNo()+userDto.getIdCard()) == null){
+        PoliceInfoEntity policeInfoEntit = policeInfoMap.get(userDto.getPoliceNo()+userDto.getIdCard());
+        if(policeInfoEntit == null){
             errorList.add(new Error(ErrorCode_Enum.IRIS_00_003.getCode(),"key用户不存在，或者还未进行用户同步！",""));
             return null;
         }
 
-
         List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,null,null,null,null,userDto.getPoliceNo(),errorList);
+
+        User user = new User();
+        user.setXm(policeInfoEntit.getXm());
+        user.setXtyhbmbh(policeInfoEntit.getXtyhbmbh());
+        user.setXtyhbmmc(policeInfoEntit.getXtyhbmmc());
+
         if(CollectionUtils.isEmpty(userEntityList_02)){
             //ca登录用户不存在则自动注册
             UserEntity userEntity = new UserEntity();
             PublicUtils.trans(userDto, userEntity);
+            userEntity.setUserName(userDto.getPoliceNo());
+            userEntity.setFlag(1);
             accountServiceDaoImpl.insertAccount(userEntity,errorList);
+            PublicUtils.trans(userEntity, user);
         }else if(userEntityList_02.size()>1){
             errorList.add(new Error("iris-00-004","存在多个账户请联系管理员",""));
             return null;
+        }else{
+            PublicUtils.trans(userEntityList_02.get(0), user);
         }
-        User user = new User();
-        PublicUtils.trans(userEntityList_02.get(0), user);
+
 
         //获取该用户加入的用户组
         List<RoleEntity> roleEntityList =  roleServiceDaoImpl.getRolesByUserId(user.getId(),errorList);
         int i = 0;
-        for(RoleEntity roleEntity : roleEntityList){
-            if(roleEntity.getId() == 1){
-                user.setSystemUser(true);
-                i ++;
-            }
-            if(roleEntity.getId() == 2){
-                user.setEconomicUser(true);
-                i ++;
-            }
-            if(i == 2){
-                break;
+        if(!CollectionUtils.isEmpty(roleEntityList)) {
+            for (RoleEntity roleEntity : roleEntityList) {
+                if (roleEntity.getId() == 1) {
+                    user.setSystemUser(true);
+                    i++;
+                }
+                if (roleEntity.getId() == 2) {
+                    user.setEconomicUser(true);
+                    i++;
+                }
+                if (i == 2) {
+                    break;
+                }
             }
         }
         return user;

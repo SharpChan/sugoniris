@@ -30,4 +30,14 @@ public class PoliceInfoEntity {
      * 是否启用标识
      */
     private String sfzybs;
+
+    /**
+     * 用户单位代码
+     */
+    private String  xtyhbmbh;
+
+    /**
+     * 用户单位名称
+     */
+    private String  xtyhbmmc;
 }

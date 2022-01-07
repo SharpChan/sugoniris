@@ -91,7 +91,37 @@ public class IndexController {
         response.sendRedirect("http://50.73.71.248:8090/#/app/dashboard");
     }
 
-    //获取当前用户信息(测试)
+    @ApiOperation(value = "ca用户登录")
+    @RequestMapping("/account/loginForCaTest")
+    @BussLog
+    @ResponseStatus(HttpStatus.CREATED)
+    public void loginForCaTest(HttpServletResponse response,  HttpSession session,@RequestParam(value = "code") String  code,@RequestParam(value = "sfzh") String  sfzh) throws IOException {
+
+        UserDto userDto = new UserDto();
+        userDto.setPoliceNo(code);
+        userDto.setIdCard(sfzh);
+
+        List<Error> errorList = new ArrayList<>();
+        User user = null;
+        try {
+            user = accountServiceImpl.getUserInfoForCa(userDto, errorList);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        session .setAttribute("user",user);
+        Cookie cookie = new Cookie("jsessionid", session.getId());
+        response.addCookie(cookie);
+        //以秒为单位，即在没有活动120分钟后，session将失效
+        //设置默认值30分钟
+        if(StringUtils.isEmpty(PublicUtils.getConfigMap().get("systemExpiration"))){
+            session.setMaxInactiveInterval(30*60);
+        }else {
+            session.setMaxInactiveInterval(Integer.parseInt(PublicUtils.getConfigMap().get("systemExpiration")) * 60);
+        }
+        //response.sendRedirect("http://50.73.71.248:8090/#/app/dashboard");
+    }
+
+    //重定向测试(测试)
     @RequestMapping("/account/getUserInfo4CaTest")
     @ApiOperation(value = "重定向测试")
     public void  getUserInfo4CaTest(HttpServletResponse response) throws IOException {
