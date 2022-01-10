@@ -1,5 +1,6 @@
 package com.sugon.iris.sugonweb.resolver;
 
+import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.sugon.iris.sugonannotation.annotation.system.BussLog;
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
@@ -16,6 +17,7 @@ import com.sugon.iris.sugonservice.service.httpClientService.HttpClientService;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 import com.thoughtworks.xstream.io.xml.XppDriver;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -48,7 +50,10 @@ public class BussLogAspect {
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request =servletRequestAttributes.getRequest();
 
-        String cztj = JSON.toJSONString( request.getParameterMap());
+        String cztj = JSONUtil.toJsonStr(args);
+        if(cztj.length()>200){
+            cztj = cztj.substring(0,199);
+        }
 
         HttpSession session = null;
         User obj = null;

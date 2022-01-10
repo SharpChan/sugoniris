@@ -91,38 +91,43 @@ public class AccountServiceDaoImpl implements AccountServiceDao {
     public int insertAccount(UserEntity user, List<Error> errorList){
         int result=0;
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String sql = "insert into sys_user(username,id_card,password,imageurl,createTime,flag,policeNo) values(?,?,?,?,?,?,?)";
+        String sql = "insert into sys_user(id,username,id_card,password,imageurl,createTime,flag,policeNo) values(?,?,?,?,?,?,?,?)";
         try{
             ds1JdbcTemplate.update(new PreparedStatementCreator() {
                 @Override
                 public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                     PreparedStatement ps  = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                    if(!StringUtils.isEmpty(user.getUserName())) {
-                        ps.setString(1, user.getUserName());
+                    if(null != user.getId()) {
+                        ps.setLong(1, user.getId());
                     }else{
-                        ps.setNull(1,Types.VARCHAR);
+                        ps.setNull(1, Types.BIGINT);
                     }
-                    if(!StringUtils.isEmpty(user.getIdCard())) {
-                        ps.setString(2, user.getIdCard());
+                    if(!StringUtils.isEmpty(user.getUserName())) {
+                        ps.setString(2, user.getUserName());
                     }else{
                         ps.setNull(2,Types.VARCHAR);
                     }
-                    if(!StringUtils.isEmpty(user.getPassword())){
-                        ps.setString(3, user.getPassword());
+                    if(!StringUtils.isEmpty(user.getIdCard())) {
+                        ps.setString(3, user.getIdCard());
                     }else{
                         ps.setNull(3,Types.VARCHAR);
                     }
-                    if(!StringUtils.isEmpty(user.getImageUrl())) {
-                        ps.setString(4, user.getImageUrl());
+                    if(!StringUtils.isEmpty(user.getPassword())){
+                        ps.setString(4, user.getPassword());
                     }else{
                         ps.setNull(4,Types.VARCHAR);
                     }
-                    ps.setTimestamp(5, new Timestamp(user.getCreateTime().getTime()));
-                    ps.setInt(6,user.getFlag());
-                    if(!StringUtils.isEmpty(user.getPoliceNo())){
-                        ps.setString(7, user.getPoliceNo());
+                    if(!StringUtils.isEmpty(user.getImageUrl())) {
+                        ps.setString(5, user.getImageUrl());
                     }else{
-                        ps.setNull(7,Types.VARCHAR);
+                        ps.setNull(5,Types.VARCHAR);
+                    }
+                    ps.setTimestamp(6, new Timestamp(user.getCreateTime().getTime()));
+                    ps.setInt(7,user.getFlag());
+                    if(!StringUtils.isEmpty(user.getPoliceNo())){
+                        ps.setString(8, user.getPoliceNo());
+                    }else{
+                        ps.setNull(8,Types.VARCHAR);
                     }
                     return ps;
                 }
