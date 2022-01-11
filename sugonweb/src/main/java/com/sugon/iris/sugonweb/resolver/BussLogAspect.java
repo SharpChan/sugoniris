@@ -33,11 +33,15 @@ import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Aspect
 @Component
 @Lazy(false)
 public class BussLogAspect {
+
+    public static ExecutorService executorService = Executors.newFixedThreadPool(1);
 
     @Resource
     private SysBusinessLogMapper sysBusinessLogMapper;
@@ -96,21 +100,30 @@ public class BussLogAspect {
         BusinessLog_Enum bsEnum = BusinessLog_Enum.getEnumByUrl(a3);
         if(obj != null && ! (null == obj.getId()) && null != bsEnum) {
             businessLog.setBusiness( bsEnum.getName());
-            sysBusinessLogMapper.saveBusinessLog(businessLog);
-            if(PublicUtils.getConfigMap().get("environment").equals("0")){
-                try {
-                    systemLogsForPost( obj, businessLog, bsEnum,cztj);
-                }catch (Exception e){
-                    if(null != restResult) {
-                        if (CollectionUtils.isEmpty(restResult.getErrorList())) {
-                            List<Error> errorList = new ArrayList<>();
-                            errorList.add(new Error(ErrorCode_Enum.SYS_03_000.getCode(), ErrorCode_Enum.SYS_03_000.getMessage()));
-                        } else {
-                            restResult.getErrorList().add(new Error(ErrorCode_Enum.SYS_03_000.getCode(), ErrorCode_Enum.SYS_03_000.getMessage()));
-                        }
-                    }
-                }
-            }
+            final User userFinal = obj;
+            final String cztjFinal = cztj;
+
+            //多线程进行日志保存和日志上传
+            executorService.execute(new Runnable() {
+                 @Override
+                 public void run() {
+                     sysBusinessLogMapper.saveBusinessLog(businessLog);
+                     if(PublicUtils.getConfigMap().get("environment").equals("0")){
+                         try {
+                             systemLogsForPost( userFinal, businessLog, bsEnum,cztjFinal);
+                         }catch (Exception e){
+                             if(null != restResult) {
+                                 if (CollectionUtils.isEmpty(restResult.getErrorList())) {
+                                     List<Error> errorList = new ArrayList<>();
+                                     errorList.add(new Error(ErrorCode_Enum.SYS_03_000.getCode(), ErrorCode_Enum.SYS_03_000.getMessage()));
+                                 } else {
+                                     restResult.getErrorList().add(new Error(ErrorCode_Enum.SYS_03_000.getCode(), ErrorCode_Enum.SYS_03_000.getMessage()));
+                                 }
+                             }
+                         }
+                     }
+                 }
+             });
         }
         }catch (Exception e){
             e.printStackTrace();
