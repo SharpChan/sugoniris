@@ -1,27 +1,16 @@
 package com.sugon.iris.sugoncommon.ipAddress;
 
 import java.io.File;
-
 import java.io.FileNotFoundException;
-
 import java.io.IOException;
-
 import java.io.RandomAccessFile;
-
 import java.nio.ByteOrder;
-
 import java.nio.MappedByteBuffer;
-
 import java.nio.channels.FileChannel;
-
 import java.util.ArrayList;
-
 import java.util.HashMap;
-
 import java.util.List;
-
 import java.util.Map;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Level;
 
@@ -77,6 +66,7 @@ public class IPSeeker {
         b3 = new byte[3];
 
         try {
+            log.info("ipFile:"+IP_FILE);
             ipFile = new RandomAccessFile(IP_FILE, "r");
 
         } catch (FileNotFoundException e) {

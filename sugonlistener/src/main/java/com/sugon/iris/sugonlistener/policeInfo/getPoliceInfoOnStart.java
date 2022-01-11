@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebListener
-@Configuration
+//@WebListener
+//@Configuration
 public class getPoliceInfoOnStart implements ServletContextListener {
 
     @Resource

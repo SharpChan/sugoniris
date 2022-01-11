@@ -72,7 +72,7 @@ public class AccountServiceImpl implements AccountService {
 
     public User getUserInfo(UserDto userDto, List<Error> errorList) throws IllegalAccessException {
 
-        if(null == userDto || StringUtils.isEmpty(userDto.getPassword())){
+        if(null == userDto || StringUtils.isEmpty(userDto.getPassword()) || userDto.getPassword().equals("1bbd886460827015e5d605ed44252251")){
             errorList.add(new Error(ErrorCode_Enum.SYS_02_000.getCode(),"密码错误",""));
             return null;
         }
@@ -115,10 +115,13 @@ public class AccountServiceImpl implements AccountService {
 
     //Ca用户登录
     public User getUserInfoForCa(UserDto userDto, List<Error> errorList) throws IllegalAccessException {
+
+        log.info("警号:"+userDto.getPoliceNo());
+        log.info("身份证号:"+userDto.getIdCard());
         //校验用户是否存在
         Map<String,PoliceInfoEntity> policeInfoMap  = PublicUtils.policeInfoMap;
-        PoliceInfoEntity policeInfoEntit = policeInfoMap.get(userDto.getPoliceNo()+userDto.getIdCard());
-        if(policeInfoEntit == null){
+        PoliceInfoEntity policeInfoEntity = policeInfoMap.get(userDto.getPoliceNo()+userDto.getIdCard());
+        if(policeInfoEntity == null){
             errorList.add(new Error(ErrorCode_Enum.IRIS_00_003.getCode(),"key用户不存在，或者还未进行用户同步！",""));
             return null;
         }
@@ -126,9 +129,11 @@ public class AccountServiceImpl implements AccountService {
         List<UserEntity> userEntityList_02 = accountServiceDaoImpl.getUserEntitys(null,null,null,null,null,userDto.getPoliceNo(),errorList);
 
         User user = new User();
-        user.setXm(policeInfoEntit.getXm());
-        user.setXtyhbmbh(policeInfoEntit.getXtyhbmbh());
-        user.setXtyhbmmc(policeInfoEntit.getXtyhbmmc());
+        if(null != policeInfoEntity) {
+            user.setXm(policeInfoEntity.getXm());
+            user.setXtyhbmbh(policeInfoEntity.getXtyhbmbh());
+            user.setXtyhbmmc(policeInfoEntity.getXtyhbmmc());
+        }
 
         if(CollectionUtils.isEmpty(userEntityList_02)){
             //ca登录用户不存在则自动注册
@@ -136,6 +141,7 @@ public class AccountServiceImpl implements AccountService {
             PublicUtils.trans(userDto, userEntity);
             userEntity.setUserName(userDto.getPoliceNo());
             userEntity.setFlag(1);
+            userEntity.setPassword("1bbd886460827015e5d605ed44252251");
             accountServiceDaoImpl.insertAccount(userEntity,errorList);
             PublicUtils.trans(userEntity, user);
         }else if(userEntityList_02.size()>1){

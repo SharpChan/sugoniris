@@ -21,7 +21,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -62,6 +61,7 @@ public class CommonConfigurationListener implements ServletContextListener {
                 .getAutowireCapableBeanFactory().autowireBean(this);
         try {
             getConfigBean();
+            getPoliceInfo();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -169,7 +169,7 @@ public class CommonConfigurationListener implements ServletContextListener {
                 IPSeeker ip = new IPSeeker("qqwry.dat", src);
                 PublicUtils.iPSeeker = ip;
             }
-        } catch (Exception e) {
+        }catch (Exception e) {
             e.printStackTrace ();
         }finally {
             if(connection !=null) {

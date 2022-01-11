@@ -17,7 +17,6 @@ import com.sugon.iris.sugonservice.service.httpClientService.HttpClientService;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 import com.thoughtworks.xstream.io.xml.XppDriver;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -27,6 +26,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
@@ -51,6 +52,12 @@ public class BussLogAspect {
         HttpServletRequest request =servletRequestAttributes.getRequest();
 
         String cztj = JSONUtil.toJsonStr(args);
+        for(Object obj : args){
+            if(obj instanceof ServletRequest || obj instanceof ServletResponse || obj instanceof HttpSession){
+               continue;
+            }
+            cztj += JSON.toJSONString(obj)+"||";
+        }
         if(cztj.length()>200){
             cztj = cztj.substring(0,199);
         }
@@ -134,7 +141,7 @@ public class BussLogAspect {
         log.setYhdwmc(obj.getXtyhbmmc());
         log.setZddz(businessLog.getIp());
         log.setCzlx(bsEnum.getCzlx());
-        log.setCztj("");
+        log.setCztj(cztj);
         log.setCzsj(df.format(businessLog.getAccessTime()));
         log.setCzjg("1");
         log.setCznr("");
