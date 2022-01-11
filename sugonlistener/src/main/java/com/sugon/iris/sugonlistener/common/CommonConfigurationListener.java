@@ -62,6 +62,7 @@ public class CommonConfigurationListener implements ServletContextListener {
         try {
             getConfigBean();
             getPoliceInfo();
+            getIpInfo();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -157,18 +158,6 @@ public class CommonConfigurationListener implements ServletContextListener {
                     consumer.start();
                 }
             }
-
-            //读取ip数据
-            String src = "";
-            if (PublicUtils.getConfigMap().get("environment").equals("1")){
-                src = "C:\\dat";
-            } else{
-                src = "/usr/local/services/dat";
-            }
-            if(null == PublicUtils.iPSeeker) {
-                IPSeeker ip = new IPSeeker("qqwry.dat", src);
-                PublicUtils.iPSeeker = ip;
-            }
         }catch (Exception e) {
             e.printStackTrace ();
         }finally {
@@ -198,6 +187,22 @@ public class CommonConfigurationListener implements ServletContextListener {
             }
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    @Scheduled(fixedRate=1800000)
+    public void getIpInfo() throws Exception{
+
+        //读取ip数据
+        String src = "";
+        if (PublicUtils.getConfigMap().get("environment").equals("1")){
+            src = "C:\\dat";
+        } else{
+            src = "/usr/local/services/dat";
+        }
+        if(null == PublicUtils.iPSeeker) {
+            IPSeeker ip = new IPSeeker("qqwry.dat", src);
+            PublicUtils.iPSeeker = ip;
         }
     }
     /**
