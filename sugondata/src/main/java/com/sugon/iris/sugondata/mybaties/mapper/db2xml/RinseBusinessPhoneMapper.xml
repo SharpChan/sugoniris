@@ -18,7 +18,7 @@
     <select id="getRinseBusinessPhoneListByTemplateId"  resultMap="ResultMap" >
         select
         <include refid="Base_Column_List" />
-        from rinse_business_Phone
+        from rinse_business_phone
         where
         file_template_id = #{fileTemplateId,jdbcType=BIGINT}
     </select>
@@ -26,12 +26,12 @@
     <select id="getAllRinseBusinessPhoneList"  resultMap="ResultMap" >
         select
         a.id,a.file_template_id,a.file_template_detail_id,b.field_name
-        from rinse_business_Phone a left join file_template_detail b on a.file_template_detail_id = b.id
+        from rinse_business_phone a left join file_template_detail b on a.file_template_detail_id = b.id
     </select>
 
     <!--单个插入-->
     <insert id="saveRinseBusinessPhone" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.RinseBusinessPhoneEntity" useGeneratedKeys="true" keyProperty="id">
-        insert into rinse_business_Phone
+        insert into rinse_business_phone
         (<include refid="Base_Column_List" />)
         values
         (
@@ -42,7 +42,7 @@
     </insert>
 
     <delete id="deleteByPrimaryKey">
-        delete from rinse_business_Phone
+        delete from rinse_business_phone
         where id = #{id,jdbcType=BIGINT}
     </delete>
 </mapper>

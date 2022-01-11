@@ -2,14 +2,12 @@ package com.sugon.iris.sugoncommon.publicUtils;
 
 import com.google.common.collect.Lists;
 import com.sugon.iris.sugoncommon.ipAddress.IPSeeker;
-import com.sugon.iris.sugondomain.beans.fileBeans.FileTemplateDetailBean;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDetailDto;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileTemplateDetailEntity;
 import com.sugon.iris.sugondomain.entities.mybatiesEntity.db4.PoliceInfoEntity;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.springframework.util.CollectionUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;

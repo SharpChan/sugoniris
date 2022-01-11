@@ -26,7 +26,7 @@
     <select id="getAllRinseBusinessIdCardNoList"  resultMap="ResultMap" >
         select
         a.id,a.file_template_id,a.file_template_detail_id,b.field_name
-        from rinse_business_IdCardNo a left join file_template_detail b on a.file_template_detail_id = b.id
+        from rinse_business_idCardNo a left join file_template_detail b on a.file_template_detail_id = b.id
     </select>
 
     <!--单个插入-->

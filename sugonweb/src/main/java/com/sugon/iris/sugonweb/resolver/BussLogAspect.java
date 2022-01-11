@@ -62,6 +62,8 @@ public class BussLogAspect {
             }
             cztj += JSON.toJSONString(obj)+"||";
         }
+
+        //该字段不能超200个字符
         if(cztj.length()>200){
             cztj = cztj.substring(0,199);
         }
