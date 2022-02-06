@@ -99,22 +99,17 @@ public class IPSeeker {
         // 如果打开文件成功，读取文件头信息
         if(ipFile != null) {
             try {
-                ipBegin = readLong4(0);
 
+                ipBegin = readLong4(0);
                 ipEnd = readLong4(4);
 
                 if(ipBegin == -1 || ipEnd == -1) {
                     ipFile.close();
-
                     ipFile = null;
-
                 }
-
             } catch (IOException e) {
                 log.info("IP地址信息文件格式有错误，IP显示功能将无法使用",Level.ERROR,e);
-
                 ipFile = null;
-
             }
         }
     }

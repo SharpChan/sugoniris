@@ -77,6 +77,29 @@ public class FileCaseController {
         return restResult;
     }
 
+    @PostMapping("/queryFileCaseEntityListHasTable")
+    @BussLog
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiImplicitParam(name = "fileCaseDto", value = "案件信息")
+    @ApiOperation(value = "获取案件")
+    public RestResult<List<FileCaseDto>> queryFileCaseEntityListHasTable(@CurrentUser User user){
+        RestResult<List<FileCaseDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(fileCaseServiceImpl.selectFileCaseEntityListHasTable(user.getId(),errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
     @PostMapping("/updateCase")
     @LogInCheck(doLock = true,doProcess = true)
     @ApiImplicitParam(name = "fileCaseDto", value = "案件信息")

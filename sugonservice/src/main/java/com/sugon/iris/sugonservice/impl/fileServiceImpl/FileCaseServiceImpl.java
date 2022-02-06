@@ -169,6 +169,20 @@ public class FileCaseServiceImpl implements FileCaseService {
     }
 
     @Override
+    public List<FileCaseDto> selectFileCaseEntityListHasTable(Long userId, List<Error> errorList) throws IllegalAccessException {
+        List<FileCaseDto> fileCaseDtoList = new ArrayList<>();
+        List<FileCaseEntity> fileCaseEntityList =  fileCaseMapper.selectFileCaseEntityListHasTable(userId);
+        for(FileCaseEntity fileCaseEntity : fileCaseEntityList){
+            FileCaseDto fileCaseDto = new FileCaseDto();
+            PublicUtils.trans(fileCaseEntity , fileCaseDto);
+            fileCaseDtoList.add(fileCaseDto);
+        }
+        return fileCaseDtoList;
+    }
+
+
+
+    @Override
     public Integer deleteCase(User user,String[] arr,boolean flag,List<Error> errorList) throws IllegalAccessException {
         //对超过一定时间的案件删除，走申报流程
         List<String> arrList = new ArrayList<>(Arrays.asList(arr));

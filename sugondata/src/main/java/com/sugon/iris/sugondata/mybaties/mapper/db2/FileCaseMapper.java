@@ -9,6 +9,8 @@ public interface FileCaseMapper {
 
     List<FileCaseEntity> selectFileCaseEntityList(FileCaseEntity fileCaseEntity);
 
+    List<FileCaseEntity> selectFileCaseEntityListHasTable(Long userId);
+
     int fileCaseInsert(FileCaseEntity fileCaseEntity);
 
     int updateFileCase(FileCaseEntity fileCaseEntity);

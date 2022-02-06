@@ -31,7 +31,7 @@ public class FileDataGroupServiceImpl implements FileDataGroupService {
             fileDataGroupEntityList.stream().forEach(a -> {
                 try {
                     fileDataGroupDtoList.add(PublicUtils.trans(a,new FileDataGroupDto()));
-                } catch (IllegalAccessException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });

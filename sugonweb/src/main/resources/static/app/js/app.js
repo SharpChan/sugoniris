@@ -130,6 +130,47 @@ function ($stateProvider, $locationProvider, $urlRouterProvider, helper) {
           templateUrl: helper.basepath('file/dataMerge.html'),
           resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
       })
+      .state('app.abnormalTrading', {
+          url: '/abnormalTrading',
+          title: 'AbnormalTrading',
+          templateUrl: helper.basepath('statistics/abnormalTrading.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
+      .state('app.blockTrade', {
+          url: '/blockTrade',
+          params: {'id': null},
+          title: 'BlockTrade',
+          templateUrl: helper.basepath('statistics/blockTrade.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
+      .state('app.rollInPoint', {
+          url: '/rollInPoint',
+          params: {'id': null},
+          title: 'RollInPoint',
+          templateUrl: helper.basepath('statistics/rollInPoint.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
+      .state('app.rollOutPoint', {
+          url: '/rollOutPoint',
+          params: {'id': null},
+          title: 'RollOutPoint',
+          templateUrl: helper.basepath('statistics/rollOutPoint.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
+      .state('app.inOut', {
+          url: '/inOut',
+          params: {'id': null},
+          title: 'InOut',
+          templateUrl: helper.basepath('statistics/inOut.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
+      .state('app.inOrOutOnly', {
+          url: '/inOrOutOnly',
+          params: {'id': null},
+          title: 'InOrOutOnly',
+          templateUrl: helper.basepath('statistics/inOrOutOnly.html'),
+          resolve: helper.resolveFor('flot-chart','flot-chart-plugins','datatables','ui.select')
+      })
       .state('app.fileRinseField', {
           url: '/fileRinseField',
           title: 'FileRinseField',
@@ -1634,6 +1675,307 @@ App.controller("dataMergeController", function ($http,$timeout,$scope,
         });
     }
 });
+
+App.controller("abnormalTradingController", function ($http,$timeout,$scope,$state,myservice) {
+
+    $("#pleaseWait").hide();
+    //登录和锁定校验
+    myservice.loginLockCheck();
+
+    $scope.query = function () {
+        var url = "/fileCase/queryFileCaseEntityListHasTable";
+
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj =myservice.setSerialNumber(temp.obj);
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    $scope.query();
+
+    //大额交易
+    $scope.blockTrade = function (id) {
+
+        $state.go('app.blockTrade',{id: id});
+    }
+
+    //集中转入点
+    $scope.rollInPoint = function (id) {
+
+        $state.go('app.rollInPoint',{id: id});
+    }
+
+    //集中转出点
+    $scope.rollOutPoint = function (id) {
+
+        $state.go('app.rollOutPoint',{id: id});
+    }
+
+    //快进快出交易点
+    $scope.inOut = function (id) {
+
+        $state.go('app.inOut',{id: id});
+    }
+
+    //只进不出
+    $scope.inOrOutOnly = function (id) {
+
+        $state.go('app.inOrOutOnly',{id: id});
+
+    }
+
+});
+
+App.controller("inOrOutOnlyController", function ($http,$timeout,$scope,$stateParams,$state,myservice) {
+
+    $("#pleaseWait1").hide();
+    $("#pleaseWait2").hide();
+    //登录和锁定校验
+    myservice.loginLockCheck();
+
+
+    //案件编号$stateParams.id
+
+    //通过案件编号查询 账户信息
+    $scope.query = function () {
+        $("#pleaseWait").show();
+        var url = "/statistics/getInOutTrading?caseId="+$stateParams.id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj =myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+            $("#pleaseWait").hide();
+        });
+    }
+
+    // $scope.query();
+
+    $scope.return = function () {
+
+        $state.go('app.abnormalTrading');
+
+    }
+
+});
+
+App.controller("inOutController", function ($http,$timeout,$scope,$stateParams,$state,myservice) {
+
+    $("#pleaseWait").hide();
+    //登录和锁定校验
+    myservice.loginLockCheck();
+
+    myservice.dragFunc("cnDivDetail");
+    $("#cnDivDetail").hide();
+
+    //案件编号$stateParams.id
+
+    //通过案件编号查询 账户信息
+    $scope.query = function () {
+        $("#pleaseWait").show();
+        var url = "/statistics/getInOutTrading?caseId="+$stateParams.id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj =myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+            $("#pleaseWait").hide();
+        });
+
+        $scope.inOutDetail = function(inOutList){
+            $scope.inOutObj = myservice.setSerialNumber(inOutList);
+            $("#cnDivDetail").show();
+        }
+    }
+
+    // $scope.query();
+
+    $scope.return = function () {
+
+        $state.go('app.abnormalTrading');
+
+    }
+
+    //通过账号查询交易明细
+    $scope.blockTradeDetail = function (cardId) {
+
+        $("#cnDivDetail").show();
+        var url = "/blockTrade/getBlockTradeDetailByAccountNo?caseId="+$stateParams.id+"&threshold="+$scope.threshold+"&cardId="+cardId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.tradingObj =myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+            $("#pleaseWait").hide();
+        });
+
+    }
+
+    $scope.closeDetail = function () {
+        $("#cnDivDetail").hide();
+    }
+
+});
+
+App.controller("blockTradeController", function ($http,$timeout,$scope,$stateParams,$state,myservice) {
+
+    $("#pleaseWait").hide();
+    //登录和锁定校验
+    myservice.loginLockCheck();
+
+    myservice.dragFunc("cnDivDetail");
+    $("#cnDivDetail").hide();
+
+    //案件编号$stateParams.id
+
+    //通过案件编号查询 账户信息
+    $scope.query = function () {
+        $("#pleaseWait").show();
+        var url = "/blockTrade/getPersonnelInfoByCaseId?caseId="+$stateParams.id+"&threshold="+$scope.threshold;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj =myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+            $("#pleaseWait").hide();
+        });
+
+    }
+
+   // $scope.query();
+
+    $scope.return = function () {
+
+        $state.go('app.abnormalTrading');
+
+    }
+
+    //通过账号查询交易明细
+    $scope.blockTradeDetail = function (cardId) {
+
+        $("#cnDivDetail").show();
+        var url = "/blockTrade/getBlockTradeDetailByAccountNo?caseId="+$stateParams.id+"&threshold="+$scope.threshold+"&cardId="+cardId;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.tradingObj =myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+            $("#pleaseWait").hide();
+        });
+        
+    }
+
+    $scope.closeDetail = function () {
+        $("#cnDivDetail").hide();
+    }
+
+});
+
+App.controller("rollInPointController", function ($http,$timeout,$scope,$stateParams,$state,myservice) {
+
+    $("#pleaseWait").hide();
+    //登录和锁定校验
+    myservice.loginLockCheck();
+
+
+    //案件编号$stateParams.id
+
+    //通过案件编号查询 账户信息
+    $scope.query = function () {
+        $("#pleaseWait").show();
+        var url = "/statistics/centrostigmaInAnalyse?caseId="+$stateParams.id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj =myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+            $("#pleaseWait").hide();
+        });
+
+    }
+
+    $scope.query();
+
+    $scope.return = function () {
+
+        $state.go('app.abnormalTrading');
+
+    }
+});
+
+App.controller("rollOutPointController", function ($http,$timeout,$scope,$stateParams,$state,myservice) {
+
+    $("#pleaseWait").hide();
+    //登录和锁定校验
+    myservice.loginLockCheck();
+
+
+    //案件编号$stateParams.id
+
+    //通过案件编号查询 账户信息
+    $scope.query = function () {
+        $("#pleaseWait").show();
+        var url = "/statistics/centrostigmaOutAnalyse?caseId="+$stateParams.id;
+        $http.post(url).success(function(data)
+        {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            $scope.obj =myservice.setSerialNumber(temp.obj);
+            $("#pleaseWait").hide();
+        }).error(function(data)
+        {
+            alert("会话已经断开或者检查网络是否正常！");
+            $("#pleaseWait").hide();
+        });
+
+    }
+
+    $scope.query();
+
+    $scope.return = function () {
+
+        $state.go('app.abnormalTrading');
+
+    }
+});
+
 
 App.controller("fileRinseController", function ($http,$timeout,$scope,
                                                     myservice) {
@@ -11291,7 +11633,6 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
 
     $scope.loadSidebarMenu = function() {
 
-
       var menuURL="/menu/getSiderBarMenu";
       $http.post(menuURL)
         .success(function(data) {
@@ -11300,14 +11641,14 @@ App.controller('SidebarController', ['$rootScope', '$scope', '$state', '$http', 
            $scope.menuItems = temp.obj;
         })
 
-                    /*
+/*
               var menuJson = 'server/sidebar-menu.json',
                   menuURL  = menuJson + '?v=' + (new Date().getTime()); // jumps cache
               $http.get(menuURL)
                   .success(function(items) {
                       $scope.menuItems = items;
-                  })*/
-
+                  })
+*/
 
         .error(function(data, status, headers, config) {
           alert('Failure loading menu');

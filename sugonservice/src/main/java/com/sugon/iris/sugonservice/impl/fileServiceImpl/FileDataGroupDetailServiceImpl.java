@@ -29,7 +29,7 @@ public class FileDataGroupDetailServiceImpl implements FileDataGroupDetailServic
             userEntityList.stream().forEach(a -> {
                 try {
                     userDtoList.add(PublicUtils.trans(a,new UserDto()));
-                } catch (IllegalAccessException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
@@ -48,7 +48,7 @@ public class FileDataGroupDetailServiceImpl implements FileDataGroupDetailServic
             userEntityList.stream().forEach(a -> {
                 try {
                     userDtoList.add(PublicUtils.trans(a,new UserDto()));
-                } catch (IllegalAccessException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
@@ -67,7 +67,7 @@ public class FileDataGroupDetailServiceImpl implements FileDataGroupDetailServic
             try {
                 a.setCreateUserId(user.getId());
                 fileDataGroupDetailEntityList.add(PublicUtils.trans(a,new FileDataGroupDetailEntity()));
-            } catch (IllegalAccessException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -87,7 +87,7 @@ public class FileDataGroupDetailServiceImpl implements FileDataGroupDetailServic
         fileDataGroupDetailDtoList.stream().forEach(a -> {
             try {
                 fileDataGroupDetailEntityList.add(PublicUtils.trans(a,new FileDataGroupDetailEntity()));
-            } catch (IllegalAccessException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });

@@ -52,6 +52,19 @@
         </if >
     </select>
 
+    <!-- 获取有数据导入的案件信息 -->
+    <select id="selectFileCaseEntityListHasTable"  resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM
+        file_case a
+        where
+        exists
+        (select id from file_table b where  a.id = b.case_id)
+        <if test="userId!=null">
+            and user_id = #{userId}
+        </if >
+    </select>
 
     <!--插入-->
     <insert id="fileCaseInsert" parameterType="com.sugon.iris.sugondomain.entities.mybatiesEntity.db2.FileCaseEntity"  useGeneratedKeys="true" keyProperty="id">

@@ -50,30 +50,34 @@ public  class PublicUtils {
     //所有的民警信息  key:警号+身份证号；value：PoliceInfoEntity
     public static Map<String,PoliceInfoEntity>  policeInfoMap;
 
-    public static <T,K> K trans(T tin, K tout) throws IllegalAccessException {
-        if(null == tin || tin instanceof Collection){
-            return tout;
-        }
-        Field[] userFieldsOut = getAllFields(tout);
-        Field[] userFieldsIn = getAllFields(tin);
-        for(Field fieldOut : userFieldsOut){
-            fieldOut.setAccessible(true);
-        }
-        for(Field fieldIn : userFieldsIn){
-            fieldIn.setAccessible(true);
-        }
-
-        for(Field fieldOut : userFieldsOut){
-            if(Modifier.isFinal(fieldOut.getModifiers())){
-                continue;
+    public static <T,K> K trans(T tin, K tout) {
+        try {
+            if (null == tin || tin instanceof Collection) {
+                return tout;
             }
-           for(Field fieldIn : userFieldsIn){
-              if(fieldOut.getName().equals(fieldIn.getName())){
-                  fieldOut.set(tout,fieldIn.get(tin));
-              }
-           }
+            Field[] userFieldsOut = getAllFields(tout);
+            Field[] userFieldsIn = getAllFields(tin);
+            for (Field fieldOut : userFieldsOut) {
+                fieldOut.setAccessible(true);
+            }
+            for (Field fieldIn : userFieldsIn) {
+                fieldIn.setAccessible(true);
+            }
+
+            for (Field fieldOut : userFieldsOut) {
+                if (Modifier.isFinal(fieldOut.getModifiers())) {
+                    continue;
+                }
+                for (Field fieldIn : userFieldsIn) {
+                    if (fieldOut.getName().equals(fieldIn.getName())) {
+                        fieldOut.set(tout, fieldIn.get(tin));
+                    }
+                }
+            }
+            beanAttributeValueTrim(tout);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        beanAttributeValueTrim(tout);
         return tout;
     }
 
