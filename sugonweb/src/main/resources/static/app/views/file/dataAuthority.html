@@ -6,38 +6,35 @@
 </style>
 
 <div ng-controller="dataGroupController">
-    <div class="topnavbar" style="height: 50px;">
-        <div align="left">
-            <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">数据用户组</strong></label>
-        </div>
-        <div align="right" style="margin-top:-30px;">
+    <div class="topnavbar Qtopnavbar">
+        <div align="left" style="" class="Qtopnavbar-content">
+            <label  style="" ><strong style="color: #FFF">数据用户组</strong></label>
         </div>
     </div>
-
     <div  class="table-grid table-grid-desktop" style="margin-top:30px;">
         <div class="">
             <div class="pr col-md-3">
                 <div class="form-inline" style="margin-bottom: 5px;">
                     <div ng-show="hasClick" ng-init="hasClick = false" class="clearfix mb input-group">
-                        <a class="btn btn-purple btn-sm mb-compose-button" ng-click="removeDataGroup()">
+                        <a class="btn btn-default btn-sm mb-compose-button" ng-click="removeDataGroup()">
                             <em class="fa fa-remove"></em>
                             <span>删除</span>
                         </a>
                     </div>
                     <div ng-show="hasClick" ng-click="!hasClick" ng-init="hasClick = false" class="clearfix mb input-group">
-                        <a ui-sref="app.dataAuthority.AddOrModify({active: active.update,id:id})" class="btn btn-purple btn-sm mb-compose-button">
+                        <a ui-sref="app.dataAuthority.AddOrModify({active: active.update,id:id})" class="btn btn-default btn-sm mb-compose-button">
                             <em class="fa fa-pencil"></em>
                             <span>修改</span>
                         </a>
                     </div>
                     <div class="clearfix mb input-group">
-                        <a ui-sref="app.dataAuthority.AddOrModify({active: active.save})" class="btn btn-purple btn-sm mb-compose-button">
+                        <a ui-sref="app.dataAuthority.AddOrModify({active: active.save})" class="btn btn-default btn-sm mb-compose-button">
                             <em class="fa fa-plus"></em>
                             <span>新增数据组</span>
                         </a>
                     </div>
                     <div  ng-show="hasClick" ng-init="hasClick = false" class="clearfix mb input-group">
-                        <a ui-sref="app.dataAuthority.dataGroupTable({groupId: id})" class="btn btn-purple btn-sm mb-compose-button">
+                        <a ui-sref="app.dataAuthority.dataGroupTable({groupId: id})" class="btn btn-default btn-sm mb-compose-button">
                             <em class="fa fa-plus"></em>
                             <span>分配数据</span>
                         </a>
@@ -45,8 +42,8 @@
                 </div>
 
                 <!-- START mailbox list-->
-                <div collapse="mailboxMenuCollapsed" class="mb-boxes">
-                    <div class="panel panel-default">
+                <div collapse="mailboxMenuCollapsed" class="mb-boxes ">
+                    <div class="panel panel-default Qpanel-content">
                         <div class="panel-body">
                             <ul class="nav nav-pills nav-stacked">
                                 <li class="p">

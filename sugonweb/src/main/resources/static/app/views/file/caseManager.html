@@ -5,32 +5,32 @@
     }
 </style>
 <div ng-controller="caseManagerController">
-    <div align="center" class="panel panel-primary" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+    <div align="center" class="panel panel-primary Qpanel-content" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
 
-        <div class="topnavbar" style="height: 50px;">
-            <div align="left">
-                <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">案件信息</strong></label>
-            </div>
-            <div align="right" style="margin-top:-30px;">
-                <input type="button" value="查询" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="query();" />
-                <input type="button" value="删除" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="deleteSelected();" />
-                <input type="button" value="新增" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="add();" />
+        <div class="topnavbar Qtopnavbar">
+            <div align="left" style="" class="Qtopnavbar-content">
+                <label  style="" ><strong style="color: #FFF">案件信息</strong></label>
             </div>
         </div>
 
-        <div align="center" style="margin-left:100px;margin-top:30px;margin-bottom: 10px;">
+        <div align="center" style="margin-top:30px;margin-bottom: 10px;">
             <form class="bs-example bs-example-form" role="form">
                 <div class="form-inline" style="margin-bottom: 5px;">
-                    <div class="input-group" align="left">
-                        <input type="text" placeholder="案件名称" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control" ng-model="caseName">
+                    <div style="display:flex;padding-left:20px;">
+                        <input type="text" class="Qinput" placeholder="案件名称"  class="form-control" ng-model="caseName">
+                    </div>
+                    <div align="right" style="margin-top:-30px;">
+                        <input type="button" value="查询" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="query();" />
+                        <input type="button" value="新增" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="add();" />
+                        <input type="button" value="删除" style="margin-right:10px" class="btn btn-danger btn-lg btn-sm" ng-click="deleteSelected();" />
                     </div>
                 </div>
             </form>
         </div>
 
-        <div class="panel" style="width: 85%">
-            <div class="panel-heading  topnavbar">
-                <strong style="color: #FFF">案件信息列表</strong>
+        <div class="panel Qtable-content" style="width: 100%;margin-top:20px;">
+            <div class="">
+                <!--<div style="color: #FFF">案件信息列表111</div>-->
                 <div id="pleaseWait"  style="float:right;padding-right:4px;z-index: 99999">
                     <img alt="" src="data:image/gif;base64,R0lGODlhGQAZAJECAK7PTQBjpv///wAAACH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo5OTYyNTQ4Ni02ZGVkLTI2NDUtODEwMy1kN2M4ODE4OWMxMTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RUNGNUFGRUFGREFCMTFFM0FCNzVDRjQ1QzI4QjFBNjgiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RUNGNUFGRTlGREFCMTFFM0FCNzVDRjQ1QzI4QjFBNjgiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk5NjI1NDg2LTZkZWQtMjY0NS04MTAzLWQ3Yzg4MTg5YzExNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5OTYyNTQ4Ni02ZGVkLTI2NDUtODEwMy1kN2M4ODE4OWMxMTQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4B//79/Pv6+fj39vX08/Lx8O/u7ezr6uno5+bl5OPi4eDf3t3c29rZ2NfW1dTT0tHQz87NzMvKycjHxsXEw8LBwL++vby7urm4t7a1tLOysbCvrq2sq6qpqKempaSjoqGgn56dnJuamZiXlpWUk5KRkI+OjYyLiomIh4aFhIOCgYB/fn18e3p5eHd2dXRzcnFwb25tbGtqaWhnZmVkY2JhYF9eXVxbWllYV1ZVVFNSUVBPTk1MS0pJSEdGRURDQkFAPz49PDs6OTg3NjU0MzIxMC8uLSwrKikoJyYlJCMiISAfHh0cGxoZGBcWFRQTEhEQDw4NDAsKCQgHBgUEAwIBAAAh+QQFCgACACwAAAAAGQAZAAACTpSPqcu9AKMUodqLpAb0+rxFnWeBIUdixwmNqRm6JLzJ38raqsGiaUXT6EqO4uIHRAYQyiHw0GxCkc7l9FdlUqWGKPX64mbFXqzxjDYWAAAh+QQFCgACACwCAAIAFQAKAAACHYyPAsuNH1SbME1ajbwra854Edh5GyeeV0oCLFkAACH5BAUKAAIALA0AAgAKABUAAAIUjI+py+0PYxO0WoCz3rz7D4bi+BUAIfkEBQoAAgAsAgANABUACgAAAh2EjxLLjQ9UmzBNWo28K2vOeBHYeRsnnldKBixZAAA7" />
                 </div>
@@ -38,7 +38,7 @@
 
 
             <div class="panel-body">
-                <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+                <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover" >
                     <thead>
                     <tr>
                         <th><input type="checkbox" ng-model="checked" ng-change="selectAll(checked)" />选择</th>
@@ -62,7 +62,9 @@
                         <td align="left">{{item.caseName}}</td>
                         <td align="left">{{item.id}}</td>
                         <td align="left">{{item.rinseUrl}}</td>
-                        <td align="left"><textarea rows="3" cols="20" >{{item.caseInfo}}</textarea></td>
+                        <td align="left">
+                            <textarea rows="3" cols="20" readonly style="background: transparent;border:none;resize:none">{{item.caseInfo}}</textarea>
+                        </td>
                         <td align="left">
                             <button type="button" ng-click="updateDetail(item)" class="btn btn-sm btn-warning">
                                 <em class="fa fa-upload"></em>
@@ -72,7 +74,7 @@
                             <span ng-show="doDelete && item.declarationStatus != 1" ng-init="doDelete=false">
                                     <img alt="" src="data:image/gif;base64,R0lGODlhGQAZAJECAK7PTQBjpv///wAAACH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo5OTYyNTQ4Ni02ZGVkLTI2NDUtODEwMy1kN2M4ODE4OWMxMTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RUNGNUFGRUFGREFCMTFFM0FCNzVDRjQ1QzI4QjFBNjgiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RUNGNUFGRTlGREFCMTFFM0FCNzVDRjQ1QzI4QjFBNjgiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk5NjI1NDg2LTZkZWQtMjY0NS04MTAzLWQ3Yzg4MTg5YzExNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5OTYyNTQ4Ni02ZGVkLTI2NDUtODEwMy1kN2M4ODE4OWMxMTQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4B//79/Pv6+fj39vX08/Lx8O/u7ezr6uno5+bl5OPi4eDf3t3c29rZ2NfW1dTT0tHQz87NzMvKycjHxsXEw8LBwL++vby7urm4t7a1tLOysbCvrq2sq6qpqKempaSjoqGgn56dnJuamZiXlpWUk5KRkI+OjYyLiomIh4aFhIOCgYB/fn18e3p5eHd2dXRzcnFwb25tbGtqaWhnZmVkY2JhYF9eXVxbWllYV1ZVVFNSUVBPTk1MS0pJSEdGRURDQkFAPz49PDs6OTg3NjU0MzIxMC8uLSwrKikoJyYlJCMiISAfHh0cGxoZGBcWFRQTEhEQDw4NDAsKCQgHBgUEAwIBAAAh+QQFCgACACwAAAAAGQAZAAACTpSPqcu9AKMUodqLpAb0+rxFnWeBIUdixwmNqRm6JLzJ38raqsGiaUXT6EqO4uIHRAYQyiHw0GxCkc7l9FdlUqWGKPX64mbFXqzxjDYWAAAh+QQFCgACACwCAAIAFQAKAAACHYyPAsuNH1SbME1ajbwra854Edh5GyeeV0oCLFkAACH5BAUKAAIALA0AAgAKABUAAAIUjI+py+0PYxO0WoCz3rz7D4bi+BUAIfkEBQoAAgAsAgANABUACgAAAh2EjxLLjQ9UmzBNWo28K2vOeBHYeRsnnldKBixZAAA7" />
                             </span>
-                            <button ng-show="(item.declarationStatus == 0 || item.declarationStatus == 2) && !doDelete" type="button" ng-click="deleteOne(item.id);doDelete = !doDelete" class="btn btn-sm btn-danger">
+                            <button ng-show="(item.declarationStatus == 0 || item.declarationStatus == 2) && !doDelete" type="button" ng-click="deleteOne(item.id);" class="btn btn-sm btn-danger">
                                 <em class="fa fa-trash-o"></em>
                             </button>
                             <span ng-show="item.declarationStatus == 1">
@@ -88,27 +90,31 @@
 
     <input  type="hidden" class="form-control" type="text" ng-model="id" >
     <input  type="hidden" class="form-control" type="text" ng-model="flag" ><!--  区分是插入还是更新  0：新增；1：修改-->
-    <div id = "cnDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 350px; height: 550px; z-index: 9999;overflow-y:auto;">
-        <div id = "cnDivheader" class="panel-heading topnavbar">
-            添加/修改<input type="button" value="关闭" style="margin-left:230px" class="btn btn-default" ng-click="close();" >
+    <div id = "cnDiv" class="panel panel-primary Qdialog"
+         style="top: 150px; left: 300px; position: absolute; width: 720px; height: 450px; z-index: 9999;overflow-y:auto;">
+        <div id = "cnDivheader" class="panel-heading topnavbar Qdialog-header">
+            添加/修改
         </div>
         <div class="panel-body">
-            <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>请填写案件编号<input placeholder="必填" class="form-control" type="text" ng-model="caseNo_1" ></span>
+            <div  class="form-group Qdialog-group">
+                <span class="Qdialog-group-label">请填写案件编号</span>
+                <input placeholder="必填" class="form-control Qinput" type="text" ng-model="caseNo_1" >
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>请填写案件名称<input placeholder="必填" class="form-control" type="text" ng-model="caseName_1" ></span>
+            <div  class="form-group Qdialog-group">
+                <span class="Qdialog-group-label ">请填写案件名称</span>
+                <input placeholder="必填" class="form-control Qinput" type="text" ng-model="caseName_1" >
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>算法清洗地址http/websocket<input placeholder="" class="form-control" type="text" ng-model="rinseUrl_1" ></span>
+            <div  class="form-group Qdialog-group">
+                <span class="Qdialog-group-label">算法清洗地址http/websocket</span>
+                <input placeholder="" class="form-control Qinput" type="text" ng-model="rinseUrl_1" >
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>请填写案件信息<textarea rows="5" cols="30" ng-model="caseInfo_1"></textarea></span>
+            <div  class="form-group Qdialog-group">
+                <span class="Qdialog-group-label">请填写案件信息</span>
+                <textarea rows="5" cols="50" ng-model="caseInfo_1" class="Qtextarea"></textarea>
             </div>
-            <div  class="form-group" style="top: 20px;width: 280px" >
-                <div align="right" style="margin-top:10px">
-                    <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="saveOrUpdate();" >
-                </div>
+            <div  class="form-group Qdialog-footer">
+                <input type="button" value="保存"  class="btn btn-default" ng-click="saveOrUpdate();" >
+                <input type="button" value="关闭" style="margin-left:20px" class="btn btn-info" ng-click="close();" >
             </div>
         </div>
     </div>

@@ -6,11 +6,9 @@
 </style>
 
 <div ng-controller="declarationController">
-    <div class="topnavbar" style="height: 50px;">
-        <div align="left">
-            <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">审核情况</strong></label>
-        </div>
-        <div align="right" style="margin-top:-30px;">
+    <div class="topnavbar Qtopnavbar">
+        <div align="left" style="" class="Qtopnavbar-content">
+            <label  style="" ><strong style="color: #FFF">审核情况</strong></label>
         </div>
     </div>
 
@@ -19,7 +17,7 @@
             <div class="pr col-md-3">
                 <!-- START mailbox list-->
                 <div collapse="mailboxMenuCollapsed" class="mb-boxes">
-                    <div class="panel panel-default">
+                    <div class="panel panel-default Qpanel-content">
                         <div class="panel-body">
                             <ul class="nav nav-pills nav-stacked">
                                 <li class="p">
@@ -27,7 +25,7 @@
                                 </li>
                                 <li ui-sref-active="active" ng-repeat="item in obj">
                                     <a ui-sref="app.declaration.declar({status:item.status,declarName:item.declarName})">
-                                        <span class="label label-green pull-right">{{item.amount}}</span>
+                                        <span class="label label-blue pull-right">{{item.amount}}</span>
                                         <em ng-class="fold.icon" class="fa fa-group"></em>
                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                         <span>{{item.declarName}}</span>

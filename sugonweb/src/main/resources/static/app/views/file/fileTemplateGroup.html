@@ -6,27 +6,25 @@
 </style>
 
 <div ng-controller="fileTemplateGroupController">
-    <div align="center" class="panel panel-primary" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-
-        <div class="topnavbar" style="height: 50px;">
-            <div align="left">
-                <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">模板组配置</strong></label>
-            </div>
-            <div align="right" style="margin-top:-30px;">
-                <input type="button" value="查询" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="query();" />
-                <input type="button" value="删除" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="deleteSelected();" />
-                <input type="button" value="新增" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="add();" />
+    <div align="center" class="panel panel-primary Qpanel-content" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+        <div class="topnavbar Qtopnavbar">
+            <div align="left" style="" class="Qtopnavbar-content">
+                <label  style="" ><strong style="color: #FFF">模板组配置</strong></label>
             </div>
         </div>
+        <div align="right" style="margin-top:10px;">
+            <input type="button" value="查询" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="query();" />
+            <input type="button" value="删除" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="deleteSelected();" />
+            <input type="button" value="新增" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="add();" />
+        </div>
 
-
-        <div class="panel" style="width: 85%;margin-top: 50px">
-            <div class="panel-heading  topnavbar">
-                <strong style="color: #FFF">模板组列表</strong>
-                <div id="pleaseWait"  style="float:right;padding-right:4px;z-index: 99999">
-                    <img alt="" src="data:image/gif;base64,R0lGODlhGQAZAJECAK7PTQBjpv///wAAACH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo5OTYyNTQ4Ni02ZGVkLTI2NDUtODEwMy1kN2M4ODE4OWMxMTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RUNGNUFGRUFGREFCMTFFM0FCNzVDRjQ1QzI4QjFBNjgiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RUNGNUFGRTlGREFCMTFFM0FCNzVDRjQ1QzI4QjFBNjgiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk5NjI1NDg2LTZkZWQtMjY0NS04MTAzLWQ3Yzg4MTg5YzExNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5OTYyNTQ4Ni02ZGVkLTI2NDUtODEwMy1kN2M4ODE4OWMxMTQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4B//79/Pv6+fj39vX08/Lx8O/u7ezr6uno5+bl5OPi4eDf3t3c29rZ2NfW1dTT0tHQz87NzMvKycjHxsXEw8LBwL++vby7urm4t7a1tLOysbCvrq2sq6qpqKempaSjoqGgn56dnJuamZiXlpWUk5KRkI+OjYyLiomIh4aFhIOCgYB/fn18e3p5eHd2dXRzcnFwb25tbGtqaWhnZmVkY2JhYF9eXVxbWllYV1ZVVFNSUVBPTk1MS0pJSEdGRURDQkFAPz49PDs6OTg3NjU0MzIxMC8uLSwrKikoJyYlJCMiISAfHh0cGxoZGBcWFRQTEhEQDw4NDAsKCQgHBgUEAwIBAAAh+QQFCgACACwAAAAAGQAZAAACTpSPqcu9AKMUodqLpAb0+rxFnWeBIUdixwmNqRm6JLzJ38raqsGiaUXT6EqO4uIHRAYQyiHw0GxCkc7l9FdlUqWGKPX64mbFXqzxjDYWAAAh+QQFCgACACwCAAIAFQAKAAACHYyPAsuNH1SbME1ajbwra854Edh5GyeeV0oCLFkAACH5BAUKAAIALA0AAgAKABUAAAIUjI+py+0PYxO0WoCz3rz7D4bi+BUAIfkEBQoAAgAsAgANABUACgAAAh2EjxLLjQ9UmzBNWo28K2vOeBHYeRsnnldKBixZAAA7" />
-                </div>
-            </div>
+        <div class="panel Qpanel-content-noborder">
+            <!--<div class="panel-heading  topnavbar">-->
+                <!--<strong style="color: #FFF">模板组列表</strong>-->
+                <!--<div id="pleaseWait"  style="float:right;padding-right:4px;z-index: 99999">-->
+                    <!--<img alt="" src="data:image/gif;base64,R0lGODlhGQAZAJECAK7PTQBjpv///wAAACH/C05FVFNDQVBFMi4wAwEAAAAh/wtYTVAgRGF0YVhNUDw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo5OTYyNTQ4Ni02ZGVkLTI2NDUtODEwMy1kN2M4ODE4OWMxMTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RUNGNUFGRUFGREFCMTFFM0FCNzVDRjQ1QzI4QjFBNjgiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RUNGNUFGRTlGREFCMTFFM0FCNzVDRjQ1QzI4QjFBNjgiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk5NjI1NDg2LTZkZWQtMjY0NS04MTAzLWQ3Yzg4MTg5YzExNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5OTYyNTQ4Ni02ZGVkLTI2NDUtODEwMy1kN2M4ODE4OWMxMTQiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4B//79/Pv6+fj39vX08/Lx8O/u7ezr6uno5+bl5OPi4eDf3t3c29rZ2NfW1dTT0tHQz87NzMvKycjHxsXEw8LBwL++vby7urm4t7a1tLOysbCvrq2sq6qpqKempaSjoqGgn56dnJuamZiXlpWUk5KRkI+OjYyLiomIh4aFhIOCgYB/fn18e3p5eHd2dXRzcnFwb25tbGtqaWhnZmVkY2JhYF9eXVxbWllYV1ZVVFNSUVBPTk1MS0pJSEdGRURDQkFAPz49PDs6OTg3NjU0MzIxMC8uLSwrKikoJyYlJCMiISAfHh0cGxoZGBcWFRQTEhEQDw4NDAsKCQgHBgUEAwIBAAAh+QQFCgACACwAAAAAGQAZAAACTpSPqcu9AKMUodqLpAb0+rxFnWeBIUdixwmNqRm6JLzJ38raqsGiaUXT6EqO4uIHRAYQyiHw0GxCkc7l9FdlUqWGKPX64mbFXqzxjDYWAAAh+QQFCgACACwCAAIAFQAKAAACHYyPAsuNH1SbME1ajbwra854Edh5GyeeV0oCLFkAACH5BAUKAAIALA0AAgAKABUAAAIUjI+py+0PYxO0WoCz3rz7D4bi+BUAIfkEBQoAAgAsAgANABUACgAAAh2EjxLLjQ9UmzBNWo28K2vOeBHYeRsnnldKBixZAAA7" />-->
+                <!--</div>-->
+            <!--</div>-->
 
 
             <div class="panel-body">
@@ -72,37 +70,35 @@
             </div>
         </div>
     </div>
-    <div id = "cnDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 500px; height: 400px; z-index: 9999;overflow-y:auto;">
-        <div id = "cnDivheader" class="panel-heading topnavbar">
+    <div id = "cnDiv" class="panel panel-primary Qdialog" style="top: 150px; left: 300px; position: absolute; width: 500px; height: 400px; z-index: 9999;overflow-y:auto;">
+        <div id = "cnDivheader" class="panel-heading topnavbar Qdialog-header">
             添加
-            <input type="button" value="关闭" style="margin-left:400px" class="btn btn-default" ng-click="close();" >
         </div>
         <div class="panel-body">
-            <div  class="form-group" style="top: 20px;width: 450px" >
-                <span>请填写名称<input placeholder="必填" class="form-control" type="text" ng-model="groupName" ></span>
+            <div  class="form-group" >
+                <input placeholder="请填写名称,必填" class="form-control Qinput" type="text" ng-model="groupName" >
             </div>
-            <div  class="form-group" style="top: 20px;width: 450px">
+            <div  class="form-group">
                 <ui-select multiple="" ng-model="template.categories" theme="bootstrap" ng-disabled="disabled" class="mb-lg">
                     <ui-select-match placeholder="选择模板">{{$item.substring(0,$item.lastIndexOf("::"))}}</ui-select-match>
                     <ui-select-choices repeat="cell in availableCategories">{{ cell.substring(0,cell.lastIndexOf("::"))}}</ui-select-choices>
                 </ui-select>
             </div>
-            <div  class="form-group" style="top: 100px;width: 450px" >
-                <div align="right" style="margin-top:20px">
-                    <input type="button" value="保存"  class="btn btn-primary topnavbar" ng-click="save();" >
-                </div>
+            <div  class="form-group Qdialog-footer">
+                    <input type="button" value="保存"  class="btn btn-default " ng-click="save();" >
+                    <input type="button" value="关闭" style="margin-left:20px" class="btn btn-info" ng-click="close();" >
             </div>
         </div>
     </div>
 
-    <div id = "fieldCompleteDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 1100px; height: 750px; z-index: 9999;overflow-y:auto;">
-        <div id = "fieldCompleteDetailheader" class="panel-heading topnavbar">
+    <div id = "fieldCompleteDetail" class="panel panel-primary Qdialog" style="top: 150px; left: 300px; position: absolute; width: 1100px; height: 750px; z-index: 9999;overflow-y:auto;">
+        <div id = "fieldCompleteDetailheader" class="panel-heading topnavbar Qdialog-header">
             <div align="left">
                 <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">模板组名称:{{groupName_2}}</strong></label>
             </div>
             <div align="right" style="margin-top:-30px;">
                 <input type="button" value="新增补全" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="addFieldComplete();" />
-                <input type="button" value="关闭" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="closeAddFieldComplete();" />
+                <input type="button" value="关闭" style="margin-right:10px" class="btn btn-info btn-lg btn-sm" ng-click="closeAddFieldComplete();" />
             </div>
         </div>
         <div class="panel-body">
@@ -146,47 +142,33 @@
     </div>
 
 
-    <div id = "fieldCompleteAdd" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 1500px; height: 900px; z-index: 9999;overflow-y:auto;">
-        <div id = "fieldCompleteAddheader" class="panel-heading topnavbar">
+    <div id = "fieldCompleteAdd" class="panel panel-primary Qdialog" style="top: 0px; left: 0px; position: absolute; width: 1500px; height: 900px; z-index: 9999;overflow-y:auto;">
+        <div id = "fieldCompleteAddheader" class="panel-heading topnavbar Qdialog-header">
             <div align="left">
                 <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">补全新增</strong></label>
             </div>
             <div align="right" style="margin-top:-30px;">
                 <input type="button" value="保存" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="saveFieldComplete();"/>
-                <input type="button" value="关闭" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="closeFieldCompleteAdd();"/>
+                <input type="button" value="关闭" style="margin-right:10px" class="btn btn-info btn-lg btn-sm" ng-click="closeFieldCompleteAdd();"/>
             </div>
         </div>
-        <div class="panel-body">
+        <div class="panel-body ">
             <div class="form-inline">
                 <!--第一部分-->
-                <div  align="left" style="width: 24%;vertical-align: top;" class="input-group panel">
+                <div  align="left" style="width: 24%;vertical-align: top;padding:15px;" class="input-group panel Qpanel-content">
 
-                    <div  class="form-group" style="top: 20px;width: 300px" >
-                        <span>请填写排序编号</span>
-                        <br>
-                        <input placeholder="必填，请输入整数0-999" class="form-control" type="text" ng-change="sortNoChange();" ng-model="sortNo" >
-                    </div>
+                        <input placeholder="请填写整数0-999排序编号,必填" class="form-control Qinput" type="text" ng-change="sortNoChange();" ng-model="sortNo" >
                     <br>
                     <br>
-                    <div  class="form-group" style="top: 20px;width: 300px" >
-                        <div class="input-group" align="left"  style=" z-index: 9999">
+                    <div  class="form-group"  style="margin-top:10px;width: 100%">
+                        <select  ng-model="selectedOptions1" width="'150px'" ng-change="selectedOptionsChange(1,3)" class="Qselect"  style="width: 100%">
+                            <option  value="" >---请选择目标模板---</option>
+                            <option ng-repeat="site in sites1" value="{{site.id}}">{{site.templateName}}</option>
+                        </select>
                             <!--<input type="text" placeholder="是否解压" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control" ng-model="hasDecompress">-->
-                            <div class="form-group mb">
-                                <div class="col-sm-5">
-                                    <div class="input-group mb">
-                                        <span class="input-group-addon">选择目标模板</span>
-                                        <!-- this uses fixed width to avoid expand outside the group container-->
-                                        <select  ng-model="selectedOptions1" width="'150px'" ng-change="selectedOptionsChange(1,3)">
-                                            <option  value="" >---请选择---</option>
-                                            <option ng-repeat="site in sites1" value="{{site.id}}">{{site.templateName}}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
-                    <div  class="panel-body">
+                    <div  class="panel-body"  style="padding:0;">
                         <div class="panel-heading  topnavbar">
                             <strong style="color: #FFF">选择被补全字段（目标模板）</strong>
                             <div align="right" style="margin-top:10px;">
@@ -217,23 +199,13 @@
                 </div>
 
                 <!--第二部分-->
-                <div style="margin-left:5px;width: 24%;vertical-align: top;" class="input-group panel">
+                <div style="margin-left:5px;width: 24%;vertical-align: top;padding: 15px;" class="input-group panel Qpanel-content">
                     <div  class="form-group" style="top: 20px;width: 300px" >
-                        <div class="input-group" align="left"  style=" z-index: 9999">
+                            <select  ng-model="selectedOptions2" width="'150px'"  ng-change="selectedOptionsChange(2,4)" class="Qselect" style="width:100% ">
+                                <option  value="" >---请选择源模板---</option>
+                                <option ng-repeat="site in sites1" value="{{site.id}}">{{site.templateName}}</option>
+                            </select>
                             <!--<input type="text" placeholder="是否解压" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control" ng-model="hasDecompress">-->
-                            <div class="form-group mb">
-                                <div class="col-sm-5">
-                                    <div class="input-group mb">
-                                        <span class="input-group-addon">选择源模板</span>
-                                        <!-- this uses fixed width to avoid expand outside the group container-->
-                                        <select  ng-model="selectedOptions2" width="'150px'"  ng-change="selectedOptionsChange(2,4)">
-                                            <option  value="" >---请选择---</option>
-                                            <option ng-repeat="site in sites1" value="{{site.id}}">{{site.templateName}}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <div  class="panel-body">
@@ -266,7 +238,7 @@
                 </div>
 
                 <!--第三部分-->
-                <div style="margin-left:5px;width: 48%;vertical-align: top;" class="input-group panel">
+                <div style="margin-left:5px;width: 48%;vertical-align: top;" class="input-group panel Qpanel-content">
                     <div  class="panel-body">
                         <div class="panel-heading  topnavbar">
                             <strong style="color: #FFF">配置关联关系</strong>
@@ -309,7 +281,7 @@
 
                             <div class="form-inline">
                                <!--内部左边-->
-                                <div style="margin-left:5px;width: 48%;vertical-align: top;" class="input-group panel">
+                                <div style="margin-left:5px;width: 48%;vertical-align: top;" class="input-group panel Qpanel-content-noborder">
                                     <div  class="panel-body">
                                         <div class="panel-heading  topnavbar">
                                             <strong style="color: #FFF">目标模板</strong>
@@ -340,7 +312,7 @@
                                     </div>
                                 </div>
                                 <!--内部右边-->
-                                <div style="margin-left:5px;width: 48%;vertical-align: top;" class="input-group panel">
+                                <div style="margin-left:5px;width: 48%;vertical-align: top;" class="input-group panel Qpanel-content-noborder">
                                     <div  class="panel-body">
                                         <div class="panel-heading  topnavbar">
                                             <strong style="color: #FFF">源模板</strong>
@@ -380,7 +352,7 @@
     <div id = "modifySortNoDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 250px; z-index: 9999;">
         <div id = "modifySortNoDivheader" class="panel-heading topnavbar">
             修改排序编号
-            <input type="button" value="关闭" style="margin-left:200px" class="btn btn-default" ng-click="closeModifySortNoDiv();" >
+            <input type="button" value="关闭" style="margin-left:200px" class="btn btn-info" ng-click="closeModifySortNoDiv();" >
         </div>
         <div class="panel-body">
             <div  class="form-group" style="top: 20px;width: 250px" >

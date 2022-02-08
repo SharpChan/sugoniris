@@ -1,15 +1,10 @@
 <div ng-controller="dataGroupAddOrModifyController">
    <input  type="hidden" class="form-control" type="text" ng-model="parm" >
-   <div class="panel" style="margin-left:50px;">
-      <div class="panel-heading  topnavbar">
+   <div class="panel Qpanel-content" style="margin-left:50px;width: 450px">
+      <div class="panel-heading  topnavbar" style="font-size:18px">
          <strong ng-show="showSave" style="color: #FFF">添加数据组</strong>
          <strong ng-show="showUpdate" style="color: #FFF">修改数据组</strong>
-         <div ng-show="showSave" style="float:right;">
-            <input type="button" value="保存" style="margin-right:2px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="save();" />
-         </div>
-         <div ng-show="showUpdate" style="float:right;">
-            <input type="button" value="修改" style="margin-right:2px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="update();" />
-         </div>
+
       </div>
 
       <div class="panel-body">
@@ -17,15 +12,24 @@
             <div  class="form-group" style="top: 20px;width: 100%" >
                <div class="input-group" align="left"  style=" z-index: 9999">
                   <div class="form-group mb">
-                        <div class="input-group mb">
-                           <span class="input-group-addon">数据组名称</span>
-                           <input type="text" placeholder="必填" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control" ng-model="groupName">
+                        <div class="input-group mb" style="display: flex;align-items: center">
+                           <span class="" style="width: 80px;color:#fff;flex-shrink: 0;text-align: right;margin-right:10px">数据组名称</span>
+                           <input type="text" placeholder="必填" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control Qinput" ng-model="groupName">
                         </div>
                   </div>
                </div>
             </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
-               <span>描述信息<textarea rows="5" cols="38" ng-model="description"></textarea></span>
+            <div  class="form-group" style="top: 20px;display: flex;align-items: center" >
+               <span  style="width: 80px;color:#fff;flex-shrink: 0;text-align: right;margin-right:10px">描述信息</span>
+               <textarea rows="5" cols="38" ng-model="description" class="Qtextarea"></textarea>
+            </div>
+            <div ng-show="showSave" style="float:right;">
+               <input type="button" value="取消" style="margin-right:2px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="cancel();" />
+               <input type="button" value="保存" style="margin-right:2px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="save();" />
+            </div>
+            <div ng-show="showUpdate" style="float:right;">
+               <input type="button" value="取消" style="margin-right:2px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="cancel();" />
+               <input type="button" value="修改" style="margin-right:2px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="update();" />
             </div>
          </form>
       </div>

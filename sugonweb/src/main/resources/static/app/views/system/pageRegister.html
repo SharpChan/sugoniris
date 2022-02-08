@@ -3,24 +3,26 @@
         border-left:1px solid #0007;
         border-right:1px solid #0007;
     }
+
 </style>
-<div  class="panel panel-primary" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
-    <div class="topnavbar" style="height: 50px;">
-        <div align="left">
-            <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">页面注册</strong></label>
+<div  class="panel panel-primary Qpanel-content" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+
+    <div class="topnavbar Qtopnavbar ">
+        <div align="left" style="" class="Qtopnavbar-content">
+            <label  style="" ><strong style="color: #FFF">页面注册</strong></label>
         </div>
     </div>
                     <!-- 包含左右两个部分 -->
                     <div ng-controller="pageRegisterController" class="form-inline">
                         <!--左半部分-->
-                        <div style="width: 59%;height: 100%;margin-left:5px;margin-top: 30px;vertical-align: top;" class="input-group panel">
+                        <div style="width: 59%;height: 100%;margin-left:5px;margin-top: 30px;vertical-align: top;padding:15px" class="input-group panel Qpanel-content">
 
                             <div style="margin-bottom: 50px">
                                 <div class="col-sm-8">
-                                    <div class="input-group mb">
-                                        <span class="input-group-addon">新增/修改一级节点</span>
+                                    <div class="input-group Qform-group mb">
+                                        <span class=" Qform-group-label">新增/修改一级节点</span>
                                         <!-- this uses fixed width to avoid expand outside the group container-->
-                                        <select  ng-model="selectedOptions_01" width="'150px'" >
+                                        <select  ng-model="selectedOptions_01" width="'150px'" class="Qselect">
                                             <option  value="" >---请选择---</option>
                                             <option ng-repeat="site in sites1" value="{{site.value}}">{{site.dicShow}}</option>
                                         </select>
@@ -29,81 +31,84 @@
                             </div>
 
                             <!--设置一级菜单-->
-                            <div ng-show="selectedOptions_01!='' && selectedOptions_01 == 1"  id="panel_01" class="panel panel-info" >
-                                <div class="panel-heading portlet-handler topnavbar">导航菜单设置（一级）
+                            <div ng-show="selectedOptions_01!='' && selectedOptions_01 == 1"  id="panel_01" class="panel panel-info Qpanel-content-noborder" >
+                                <div class="panel-heading portlet-handler topnavbar Qtopnavbar" style="height:auto;line-height: 21px;">
+                                    <span>
+                                        导航菜单设置（一级）
+                                    </span>
                                     <div id="button1"  style="float:right;padding-right:4px;z-index: 99999">
                                         <input type="button" value="保存" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="addOne();" >
                                     </div>
                                 </div>
                                 <div class="panel-body">
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">名称</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="oneName" >
+                                        <div  class="input-group  Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class=" Qform-group-label">名称</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="oneName" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">提示</span>
-                                            <input  placeholder="" class="form-control" type="text" ng-model="oneText" >
+                                        <div  class="input-group mb Qform-group" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">提示</span>
+                                            <input  placeholder="" class="form-control Qinput" type="text" ng-model="oneText" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">显示设置</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="oneTranslate" >
+                                        <div  class="input-group mb Qform-group" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">显示设置</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="oneTranslate" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">排序编号</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="oneSort" ng-change="headSortCheck(oneSort)" >
+                                        <div  class="input-group mb Qform-group" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">排序编号</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="oneSort" ng-change="headSortCheck(oneSort)" >
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!--修改一级菜单-->
-                            <div ng-show="selectedOptions_01!='' && selectedOptions_01 == 0"  id="panel_05" class="panel panel-info" >
-                                <div class="panel-heading portlet-handler topnavbar">导航菜单设置（一级）
+                            <div ng-show="selectedOptions_01!='' && selectedOptions_01 == 0"  id="panel_05" class="panel panel-info Qpanel-content-noborder" >
+                                <div class="panel-heading portlet-handler topnavbar Qtopnavbar" style="height:auto;line-height: 21px;">导航菜单设置（一级）
                                     <div id="button5"  style="float:right;padding-right:4px;z-index: 99999">
                                         <input type="button" value="修改" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="updateOne();" >
                                         <input type="button" value="删除" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="deleteOne();" >
                                     </div>
                                 </div>
                                 <div class="panel-body">
-                                    <div class="input-group mb">
+                                    <div class="input-group Qform-group mb">
                                         <input  type="hidden" class="form-control" type="text" ng-model="oneUpdateHeading" >
                                         <input  type="hidden" class="form-control" type="text" ng-model="oneUpdateTier" >
-                                        <span class="input-group-addon">选择一级节点</span>
+                                        <span class="Qform-group-label">选择一级节点</span>
                                         <!-- this uses fixed width to avoid expand outside the group container-->
-                                        <select  ng-model="selectedOptions_10" width="'150px'" ng-change="options10Changed(selectedOptions_10)" >
+                                        <select  ng-model="selectedOptions_10" width="'150px'" ng-change="options10Changed(selectedOptions_10)" class="Qselect">
                                             <option  value="" >---请选择---</option>
                                             <option ng-repeat="site in sites2" value="{{site.id}}">{{site.name}}</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">名称</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="oneUpdateName" >
+                                        <div  class="input-group mb Qform-group" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">名称</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="oneUpdateName" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">提示</span>
-                                            <input  placeholder="" class="form-control" type="text" ng-model="oneUpdateText" >
+                                        <div  class="input-group mb Qform-group" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">提示</span>
+                                            <input  placeholder="" class="form-control Qinput" type="text" ng-model="oneUpdateText" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">显示设置</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="oneUpdateTranslate" >
+                                        <div  class="input-group mb Qform-group" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">显示设置</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="oneUpdateTranslate" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">排序编号</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="oneUpdateSort" ng-change="headSortCheck(oneUpdateSort)" >
+                                        <div  class="input-group mb Qform-group" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">排序编号</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="oneUpdateSort" ng-change="headSortCheck(oneUpdateSort)" >
                                         </div>
                                     </div>
                                 </div>
@@ -112,10 +117,10 @@
                             <!--设置二级节点-->
                             <div style="margin-top: 30px">
                                 <div class="col-sm-8">
-                                    <div class="input-group mb">
-                                        <span class="input-group-addon">选择一级节点</span>
+                                    <div class="input-group mb Qform-group">
+                                        <span class="Qform-group-label">选择一级节点</span>
                                         <!-- this uses fixed width to avoid expand outside the group container-->
-                                        <select  ng-model="selectedOptions_02" width="'150px'" ng-change="options02Changed()" >
+                                        <select  ng-model="selectedOptions_02" width="'150px'" ng-change="options02Changed()" class="Qselect">
                                             <option  value="" >---请选择---</option>
                                             <option ng-repeat="site in sites2" value="{{site.id}}">{{site.name}}</option>
                                         </select>
@@ -126,8 +131,8 @@
                                    <input type="checkbox" ng-model="two_checked" ng-change="selectBox(two_checked)" />
                                 </div>
                             </div>
-                            <div ng-show="select_02||(selectedOptions_02 && two_checked)" ng-init="select_02 = false" id="panel_02" class="panel panel-info" style="margin-top: 50px">
-                                <div class="panel-heading portlet-handler topnavbar">
+                            <div ng-show="select_02||(selectedOptions_02 && two_checked)" ng-init="select_02 = false" id="panel_02" class="panel panel-info Qpanel-content-noborder" style="margin-top: 50px">
+                                <div class="panel-heading portlet-handler topnavbar Qtopnavbar"  style="height:auto;line-height: 21px;">
                                     <span>菜单主节点设置（二级）</span>
                                     <div id="button2"  style="float:right;padding-right:4px;z-index: 99999">
                                         <input ng-show="select2Btn" ng-init="select2Btn = true" type="button" value="保存" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="addTwo();" >
@@ -138,51 +143,51 @@
                                 <div class="panel-body">
                                     <div>
                                         <input  type="hidden" class="form-control" type="text" ng-model="select02Item" >
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">名称</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_name" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">名称</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="two_name" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">鼠标放置显示</span>
-                                            <input  placeholder="" class="form-control" type="text" ng-model="two_text" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">鼠标放置显示</span>
+                                            <input  placeholder="" class="form-control Qinput" type="text" ng-model="two_text" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">路由</span>
-                                            <input  placeholder="必填,没有请填#号" class="form-control" type="text" ng-model="two_sref" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">路由</span>
+                                            <input  placeholder="必填,没有请填#号" class="form-control Qinput" type="text" ng-model="two_sref" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">图标</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_icon" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">图标</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="two_icon" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">翻译</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_translate" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">翻译</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="two_translate" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">提示标签</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_alert" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">提示标签</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="two_alert" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">标签颜色</span>
-                                            <input  placeholder="" class="form-control" type="text" ng-model="two_label" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">标签颜色</span>
+                                            <input  placeholder="" class="form-control Qinput" type="text" ng-model="two_label" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">排序字段</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="two_sort" ng-change="twoSortCheck(two_sort)">
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">排序字段</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="two_sort" ng-change="twoSortCheck(two_sort)">
                                         </div>
                                     </div>
                                 </div>
@@ -193,10 +198,10 @@
                             <!--设置菜单节点-->
                             <div style="margin-top: 30px">
                                 <div class="col-sm-8">
-                                    <div class="input-group mb">
-                                        <span class="input-group-addon">选择二级节点</span>
+                                    <div class="input-group Qform-group mb">
+                                        <span class="Qform-group-label">选择二级节点</span>
                                         <!-- this uses fixed width to avoid expand outside the group container-->
-                                        <select  ng-model="selectedOptions_03" width="'150px'" ng-change="options03Changed()">
+                                        <select  ng-model="selectedOptions_03" width="'150px'" ng-change="options03Changed()" class="Qselect">
                                             <option  value="" >---请选择---</option>
                                             <option ng-repeat="site in sites3" value="{{site.id}}">{{site.name}}</option>
                                         </select>
@@ -207,8 +212,8 @@
                                     <input type="checkbox" ng-model="three_checked" ng-change="selectBox(three_checked)" />
                                 </div>
                             </div>
-                            <div ng-show="select_03||(selectedOptions_03 && three_checked)" ng-init="select_03 = false" id="panel_03" class="panel panel-info" style="margin-top: 50px">
-                                <div class="panel-heading portlet-handler topnavbar">菜单主节点设置（三级）
+                            <div ng-show="select_03||(selectedOptions_03 && three_checked)" ng-init="select_03 = false" id="panel_03" class="panel panel-info Qpanel-content-noborder" style="margin-top: 50px">
+                                <div class="panel-heading portlet-handler topnavbar Qtopnavbar" style="height: auto;line-height: 21px;">菜单主节点设置（三级）
                                     <div id="button3"  style="float:right;padding-right:4px;z-index: 99999">
                                         <input ng-show="select3Btn" ng-init="select3Btn = true" type="button" value="保存" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="addThree();" >
                                         <input ng-show="!select3Btn" type="button" value="修改" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="updateThree();" >
@@ -218,45 +223,45 @@
                                 <div class="panel-body">
                                     <input  type="hidden" class="form-control" type="text" ng-model="select03Item" >
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">名称</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="three_name" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">名称</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="three_name" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">鼠标放置显示</span>
-                                            <input  placeholder="" class="form-control" type="text" ng-model="three_text" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">鼠标放置显示</span>
+                                            <input  placeholder="" class="form-control Qinput" type="text" ng-model="three_text" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">路由</span>
-                                            <input  placeholder="必填,没有请填#号" class="form-control" type="text" ng-model="three_sref" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">路由</span>
+                                            <input  placeholder="必填,没有请填#号" class="form-control Qinput" type="text" ng-model="three_sref" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">翻译</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="three_translate" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">翻译</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="three_translate" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">提示标签</span>
-                                            <input  placeholder="" class="form-control" type="text" ng-model="three_alert" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">提示标签</span>
+                                            <input  placeholder="" class="form-control Qinput" type="text" ng-model="three_alert" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">标签颜色</span>
-                                            <input  placeholder="" class="form-control" type="text" ng-model="three_label" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">标签颜色</span>
+                                            <input  placeholder="" class="form-control Qinput" type="text" ng-model="three_label" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">排序字段</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="three_sort" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">排序字段</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="three_sort" >
                                         </div>
                                     </div>
                                 </div>
@@ -266,10 +271,10 @@
                             <!--设置菜单叶子-->
                             <div style="margin-top: 30px">
                                 <div class="col-sm-8">
-                                    <div class="input-group mb">
-                                        <span class="input-group-addon">选择三级节点</span>
+                                    <div class="input-group Qform-group mb">
+                                        <span class="Qform-group-label">选择三级节点</span>
                                         <!-- this uses fixed width to avoid expand outside the group container-->
-                                        <select  ng-model="selectedOptions_04" width="'150px'" >
+                                        <select  ng-model="selectedOptions_04" width="'150px'" class="Qselect">
                                             <option  value="" >---请选择---</option>
                                             <option ng-repeat="site in sites4" value="{{site.id}}">{{site.name}}</option>
                                         </select>
@@ -280,8 +285,8 @@
                                     <input type="checkbox" ng-model="four_checked" ng-change="selectBox(four_checked)" />
                                 </div>
                             </div>
-                            <div ng-show="select_04||(selectedOptions_04  && four_checked)" ng-init="select_04 = false" id="panel_04" class="panel panel-info" style="margin-top: 50px">
-                                <div class="panel-heading portlet-handler topnavbar">菜单主节点设置（四级）
+                            <div ng-show="select_04||(selectedOptions_04  && four_checked)" ng-init="select_04 = false" id="panel_04" class="panel panel-info Qpanel-content-noborder" style="margin-top: 50px">
+                                <div class="panel-heading portlet-handler topnavbar Qtopnavbar" style="height: auto;line-height: 21px">菜单主节点设置（四级）
                                     <div id="button4"  style="float:right;padding-right:4px;z-index: 99999">
                                         <input ng-show="select4Btn" ng-init="select4Btn = true" type="button" value="保存" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="addFour();" >
                                         <input ng-show="!select4Btn" type="button" value="修改" style="margin-right:10px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="updateFour();" >
@@ -292,44 +297,44 @@
                                     <div>
                                         <input  type="hidden" class="form-control" type="text" ng-model="select03Item" >
                                         <div>
-                                            <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                                <span  class="input-group-addon">名称</span>
-                                                <input  placeholder="必填" class="form-control" type="text" ng-model="four_name" >
+                                            <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                                <span  class="Qform-group-label">名称</span>
+                                                <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="four_name" >
                                             </div>
                                         </div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">鼠标放置显示</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="four_text" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">鼠标放置显示</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="four_text" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">路由</span>
-                                            <input  placeholder="必填,没有请填#号" class="form-control" type="text" ng-model="four_sref" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">路由</span>
+                                            <input  placeholder="必填,没有请填#号" class="form-control Qinput" type="text" ng-model="four_sref" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">翻译</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="four_translate" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">翻译</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="four_translate" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">提示标签</span>
-                                            <input  placeholder="" class="form-control" type="text" ng-model="four_alert" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">提示标签</span>
+                                            <input  placeholder="" class="form-control Qinput" type="text" ng-model="four_alert" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">标签颜色</span>
-                                            <input  placeholder="" class="form-control" type="text" ng-model="four_label" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">标签颜色</span>
+                                            <input  placeholder="" class="form-control Qinput" type="text" ng-model="four_label" >
                                         </div>
                                     </div>
                                     <div>
-                                        <div  class="input-group mb" style="width: 90%;margin-left: 0px">
-                                            <span  class="input-group-addon">排序字段</span>
-                                            <input  placeholder="必填" class="form-control" type="text" ng-model="four_sort" >
+                                        <div  class="input-group Qform-group mb" style="width: 90%;margin-left: 0px">
+                                            <span  class="Qform-group-label">排序字段</span>
+                                            <input  placeholder="必填" class="form-control Qinput" type="text" ng-model="four_sort" >
                                         </div>
                                     </div>
                                 </div>
@@ -338,7 +343,7 @@
                         </div>
 
                         <!--右半部分-->
-                        <div style="width: 39%;height: 100%;margin-top: 30px;vertical-align: top;" class="input-group panel">
+                        <div style="width: 39%;height: 100%;margin-top: 30px;vertical-align: top;" class="input-group panel Qpanel-content">
 
                             <aside ng-include="'app/views/system/registerSidebar.html'" ng-controller="registerSidebarController" class="aside"></aside>
 

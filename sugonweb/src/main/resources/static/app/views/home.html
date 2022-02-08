@@ -1,0 +1,118 @@
+<style>
+   .home-content{
+      width: 100%;
+      height:100vh;
+      background: url('app/img/login-bg.png') center center no-repeat;
+      background-size:100% 100% ;
+   }
+   .panel-heading{
+      background: url('app/img/login-header-bg.png') center center no-repeat;
+      /*width: 100%;*/
+      height: 106px;
+      background-size:100% 100% ;
+      padding: 0;
+      line-height: 106px;
+   }
+   .panel-footer{
+      background: url(app/img/login-footer-bg.png) center center no-repeat;
+      /* width: 100%; */
+      height: 106px;
+      background-size: 100% 100%;
+      border: 0;
+      position: fixed;
+      bottom: -30px;
+      width: 1920px;
+      padding: 0;
+   }
+   .home-body{
+      margin: 200px 0;
+      background: transparent;
+      border:none;
+      display: flex;
+      justify-content: center;
+   }
+   .home-body-item{
+      background: url('app/img/home-item-bg.png') center center no-repeat;
+      width: 258px;
+      height: 346px;
+      text-align: center;
+      margin: 0 20px;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+   }
+   .home-body-item:hover{
+      background: url('app/img/home-item-bg-active.png') center center no-repeat;
+      margin-top:-60px;
+      transition:margin-top linear .2s;
+   }
+   .home-body-item:hover .home-item-active{
+      display: block;
+   }
+   .home-item-active{
+      position: absolute;
+      bottom: -140px;
+      width: 295px;
+      height: 295px;
+      left: -15px;
+      display: none;
+   }
+   /*.home-body-item:hoverafter{*/
+      /*width: 100px;*/
+      /*height:100px;*/
+      /*position: absolute;*/
+      /*bottom:0;*/
+      /*background-color: #fff;*/
+   /*}*/
+   .home-body-item>div{
+      background: linear-gradient(to top, #2462C5, #fff);
+      -webkit-background-clip: text;
+      color: transparent;
+      font-size: 26px;
+      font-weight: 400;
+      font-family: YouSheBiaoTiHei;
+   }
+
+</style>
+<div ng-controller="HomeController" class="block-center  wd-xl home-content">
+   <div class="panel-heading text-center">
+
+      <img src="app/img/login-title.png" alt="" style="margin-bottom: 10px;">
+   </div>
+   <div class="panel panel-primary home-body">
+
+      <div class="home-body-item" type="item1" ng-click="goDashboard(1)">
+         <img src="app/img/home-item1.png" alt="" style="margin-left: -15px;margin-bottom:40px">
+         <div>
+            数据汇聚与治理
+         </div>
+         <img src="app/img/home-item-active-img.png" alt="" class="home-item-active">
+      </div>
+      <div class="home-body-item" type="item2" ng-click="goDashboard(2)">
+         <img src="app/img/home-item2.png" alt="" style="margin-left: -64.5px;margin-bottom:1px">
+         <div>
+            模型搭建与展示
+         </div>
+         <img src="app/img/home-item-active-img.png" alt="" class="home-item-active">
+      </div>
+      <div class="home-body-item" type="item3"  ng-click="goDashboard(3)">
+         <img src="app/img/home-item3.png" alt="" style="margin-left:20px;margin-bottom:27px">
+         <div>
+            关系图谱展示
+         </div>
+         <img src="app/img/home-item-active-img.png" alt="" class="home-item-active">
+      </div>
+      <div class="home-body-item" type="item4"  ng-click="goDashboard(4)">
+         <img src="app/img/home-item4.png" alt="" style="margin-left:-30px;margin-bottom: 50px;
+    margin-top: 30px;">
+         <div>
+            个人中心
+         </div>
+         <img src="app/img/home-item-active-img.png" alt="" class="home-item-active">
+      </div>
+   </div>
+
+   <div class="panel-footer text-center">
+
+   </div>
+</div>

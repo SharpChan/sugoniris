@@ -1,30 +1,141 @@
-<div ng-controller="LoginFormController" class="block-center mt-xl wd-xl">
+<style>
+   .login-content{
+      width: 100%;
+      height:100vh;
+      background: url('app/img/login-bg.png') center center no-repeat;
+      background-size:100% 100% ;
+   }
+   .panel-heading{
+      background: url('app/img/login-header-bg.png') center center no-repeat;
+      /*width: 100%;*/
+      height: 106px;
+      background-size:100% 100% ;
+      padding: 0;
+      line-height: 106px;
+   }
+   .panel-footer{
+      background: url(app/img/login-footer-bg.png) center center no-repeat;
+      /* width: 100%; */
+      height: 106px;
+      background-size: 100% 100%;
+      border: 0;
+      position: fixed;
+      bottom: -30px;
+      width: 1920px;
+      padding: 0;
+   }
+   .login-body{
+      background: url('app/img/login-body-bg.png') center center no-repeat;
+      width: 516px;
+      height: 542px;
+      margin:100px auto 0;
+      border:none;
+      padding-top:40px;
+   }
+   .login-form{
+      padding:0 88px;
+   }
+   .login-group{
+      height: 40px;
+      margin-top: 40px;
+      border: 1px solid #2B4ACB;
+      border-radius: 4px;
+      margin-bottom: 20px;
+   }
+   .login-group input{
+      background: transparent;
+      height: 40px;
+      border:none;
+      color:#fff;
+   }
+   .icon-left{
+      width: 50px;
+      border-right: 1px solid #2B4ACB;
+   }
+   .login-type{
+      font-family: PingFangSC-Semibold;
+      font-size: 20px;
+      color: rgba(255,255,255,0.37);
+      letter-spacing: 1.36px;
+      font-weight: 600;
+      display: flex;
+      position: relative;
+      margin-bottom:80px;
+   }
+   .under-line{
+      position: absolute;
+      width: 100%;
+      bottom:0;
+      height: 2px;
+      background-image: linear-gradient(90deg, rgba(255,255,255,0.00) 0%, rgba(255,255,255,0.33) 15%, rgba(255,255,255,0.33) 51%, rgba(255,255,255,0.33) 85%, rgba(255,255,255,0.00) 100%);
+      border-radius: 2px;
+   }
+   .login-type .login-type-item{
+      width: 50%;
+      text-align: center;
+   }
+   .login-type .login-type-item.active div{
+      color: rgba(255,255,255,0.81);
+      border-bottom:4px solid #2B4ACB;
+      padding-bottom: 5px;
+      display: block;
+      width: 100px;
+      margin: 0 auto;
+   }
+</style>
+<div ng-controller="LoginFormController" class="block-center  wd-xl login-content">
    <!-- START panel-->
-   <div class="panel panel-primary panel-flat">
-      <div class="panel-heading text-center">
-         <a href="#">
-            <img src="app/img/logo.png" alt="Image" class="block-center img-rounded" />
-         </a>
-      </div>
+   <div class="panel-heading text-center">
+      <!--<a href="#">-->
+      <!--<img src="app/img/logo.png" alt="Image" class="block-center img-rounded" />-->
+      <!--</a>-->
+      <img src="app/img/login-title.png" alt=""  style="margin-bottom: 10px;">
+   </div>
+   <div class="panel panel-primary  login-body">
+
       <div class="panel-body">
-         <p class="text-center pv">进行登录.</p>
-         <form role="form" ng-submit="login()" name="loginForm" novalidate="" class="form-validate mb-lg">
-            <div class="form-group has-feedback">
+         <!--<p class="text-center pv">进行登录.</p>-->
+         <div class="login-type" ng-init='activeTab=1'>
+            <div ng-class="{'active':activeTab==1}" ng-click='activeTab=1' class="login-type-item">
+               <div>
+                  账号登录
+               </div>
+            </div>
+            <div ng-class="{'active':activeTab==2}" ng-click='activeTab=2' class="login-type-item">
+               <div>
+                  证书登录
+               </div>
+            </div>
+            <div class="under-line">
+            </div>
+         </div>
+         <form role="form" ng-show='activeTab==1' ng-submit="login()" name="loginForm" novalidate="" class="form-validate mb-lg login-form">
+            <div class="form-group has-feedback login-group">
+               <div class="just-between">
+                  <div class="icon-left just-center">
+                     <img src="app/img/icon-user.svg" alt="">
+                  </div>
+                  <input type="text"  placeholder="用户名" autocomplete="off" ng-model="account.userName" required="" class="form-control" />
+               </div>
                <!--<input id="exampleInputEmail1" type="email" name="account_email" placeholder="邮箱" autocomplete="off" ng-model="account.email" required="" class="form-control" />-->
-               <input type="text"  placeholder="用户名" autocomplete="off" ng-model="account.userName" required="" class="form-control" />
-               <span class="icon-user form-control-feedback text-muted"></span>
+               <!--<span class="icon-user form-control-feedback text-muted"></span>-->
                <!--<span class="fa fa-envelope form-control-feedback text-muted"></span>
               <span ng-show="loginForm.account_email.$dirty &amp;&amp; loginForm.account_email.$error.required" class="text-danger">请填写邮箱</span>
               <span ng-show="loginForm.account_email.$dirty &amp;&amp; loginForm.account_email.$error.email" class="text-danger">必须是存在的邮箱地址</span>-->
             </div>
-            <div class="form-group has-feedback">
-               <input id="exampleInputPassword1" type="password" name="account_password" placeholder="密码" ng-model="account.password" required="" class="form-control" />
-               <span class="fa fa-lock form-control-feedback text-muted"></span>
-               <span ng-show="loginForm.account_password.$dirty &amp;&amp; loginForm.account_password.$error.required" class="text-danger">请填写密码</span>
+            <div class="form-group has-feedback login-group">
+               <div class="just-between">
+                  <div class="icon-left just-center">
+                     <img src="app/img/icon-psw.svg" alt="">
+                  </div>
+                  <input id="exampleInputPassword1" type="password" name="account_password" placeholder="密码" ng-model="account.password" required="" class="form-control" />
+               </div>
+               <!--<span class="fa fa-lock form-control-feedback text-muted"></span>-->
+               <!--<span ng-show="loginForm.account_password.$dirty &amp;&amp; loginForm.account_password.$error.required" class="text-danger">请填写密码</span>-->
             </div>
-            <div class="form-group clearfix">
+            <div class="form-group clearfix" style="display: none">
                <div class="pull-left">
-                  <input id="verificationCode" type="text" name="verification_code" placeholder="验证码" ng-model="verificationCode" required="" class="form-control" />
+                  <input id="verificationCode" type="text" name="verification_code" placeholder="验证码" ng-model="verificationCode" ng-required="false" class="form-control" />
                </div>
                <div class="pull-right">
                   <canvas id="drawCodaCanvas" ng-click="drawCoda()"></canvas>
@@ -34,30 +145,38 @@
                <div class="checkbox c-checkbox pull-left mt0">
                   <label>
                      <input type="checkbox" value="" name="account_remember" ng-model="account.remember" />
-                     <span class="fa fa-check"></span>保存</label>
+                     <span class="fa fa-check"></span>记住密码</label>
                </div>
-               <div class="pull-right"><a ui-sref="page.recover" class="text-muted">修改密码</a>
-               </div>
+               <!--<div class="pull-right"><a ui-sref="page.recover" class="text-muted">修改密码</a>-->
+               <!--</div>-->
             </div>
-            <button type="submit" class="btn btn-block btn-primary mt-lg">登录</button>
+            <button type="submit" class="btn btn-block btn-default " style="margin-top:120px;height:40px;font-size: 18px">登 录</button>
          </form>
+         <div ng-show='activeTab==2' style="text-align: center">
+            <img src="app/img/szzs.png" alt="">
+         </div>
+         <!--<iframe id="rfFrame" name="rfFrame" src="about:blank" style="display:none;"></iframe>-->
 
+         <!--<form role="form" ng-submit="loginForCa()" name="loginFormCa" novalidate="" class="form-validate mb-lg">-->
+            <!--<button type="submit" class="btn btn-block btn-primary mt-lg">KEY登录</button>-->
+         <!--</form>-->
 
-         <form role="form" ng-submit="loginForCa()" name="loginFormCa" novalidate="" class="form-validate mb-lg">
-            <button type="submit" class="btn btn-block btn-primary mt-lg">KEY登录</button>
-         </form>
-
-         <div ng-show="authMsg" class="alert alert-danger text-center">{{authMsg}}</div>
-         <p class="pt-lg text-center">需要注册吗?</p><a ui-sref="page.register" class="btn btn-block btn-default">注册</a>
+         <!--<div ng-show="authMsg" class="alert alert-danger text-center">{{authMsg}}</div>-->
+         <!--<p class="pt-lg text-center">需要注册吗?</p><a ui-sref="page.register" class="btn btn-block btn-default">注册</a>-->
       </div>
    </div>
    <!-- END panel-->
-   <div class="p-lg text-center">
-      <span>&copy;</span>
-      <span ng-bind="app.year"></span>
-      <span>-</span>
-      <span ng-bind="app.name"></span>
-      <br/>
-      <span ng-bind="app.description"></span>
+   <!--<div class="p-lg text-center">-->
+      <!--<span>&copy;</span>-->
+      <!--<span ng-bind="app.year"></span>-->
+      <!--<span>-</span>-->
+      <!--<span ng-bind="app.name"></span>-->
+      <!--<br/>-->
+      <!--<span ng-bind="app.description"></span>-->
+   <!--</div>-->
+   <div class="panel-footer text-center">
+      <!--<a href="#">-->
+      <!--<img src="app/img/logo.png" alt="Image" class="block-center img-rounded" />-->
+      <!--</a>-->
    </div>
 </div>

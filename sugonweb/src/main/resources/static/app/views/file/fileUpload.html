@@ -1,19 +1,16 @@
-<div class="topnavbar" style="height: 50px;">
-    <div align="left">
-        <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">上传文件</strong></label>
-    </div>
-    <div align="right" style="margin-top:-30px;">
-
+<div class="topnavbar Qtopnavbar">
+    <div align="left" style="" class="Qtopnavbar-content">
+        <label  style="" ><strong style="color: #FFF">上传文件</strong></label>
     </div>
 </div>
-<div ng-controller="myFileUploadController" nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
+<div ng-controller="myFileUploadController" nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter" style="margin-top:20px;">
     <div class="form-group mb">
-        <div class="col-sm-4">
+        <div class="col-sm-4" style="padding-left:0;">
             <div class="input-group mb">
-                <span class="input-group-addon">选择案件</span>
+                <!--<span class="input-group-addon">选择案件</span>-->
                 <!-- this uses fixed width to avoid expand outside the group container-->
-                <select  ng-model="selectedOptions1" width="'250px'"  ng-change="caseIdChanged()">
-                    <option  value="" >---请选择---</option>
+                <select  ng-model="selectedOptions1" style="width: 250px"  ng-change="caseIdChanged()" class="Qselect">
+                    <option value='' disabled selected style='display:none;'>请选择案件</option>
                     <option ng-repeat="site in sites1" value="{{site.id}}">{{site.id+"::"+site.caseName}}</option>
                 </select>
             </div>
@@ -37,8 +34,8 @@
                 </div>-->
             </div>
             <div style="margin-bottom: 40px" class="col-md-9">
-                <div class="panel">
-                    <div class="panel-body">
+                <div class="panel Qfileupload-content">
+                    <div class="panel-body ">
                         <p ng-if="uploader.queue.length" class="pull-right label label-info">上传文件数: {{ uploader.queue.length }}</p>
                         <h4 class="page-header mt0">上传列表</h4>
                         <p ng-if="!uploader.queue.length" class="lead text-center">还没有文件，可拖动上传</p>
@@ -76,11 +73,11 @@
                                  </span>
                                     </td>
                                     <td nowrap="">
-                                        <button type="button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" class="btn btn-info btn-xs">
+                                        <button type="button" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess" class="btn btn-default-out btn-xs">
                                             <span class="icon-cloud-upload mr"></span>上传</button>
-                                        <button type="button" ng-click="item.cancel()" ng-disabled="!item.isUploading" class="btn btn-warning btn-xs">
+                                        <button type="button" ng-click="item.cancel()" ng-disabled="!item.isUploading" class="btn btn-warning-out btn-xs">
                                             <span class="icon-close mr"></span>取消</button>
-                                        <button type="button" ng-click="item.remove()" class="btn btn-danger btn-xs">
+                                        <button type="button" ng-click="item.remove()" class="btn btn-danger-out btn-xs">
                                             <span class="icon-trash mr"></span>删除</button>
                                     </td>
                                 </tr>
@@ -89,8 +86,12 @@
                         </div>
                     </div>
                 </div>
-                <input filestyle="" type="file" data-button-text="批量选择文件" data-class-button="btn btn-default" data-class-input="form-control inline" nv-file-select="" uploader="uploader" multiple="" class="form-control" />
-                <div class="panel">
+                <div class="panel Qfileupload-content" >
+                    <input filestyle="" type="file" data-button-text="批量选择文件" data-class-button="btn btn-default"
+                           data-class-input="form-control inline" nv-file-select="" uploader="uploader" multiple="" class="form-control"
+                           style="border: none;
+                            background: rgba(83,130,181,0.18);"
+                    />
                     <div class="panel-body">
                         <div>
                             <p>上传队列:</p>

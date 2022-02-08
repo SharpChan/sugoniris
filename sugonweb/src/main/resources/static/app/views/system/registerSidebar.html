@@ -1,4 +1,16 @@
 <!-- Inline template with sidebar items markup and ng-directives-->
+<style>
+   .Qpanel-content > .nav > li.active {
+      border-left: none !important;
+      color: #515253 !important;
+   }
+   .Qpanel-content > .nav > li.active li.active{
+      background-color:#04102E!important;
+   }
+   .Qpanel-content > .nav > li.active, .Qpanel-content > .nav > li.open, .Qpanel-content > .nav > li.active > a, .Qpanel-content > .nav > li.open > a, .Qpanel-content > .nav > li.active .nav, .Qpanel-content > .nav > li.open .nav{
+      background-color: transparent!important;
+   }
+</style>
 <script type="text/ng-template" id="sidebar-renderer.html">
    <span  ng-if="item.heading">{{(item.translate | translate) || item.text}}</span>
    <!--<a ng-if="!item.heading" ng-href="{{$state.href(item.sref, item.params)}}" title="{{item.text}}">-->
@@ -14,7 +26,7 @@
 </script>
 <!-- START Sidebar (left)-->
 <div class="aside-inner">
-   <nav sidebar="" sidebar-anyclick-close="" class="sidebar">
+   <nav sidebar="" sidebar-anyclick-close="" class="sidebar Qpanel-content" style="background-color:rgba(5,27,85,.2)">
       <!-- START sidebar nav-->
       <ul class="nav">
          <!-- END user info-->

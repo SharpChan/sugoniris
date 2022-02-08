@@ -1,34 +1,33 @@
 <div ng-controller="userGroupAddOrModifyController">
    <input  type="hidden" class="form-control" type="text" ng-model="parm" >
-   <div class="panel" style="margin-left:50px;">
-      <div class="panel-heading  topnavbar">
+   <div class="panel Qdialog" style="margin-left:50px;">
+      <div class="panel-heading  topnavbar Qdialog-header">
          <strong ng-show="showSave" style="color: #FFF">添加用户组</strong>
          <strong ng-show="showUpdate" style="color: #FFF">修改用户组</strong>
+
+      </div>
+
+      <div class="panel-body">
+
+         <form class="bs-example bs-example-form" role="form">
+            <div class="form-group  Qdialog-group">
+                  <span class="Qdialog-group-label" style="width: 80px">用户组名称</span>
+                  <input type="text" placeholder="必填" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control Qinput" ng-model="groupName">
+            </div>
+            <div  class="form-group Qdialog-group">
+               <span class="Qdialog-group-label"  style="width: 80px">描述信息</span>
+               <textarea rows="5" cols="38" ng-model="description" class="Qtextarea"></textarea>
+            </div>
+         </form>
+      </div>
+      <div class="Qdialog-footer" style="margin-top: 0;padding-bottom:20px;">
          <div ng-show="showSave" style="float:right;">
             <input type="button" value="保存" style="margin-right:2px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="save();" />
          </div>
          <div ng-show="showUpdate" style="float:right;">
             <input type="button" value="修改" style="margin-right:2px;margin-top: -5px" class="btn btn-default btn-lg btn-sm" ng-click="update();" />
          </div>
-      </div>
-
-      <div class="panel-body">
-
-         <form class="bs-example bs-example-form" role="form">
-            <div  class="form-group" style="top: 20px;width: 100%" >
-               <div class="input-group" align="left"  style=" z-index: 9999">
-                  <div class="form-group mb">
-                        <div class="input-group mb">
-                           <span class="input-group-addon">用户组名称</span>
-                           <input type="text" placeholder="必填" style="box-shadow: 0px 0px 10px #DDDDDD inset" class="form-control" ng-model="groupName">
-                        </div>
-                  </div>
-               </div>
-            </div>
-            <div  class="form-group" style="top: 20px;width: 250px" >
-               <span>描述信息<textarea rows="5" cols="38" ng-model="description"></textarea></span>
-            </div>
-         </form>
+         <input type="button" value="取消" style="margin-left:10px;margin-top: -5px" class="btn btn-danger btn-lg btn-sm" ng-click="cancel()" />
       </div>
   </div>
 </div>
