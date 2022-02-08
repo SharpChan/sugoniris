@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <div  class="input-group panel" style="margin-left:5px;width: 49%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+    <div  class="input-group panel" style="margin-left:5px;width: 49%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;vertical-align: top;">
         <div class="topnavbar" style="height: 50px;">
             <div align="left">
                 <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">只进不出账户分析</strong></label>
@@ -53,10 +53,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="item in objIn">
-                        <td align="left">{{item.no}}</td>
-                        <td align="left">{{item.accountName}}</td>
-                        <td align="left">{{item.idNo}}</td>
+                    <tr ng-repeat="item in obj1">
+                        <td  align="left">{{item.no}}</td>
+                        <td  align="left">{{item.accountName}}</td>
+                        <td  align="left">{{item.idNo}}</td>
                         <td align="left">{{item.accountNo}}</td>
                         <td align="left">
                             <button type="button" ng-click="detail(item.casePersonnelInfoInList)" class="btn btn-sm btn-primary">
@@ -70,10 +70,10 @@
         </div>
     </div>
 
-    <div  class="input-group panel" style="margin-left:5px;width: 49%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+    <div  class="input-group panel" style="margin-left:5px;width: 49%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;vertical-align: top;">
         <div class="topnavbar" style="height: 50px;">
             <div align="left">
-                <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">只进不出账户分析</strong></label>
+                <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">只出不进账户分析</strong></label>
             </div>
 
             <div align="right" style="margin-top:-30px;">
@@ -106,13 +106,13 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="item in objOut">
+                    <tr ng-repeat="item in obj2">
                         <td align="left">{{item.no}}</td>
                         <td align="left">{{item.accountName}}</td>
                         <td align="left">{{item.idNo}}</td>
                         <td align="left">{{item.accountNo}}</td>
                         <td align="left">
-                            <button type="button" ng-click="detail(item.casePersonnelInfoInList)" class="btn btn-sm btn-primary">
+                            <button type="button" ng-click="detail(item.casePersonnelInfoOutList)" class="btn btn-sm btn-primary">
                                 <strong style="color: #FFF">对手信息详情</strong>
                             </button>
                         </td>
@@ -120,6 +120,37 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+
+    <div id = "cnDivDetail" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 1250px; height: 500px; z-index: 9999;overflow-y:auto;">
+        <div id = "cnDivDetailheader" class="panel-heading topnavbar">
+            <div align="left">
+                <label  style="margin-left:10px;margin-top:10px;" ><strong style="color: #FFF">交易对手明细</strong></label>
+            </div>
+            <div align="right" style="margin-top:-30px;">
+                <input type="button" value="关闭" style="margin-right:10px" class="btn btn-default btn-lg btn-sm" ng-click="closeDetail();" />
+            </div>
+        </div>
+        <div class="panel-body">
+            <table  datatable="ng" dt-options="dtOptions" dt-column-defs="dtColumnDefs" class="row-border hover">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>姓名</th>
+                    <th>证件号</th>
+                    <th>账号</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in list">
+                    <td align="left">{{item.no}}</td>
+                    <td align="left">{{item.accountName}}</td>
+                    <td align="left">{{item.idNo}}</td>
+                    <td align="left">{{item.accountNo}}</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 

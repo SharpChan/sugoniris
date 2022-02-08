@@ -1723,7 +1723,7 @@ App.controller("abnormalTradingController", function ($http,$timeout,$scope,$sta
         $state.go('app.inOut',{id: id});
     }
 
-    //只进不出
+    //只进不出或只出不进
     $scope.inOrOutOnly = function (id) {
 
         $state.go('app.inOrOutOnly',{id: id});
@@ -1738,21 +1738,40 @@ App.controller("inOrOutOnlyController", function ($http,$timeout,$scope,$statePa
     $("#pleaseWait2").hide();
     //登录和锁定校验
     myservice.loginLockCheck();
-
+    myservice.dragFunc("cnDivDetail");
+    $("#cnDivDetail").hide();
 
     //案件编号$stateParams.id
 
     //通过案件编号查询 账户信息
     $scope.query = function () {
-        $("#pleaseWait").show();
-        var url = "/statistics/getInOutTrading?caseId="+$stateParams.id;
+        $("#pleaseWait1").show();
+        $("#pleaseWait2").show();
+        var url = "/statistics/getInOrOutOnly?caseId="+$stateParams.id;
         $http.post(url).success(function(data)
         {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
             myservice.errors(temp);
-            $scope.obj =myservice.setSerialNumber(temp.obj);
-            $("#pleaseWait").hide();
+            $scope.obj =temp.obj;
+
+            var obj1=[];
+            var obj2=[];
+            angular.forEach(temp.obj,function(item){
+                if(item.casePersonnelInfoInList.length > 0){
+                    obj1.push(item);
+                }
+
+                if(item.casePersonnelInfoOutList.length > 0){
+                    obj2.push(item);
+                }
+            });
+
+            $scope.obj1  = myservice.setSerialNumber(obj1);
+            $scope.obj2  = myservice.setSerialNumber(obj2);
+
+            $("#pleaseWait1").hide();
+            $("#pleaseWait2").hide();
         }).error(function(data)
         {
             alert("会话已经断开或者检查网络是否正常！");
@@ -1760,7 +1779,16 @@ App.controller("inOrOutOnlyController", function ($http,$timeout,$scope,$statePa
         });
     }
 
-    // $scope.query();
+    $scope.query();
+
+    $scope.detail = function(casePersonnelInfoList){
+        $("#cnDivDetail").show();
+        $scope.list =myservice.setSerialNumber(casePersonnelInfoList);
+    }
+
+    $scope.closeDetail = function(casePersonnelInfoList){
+        $("#cnDivDetail").hide();
+    }
 
     $scope.return = function () {
 

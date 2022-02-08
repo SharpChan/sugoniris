@@ -65,5 +65,4 @@ public class TradingBean {
      */
     private String tradingType;
 
-
 }

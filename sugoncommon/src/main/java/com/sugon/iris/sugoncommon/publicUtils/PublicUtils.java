@@ -10,11 +10,17 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.springframework.util.CollectionUtils;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * dto和entity的属性定义一样的名称，用反射进行互转
@@ -189,6 +195,19 @@ public  class PublicUtils {
             e.printStackTrace();
         }
         return sb.toString();
+    }
+
+
+    /**
+     * List集合拷贝
+     */
+    public static <T> List<T> deepCopy(List<T> src) {
+
+       List<T> dest = new ArrayList<>();
+       for(T t : src){
+           dest.add(t);
+       }
+        return dest;
     }
 
     /**

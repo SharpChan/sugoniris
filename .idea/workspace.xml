@@ -8,43 +8,20 @@
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/system/pageRegister.html" line="117" />
     <bookmark url="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js" line="247" />
-    <bookmark url="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js" line="3735" />
+    <bookmark url="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js" line="3763" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a90609e4-7a89-43d9-9541-decbe39a1fc1" name="Default Changelist" comment="系统日志优化">
-      <change afterPath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db4/CasePersonnelInfoMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/CasePersonnelInfoBean.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/CentrostigmaBean.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/TradingBean.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/CasePersonnelInfoDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/CentrostigmaDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/InOutDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/TradingDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/abnormalTrading/CasePersonnelInfoEntity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/abnormalTrading/TradingEntity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/casePersonnelServiceImpl/CasePersonnelInfoServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/statisticsServiceImpl/StatisticsServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/service/casePersonnelInfoService/CasePersonnelInfoService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/service/statisticsService/StatisticsService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/statistics/BlockTradeController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/statistics/StatisticsController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/abnormalTrading.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/blockTrade.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOrOutOnly.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOut.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/rollInPoint.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/rollOutPoint.html" afterDir="false" />
+    <list default="true" id="a90609e4-7a89-43d9-9541-decbe39a1fc1" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugoncommon/src/main/java/com/sugon/iris/sugoncommon/ipAddress/IPSeeker.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugoncommon/src/main/java/com/sugon/iris/sugoncommon/ipAddress/IPSeeker.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sugoncommon/src/main/java/com/sugon/iris/sugoncommon/publicUtils/PublicUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugoncommon/src/main/java/com/sugon/iris/sugoncommon/publicUtils/PublicUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileCaseMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2/FileCaseMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2xml/FileCaseMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db2xml/FileCaseMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileCaseServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileCaseServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileDataGroupDetailServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileDataGroupDetailServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileDataGroupServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileDataGroupServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/service/fileService/FileCaseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/service/fileService/FileCaseService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/file/FileCaseController.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/file/FileCaseController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db4/CasePersonnelInfoMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db4/CasePersonnelInfoMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db4/JymxMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db4/JymxMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/TradingBean.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/TradingBean.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/abnormalTrading/TradingEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/abnormalTrading/TradingEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/statisticsServiceImpl/StatisticsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/statisticsServiceImpl/StatisticsServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOrOutOnly.html" beforeDir="false" afterPath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOrOutOnly.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOut.html" beforeDir="false" afterPath="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOut.html" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -96,8 +73,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="1747" column="46" selection-start-line="1747" selection-start-column="31" selection-end-line="1747" selection-end-column="46" />
+            <state relative-caret-position="119">
+              <caret line="1785" column="47" lean-forward="true" selection-start-line="1785" selection-start-column="47" selection-end-line="1785" selection-end-column="47" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
                 <element signature="n#style#0;n#li#1;n#ol#0;n#!!top" expanded="true" />
@@ -109,102 +86,97 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/abnormalTrading.html">
+        <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/statisticsServiceImpl/StatisticsServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="73" column="37" lean-forward="true" selection-start-line="71" selection-start-column="28" selection-end-line="73" selection-end-column="37" />
+            <state relative-caret-position="246">
+              <caret line="246" column="19" selection-start-line="246" selection-start-column="19" selection-end-line="246" selection-end-column="19" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/abnormalTrading/TradingEntity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="243">
+              <caret line="9" column="42" selection-start-line="9" selection-start-column="42" selection-end-line="9" selection-end-column="42" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/TradingBean.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="567">
+              <caret line="45" column="33" selection-start-line="45" selection-start-column="19" selection-end-line="45" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOrOutOnly.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="232">
+              <caret line="75" column="97" selection-start-line="75" selection-start-column="97" selection-end-line="75" selection-end-column="97" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#strong#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#strong#0;n#label#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#strong#0;n#button#0;n#td#3;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#strong#0;n#button#0;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#strong#0;n#button#0;n#td#5;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#strong#0;n#button#0;n#td#6;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#strong#0;n#button#0;n#td#7;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#strong#0;n#div#0;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#0;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#src#0;n#img#0;n#div#0;n#div#0;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#2;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#0;n#div#2;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#strong#0;n#button#0;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#2;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#3;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#strong#0;n#label#0;n#div#0;n#div#0;n#div#3;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#0;n#div#3;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#3;n#div#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOrOutOnly.html">
+        <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOut.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="104" column="30" selection-start-line="104" selection-start-column="30" selection-end-line="104" selection-end-column="30" />
+            <state relative-caret-position="2619">
+              <caret line="97" column="10" selection-start-line="97" selection-start-column="10" selection-end-line="97" selection-end-column="10" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#1;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#strong#0;n#button#0;n#td#3;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#strong#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#1;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#1;n#div#0;n#div#2;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#1;n#div#1;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#strong#0;n#div#0;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#div#0;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#src#0;n#img#0;n#div#0;n#div#0;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#strong#0;n#button#0;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#2;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/statisticsServiceImpl/StatisticsServiceImpl.java">
+        <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/rollInPoint.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="149" selection-start-line="149" selection-end-line="149" />
+            <state relative-caret-position="849">
+              <caret line="54" column="6" lean-forward="true" selection-start-line="7" selection-end-line="54" selection-end-column="6" />
               <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/statistics/StatisticsController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="265">
-              <caret line="112" column="62" selection-start-line="112" selection-start-column="62" selection-end-line="112" selection-end-column="62" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/service/statisticsService/StatisticsService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="29" column="45" selection-start-line="29" selection-start-column="45" selection-end-line="29" selection-end-column="45" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/CasePersonnelInfoDto.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
-              <caret line="18" column="62" selection-start-line="18" selection-start-column="39" selection-end-line="18" selection-end-column="62" />
-              <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#1;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -213,8 +185,39 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/CasePersonnelInfoBean.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="675">
-              <caret line="25" column="28" selection-start-line="25" selection-start-column="19" selection-end-line="25" selection-end-column="28" />
+            <state relative-caret-position="-27">
+              <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/rollOutPoint.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="313">
+              <caret line="15" column="128" selection-start-line="15" selection-start-column="122" selection-end-line="15" selection-end-column="128" />
+              <folding>
+                <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#input#1;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/CasePersonnelInfoDto.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="442">
+              <caret line="20" column="7" lean-forward="true" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="7" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -235,11 +238,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>mcgcController</find>
-      <find>ruleModalIfram</find>
-      <find>yyyy</find>
-      <find>_IdCardNo</find>
-      <find>rinse_business_Phone</find>
       <find>/menu/getSiderBarMenu</find>
       <find>margin</find>
       <find>std_per_tydlpt_t_sys_user_core</find>
@@ -255,7 +253,6 @@
       <find>/dataMerge</find>
       <find>dataMergeController</find>
       <find>blockTradeDetail</find>
-      <find>tradingType</find>
       <find>abnormalTradingController</find>
       <find>app.blockTrade</find>
       <find>.remove</find>
@@ -265,6 +262,12 @@
       <find>未加入该用户组用户列表</find>
       <find>app.inOut</find>
       <find>app.inOnly</find>
+      <find>if (this == o) return true</find>
+      <find>tradingType</find>
+      <find>/getInOrOutOnly</find>
+      <find>app.inOrOutOnly</find>
+      <find>inOrOutOnlyController</find>
+      <find>receiptsOrPaid</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -291,7 +294,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/system/AccountResource.java" />
         <option value="$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/system/IndexController.java" />
         <option value="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/rocketMqServiceImpl/DealWithCrawlerServiceImpl.java" />
         <option value="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/PoliceInfoEntity.java" />
@@ -314,15 +316,12 @@
         <option value="$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/file/FileCaseController.java" />
         <option value="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileCaseServiceImpl.java" />
         <option value="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/abnormalTrading/CasePersonnelInfoEntity.java" />
-        <option value="$PROJECT_DIR$/sugoncommon/src/main/java/com/sugon/iris/sugoncommon/publicUtils/PublicUtils.java" />
         <option value="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileDataGroupServiceImpl.java" />
         <option value="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileDataGroupDetailServiceImpl.java" />
         <option value="$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/statistics/blockTradeController.java" />
         <option value="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/CasePersonnelInfoBean.java" />
         <option value="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/JymxBean.java" />
-        <option value="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/TradingBean.java" />
         <option value="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/TradingDto.java" />
-        <option value="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/abnormalTrading/TradingEntity.java" />
         <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/blockTrade.html" />
         <option value="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/casePersonnelServiceImpl/CasePersonnelInfoServiceImpl.java" />
         <option value="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/service/casePersonnelInfoService/CasePersonnelInfoService.java" />
@@ -331,17 +330,21 @@
         <option value="$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/statistics/BlockTradeController.java" />
         <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/rollInPoint.html" />
         <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/rollOutPoint.html" />
-        <option value="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db4/CasePersonnelInfoMapper.java" />
         <option value="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/InOutDto.java" />
-        <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOut.html" />
         <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOnly.html" />
         <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/abnormalTrading.html" />
-        <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js" />
         <option value="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/CasePersonnelInfoDto.java" />
         <option value="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/service/statisticsService/StatisticsService.java" />
+        <option value="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db4/JymxMapper.java" />
+        <option value="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/TradingBean.java" />
+        <option value="$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/abnormalTrading/TradingEntity.java" />
+        <option value="$PROJECT_DIR$/sugoncommon/src/main/java/com/sugon/iris/sugoncommon/publicUtils/PublicUtils.java" />
         <option value="$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/statistics/StatisticsController.java" />
+        <option value="$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db4/CasePersonnelInfoMapper.java" />
         <option value="$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/statisticsServiceImpl/StatisticsServiceImpl.java" />
+        <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js" />
         <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOrOutOnly.html" />
+        <option value="$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOut.html" />
       </list>
     </option>
   </component>
@@ -1302,8 +1305,8 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1495,13 +1498,13 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Application.StatisticsServiceImpl" />
       <item itemvalue="JUnit.ipAddressTest.testIp" />
       <item itemvalue="JUnit.phoneNoTest.testPhoneNO" />
       <item itemvalue="JUnit.SugonwebApplicationTests.caLongInTest" />
       <item itemvalue="Spring Boot.SugonfilerestApplication" />
       <item itemvalue="Spring Boot.SugonrestApplication" />
       <item itemvalue="Spring Boot.SugonwebApplication" />
-      <item itemvalue="Application.StatisticsServiceImpl" />
     </list>
     <recent_temporary>
       <list>
@@ -1629,14 +1632,9 @@
       <workItem from="1641881102044" duration="2673000" />
       <workItem from="1641886843988" duration="4745000" />
       <workItem from="1641892173500" duration="57092000" />
-      <workItem from="1642746556748" duration="200072000" />
-    </task>
-    <task id="LOCAL-00098" summary="数据清洗">
-      <created>1635519430528</created>
-      <option name="number" value="00098" />
-      <option name="presentableId" value="LOCAL-00098" />
-      <option name="project" value="LOCAL" />
-      <updated>1635519430528</updated>
+      <workItem from="1642746556748" duration="201087000" />
+      <workItem from="1644158818051" duration="138000" />
+      <workItem from="1644159226402" duration="23282000" />
     </task>
     <task id="LOCAL-00099" summary="数据清洗">
       <created>1635655205134</created>
@@ -1974,7 +1972,14 @@
       <option name="project" value="LOCAL" />
       <updated>1641891741414</updated>
     </task>
-    <option name="localTasksCounter" value="147" />
+    <task id="LOCAL-00147" summary="系统日志优化">
+      <created>1644158572097</created>
+      <option name="number" value="00147" />
+      <option name="presentableId" value="LOCAL-00147" />
+      <option name="project" value="LOCAL" />
+      <updated>1644158572100</updated>
+    </task>
+    <option name="localTasksCounter" value="148" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -2010,7 +2015,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5544978000" />
+    <option name="totallyTimeSpent" value="5569413000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -2023,7 +2028,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-5" y="-5" width="1930" height="1028" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Image Layers" order="0" />
       <window_info id="Capture Tool" order="1" />
@@ -2032,9 +2036,9 @@
       <window_info id="Web" order="4" sideWeight="0.50652176" side_tool="true" weight="0.30247578" />
       <window_info id="Designer" order="5" />
       <window_info id="Structure" order="6" sideWeight="0.50652176" side_tool="true" weight="0.30247578" />
-      <window_info content_ui="combo" id="Project" order="7" sideWeight="0.8322368" weight="0.35791174" />
+      <window_info active="true" content_ui="combo" id="Project" order="7" sideWeight="0.8322368" visible="true" weight="0.27556512" />
       <window_info anchor="bottom" id="Terminal" order="0" sideWeight="0.4994618" weight="0.3292232" />
-      <window_info anchor="bottom" id="Messages" order="1" sideWeight="0.49892357" weight="0.28483355" />
+      <window_info anchor="bottom" id="Messages" order="1" sideWeight="0.49892357" weight="0.21824908" />
       <window_info anchor="bottom" id="Run Dashboard" order="2" sideWeight="0.57104415" weight="0.36621454" />
       <window_info anchor="bottom" id="Spring" order="3" sideWeight="0.4994618" weight="0.3292232" />
       <window_info anchor="bottom" id="Docker" order="4" show_stripe_button="false" />
@@ -2045,10 +2049,10 @@
       <window_info anchor="bottom" id="Application Servers" order="9" weight="0.3292232" />
       <window_info anchor="bottom" id="Message" order="10" />
       <window_info anchor="bottom" id="Find" order="11" sideWeight="0.4994618" weight="0.40197286" />
-      <window_info anchor="bottom" id="Run" order="12" weight="0.1972873" />
+      <window_info anchor="bottom" id="Run" order="12" weight="0.4130703" />
       <window_info anchor="bottom" id="Cvs" order="13" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="14" weight="0.4" />
-      <window_info anchor="bottom" id="Debug" order="15" sideWeight="0.4962325" weight="0.45252773" />
+      <window_info anchor="bottom" id="Debug" order="15" sideWeight="0.4962325" weight="0.4130703" />
       <window_info anchor="bottom" id="TODO" order="16" sideWeight="0.4994618" weight="0.3292232" />
       <window_info anchor="bottom" id="Problems" order="17" sideWeight="0.4994618" weight="0.3292232" />
       <window_info anchor="right" id="Coverage" order="0" sideWeight="0.5010101" side_tool="true" weight="0.26910657" />
@@ -2073,9 +2077,9 @@
       <window_info id="Web" order="4" sideWeight="0.50652176" side_tool="true" weight="0.30247578" />
       <window_info id="Designer" order="5" />
       <window_info id="Structure" order="6" sideWeight="0.50652176" side_tool="true" weight="0.30247578" />
-      <window_info content_ui="combo" id="Project" order="7" sideWeight="0.8322368" weight="0.35791174" />
+      <window_info content_ui="combo" id="Project" order="7" sideWeight="0.8322368" weight="0.27556512" />
       <window_info anchor="bottom" id="Terminal" order="0" sideWeight="0.4994618" weight="0.3292232" />
-      <window_info active="true" anchor="bottom" id="Messages" order="1" sideWeight="0.49892357" visible="true" weight="0.28483355" />
+      <window_info anchor="bottom" id="Messages" order="1" sideWeight="0.49892357" weight="0.21824908" />
       <window_info anchor="bottom" id="Run Dashboard" order="2" sideWeight="0.57104415" weight="0.36621454" />
       <window_info anchor="bottom" id="Spring" order="3" sideWeight="0.4994618" weight="0.3292232" />
       <window_info anchor="bottom" id="Docker" order="4" show_stripe_button="false" />
@@ -2086,10 +2090,10 @@
       <window_info anchor="bottom" id="Application Servers" order="9" weight="0.3292232" />
       <window_info anchor="bottom" id="Message" order="10" />
       <window_info anchor="bottom" id="Find" order="11" sideWeight="0.4994618" weight="0.40197286" />
-      <window_info anchor="bottom" id="Run" order="12" weight="0.1972873" />
+      <window_info anchor="bottom" id="Run" order="12" weight="0.4130703" />
       <window_info anchor="bottom" id="Cvs" order="13" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="14" weight="0.4" />
-      <window_info anchor="bottom" id="Debug" order="15" sideWeight="0.4962325" weight="0.45252773" />
+      <window_info active="true" anchor="bottom" id="Debug" order="15" sideWeight="0.4962325" visible="true" weight="0.4130703" />
       <window_info anchor="bottom" id="TODO" order="16" sideWeight="0.4994618" weight="0.3292232" />
       <window_info anchor="bottom" id="Problems" order="17" sideWeight="0.4994618" weight="0.3292232" />
       <window_info anchor="right" id="Coverage" order="0" sideWeight="0.5010101" side_tool="true" weight="0.26910657" />
@@ -2305,74 +2309,10 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/file/fileImportCount.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="25" column="148" lean-forward="true" selection-start-line="25" selection-start-column="130" selection-end-line="25" selection-end-column="148" />
-          <folding>
-            <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/vendor/jqcloud2/dist/jqcloud.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="256">
-          <caret line="145" column="49" selection-start-line="145" selection-start-column="49" selection-end-line="145" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugoncommon/src/main/java/com/sugon/iris/sugoncommon/publicUtils/PublicUtils.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="52" column="48" selection-start-line="52" selection-start-column="48" selection-end-line="52" selection-end-column="48" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileDataGroupDetailServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1350">
-          <caret line="50" column="34" selection-start-line="50" selection-start-column="34" selection-end-line="50" selection-end-column="34" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileDataGroupServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="33" column="25" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileCaseServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="146" column="104" lean-forward="true" selection-start-line="145" selection-start-column="12" selection-end-line="146" selection-end-column="104" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/file/FileCaseController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1674">
           <caret line="131" column="50" selection-start-line="131" selection-start-column="50" selection-end-line="131" selection-end-column="50" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db4/JymxMapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="7" column="17" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -2463,19 +2403,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/rollInPoint.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="577">
-          <caret line="54" column="6" lean-forward="true" selection-start-line="7" selection-end-line="54" selection-end-column="6" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#1;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/CentrostigmaDto.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="162">
@@ -2486,45 +2413,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/abnormalTrading/CasePersonnelInfoEntity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="6" column="51" selection-start-line="6" selection-start-column="51" selection-end-line="6" selection-end-column="51" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/fileServiceImpl/FileDoParsingServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="148">
           <caret line="1103" column="13" selection-start-line="1103" selection-start-column="8" selection-end-line="1103" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/blockTrade.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="64" column="89" selection-start-line="64" selection-start-column="89" selection-end-line="64" selection-end-column="89" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#strong#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#form#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#strong#0;n#div#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#src#0;n#img#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2576,30 +2468,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db4/CasePersonnelInfoMapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="38" column="31" selection-start-line="38" selection-start-column="31" selection-end-line="38" selection-end-column="31" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/math/BigDecimal.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="310">
           <caret line="1287" column="36" selection-start-line="1287" selection-start-column="36" selection-end-line="1287" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/abnormalTrading/TradingEntity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="6" column="42" selection-start-line="6" selection-start-column="42" selection-end-line="6" selection-end-column="42" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2613,13 +2485,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/TradingBean.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="20" column="30" selection-start-line="20" selection-start-column="19" selection-end-line="20" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/InOutDto.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
@@ -2628,39 +2493,6 @@
             <element signature="imports" expanded="true" />
             <element signature="e#291#292#0" expanded="true" />
             <element signature="e#336#337#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOut.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="86" column="22" selection-start-line="86" selection-start-column="20" selection-end-line="86" selection-end-column="22" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#strong#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#1;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/rollOutPoint.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="15" column="128" selection-start-line="15" selection-start-column="122" selection-end-line="15" selection-end-column="128" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#1;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -2700,60 +2532,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/CasePersonnelInfoBean.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="675">
-          <caret line="25" column="28" selection-start-line="25" selection-start-column="19" selection-end-line="25" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="1747" column="46" selection-start-line="1747" selection-start-column="31" selection-end-line="1747" selection-end-column="46" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-            <element signature="n#style#0;n#li#1;n#ol#0;n#!!top" expanded="true" />
-            <element signature="e#328#334#0" expanded="true" />
-            <element signature="e#17#24#1" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/service/statisticsService/StatisticsService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="29" column="45" selection-start-line="29" selection-start-column="45" selection-end-line="29" selection-end-column="45" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/statistics/StatisticsController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="112" column="62" selection-start-line="112" selection-start-column="62" selection-end-line="112" selection-end-column="62" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/statisticsServiceImpl/StatisticsServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="149" selection-start-line="149" selection-end-line="149" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/abnormalTrading.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="73" column="37" lean-forward="true" selection-start-line="71" selection-start-column="28" selection-end-line="73" selection-end-column="37" />
+        <state relative-caret-position="1971">
+          <caret line="73" column="37" selection-start-line="71" selection-start-column="28" selection-end-line="73" selection-end-column="37" />
           <folding>
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -2773,39 +2555,261 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/CasePersonnelInfoDto.java">
+    <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/service/statisticsService/StatisticsService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="18" column="62" selection-start-line="18" selection-start-column="39" selection-end-line="18" selection-end-column="62" />
+        <state relative-caret-position="675">
+          <caret line="29" column="45" selection-start-line="29" selection-start-column="45" selection-end-line="29" selection-end-column="45" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOrOutOnly.html">
+    <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db4/JymxMapper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="104" column="30" selection-start-line="104" selection-start-column="30" selection-end-line="104" selection-end-column="30" />
+        <state relative-caret-position="523">
+          <caret line="52" selection-start-line="52" selection-end-line="52" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/calculate/JymxEntity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/fileBeans/FileTemplateGroupBean.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1161">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db2/FileTemplateGroupEntity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="11" selection-start-line="11" selection-end-line="24" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_131/src.zip!/java/util/List.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="355" column="12" selection-start-line="355" selection-start-column="12" selection-end-line="355" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugoncommon/src/main/java/com/sugon/iris/sugoncommon/publicUtils/PublicUtils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="206" column="22" lean-forward="true" selection-start-line="206" selection-start-column="22" selection-end-line="206" selection-end-column="22" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/abnormalTrading/CasePersonnelInfoEntity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="6" column="56" lean-forward="true" selection-start-line="6" selection-start-column="56" selection-end-line="6" selection-end-column="56" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/java/com/sugon/iris/sugonweb/statistics/StatisticsController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="91">
+          <caret line="103" column="36" selection-start-line="103" selection-start-column="22" selection-end-line="103" selection-end-column="36" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugondata/src/main/java/com/sugon/iris/sugondata/mybaties/mapper/db4/CasePersonnelInfoMapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="80">
+          <caret line="19" column="72" selection-start-line="19" selection-start-column="68" selection-end-line="19" selection-end-column="72" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/blockTrade.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="64" column="89" selection-start-line="64" selection-start-column="89" selection-end-line="64" selection-end-column="89" />
           <folding>
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#strong#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#form#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#strong#0;n#div#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#src#0;n#img#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/system/pageRegister.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="15" column="113" selection-start-line="15" selection-start-column="93" selection-end-line="15" selection-end-column="113" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/rollInPoint.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="849">
+          <caret line="54" column="6" lean-forward="true" selection-start-line="7" selection-end-line="54" selection-end-column="6" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#1;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/rollOutPoint.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="313">
+          <caret line="15" column="128" selection-start-line="15" selection-start-column="122" selection-end-line="15" selection-end-column="128" />
+          <folding>
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#1;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#div#2;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#strong#0;n#button#0;n#td#3;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/CasePersonnelInfoBean.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-27">
+          <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/dtos/abnormalTradingDtos/CasePersonnelInfoDto.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="20" column="7" lean-forward="true" selection-start-line="20" selection-start-column="7" selection-end-line="20" selection-end-column="7" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/js/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="1785" column="47" lean-forward="true" selection-start-line="1785" selection-start-column="47" selection-end-line="1785" selection-end-column="47" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="n#style#0;n#li#1;n#ol#0;n#!!top" expanded="true" />
+            <element signature="e#328#334#0" expanded="true" />
+            <element signature="e#17#24#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonservice/src/main/java/com/sugon/iris/sugonservice/impl/statisticsServiceImpl/StatisticsServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="246">
+          <caret line="246" column="19" selection-start-line="246" selection-start-column="19" selection-end-line="246" selection-end-column="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/entities/mybatiesEntity/db4/abnormalTrading/TradingEntity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="9" column="42" selection-start-line="9" selection-start-column="42" selection-end-line="9" selection-end-column="42" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugondomain/src/main/java/com/sugon/iris/sugondomain/beans/abnormalTradingBeans/TradingBean.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="567">
+          <caret line="45" column="33" selection-start-line="45" selection-start-column="19" selection-end-line="45" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOrOutOnly.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="232">
+          <caret line="75" column="97" selection-start-line="75" selection-start-column="97" selection-end-line="75" selection-end-column="97" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#strong#0;n#label#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#div#2;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#1;n#div#1;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#strong#0;n#div#0;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
             <element signature="n#src#0;n#img#0;n#div#0;n#div#0;n#div#2;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#2;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#div#2;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#strong#0;n#button#0;n#td#4;n#tr#0;n#tbody#0;n#table#0;n#div#1;n#div#2;n#div#2;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#3;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#strong#0;n#label#0;n#div#0;n#div#0;n#div#3;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#div#3;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#3;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sugonweb/src/main/resources/static/app/views/statistics/inOut.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2619">
+          <caret line="97" column="10" selection-start-line="97" selection-start-column="10" selection-end-line="97" selection-end-column="10" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#strong#0;n#label#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#1;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#div#1;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>

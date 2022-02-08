@@ -50,4 +50,5 @@ public interface JymxMapper {
     //修改交易账号
     @Update("update ${tableName} set  jyzh=#{jyzh}  where id=#{id}")
     public int UpdateJyzh(String tableName,String jyzh,Long id);
+
 }

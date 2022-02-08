@@ -14,8 +14,8 @@ import com.sugon.iris.sugonservice.service.statisticsService.StatisticsService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -141,14 +141,127 @@ public class StatisticsServiceImpl implements StatisticsService {
      */
     @Override
     public List<CasePersonnelInfoDto> getInOrOutOnly(Long userId, Long caseId, List<Error> errorList) {
-
+        List<CasePersonnelInfoDto> casePersonnelInfoDtoList = new ArrayList<>();
         String  tableName_zhxx = "base_bank_zhxx_"+caseId+"_"+userId;
         String  tableName_jymx = "base_bank_jymx_"+caseId+"_"+userId;
         //通过案件编号获取案件下的人员信息
         List<CasePersonnelInfoEntity> casePersonnelInfoEntityList  = casePersonnelInfoMapper.getCasePersonnelInfo4InOut(tableName_zhxx);
-        List<CasePersonnelInfoDto> casePersonnelInfoDtoList = new ArrayList<>();
 
-        return null;
+        if(CollectionUtils.isEmpty(casePersonnelInfoEntityList)){
+           return casePersonnelInfoDtoList;
+        }
+        //key:账号accountNo，value：人员信息
+        Map<String,CasePersonnelInfoEntity> map = new HashMap<>();
+        for(CasePersonnelInfoEntity bean : casePersonnelInfoEntityList){
+            map.put(bean.getAccountNo(),bean);
+        }
+
+        //获取该案件的  按jyzh,sfbz,jydszh分类后的其中一条数据,并且把满足要求的数据全部加载到内存
+        List<TradingEntity> tradingEntityList = casePersonnelInfoMapper.selectTradingEntityClassifyBySfbz(tableName_jymx);
+
+        List<TradingEntity> tradingEntityList4OnlyIn = new ArrayList<>();
+        List<TradingEntity> tradingEntityList4OnlyOut = new ArrayList<>();
+        //进行分类
+        for(CasePersonnelInfoEntity casePersonnelInfoEntity : casePersonnelInfoEntityList){
+
+            //1.1交易明细分成两类，一类相对于选定账户为只出不进，另一类相对于选定账户为只进不出
+            for(TradingEntity TradingEntity : tradingEntityList){
+               if(casePersonnelInfoEntity.getAccountNo().equals(TradingEntity.getReciprocalAccount())){
+                   if("出".equals(TradingEntity.getReceiptsOrPaid())){
+                       tradingEntityList4OnlyIn.add(TradingEntity);
+                   }else if("进".equals(TradingEntity.getReceiptsOrPaid())){
+                       tradingEntityList4OnlyOut.add(TradingEntity);
+                   }
+               }
+            }
+        }
+
+        List<TradingEntity> tradingEntityList4OnlyInCopy = PublicUtils.deepCopy(tradingEntityList4OnlyIn);
+        tradingEntityList4OnlyIn.removeAll(tradingEntityList4OnlyOut);
+
+        tradingEntityList4OnlyOut.removeAll(tradingEntityList4OnlyInCopy);
+
+        for(CasePersonnelInfoEntity casePersonnelInfoEntity : casePersonnelInfoEntityList){
+
+            List<CasePersonnelInfoDto> casePersonnelInfoInList = new ArrayList<>();
+            List<CasePersonnelInfoDto> casePersonnelInfoOutList = new ArrayList<>();
+
+            for(TradingEntity in :  tradingEntityList4OnlyIn){
+                if(casePersonnelInfoEntity.getAccountNo().equals(in.getReciprocalAccount())){
+
+                    if(PublicUtils.trans(map.get(in.getAccountNo()),new CasePersonnelInfoDto()).getAccountNo() == null){
+                        CasePersonnelInfoDto casePersonnelInfoDto = new CasePersonnelInfoDto();
+                        casePersonnelInfoDto.setAccountNo(in.getAccountNo());
+                        casePersonnelInfoInList.add(casePersonnelInfoDto);
+                    }else{
+                        casePersonnelInfoInList.add(PublicUtils.trans(map.get(in.getAccountNo()),new CasePersonnelInfoDto()));
+                    }
+                }
+            }
+
+            for(TradingEntity out :  tradingEntityList4OnlyOut){
+                if(casePersonnelInfoEntity.getAccountNo().equals(out.getReciprocalAccount())){
+                    if(PublicUtils.trans(map.get(out.getAccountNo()),new CasePersonnelInfoDto()).getAccountNo() == null){
+                        CasePersonnelInfoDto casePersonnelInfoDto = new CasePersonnelInfoDto();
+                        casePersonnelInfoDto.setAccountNo(out.getAccountNo());
+                        casePersonnelInfoOutList.add(casePersonnelInfoDto);
+                    }else {
+                        casePersonnelInfoOutList.add(PublicUtils.trans(map.get(out.getAccountNo()),new CasePersonnelInfoDto()));
+                    }
+                }
+            }
+
+            if(!CollectionUtils.isEmpty(casePersonnelInfoInList) || !CollectionUtils.isEmpty(casePersonnelInfoOutList)){
+                CasePersonnelInfoDto casePersonnelInfoDto = new CasePersonnelInfoDto();
+                PublicUtils.trans(casePersonnelInfoEntity,casePersonnelInfoDto);
+                casePersonnelInfoDto.setCasePersonnelInfoInList(casePersonnelInfoInList);
+                casePersonnelInfoDto.setCasePersonnelInfoOutList(casePersonnelInfoOutList);
+                casePersonnelInfoDtoList.add(casePersonnelInfoDto);
+            }
+
+        }
+
+        return casePersonnelInfoDtoList;
+    }
+
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+
+        List<TradingEntity> tradingEntityList4OnlyIn = new ArrayList<>();
+        List<TradingEntity> tradingEntityList4OnlyOut = new ArrayList<>();
+
+        TradingEntity tradingEntity_01 = new TradingEntity();
+        tradingEntity_01.setAccountNo("111");
+        tradingEntity_01.setReciprocalAccount("222");
+        tradingEntity_01.setReceiptsOrPaid("进");
+
+        TradingEntity tradingEntity_03 = new TradingEntity();
+        tradingEntity_03.setAccountNo("111a");
+        tradingEntity_03.setReciprocalAccount("222");
+        tradingEntity_03.setReceiptsOrPaid("进");
+
+        TradingEntity tradingEntity_02 = new TradingEntity();
+        tradingEntity_02.setAccountNo("111");
+        tradingEntity_02.setReciprocalAccount("222");
+        tradingEntity_02.setReceiptsOrPaid("出");
+
+        TradingEntity tradingEntity_04 = new TradingEntity();
+        tradingEntity_04.setAccountNo("111b");
+        tradingEntity_04.setReciprocalAccount("222");
+        tradingEntity_04.setReceiptsOrPaid("出");
+
+        tradingEntityList4OnlyIn.add(tradingEntity_01);
+        tradingEntityList4OnlyIn.add(tradingEntity_03);
+        tradingEntityList4OnlyOut.add(tradingEntity_02);
+        tradingEntityList4OnlyOut.add(tradingEntity_04);
+
+        List<TradingEntity> tradingEntityList4OnlyInBak = PublicUtils.deepCopy(tradingEntityList4OnlyIn);
+
+        tradingEntityList4OnlyIn.removeAll(tradingEntityList4OnlyOut);
+
+        System.out.println("--差集--" +tradingEntityList4OnlyIn);
+
+        tradingEntityList4OnlyOut.removeAll(tradingEntityList4OnlyInBak);
+        System.out.println("--差集--" +tradingEntityList4OnlyOut);
     }
 
     private void inOutPoint(List<TradingEntity> tradingEntityList, List<InOutDto> inOutList, long interval, BigDecimal offset) throws Exception{
