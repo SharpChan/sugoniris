@@ -1,11 +1,11 @@
 /*!
- * 
+ *
  * Angle - Bootstrap Admin App + AngularJS
- * 
+ *
  * Author: @themicon_co
  * Website: http://themicon.co
  * License: http://support.wrapbootstrap.com/knowledge_base/topics/usage-licenses
- * 
+ *
  */
 
 if (typeof $ === 'undefined') {
@@ -124,6 +124,30 @@ App.config(['$stateProvider', '$locationProvider', '$urlRouterProvider', 'RouteH
                 url: '/xxlJob',
                 title: 'xxlJob',
                 templateUrl: helper.basepath('actualCenter/xxlJob.html'),
+                resolve: helper.resolveFor('flot-chart', 'flot-chart-plugins', 'datatables', 'ui.select')
+            })
+            .state('app.xxlJob_yxbb', {
+                url: '/xxlJob_yxbb',
+                title: 'xxlJob_yxbb',
+                templateUrl: helper.basepath('actualCenter/xxlJob_yxbb.html'),
+                resolve: helper.resolveFor('flot-chart', 'flot-chart-plugins', 'datatables', 'ui.select')
+            })
+            .state('app.xxlJob_rwgl', {
+                url: '/xxlJob_rwgl',
+                title: 'xxlJob_rwgl',
+                templateUrl: helper.basepath('actualCenter/xxlJob_rwgl.html'),
+                resolve: helper.resolveFor('flot-chart', 'flot-chart-plugins', 'datatables', 'ui.select')
+            })
+            .state('app.xxlJob_ddrz', {
+                url: '/xxlJob_ddrz',
+                title: 'xxlJob_ddrz',
+                templateUrl: helper.basepath('actualCenter/xxlJob_ddrz.html'),
+                resolve: helper.resolveFor('flot-chart', 'flot-chart-plugins', 'datatables', 'ui.select')
+            })
+            .state('app.xxlJob_zxqgl', {
+                url: '/xxlJob_zxqgl',
+                title: 'xxlJob_zxqgl',
+                templateUrl: helper.basepath('actualCenter/xxlJob_zxqgl.html'),
                 resolve: helper.resolveFor('flot-chart', 'flot-chart-plugins', 'datatables', 'ui.select')
             })
             .state('app.dataMerge', {
@@ -1731,7 +1755,89 @@ App.controller("dataMergeController", function ($http, $timeout, $scope,
 });
 
 App.controller("abnormalTradingController", function ($http, $timeout, $scope, $state, myservice) {
+    const data = {
+        title:'案件信息',
+        menus:[
+            {
+                title: '',
 
+            },
+            {
+                title: '',
+            },
+            {
+                title: '',
+            },
+            {
+                title: '异常交易行为统计',
+                id:1,
+
+                menus: [
+                    {
+                        title: '大额交易',
+                        id:2,
+                    },
+                    {
+                        title: '只进不出账号',
+                        id:3,
+                    },
+                    {
+                        title: '只出不进账号',
+                        id:4,
+                    },
+                    {
+                        title: '快进快出交易点',
+                        id:5,
+                    },
+                    {
+                        title: '集中开支点',
+                        id:6,
+                    },
+                    {
+                        title: '集中转入点',
+                        id:7,
+                    }
+                ]
+            }, {
+                title: '',
+            },
+            {
+                title: '',
+            },
+        ]
+    }
+    for(var i = 0;i<data.menus.length;i++){
+        if(data.menus[i].title){
+            data.menus[i].click=function(e,data){
+                console.log(data);
+            }
+            for(var j = 0;j<data.menus[i].menus.length;j++){
+                if(data.menus[i].menus[j].title){
+                    data.menus[i].menus[j].click=function(e,data){
+                        console.log(data);
+                    }
+                }
+            }
+        }
+    }
+    var ele = document.querySelector('#circle-menu1');
+    var cmenu = CMenu(ele)
+        .config({
+            hideAfterClick:false,
+            totalAngle: 360,//deg,
+            spaceDeg: 1,//deg
+            background: "#003FC7",
+            backgroundHover: "#189DE3",
+            //pageBackground: "#52be7f",
+            percent: 0.32,//%
+            diameter: 300,//px
+            // position: 'top',
+            // horizontal: true,
+            //start: -45,//deg
+            menus: data.menus
+        });
+    cmenu.show()
+    $('.cn-menu-title').html(data.title)
     $("#pleaseWait").hide();
     //登录和锁定校验
     myservice.loginLockCheck();
@@ -7510,24 +7616,51 @@ App.controller('LoginFormController', ['$scope', '$http', '$state', '$cookieStor
         window.location.href = url;
     }
 }]);
-App.controller('HomeController', ['$scope','$state', function ($scope,$state) {
-        $(".home-body-item").on('click',function(e) {
-            console.log($(this).attr('type'))
-            switch ($(this).attr('type')) {
-                case 'item1':
-                    $state.go('app.fileUpload');
-                    break;
-                case 'item2':
-                    window.open('http://192.168.2.108:8080/sdm_web_war/index.jsp?userName=system&password=3c33c5db746c4c066b9faa398a895e77')
-                    break;
-                case 'item3':
-                    window.open('http://50.73.68.61:8666/sdm/index.jsp?userName=Sysadmin&password=11111111')
-                    break;
-                case 'item4':
-                    $state.go('app.dictionary');
-                    break;
-            }
-        })
+App.controller('HomeController', ['$scope','$http','$state', function ($scope,$http,$state) {
+    $('#logOut').click(function () {
+        $http
+            .post('api/account/logOut')
+            .success(function (data) {
+                // assumes if ok, response is an object with some data, if not, a string with error
+                // customize according to your api
+                $state.go('page.login');
+
+            }, function (x) {
+                alert('Server Request Error');
+            });
+    })
+    $("#goPtgl").click(function(){
+        $state.go('app.checkUser');
+    })
+    // $scope.logout=function () {
+    //     $http
+    //         .post('api/account/logOut')
+    //         .success(function (data) {
+    //             // assumes if ok, response is an object with some data, if not, a string with error
+    //             // customize according to your api
+    //             $state.go('page.login');
+    //
+    //         }, function (x) {
+    //             alert('Server Request Error');
+    //         });
+    // };
+    $(".home-body-item").on('click',function(e) {
+        console.log($(this).attr('type'))
+        switch ($(this).attr('type')) {
+            case 'item1':
+                $state.go('app.fileUpload');
+                break;
+            case 'item2':
+                window.open('http://192.168.2.108:8080/sdm_web_war/index.jsp?userName=system&password=3c33c5db746c4c066b9faa398a895e77')
+                break;
+            case 'item3':
+                window.open('http://50.73.68.61:8666/sdm/index.jsp?userName=Sysadmin&password=11111111')
+                break;
+            case 'item4':
+                $state.go('app.dictionary');
+                break;
+        }
+    })
 }]);
 
 App.controller('UnlockFormController', function ($scope, $http, $state, myservice) {

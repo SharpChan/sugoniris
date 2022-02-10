@@ -424,7 +424,7 @@ fieldset .form-group {
  ========================================================================== */
 body {
   font-family: "Source Sans Pro", sans-serif;
-  color: #656565;
+  color:  #656565;
 }
 h1,
 h2,
@@ -490,7 +490,7 @@ body {
   margin-left: 0;
   z-index: 111;
   background-color: #f5f7fa;
-  margin-bottom: 60px !important;
+  margin-bottom: 0px !important;
 }
 .wrapper > footer {
   position: absolute;
@@ -729,7 +729,7 @@ body {
   .layout-fixed .wrapper > section {
     margin-top: 100px;
     background: transparent;
-    height:calc( 100vh - 180px );
+    height:calc( 100vh - 100px );
     overflow: auto;
   }
 }
@@ -8675,7 +8675,7 @@ ul.ColVis_collection > li > label {
   margin: 0;
 }
 ul.ColVis_collection > li > label > span {
-  color: #888;
+  color: #fff;
   vertical-align: top;
   font-weight: normal;
 }
@@ -8783,14 +8783,14 @@ body .dataTables_wrapper .dataTables_filter,
 body .dataTables_wrapper .dataTables_info,
 body .dataTables_wrapper .dataTables_processing,
 body .dataTables_wrapper .dataTables_paginate {
-  color: #888;
+  color: #fff;
 }
 /* ========================================================================
    Component: table-extras.less
  ========================================================================== */
 .table > thead > tr > th {
   padding: 14px 8px;
-  color: #888;
+  color: #fff;
 }
 .table > tbody > tr > td {
   vertical-align: middle;

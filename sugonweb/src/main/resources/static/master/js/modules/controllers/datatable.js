@@ -33,7 +33,6 @@ App.controller('DataTableController', ['$scope', '$resource', 'DTOptionsBuilder'
       "lastName": "Skywalker"
     }
   ];
-
   $scope.dtOptions = DTOptionsBuilder.newOptions().withPaginationType('full_numbers');
   $scope.dtColumnDefs = [
       DTColumnDefBuilder.newColumnDef(0),

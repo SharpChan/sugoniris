@@ -95,6 +95,7 @@ $(function(){
     $('.datatable').each(function(){
         var datatable = $(this);
         // SEARCH - Add the placeholder for Search and Turn this into in-line formcontrol
+        debugger;
         var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
         search_input.attr('placeholder', 'Search')
         search_input.addClass('form-control input-small')

@@ -1,0 +1,87 @@
+spring:
+
+  datasource:
+    ds1: #数据源1 jdbcTemplate
+      driver-class-name: com.mysql.cj.jdbc.Driver # mysql的驱动你可以配置别的关系型数据库
+      url: jdbc:mysql://192.168.102.141:3309/iris?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true #数据源地址
+      #url: jdbc:mysql://192.168.217.140:3306/iris?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT
+      username: root
+      password: root123
+
+  jackson:
+     date-format: yyyy-MM-dd HH:mm:ss
+     time-zone: GMT+8
+
+
+#mybatis
+datasource:
+  druid:
+    #连接建模平台
+    db1:
+      driverClassName: com.mysql.cj.jdbc.Driver
+      username: root
+      password: root
+      jdbc-url: jdbc:mysql://192.168.217.140:3306/jianmo3.3.1?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+      type: com.alibaba.druid.pool.DruidDataSource
+      initialSize: 5
+      minIdle: 2
+      maxActive: 20
+      validationQuery: SELECT 1 from dual
+      testWhileIdle: true
+      testOnBorrow: true
+      testOnReturn: false
+      maxWait: 60000
+      filters: stat,slf4j #wall,
+
+    #连接本地数据库
+    db2:
+      driverClassName: com.mysql.cj.jdbc.Driver
+      username: root
+      password: root123
+      jdbc-url: jdbc:mysql://192.168.102.141:3309/iris?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+      type: com.alibaba.druid.pool.DruidDataSource
+      initialSize: 20
+      minIdle: 2
+      maxActive: 100
+      validationQuery: SELECT 1 from dual
+      testWhileIdle: true
+      testOnBorrow: true
+      testOnReturn: false
+      maxWait: 600000
+      filters: stat,slf4j #wall,
+
+    #备用
+    db3:
+      driverClassName: com.mysql.jdbc.Driver
+      username: root
+      password: root123
+      jdbc-url: jdbc:mysql://192.168.102.141:3309/dzzoffice?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+      type: com.alibaba.druid.pool.DruidDataSource
+      initialSize: 20
+      minIdle: 2
+      maxActive: 100
+      validationQuery: SELECT 1 from dual
+      testWhileIdle: true
+      testOnBorrow: true
+      testOnReturn: false
+      maxWait: 6000
+      filters: stat,slf4j #wall,
+    #连接华为mpp
+    db4:
+      driverClassName: org.postgresql.Driver
+      #username: postgres
+      #password: 123456
+      #jdbc-url: jdbc:postgresql://192.168.217.140:5432/iris?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+      username: gaussdb
+      password: Shuguang_szga
+      jdbc-url: jdbc:postgresql://192.168.217.137:20001/postgres?useUnicode=true&characterEncoding=utf-8
+      type: com.alibaba.druid.pool.DruidDataSource
+      initialSize: 20
+      minIdle: 2
+      maxActive: 100
+      validationQuery: SELECT 1 as a
+      testWhileIdle: true
+      testOnBorrow: true
+      testOnReturn: false
+      maxWait: 6000000
+      filters: stat,slf4j #wall,

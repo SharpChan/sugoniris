@@ -343,6 +343,7 @@ html, body {
     > .aside {
       &, > .aside-inner {
         width: $aside-wd-collapsed;
+        background: #000;
       }
       > .nav-floating {
         margin-left: $aside-wd-collapsed;
