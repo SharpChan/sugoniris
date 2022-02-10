@@ -169,6 +169,22 @@ public class FileCaseServiceImpl implements FileCaseService {
     }
 
     @Override
+    public FileCaseDto selectCaseListByCaseIdOrCaseName(FileCaseDto fileCaseDto, List<Error> errorList) {
+        FileCaseEntity fileCaseEntity = PublicUtils.trans(fileCaseDto,new FileCaseEntity());
+        List<FileCaseEntity> caseList = fileCaseMapper.selectFileCaseEntityList( fileCaseEntity);
+        if(CollectionUtils.isEmpty(caseList)){
+            errorList.add(new Error(ErrorCode_Enum.SUGON_01_013.getCode(),ErrorCode_Enum.SUGON_01_013.getMessage()));
+            return null;
+        }else if(caseList.size()>1){
+            errorList.add(new Error(ErrorCode_Enum.SUGON_01_014.getCode(),ErrorCode_Enum.SUGON_01_014.getMessage()));
+            return null;
+        }else{
+            return PublicUtils.trans(caseList.get(0),new FileCaseDto());
+        }
+    }
+
+
+    @Override
     public List<FileCaseDto> selectFileCaseEntityListHasTable(Long userId, List<Error> errorList) throws IllegalAccessException {
         List<FileCaseDto> fileCaseDtoList = new ArrayList<>();
         List<FileCaseEntity> fileCaseEntityList =  fileCaseMapper.selectFileCaseEntityListHasTable(userId);

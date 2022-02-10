@@ -1754,8 +1754,14 @@ App.controller("dataMergeController", function ($http, $timeout, $scope,
     }
 });
 
-App.controller("abnormalTradingController", function ($http, $timeout, $scope, $state, myservice) {
-    const data = {
+App.controller("abnormalTradingController", function ($http, $timeout, $scope,$state,$rootScope, myservice) {
+
+    //登录和锁定校验
+    myservice.loginLockCheck();
+
+    $scope.caseId='';
+
+    $scope.data = {
         title:'案件信息',
         menus:[
             {
@@ -1770,32 +1776,28 @@ App.controller("abnormalTradingController", function ($http, $timeout, $scope, $
             },
             {
                 title: '异常交易行为统计',
-                id:1,
+                id: '0100',
 
                 menus: [
                     {
                         title: '大额交易',
-                        id:2,
-                    },
-                    {
-                        title: '只进不出账号',
-                        id:3,
-                    },
-                    {
-                        title: '只出不进账号',
-                        id:4,
-                    },
-                    {
-                        title: '快进快出交易点',
-                        id:5,
-                    },
-                    {
-                        title: '集中开支点',
-                        id:6,
+                        id: '0101',
                     },
                     {
                         title: '集中转入点',
-                        id:7,
+                        id: '0102',
+                    },
+                    {
+                        title: '集中转出点',
+                        id: '0103',
+                    },
+                    {
+                        title: '快进快出交易点',
+                        id: '0104',
+                    },
+                    {
+                        title: '只进不出或只出不进',
+                        id: '0105',
                     }
                 ]
             }, {
@@ -1806,15 +1808,29 @@ App.controller("abnormalTradingController", function ($http, $timeout, $scope, $
             },
         ]
     }
-    for(var i = 0;i<data.menus.length;i++){
-        if(data.menus[i].title){
-            data.menus[i].click=function(e,data){
-                console.log(data);
+    for(var i = 0;i<$scope.data.menus.length;i++){
+        if($scope.data.menus[i].title){
+            $scope.data.menus[i].click=function(e,data){
+                //console.log('1:'+data);
             }
-            for(var j = 0;j<data.menus[i].menus.length;j++){
-                if(data.menus[i].menus[j].title){
-                    data.menus[i].menus[j].click=function(e,data){
-                        console.log(data);
+            for(var j = 0;j<$scope.data.menus[i].menus.length;j++){
+                if($scope.data.menus[i].menus[j].title){
+                    $scope.data.menus[i].menus[j].click=function(e,data){
+                        if('0101'==data.id){
+                            $scope.blockTrade($scope.caseId);
+                        }
+                        if('0102'==data.id){
+                            $scope.rollInPoint($scope.caseId);
+                        }
+                        if('0103'==data.id){
+                            $scope.rollOutPoint($scope.caseId);
+                        }
+                        if('0104'==data.id){
+                            $scope.inOut($scope.caseId);
+                        }
+                        if('0105'==data.id){
+                            $scope.inOrOutOnly($scope.caseId);
+                        }
                     }
                 }
             }
@@ -1834,14 +1850,43 @@ App.controller("abnormalTradingController", function ($http, $timeout, $scope, $
             // position: 'top',
             // horizontal: true,
             //start: -45,//deg
-            menus: data.menus
+            menus: $scope.data.menus
         });
-    cmenu.show()
-    $('.cn-menu-title').html(data.title)
-    $("#pleaseWait").hide();
-    //登录和锁定校验
-    myservice.loginLockCheck();
+    cmenu.hide();
+    $('.cn-menu-title').html($scope.data.title);
 
+    $scope.query = function () {
+        //根据案件编号和案件名称，查询案件
+        var params = {
+            caseNo: $scope.caseNo,
+            caseName: $scope.caseName
+        }
+        var url = "/fileCase/getCasesByCaseIdOrCaseName";
+        $http.post(url,params).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+
+            if(temp.obj){
+                cmenu.show();
+                $rootScope.caseNo_abnormalTrading = $scope.caseNo;
+            }else{
+                cmenu.hide();
+                return;
+            }
+
+            $('.cn-menu-title').html(temp.obj.caseName);
+            $scope.caseId = temp.obj.id;
+        }).error(function (data) {
+            alert("会话已经断开或者检查网络是否正常！");
+        });
+    }
+
+    if(!$scope.caseNo && $rootScope.caseNo_abnormalTrading){
+        $scope.caseNo = $rootScope.caseNo_abnormalTrading
+        $scope.query();
+    }
+
+    /*
     $scope.query = function () {
         var url = "/fileCase/queryFileCaseEntityListHasTable";
 
@@ -1854,8 +1899,7 @@ App.controller("abnormalTradingController", function ($http, $timeout, $scope, $
             alert("会话已经断开或者检查网络是否正常！");
         });
     }
-
-    $scope.query();
+    */
 
     //大额交易
     $scope.blockTrade = function (id) {

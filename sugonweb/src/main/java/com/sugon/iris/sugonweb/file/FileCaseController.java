@@ -77,6 +77,30 @@ public class FileCaseController {
         return restResult;
     }
 
+    @PostMapping("/getCasesByCaseIdOrCaseName")
+    @BussLog
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiImplicitParam(name = "fileCaseDto", value = "案件信息")
+    @ApiOperation(value = "通过案件编号获取案件")
+    public RestResult<FileCaseDto> getCasesByCaseIdOrCaseName(@CurrentUser User user, @RequestBody FileCaseDto fileCaseDto){
+        RestResult<FileCaseDto> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        fileCaseDto.setUserId(user.getId());
+        try{
+            restResult.setObj(fileCaseServiceImpl.selectCaseListByCaseIdOrCaseName(fileCaseDto,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
     @PostMapping("/queryFileCaseEntityListHasTable")
     @BussLog
     @LogInCheck(doLock = true,doProcess = true)

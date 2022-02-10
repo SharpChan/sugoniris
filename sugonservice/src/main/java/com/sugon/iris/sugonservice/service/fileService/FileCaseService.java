@@ -15,6 +15,8 @@ public interface FileCaseService {
 
     List<FileCaseDto> selectCaseList(FileCaseDto fileCaseDto,List<Error> errorList) throws IllegalAccessException;
 
+    FileCaseDto selectCaseListByCaseIdOrCaseName(FileCaseDto fileCaseDto,List<Error> errorList);
+
     List<FileCaseDto> selectFileCaseEntityListHasTable(Long userId,List<Error> errorList) throws IllegalAccessException;
 
     Integer deleteCase(User user,String[] arr,boolean flag,List<Error> errorList) throws IllegalAccessException;
