@@ -282,7 +282,7 @@
                             <div class="form-inline">
                                <!--内部左边-->
                                 <div style="margin-left:5px;width: 48%;vertical-align: top;" class="input-group panel Qpanel-content-noborder">
-                                    <div  class="panel-body">
+                                    <div  class="panel-body Qpanel-content">
                                         <div class="panel-heading  topnavbar">
                                             <strong style="color: #FFF">目标模板</strong>
                                             <div align="right" style="margin-top:10px;">
@@ -313,7 +313,7 @@
                                 </div>
                                 <!--内部右边-->
                                 <div style="margin-left:5px;width: 48%;vertical-align: top;" class="input-group panel Qpanel-content-noborder">
-                                    <div  class="panel-body">
+                                    <div  class="panel-body Qpanel-content">
                                         <div class="panel-heading  topnavbar">
                                             <strong style="color: #FFF">源模板</strong>
                                             <div align="right" style="margin-top:10px;">
@@ -349,19 +349,17 @@
             </div>
         </div>
     </div>
-    <div id = "modifySortNoDiv" class="panel panel-primary" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 250px; z-index: 9999;">
-        <div id = "modifySortNoDivheader" class="panel-heading topnavbar">
+    <div id = "modifySortNoDiv" class="panel panel-primary Qdialog" style="top: 150px; left: 300px; position: absolute; width: 300px; height: 250px; z-index: 9999;">
+        <div id = "modifySortNoDivheader" class="panel-heading topnavbar Qdialog-header">
             修改排序编号
-            <input type="button" value="关闭" style="margin-left:200px" class="btn btn-info" ng-click="closeModifySortNoDiv();" >
         </div>
         <div class="panel-body">
             <div  class="form-group" style="top: 20px;width: 250px" >
-                <span>请填写排序编号<input placeholder="必填" class="form-control" type="text" ng-change="mod_sortNoChange();" ng-model="mod_sortNo"></span>
+                <span>请填写排序编号<input placeholder="必填" class="form-control Qinput" type="text" ng-change="mod_sortNoChange();" ng-model="mod_sortNo"></span>
             </div>
-            <div  class="form-group" style="top: 100px;width: 250px" >
-                <div align="right" style="margin-top:20px">
-                    <input type="button" value="修改"  class="btn btn-primary topnavbar" ng-click="modifySortNo();">
-                </div>
+            <div  class="form-group Qdialog-footer" style="top: 100px;width: 250px" >
+                <input type="button" value="修改"  class="btn btn-default" ng-click="modifySortNo();">
+                <input type="button" value="关闭" style="margin-left:20px" class="btn btn-danger" ng-click="closeModifySortNoDiv();" >
             </div>
         </div>
     </div>

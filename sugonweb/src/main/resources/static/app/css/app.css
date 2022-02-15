@@ -424,7 +424,7 @@ fieldset .form-group {
  ========================================================================== */
 body {
   font-family: "Source Sans Pro", sans-serif;
-  color:  #656565;
+  color:  #fff;
 }
 h1,
 h2,
@@ -8770,7 +8770,7 @@ body table.dataTable.row-border tbody td,
 body table.dataTable.display tbody th,
 body table.dataTable.display tbody td {
   border-top-color:  rgba(255,255,255,0.12);
-  color:rgba(255,255,255,0.65);
+  color:rgba(255,255,255,1);
 }
 body table.dataTable tbody tr:nth-child(odd),
 body table.dataTable.hover tbody tr:hover,
@@ -11289,4 +11289,18 @@ table.dataTable thead{
 }
 .label-blue{
   background: #2B4ACB;
+}
+.page .page-r ul li:hover{
+  background: #2B4ACB !important;
+  color:#fff;
+}
+.page .page-r ul li a{
+  color:#fff !important;
+}
+.page .page-r ul li a.active{
+  background-color: #1F48D3 !important;
+}
+.page .page-r ul li{
+  border:1px solid #1F48D3 !important;
+  background: rgba(43,74,203,0.20) !important;
 }
