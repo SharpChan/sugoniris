@@ -1529,6 +1529,7 @@ App.controller("xxljobController", function ($http, $timeout, $scope, $sce,
 
 })
 
+
 App.controller("dataMergeController", function ($http, $timeout, $scope,
                                                 myservice) {
 
@@ -7660,7 +7661,40 @@ App.controller('LoginFormController', ['$scope', '$http', '$state', '$cookieStor
         window.location.href = url;
     }
 }]);
-App.controller('HomeController', ['$scope','$http','$state', function ($scope,$http,$state) {
+App.controller('HomeController', ['$scope','$http','$state','myservice','$sce', function ($scope,$http,$state,myservice,$sce) {
+
+    //登录和锁定校验
+    myservice.loginLockCheck();
+
+    var url = '/actualCenter/getMcgcUrl';
+    var sdm_url = '/actualCenter/getSdmUrl';
+    var dataSrc = '';
+    var sdmSrc = 'http://50.73.68.61:8666/sdm/index.jsp?userName=Sysadmin&password=11111111';
+    $scope.skip = function () {
+        $('.hide').removeClass('hide'); // 打开模态框
+        $http.post(url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            dataSrc = data.obj;
+            dataSrc = $sce.trustAsResourceUrl(dataSrc);
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+
+        $http.post(sdm_url).success(function (data) {
+            var jsonString = angular.toJson(data);
+            var temp = angular.fromJson(jsonString);
+            myservice.errors(temp);
+            sdmSrc = data.obj;
+            sdmSrc = $sce.trustAsResourceUrl(sdmSrc);
+        }).error(function (data) {
+            alert("请检查必填项是否填写！");
+        });
+
+    }
+    $scope.skip();
+
     $('#logOut').click(function () {
         $http
             .post('api/account/logOut')
@@ -7689,16 +7723,17 @@ App.controller('HomeController', ['$scope','$http','$state', function ($scope,$h
     //         });
     // };
     $(".home-body-item").on('click',function(e) {
-        console.log($(this).attr('type'))
+        console.log(dataSrc);
         switch ($(this).attr('type')) {
             case 'item1':
                 $state.go('app.fileUpload');
                 break;
             case 'item2':
-                window.open('http://192.168.2.108:8080/sdm_web_war/index.jsp?userName=system&password=3c33c5db746c4c066b9faa398a895e77')
+                //window.open('http://192.168.2.108:8080/sdm_web_war/index.jsp?userName=system&password=3c33c5db746c4c066b9faa398a895e77')
+                window.open(dataSrc)
                 break;
             case 'item3':
-                window.open('http://50.73.68.61:8666/sdm/index.jsp?userName=Sysadmin&password=11111111')
+                window.open(sdmSrc)
                 break;
             case 'item4':
                 $state.go('app.dictionary');
@@ -13133,19 +13168,20 @@ App.directive('treeView2', [function () {
 
             //递归把已勾选的所有父节点进行勾选,并找出新增勾选
             function doCheck(item, allNode) {
+
+                doCheckFather(item, allNode)
+                doCheckChildren(item, allNode);
+
+            }
+
+            function doCheckFather(item, allNode) {
                 //把父亲勾上
                 angular.forEach(allNode, function (e) {
-                    if (e.id == item.fatherId) {
-                        if (e.isChecked == null || e.isChecked == undefined || e.isChecked == false) {
-                            //newNodeAdd.push(e);
-                        }
+                    if (e.id && e.id== item.fatherId) {
                         e.isChecked = true;
-                        if (e.id) {
-                            doCheck(e, allNode);
-                        }
+                            doCheckFather(e, allNode);
                     }
                 });
-                doCheckChildren(item, allNode);
             }
 
             function doCheckChildren(item, allNode) {
@@ -13346,21 +13382,21 @@ App.directive('treeView', [function () {
             //角色新增节点
             var newNodeAdd = [];
 
-            //递归把已勾选的所有父节点进行勾选,并找出新增勾选
             function doCheck(item, allNode) {
+                doCheckFather(item, allNode);
+                doCheckChildren(item, allNode)
+            }
+
+            //递归把已勾选的所有父节点进行勾选,并找出新增勾选
+            function doCheckFather(item, allNode) {
                 //把父亲勾上
                 angular.forEach(allNode, function (e) {
-                    if (e.id == item.fatherId) {
-                        if (e.isChecked == null || e.isChecked == undefined || e.isChecked == false) {
-                            newNodeAdd.push(e);
-                        }
+                    if (e.id && e.id == item.fatherId) {
                         e.isChecked = true;
-                        if (e.id) {
-                            doCheck(e, allNode);
-                        }
+                        doCheckFather(e, allNode);
                     }
                 });
-                doCheckChildren(item, allNode);
+                //doCheckChildren(item, allNode);
             }
 
             function doCheckChildren(item, allNode) {
@@ -13380,7 +13416,6 @@ App.directive('treeView', [function () {
                             }
                         });
                     }
-
                 });
             }
 

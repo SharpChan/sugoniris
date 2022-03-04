@@ -1,0 +1,25 @@
+spring:
+  redis:
+    database: 0
+    host: 192.168.102.141
+    password: root
+    port: 6379
+  application:
+    name: sogonFileRest
+
+server:
+  port: 8093
+
+#定时任务调度
+xxl:
+  job:
+    admin:
+    #addresses: http://127.0.0.1:8080/xxl-job-admin
+    executor:
+      address:
+      ip:
+      #port: 9999
+      logpath: /home/centos/logs/xxl-job/jobhandler
+      logretentiondays: -1
+      appname: ams-training-xxl-job
+    accessToken:

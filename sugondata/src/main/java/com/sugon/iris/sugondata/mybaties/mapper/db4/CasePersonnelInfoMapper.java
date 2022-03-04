@@ -10,9 +10,9 @@ public interface CasePersonnelInfoMapper {
 
     //获取超交易金额阈值的账号
     @Select("select zhkhmc accountName,khrzjhm idNo,jykh cardId,jyzh accountNo, " +
-            "(select count(*) from ${tableName_jymx} c where to_number(c.jyje,'99999999999.99')  >= ${threshold} and a.khrzjhm = c.jyzjhm) as blockTradeQuantity "+
+            "(select count(*) from ${tableName_jymx} c where to_number(c.jyje,'99999999999.99')  >= ${threshold} and c.jyje ~ '^-?([0-9]+|[0-9]{1,3}(,[0-9]{3})*)*(.[0-9]{1,2})?$' and a.khrzjhm = c.jyzjhm) as blockTradeQuantity "+
             "from ${tableName_zhxx} a " +
-            "where exists (select * from ${tableName_jymx} b where to_number(b.jyje,'99999999999.99')  >= ${threshold} and a.khrzjhm = b.jyzjhm);")
+            "where exists (select * from ${tableName_jymx} b where to_number(b.jyje,'99999999999.99')  >= ${threshold} and b.jyje ~ '^-?([0-9]+|[0-9]{1,3}(,[0-9]{3})*)*(.[0-9]{1,2})?$' and a.khrzjhm = b.jyzjhm);")
     public List<CasePersonnelInfoEntity> getCasePersonnelInfo(String  tableName_zhxx,String  tableName_jymx,String threshold );
 
 
@@ -27,7 +27,7 @@ public interface CasePersonnelInfoMapper {
             "jyje tradingAmount,jyye tradingBalance,sfbz receiptsOrPaid," +
             "jydszh reciprocalAccount,dshm reciprocalName, " +
             "dssfzh reciprocalIdNo,dskhyh reciprocalBank,jybz currency,jylx tradingType " +
-            "from ${tableName_jymx} where jykh = ${cardId} and to_number(jyje,'999999999.99')  >= ${threshold};")
+            "from ${tableName_jymx} where jykh = '${cardId}' and to_number(jyje,'999999999.99')  >= ${threshold}  and jyje ~ '^-?([0-9]+|[0-9]{1,3}(,[0-9]{3})*)*(.[0-9]{1,2})?$' ;")
     public List<TradingEntity> getTradingDetail(String  tableName_jymx, String threshold, String cardId );
 
     //通过证件号获取交易明细

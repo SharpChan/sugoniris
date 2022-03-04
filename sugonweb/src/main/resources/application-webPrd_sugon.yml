@@ -1,0 +1,36 @@
+spring:
+  thymeleaf:
+    prefix: classpath:/static/
+    mode: LEGACYHTML5
+    encoding: utf-8
+    suffix: .html
+    cache: false
+  session:
+    store-type: redis
+  redis:
+    database: 0
+    host: 192.168.102.141
+    password: root
+    port: 6379
+  servlet:
+    multipart:
+      max-file-size: 2048MB
+      max-request-size: 4000MB
+  application:
+    name: sogonWeb
+server:
+  port: 8090
+
+#定时任务调度
+xxl:
+  job:
+    admin:
+    #addresses: http://127.0.0.1:8080/xxl-job-admin
+    executor:
+      address:
+      ip:
+      #port: 9999
+      logpath: /home/centos/logs/xxl-job/jobhandler
+      logretentiondays: -1
+      appname: ams-training-xxl-job
+    accessToken:

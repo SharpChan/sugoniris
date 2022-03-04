@@ -4,9 +4,9 @@ spring:
     ds1: #数据源1 jdbcTemplate
       driver-class-name: com.mysql.cj.jdbc.Driver # mysql的驱动你可以配置别的关系型数据库
       #url: jdbc:mysql://172.18.10.1:3306/iris?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true #数据源地址
-      url: jdbc:mysql://172.18.10.1:3306/iris?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT
+      url: jdbc:mysql://192.168.102.141:3309/iris?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
       username: root
-      password: E9T9E9TPU5
+      password: root123
 
   jackson:
      date-format: yyyy-MM-dd HH:mm:ss
@@ -18,12 +18,12 @@ datasource:
       db1:
         driverClassName: com.mysql.cj.jdbc.Driver
         username: root
-        password: root@123
-        jdbc-url: jdbc:mysql://50.73.68.61:3306/fangzhousdm?useUnicode=true&characterEncoding=utf8
+        password: root123
+        jdbc-url: jdbc:mysql://192.168.102.141:3309/fangzhousdm?useUnicode=true&characterEncoding=utf8
         type: com.alibaba.druid.pool.DruidDataSource
-        initialSize: 10
+        initialSize: 2
         minIdle: 2
-        maxActive: 50
+        maxActive: 10
         validationQuery: SELECT 1 from dual
         testWhileIdle: true
         testOnBorrow: true
@@ -33,12 +33,12 @@ datasource:
       db2:
         driverClassName: com.mysql.jdbc.Driver
         username: root
-        password: E9T9E9TPU5
-        jdbc-url: jdbc:mysql://172.18.10.1:3306/iris?useUnicode=true&characterEncoding=utf8
+        password: root123
+        jdbc-url: jdbc:mysql://192.168.102.141:3309/iris?useUnicode=true&characterEncoding=utf8
         type: com.alibaba.druid.pool.DruidDataSource
-        initialSize: 10
+        initialSize: 2
         minIdle: 2
-        maxActive: 50
+        maxActive: 10
         validationQuery: SELECT 1 from dual
         testWhileIdle: true
         testOnBorrow: true
@@ -50,8 +50,8 @@ datasource:
       db3:
         driverClassName: com.mysql.jdbc.Driver
         username: root
-        password: E9T9E9TPU5
-        jdbc-url: jdbc:mysql://172.18.10.1:3306/iris?useUnicode=true&characterEncoding=utf8
+        password: root123
+        jdbc-url: jdbc:mysql://192.168.102.141:3309/iris?useUnicode=true&characterEncoding=utf8
         type: com.alibaba.druid.pool.DruidDataSource
         initialSize: 2
         minIdle: 2
@@ -65,13 +65,13 @@ datasource:
           #连接华为mpp
       db4:
         driverClassName: org.postgresql.Driver
-        username: shuguang
-        password: Shuguang_szga
-        jdbc-url: jdbc:postgresql://50.73.126.6:20001/szga_edw?useUnicode=true&characterEncoding=utf-8
+        username: joe
+        password: Bigdata@123
+        jdbc-url: jdbc:postgresql://192.168.102.153:25308/db_tpcds?useUnicode=true&characterEncoding=utf-8
         type: com.alibaba.druid.pool.DruidDataSource
-        initialSize: 10
+        initialSize: 2
         minIdle: 2
-        maxActive: 50
+        maxActive: 10
         validationQuery: SELECT 1 as a
         testWhileIdle: true
         testOnBorrow: true

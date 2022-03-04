@@ -88,7 +88,7 @@ public class IndexController {
         }else {
             session.setMaxInactiveInterval(Integer.parseInt(PublicUtils.getConfigMap().get("systemExpiration")) * 60);
         }
-        response.sendRedirect("http://50.73.71.248:8090/#/app/dashboard");
+        response.sendRedirect("http://50.73.71.248:8090/#/page/home");
     }
 
     @ApiOperation(value = "ca用户登录")

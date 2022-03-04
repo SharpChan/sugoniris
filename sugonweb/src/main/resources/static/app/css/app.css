@@ -1356,7 +1356,7 @@ body {
   padding-left: 53px;
   font-weight: normal;
   background-color: transparent !important;
-  color: #515253;
+  color: #fff;
 }
 .sidebar-subnav > li > a:focus,
 .sidebar-subnav > li > .nav-item:focus,

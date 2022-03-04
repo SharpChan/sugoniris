@@ -45,4 +45,48 @@ public class ActualCenterController {
         }
         return restResult;
     }
+
+    @PostMapping("/getSdmUrl")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取天网url地址")
+    public RestResult<String> getSdmUrl(@CurrentUser User user){
+        RestResult<String> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(PublicUtils.getConfigMap().get("sdm-url"));
+            //restResult.setObj(PublicUtils.getConfigMap().get("mcgc-url")+"index.jsp?userName="+"Sysadmin"+"&password="+"1bbd886460827015e5d605ed44252251");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("操作失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("操作成功");
+        }
+        return restResult;
+    }
+
+    @PostMapping("/getXxlJobUrl")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "获取天网url地址")
+    public RestResult<String> getXxlJobUrl(@CurrentUser User user){
+        RestResult<String> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(PublicUtils.getConfigMap().get("xxlJob-url"));
+            //restResult.setObj(PublicUtils.getConfigMap().get("mcgc-url")+"index.jsp?userName="+"Sysadmin"+"&password="+"1bbd886460827015e5d605ed44252251");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("操作失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("操作成功");
+        }
+        return restResult;
+    }
 }
