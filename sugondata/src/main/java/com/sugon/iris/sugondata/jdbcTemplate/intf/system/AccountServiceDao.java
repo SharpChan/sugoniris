@@ -12,6 +12,8 @@ public interface AccountServiceDao {
 
     List<UserEntity> getUserEntitysForCheck(String keyWord,Integer flag, List<Error> errorList);
 
+    List<UserEntity> getUserEntityIsEconomic(List<Error> errorList);
+
     int insertAccount(UserEntity user, List<Error> errorList);
 
     int update (UserEntity user, List<Error> errorList);

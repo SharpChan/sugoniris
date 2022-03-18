@@ -195,7 +195,7 @@ public class CommonConfigurationListener implements ServletContextListener {
 
         //读取ip数据
         String src = "";
-        if (PublicUtils.getConfigMap().get("environment").equals("1")){
+        if (System.getProperty("os.name").toLowerCase().contains("win")){
             src = "C:\\dat";
         } else{
             src = "/usr/local/services/dat";

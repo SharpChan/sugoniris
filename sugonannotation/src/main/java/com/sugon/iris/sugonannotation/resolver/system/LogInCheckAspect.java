@@ -55,7 +55,7 @@ public class LogInCheckAspect {
 
         Object[] args = pjp.getArgs();
         if(null == obj){
-             restResult.setFlag("FAILED");
+            restResult.setFlag("FAILED");
             errorSet.add(new Error(ErrorCode_Enum.SYS_00_000.getCode(),ErrorCode_Enum.SYS_00_000.getMessage()));
         }else if(obj.isLocked() && logInCheck.doLock()){
             restResult.setFlag("FAILED");

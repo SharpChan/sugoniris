@@ -50,7 +50,7 @@
         (select * from file_data_group_detail b
         where
         a.id = b.user_id
-        and b.file_data_group_id=#{groupId}
+        <!--and b.file_data_group_id=#{groupId}-->
         )
     </select>
 

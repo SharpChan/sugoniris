@@ -79,6 +79,28 @@ public class AccountServiceDaoImpl implements AccountServiceDao {
         return  userEntityList;
     }
 
+    /**
+     * 获取角色为经侦的用户
+     */
+    public List<UserEntity> getUserEntityIsEconomic(List<Error> errorList){
+        List<UserEntity>  userEntityList = null;
+        try{
+            String sql = "select distinct a.* from sys_user a,sys_user_group_detail b ,sys_user_group c ,sys_group_role d,sys_role e\n" +
+                    "             where a.id = b.user_id \n" +
+                    "               and b.user_group_id = c.id\n" +
+                    "               and c.id = d.group_id\n" +
+                    "               and d.role_id = e.id\n" +
+                    "               and e.role_name like '%经侦%'\n" +
+                    "               and flag = '1'";
+
+            userEntityList = ds1JdbcTemplate.query(sql,new BeanPropertyRowMapper<>(UserEntity.class));
+        }catch(Exception e){
+            LOGGER.info("{}-{}","查询所有经侦用户失败",e);
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"查询user表出错",e.toString()));
+        }
+        return  userEntityList;
+    }
+
 
     /**
      * 插入用户自信息

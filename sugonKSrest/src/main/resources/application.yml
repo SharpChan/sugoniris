@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    #生产环境
+    #active: restPrd,annoRestPrd,commonRestPrd,dataRestPrd,domainRestPrd,serviceRestPrd
+    #测试环境
+    active: rest,anno,common,data,domain,service

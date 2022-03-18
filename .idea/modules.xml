@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/sugonKSrest/sugonKSrest.iml" filepath="$PROJECT_DIR$/sugonKSrest/sugonKSrest.iml" />
       <module fileurl="file://$PROJECT_DIR$/sugonannotation/sugonannotation.iml" filepath="$PROJECT_DIR$/sugonannotation/sugonannotation.iml" />
       <module fileurl="file://$PROJECT_DIR$/sugoncommon/sugoncommon.iml" filepath="$PROJECT_DIR$/sugoncommon/sugoncommon.iml" />
       <module fileurl="file://$PROJECT_DIR$/sugondata/sugondata.iml" filepath="$PROJECT_DIR$/sugondata/sugondata.iml" />

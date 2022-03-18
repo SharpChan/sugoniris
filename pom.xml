@@ -17,6 +17,7 @@
         <module>sugonlistener</module>
         <module>sugonfilerest</module>
         <module>sugonrest</module>
+        <module>sugonKSrest</module>
         <module>sugonweb</module>
     </modules>
     <groupId>com.sugon.iris.sugoniris</groupId>

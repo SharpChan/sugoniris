@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="sugonannotation" />
         <module name="sugonfilerest" />
+        <module name="sugonKSrest" />
         <module name="sugondomain" />
         <module name="sugondata" />
         <module name="sugonlistener" />
@@ -26,6 +27,7 @@
       <module name="sugondomain" target="1.8" />
       <module name="sugonfilerest" target="1.8" />
       <module name="sugoniris" target="1.8" />
+      <module name="sugonKSrest" target="1.8" />
       <module name="sugonlistener" target="1.8" />
       <module name="sugonrest" target="1.8" />
       <module name="sugonservice" target="1.8" />
@@ -35,6 +37,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="sugonKSrest" options="-parameters" />
       <module name="sugonannotation" options="-parameters" />
       <module name="sugoncommon" options="-parameters" />
       <module name="sugondao" options="-parameters" />

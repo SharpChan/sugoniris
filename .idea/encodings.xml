@@ -2,6 +2,7 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/sugonKSrest" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sugonannotation" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sugoncommon" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/sugondata" charset="UTF-8" />
