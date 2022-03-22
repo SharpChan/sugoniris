@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db1.JM_t_model_local_tableMapper" >
+
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db1.JM_t_model_local_tableEntity" >
+        <result column="ID" property="id" jdbcType="INTEGER" />
+        <result column="TABLENAME" property="tableName" jdbcType="VARCHAR" />
+        <result column="FILENAME" property="fileName" jdbcType="VARCHAR" />
+        <result column="IMPORTSTATUS" property="importStatus" jdbcType="INTEGER" />
+        <result column="CREATE_TIME" property="modelType" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+         `ID`,
+         `TABLENAME`,
+         `FILENAME`,
+         `IMPORTSTATUS`,
+         `CREATE_TIME`
+    </sql>
+
+
+    <select id="queryAllModelLocalTable" resultMap="BaseResultMap"  >
+        select
+        <include refid="Base_Column_List" />
+        from
+        t_model_local_table
+        where
+        user_id = #{userId}
+    </select>
+
+    <!--批量插入-->
+    <insert id="batchTModelLocalTableInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into t_system_user
+        (<include refid="Base_Column_List" />)
+        values
+        <foreach collection="jM_t_system_userEntityList" item="item" index="i" separator=",">
+            (
+            #{item.id,jdbcType=BIGINT},
+            #{item.tableName,jdbcType=VARCHAR},
+            #{item.fileName,jdbcType=VARCHAR},
+            #{item.importStatus,jdbcType=BIGINT},
+            #{item.createTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+    
+</mapper>

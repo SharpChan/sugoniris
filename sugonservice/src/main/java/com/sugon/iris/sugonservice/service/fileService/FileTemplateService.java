@@ -1,16 +1,11 @@
 package com.sugon.iris.sugonservice.service.fileService;
 
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
-import com.sugon.iris.sugondomain.beans.shengTing.ShanghaiMinhangBean;
-import com.sugon.iris.sugondomain.beans.shengTing.ShanghaikeyunBean;
-import com.sugon.iris.sugondomain.beans.shengTing.base.StResponse;
 import com.sugon.iris.sugondomain.beans.system.User;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto4Txt;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 public interface FileTemplateService {
@@ -31,11 +26,4 @@ public interface FileTemplateService {
 
     boolean importTemplateTxt(MultipartFile file, User user, List<Error> errorList) throws IllegalAccessException;
 
-    List<StResponse>  getKyxx(String cardId,String minRownum,String maxRownum);
-
-    List<StResponse> getMinHanxx(String cardId, String minRownum, String maxRownum);
-
-    List<StResponse<List<ShanghaiMinhangBean>>> getMinHanxxByExcel(List<MultipartFile> files) throws Exception;
-
-    List<StResponse<List<ShanghaikeyunBean>>> getKeyunByExcel(List<MultipartFile> files) throws Exception;
 }

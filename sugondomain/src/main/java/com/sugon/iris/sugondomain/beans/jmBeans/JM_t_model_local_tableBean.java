@@ -1,7 +1,6 @@
 package com.sugon.iris.sugondomain.beans.jmBeans;
 
 import lombok.Data;
-
 import java.sql.Timestamp;
 
 @Data
@@ -11,9 +10,9 @@ public class JM_t_model_local_tableBean {
 
     private String tableName;
 
-    private String fileName;
+    private String fileName="同步数据";
 
-    private Integer importStatus;
+    private Integer importStatus = 1;
 
     private Timestamp createTime;
 
@@ -26,5 +25,7 @@ public class JM_t_model_local_tableBean {
     private String extend4;
 
     private String extend5;
+
+    private Integer userId;
 
 }

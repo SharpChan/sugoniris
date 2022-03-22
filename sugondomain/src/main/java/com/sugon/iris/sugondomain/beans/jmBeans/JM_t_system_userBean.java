@@ -1,7 +1,6 @@
 package com.sugon.iris.sugondomain.beans.jmBeans;
 
 import lombok.Data;
-
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -36,18 +35,24 @@ public class JM_t_system_userBean {
     /**
      * 创建时间
      */
-    private Timestamp createTime;
+    private Timestamp createTime = new Timestamp(System.currentTimeMillis());
+
+    /**
+     * 账号名称
+     */
+    private String accountNo;
+
 
     /**
      * 密码
      */
     private String passWord;
 
-    /**
-     * 指导动画
-     */
-    private String guiDe;
 
-    private String modelExecuteType;
+
+    private String modelExecuteType= "0";
+
+    //用户有效期
+    private Date validity_time;
 
 }

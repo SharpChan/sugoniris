@@ -14,6 +14,7 @@
         <module>sugonannotation</module>
         <module>sugondata</module>
         <module>sugonservice</module>
+        <module>sugonksservice</module>
         <module>sugonlistener</module>
         <module>sugonfilerest</module>
         <module>sugonrest</module>

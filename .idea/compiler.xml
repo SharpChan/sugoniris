@@ -14,6 +14,7 @@
         <module name="sugondata" />
         <module name="sugonlistener" />
         <module name="sugonweb" />
+        <module name="sugonksservice" />
         <module name="sugonservice" />
         <module name="sugonrest" />
         <module name="sugoncommon" />
@@ -28,6 +29,7 @@
       <module name="sugonfilerest" target="1.8" />
       <module name="sugoniris" target="1.8" />
       <module name="sugonKSrest" target="1.8" />
+      <module name="sugonksservice" target="1.8" />
       <module name="sugonlistener" target="1.8" />
       <module name="sugonrest" target="1.8" />
       <module name="sugonservice" target="1.8" />
@@ -45,6 +47,7 @@
       <module name="sugondomain" options="-parameters" />
       <module name="sugonfilerest" options="-parameters" />
       <module name="sugoniris" options="-parameters" />
+      <module name="sugonksservice" options="-parameters -Xlint" />
       <module name="sugonlistener" options="-parameters" />
       <module name="sugonrest" options="-parameters" />
       <module name="sugonservice" options="-parameters -Xlint" />

@@ -12,7 +12,7 @@ spring:
       password: neo4j
 
   application:
-    name: sogonRest
+    name: sogonKsRest
 
 server:
   port: 8091

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db1.JM_t_system_user_roleMapper" >
+
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db1.JM_t_system_user_roleEntity" >
+        <result column="ID" property="id" jdbcType="INTEGER" />
+        <result column="USER_ID" property="userId" jdbcType="INTEGER" />
+        <result column="ROLE_ID" property="roleId" jdbcType="INTEGER" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+         `ID`,
+         `USER_ID`,
+         `ROLE_ID`
+    </sql>
+
+    <!--批量插入-->
+    <insert id="batchTSystemUserRoleInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into t_system_user_role
+        (<include refid="Base_Column_List" />)
+        values
+        <foreach collection="jM_t_system_user_roleEntityList" item="item" index="i" separator=",">
+            (
+            #{item.id,jdbcType=BIGINT},
+            #{item.userId,jdbcType=BIGINT},
+            #{item.roleId,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+
+</mapper>

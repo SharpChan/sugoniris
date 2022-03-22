@@ -19,6 +19,7 @@
         <option value="$PROJECT_DIR$/sugonfilerest/pom.xml" />
         <option value="$PROJECT_DIR$/sugonlistener/pom.xml" />
         <option value="$PROJECT_DIR$/sugonKSrest/pom.xml" />
+        <option value="$PROJECT_DIR$/sugonksservice/pom.xml" />
       </list>
     </option>
   </component>

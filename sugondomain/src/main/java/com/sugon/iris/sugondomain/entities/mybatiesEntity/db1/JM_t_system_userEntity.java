@@ -6,4 +6,6 @@ import lombok.Data;
 @Data
 public class JM_t_system_userEntity extends JM_t_system_userBean {
 
+    private Long iris_user_id;
+
 }

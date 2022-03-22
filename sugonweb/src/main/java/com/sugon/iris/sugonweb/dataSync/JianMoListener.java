@@ -1,8 +1,10 @@
 package com.sugon.iris.sugonweb.dataSync;
 
 import com.sugon.iris.sugondata.jdbcTemplate.intf.system.AccountServiceDao;
+import com.sugon.iris.sugondata.mybaties.mapper.db1.JM_t_system_userMapper;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
 import com.sugon.iris.sugondomain.entities.jdbcTemplateEntity.systemEntities.UserEntity;
+import com.sugon.iris.sugonservice.service.dataSyncService.DataSyncService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,9 +24,8 @@ import java.util.List;
 @EnableScheduling   // 2.开启定时任务
 public class JianMoListener implements ServletContextListener {
 
-    @Autowired
-    private AccountServiceDao accountServiceDaoImpl;
-
+   @Autowired
+   private DataSyncService dataSyncServiceImpl;
 
 
 
@@ -50,15 +51,11 @@ public class JianMoListener implements ServletContextListener {
     }
 
     @Scheduled(fixedRate=10000)
-  public void getConfigBean() throws Exception{
+  public void dataSync() throws Exception{
 
         try {
             List<Error> errorList = new ArrayList<>();
-            //获取该平台的所有分配（经侦）角色的用户
-            List<UserEntity> userEntityList = accountServiceDaoImpl.getUserEntityIsEconomic(errorList);
-            //获取建模平台的所有用户
-
-
+            dataSyncServiceImpl.dataSync(errorList);
         }catch (Exception e) {
             e.printStackTrace ();
         }
