@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface TableRecordSearchService {
 
-    List<TableRecordSearchDto> getRecordsByUserId(Long userId, String condition,List<Error> errorList) throws IllegalAccessException;
+    List<TableRecordSearchDto> getRecordsByUserId(Long userId, String condition,String offset,String perSize,List<Error> errorList) throws IllegalAccessException;
+
+    Integer getRecordCountByUserId(Long userId, String condition,List<Error> errorList) throws IllegalAccessException;
 }

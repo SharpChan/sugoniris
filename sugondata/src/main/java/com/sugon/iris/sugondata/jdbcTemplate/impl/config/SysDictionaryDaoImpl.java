@@ -41,6 +41,22 @@ public class SysDictionaryDaoImpl implements SysDictionaryDao {
         return list;
     }
 
+    @Override
+    public List<SysDictionaryEntity> findSysDictionaryLike(String dicGroup, List<Error> errorList) {
+        String sql = "select id,dic_group,value,dic_show,comment from sys_dictionary where 1=1 ";
+        if(StringUtils.isNotEmpty(dicGroup)){
+            sql += " and dic_group like '%"+dicGroup+"%' ";
+        }
+        List<SysDictionaryEntity> list = null;
+        try{
+            list = jdbcTemplate.query(sql,new BeanPropertyRowMapper<>(SysDictionaryEntity.class));
+        }catch (Exception e){
+            e.printStackTrace();
+            errorList.add(new Error(ErrorCode_Enum.SYS_DB_001.getCode(),"数据库查询配置信息sys_dictionary失败",e.toString()));
+        }
+        return list;
+    }
+
     /**
      * 更新字典项
      *

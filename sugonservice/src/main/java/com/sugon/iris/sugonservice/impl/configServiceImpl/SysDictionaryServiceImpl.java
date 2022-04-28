@@ -34,7 +34,19 @@ public class SysDictionaryServiceImpl implements SysDictionaryService {
     @Override
     public List<SysDictionaryDto> getSysDictionariesByDicGroup(String dicGroup,List<Error> errorList) throws IllegalAccessException {
         List<SysDictionaryDto> sysDictionaryDtoList= new ArrayList<>();
-        List<SysDictionaryEntity> sysDictionaryEntityList = sysDictionaryDaoImpl.findSysDictionary(dicGroup,errorList);
+        List<SysDictionaryEntity> sysDictionaryEntityList = sysDictionaryDaoImpl.findSysDictionaryLike(dicGroup,errorList);
+        for(SysDictionaryEntity sysDictionaryEntity : sysDictionaryEntityList){
+            SysDictionaryDto sysDictionaryDto = new SysDictionaryDto();
+            PublicUtils.trans(sysDictionaryEntity,sysDictionaryDto);
+            sysDictionaryDtoList.add(sysDictionaryDto);
+        }
+        return sysDictionaryDtoList;
+    }
+
+    @Override
+    public List<SysDictionaryDto> getSysDictionariesByDicGroupLike(String dicGroup,List<Error> errorList) throws IllegalAccessException {
+        List<SysDictionaryDto> sysDictionaryDtoList= new ArrayList<>();
+        List<SysDictionaryEntity> sysDictionaryEntityList = sysDictionaryDaoImpl.findSysDictionaryLike(dicGroup,errorList);
         for(SysDictionaryEntity sysDictionaryEntity : sysDictionaryEntityList){
             SysDictionaryDto sysDictionaryDto = new SysDictionaryDto();
             PublicUtils.trans(sysDictionaryEntity,sysDictionaryDto);

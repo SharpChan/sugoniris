@@ -504,7 +504,7 @@ public class FileParsingServiceImpl implements FileParsingService {
         if(null == fileTableEntity) {
             //组装建表和插入语句
             //表名="base_"+模板配置前缀+"_"+案件编号
-            String tableName = "base_" + fileTemplateDto.getTablePrefix() + "_" + fileAttachmentEntity.getCaseId()+"_"+userId;
+            String tableName = "base_" + fileTemplateDto.getTablePrefix() + "_" + fileAttachmentEntity.getCaseId()+"_"+userId+"_localfile";
             String origin_tableName = "origin_" + fileTemplateDto.getTablePrefix() + "_" + fileAttachmentEntity.getCaseId()+"_"+userId;
             tableInfos[0] = tableName;
             tableInfos[2] = origin_tableName;

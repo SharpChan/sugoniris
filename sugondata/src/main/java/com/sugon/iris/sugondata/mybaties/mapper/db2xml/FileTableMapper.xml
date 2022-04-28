@@ -71,7 +71,7 @@
     </select>
 
     <select id="findAllFileTablesByUserId" resultMap="BaseResultMap">
-        select c.* from
+        select distinct c.* from
                 (file_data_group_detail a inner join file_data_group_table b on a.file_data_group_id = b.data_group_id)
                 inner join  file_table c on b.table_id = c.id
                 and a.user_id = #{userId}

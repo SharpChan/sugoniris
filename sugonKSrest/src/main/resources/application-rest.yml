@@ -16,3 +16,12 @@ spring:
 
 server:
   port: 8091
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    enabled: true # By default, the JHipster Registry is not used in the "dev" profile
+    service-url:
+      defaultZone: http://admin:admin@192.168.217.139:8761/eureka/
+      #defaultZone: http://50.78.129.62:8100/eureka/

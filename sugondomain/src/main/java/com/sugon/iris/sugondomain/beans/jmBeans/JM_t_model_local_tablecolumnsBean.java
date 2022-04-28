@@ -28,27 +28,27 @@ public class JM_t_model_local_tablecolumnsBean {
     /**
      * 字段长度
      */
-    private String  fieldlength;
+    private Integer  fieldlength;
 
     /**
      * 字段索引
      */
-    private String  fieldindex;
+    private Integer  fieldindex;
 
     /**
      * 数据表编号
      */
-    private String  tableid;
+    private Integer  tableid;
 
     /**
      * 是否是主键
      */
-    private String  isprimarykey;
+    private Integer  isprimarykey;
 
     /**
      * 是否为空
      */
-    private String  isnull;
+    private Integer  isnull;
 
     /**
      *

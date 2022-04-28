@@ -97,6 +97,27 @@ public class SysDictionaryController {
         return restResult;
     }
 
+    @PostMapping("/getSysDictionaryByDicGroupLike")
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiImplicitParam(name = "dicGroup", value = "字典组名称")
+    @ApiOperation(value = "通过字典组名称模糊查詢")
+    public RestResult<List<SysDictionaryDto>> getSysDictionaryByDicGroupLike(@RequestParam(value = "dicGroup") String dicGroup){
+        RestResult<List<SysDictionaryDto>> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(sysDictionaryServiceImpl.getSysDictionariesByDicGroup(dicGroup,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("操作失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("操作成功");
+        }
+        return restResult;
+    }
 
 
     @PostMapping("/updateSysDictionary")

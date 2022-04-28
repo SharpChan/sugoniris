@@ -676,7 +676,7 @@ public class FolderServiceImpl implements FolderService {
                         //目地模板
                         FileTemplateEntity fileTemplateDestEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(destFileTemplateId);
                         //目地表
-                        String destTable = "base_" + fileTemplateDestEntity.getTablePrefix() + "_" + caseId + "_" + userId;
+                        String destTable = "base_" + fileTemplateDestEntity.getTablePrefix() + "_" + caseId + "_" + userId+"_localfile";
 
                         if (!tableNames.contains(destTable)) {
                             continue;
@@ -685,7 +685,7 @@ public class FolderServiceImpl implements FolderService {
                         Long sourceFileTemplateId = fileFieldCompleteEntity.getSourceFileTemplateId();
                         //源模板
                         FileTemplateEntity fileTemplateSourceEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(sourceFileTemplateId);
-                        String sourceTable = "base_" + fileTemplateSourceEntity.getTablePrefix() + "_" + caseId + "_" + userId;
+                        String sourceTable = "base_" + fileTemplateSourceEntity.getTablePrefix() + "_" + caseId + "_" + userId+"_localfile";
                         if (!tableNames.contains(sourceTable)) {
                             continue;
                         }
@@ -799,7 +799,7 @@ public class FolderServiceImpl implements FolderService {
                         //目地模板
                         FileTemplateEntity fileTemplateDestEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(destFileTemplateId);
                         //目地表
-                        String destTable = "base_" + fileTemplateDestEntity.getTablePrefix() + "_" + caseId + "_" + userId;
+                        String destTable = "base_" + fileTemplateDestEntity.getTablePrefix() + "_" + caseId + "_" + userId+"_localfile";
 
                         if (!tableNames.contains(destTable)) {
                             continue;
@@ -808,7 +808,7 @@ public class FolderServiceImpl implements FolderService {
                         Long sourceFileTemplateId = fileFieldCompleteEntity.getSourceFileTemplateId();
                         //源模板
                         FileTemplateEntity fileTemplateSourceEntity = fileTemplateMapper.selectFileTemplateByPrimaryKey(sourceFileTemplateId);
-                        String sourceTable = "base_" + fileTemplateSourceEntity.getTablePrefix() + "_" + caseId + "_" + userId;
+                        String sourceTable = "base_" + fileTemplateSourceEntity.getTablePrefix() + "_" + caseId + "_" + userId+"_localfile";
                         if (!tableNames.contains(sourceTable)) {
                             continue;
                         }

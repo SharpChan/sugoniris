@@ -16,6 +16,10 @@ public class JM_t_model_local_tableBean {
 
     private Timestamp createTime;
 
+    private Timestamp updateTime;
+
+    private String areaType;
+
     private String extend1;
 
     private String extend2;

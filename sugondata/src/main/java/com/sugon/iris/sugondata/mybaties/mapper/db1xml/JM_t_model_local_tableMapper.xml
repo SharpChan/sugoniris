@@ -7,7 +7,9 @@
         <result column="TABLENAME" property="tableName" jdbcType="VARCHAR" />
         <result column="FILENAME" property="fileName" jdbcType="VARCHAR" />
         <result column="IMPORTSTATUS" property="importStatus" jdbcType="INTEGER" />
-        <result column="CREATE_TIME" property="modelType" jdbcType="TIMESTAMP" />
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+        <result column="AREA_TYPE" property="areaType" jdbcType="VARCHAR" />
     </resultMap>
 
     <sql id="Base_Column_List" >
@@ -15,33 +17,60 @@
          `TABLENAME`,
          `FILENAME`,
          `IMPORTSTATUS`,
-         `CREATE_TIME`
+         `CREATE_TIME`,
+         `UPDATE_TIME`,
+         `AREA_TYPE`,
+         `user_id`,
+         `EXTEND1`,
+         `EXTEND2`
     </sql>
 
 
-    <select id="queryAllModelLocalTable" resultMap="BaseResultMap"  >
+    <select id="queryAllModelLocalTableByUserId" resultMap="BaseResultMap"  >
         select
         <include refid="Base_Column_List" />
         from
         t_model_local_table
         where
         user_id = #{userId}
+        and
+        AREA_TYPE = #{areaType}
     </select>
 
     <!--批量插入-->
     <insert id="batchTModelLocalTableInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
-        insert into t_system_user
+        insert into t_model_local_table
         (<include refid="Base_Column_List" />)
         values
-        <foreach collection="jM_t_system_userEntityList" item="item" index="i" separator=",">
+        <foreach collection="jM_t_model_local_tableEntityList" item="item" index="i" separator=",">
             (
-            #{item.id,jdbcType=BIGINT},
-            #{item.tableName,jdbcType=VARCHAR},
-            #{item.fileName,jdbcType=VARCHAR},
-            #{item.importStatus,jdbcType=BIGINT},
-            #{item.createTime,jdbcType=TIMESTAMP}
+            #{item.id},
+            #{item.tableName},
+            #{item.fileName},
+            #{item.importStatus},
+            #{item.createTime},
+            #{item.updateTime},
+            #{item.areaType},
+            #{item.userId},
+            #{item.extend1},
+            #{item.extend2}
             )
         </foreach>
     </insert>
+
+
+    <!--批量删除-->
+    <delete id="deleteTModelLocalTableByIds">
+        DELETE
+        FROM
+        t_model_local_table
+        <where>
+            ID in (
+            <foreach collection="ids" item="item" index="i" separator=",">
+                #{item}
+            </foreach>
+            )
+        </where>
+    </delete>
     
 </mapper>

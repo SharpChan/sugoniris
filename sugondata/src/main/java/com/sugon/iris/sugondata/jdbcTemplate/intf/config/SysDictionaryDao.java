@@ -11,6 +11,8 @@ public interface SysDictionaryDao {
      */
     List<SysDictionaryEntity> findSysDictionary(String dicGroup,List<Error> errorList);
 
+    List<SysDictionaryEntity> findSysDictionaryLike(String dicGroup,List<Error> errorList);
+
     /**
      * 更新字典项
      */

@@ -52,7 +52,5 @@ public class JM_t_system_userBean {
 
     private String modelExecuteType= "0";
 
-    //用户有效期
-    private Date validity_time;
 
 }

@@ -34,11 +34,37 @@ public class TableRecordSearchController {
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过条件获取查询结果")
     @ApiImplicitParam(name = "condition", value = "查询条件")
-    public RestResult<List<TableRecordSearchDto>> getFileTemplates(@CurrentUser User user, @RequestParam(value = "condition") String  condition){
+    public RestResult<List<TableRecordSearchDto>> getFileTemplates(@CurrentUser User user, @RequestParam(value = "condition") String  condition,
+                                                                   @RequestParam(value = "offset") String  offset,
+                                                                   @RequestParam(value = "perSize") String  perSize){
         RestResult<List<TableRecordSearchDto>> restResult = new RestResult();
         List<Error> errorList = new ArrayList<>();
         try{
-            restResult.setObj(tableRecordSearchServiceImpl.getRecordsByUserId(user.getId(),condition,errorList));
+            restResult.setObj(tableRecordSearchServiceImpl.getRecordsByUserId(user.getId(),condition,offset,perSize,errorList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if(!CollectionUtils.isEmpty(errorList)){
+            restResult.setFlag(FAILED);
+            restResult.setMessage("执行失败！");
+            restResult.setErrorList(errorList);
+        }else{
+            restResult.setMessage("执行成功");
+        }
+        return restResult;
+    }
+
+    @RequestMapping("/searchAllTablesTotalCount")
+    @BussLog
+    @LogInCheck(doLock = true,doProcess = true)
+    @ApiOperation(value = "通过条件获取查询结果")
+    @ApiImplicitParam(name = "condition", value = "查询条件")
+    public RestResult<Integer> getFileTemplatesTotalCount(@CurrentUser User user, @RequestParam(value = "condition") String  condition){
+        RestResult<Integer> restResult = new RestResult();
+        List<Error> errorList = new ArrayList<>();
+        try{
+            restResult.setObj(tableRecordSearchServiceImpl.getRecordCountByUserId(user.getId(),condition,errorList));
         }catch (Exception e){
             e.printStackTrace();
         }

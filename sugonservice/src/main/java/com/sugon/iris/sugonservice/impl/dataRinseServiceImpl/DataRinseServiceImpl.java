@@ -29,17 +29,17 @@ public class DataRinseServiceImpl implements DataRinseService {
     public void completeRinse(String userId,Long caseId) {
                 //进行交易明细的交易账号的补全
                 //获取这些数据的mppid2errorid，以便重新进行校验
-                String selectSql = "select a.* from base_bank_jymx_"+caseId+"_"+userId+" a where a.jyhm is null \n" +
+                String selectSql = "select a.* from base_bank_jymx_"+caseId+"_"+userId+"_localfile "+" a where a.jyhm is null \n" +
                         "             or trim(a.jyhm) is null \n" +
-                        "             and exists(select * from base_bank_zhxx_"+caseId+"_"+userId+" b \n" +
+                        "             and exists(select * from base_bank_zhxx_"+caseId+"_"+userId+"_localfile "+" b \n" +
                         "                             where a.jykh =b.jykh \n" +
                         "                             and a.jyzh = b.jyzh\n" +
                         "                             and b.zhkhmc is not null \n" +
                         "                             and trim(b.zhkhmc) is not null )";
 
                 String updateSql = "update  " +
-                        "base_bank_jymx_"+caseId+"_"+userId+" a " +
-                        "set jyhm = (select zhkhmc from base_bank_zhxx_"+caseId+"_"+userId+" b where a.jykh =b.jykh and a.jyzh = b.jyzh  and b.zhkhmc is not null and trim(b.zhkhmc) is not null ) " +
+                        "base_bank_jymx_"+caseId+"_"+userId+"_localfile "+" a " +
+                        "set jyhm = (select zhkhmc from base_bank_zhxx_"+caseId+"_"+userId+"_localfile "+" b where a.jykh =b.jykh and a.jyzh = b.jyzh  and b.zhkhmc is not null and trim(b.zhkhmc) is not null ) " +
                         "where a.jyzjhm is null or trim(a.jyzjhm) is null ";
         mppMapper.mppSqlExec(updateSql);
         //对清楚次数进行修改

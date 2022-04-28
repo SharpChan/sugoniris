@@ -42,7 +42,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             List<CentrostigmaDto> centrostigmaDtoList = new ArrayList<>();
             String sql = "select " +
                    "distinct  tradingHour ,count(1) OVER(PARTITION BY tradingHour ORDER BY tradingHour) AS count " +
-                   "from (select  to_char(to_date(jysj,'yyyy-MM-dd HH24:mi:ss'),'HH24') tradingHour  from base_bank_jymx_"+caseId+"_"+userId+" where sfbz = '进' ) order by tradingHour";
+                   "from (select  to_char(to_date(jysj,'yyyy-MM-dd HH24:mi:ss'),'HH24') tradingHour  from base_bank_jymx_"+caseId+"_"+userId+"_localfile"+" where sfbz = '进' ) order by tradingHour";
             List<Map<String,Object>> list =  mppMapper.mppSqlExecForSearchRtMapList(sql);
 
             for(Map map : list){
@@ -65,7 +65,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<CentrostigmaDto> centrostigmaDtoList = new ArrayList<>();
         String sql = "select " +
                 "distinct  tradingHour ,count(1) OVER(PARTITION BY tradingHour ORDER BY tradingHour) AS count " +
-                "from (select  to_char(to_date(jysj,'yyyy-MM-dd HH24:mi:ss'),'HH24') tradingHour  from base_bank_jymx_"+caseId+"_"+userId+" where sfbz = '出' ) order by tradingHour";
+                "from (select  to_char(to_date(jysj,'yyyy-MM-dd HH24:mi:ss'),'HH24') tradingHour  from base_bank_jymx_"+caseId+"_"+userId+"_localfile"+" where sfbz = '出' ) order by tradingHour";
         List<Map<String,Object>> list =  mppMapper.mppSqlExecForSearchRtMapList(sql);
 
         for(Map map : list){
@@ -86,8 +86,8 @@ public class StatisticsServiceImpl implements StatisticsService {
      */
     @Override
     public List<CasePersonnelInfoDto> getInOutTrading(Long userId, Long caseId, List<Error> errorList) {
-        String  tableName_zhxx = "base_bank_zhxx_"+caseId+"_"+userId;
-        String  tableName_jymx = "base_bank_jymx_"+caseId+"_"+userId;
+        String  tableName_zhxx = "base_bank_zhxx_"+caseId+"_"+userId+"_localfile";
+        String  tableName_jymx = "base_bank_jymx_"+caseId+"_"+userId+"_localfile";
         //通过案件编号获取案件下的人员信息
         List<CasePersonnelInfoEntity> casePersonnelInfoEntityList  = casePersonnelInfoMapper.getCasePersonnelInfo4InOut(tableName_zhxx);
         List<CasePersonnelInfoDto> casePersonnelInfoDtoList = new ArrayList<>();
@@ -142,8 +142,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public List<CasePersonnelInfoDto> getInOrOutOnly(Long userId, Long caseId, List<Error> errorList) {
         List<CasePersonnelInfoDto> casePersonnelInfoDtoList = new ArrayList<>();
-        String  tableName_zhxx = "base_bank_zhxx_"+caseId+"_"+userId;
-        String  tableName_jymx = "base_bank_jymx_"+caseId+"_"+userId;
+        String  tableName_zhxx = "base_bank_zhxx_"+caseId+"_"+userId+"_localfile";
+        String  tableName_jymx = "base_bank_jymx_"+caseId+"_"+userId+"_localfile";
         //通过案件编号获取案件下的人员信息
         List<CasePersonnelInfoEntity> casePersonnelInfoEntityList  = casePersonnelInfoMapper.getCasePersonnelInfo4InOut(tableName_zhxx);
 

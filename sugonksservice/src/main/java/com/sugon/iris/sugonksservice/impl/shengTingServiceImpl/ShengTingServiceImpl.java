@@ -3,11 +3,13 @@ package com.sugon.iris.sugonksservice.impl.shengTingServiceImpl;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.sugon.iris.sugondomain.beans.baseBeans.Error;
+import com.sugon.iris.sugondomain.beans.shengTing.ShanghaiJsrBean;
 import com.sugon.iris.sugondomain.beans.shengTing.ShanghaiMinhangBean;
+import com.sugon.iris.sugondomain.beans.shengTing.ShanghaijdcxxBean;
 import com.sugon.iris.sugondomain.beans.shengTing.ShanghaikeyunBean;
 import com.sugon.iris.sugondomain.beans.shengTing.base.*;
 import com.sugon.iris.sugondomain.dtos.fileDtos.FileTemplateDto;
-import com.sugon.iris.sugondomain.enums.ErrorCode_Enum;
+import com.sugon.iris.sugondomain.enums.*;
 import com.sugon.iris.sugonksservice.impl.excelServiceImpl.ImportService;
 import com.sugon.iris.sugonksservice.intf.shengTingIntf.ShengTingServiceIntf;
 import lombok.extern.slf4j.Slf4j;
@@ -77,6 +79,22 @@ public class ShengTingServiceImpl implements ShengTingServiceIntf {
     }
 
     @Override
+    public List<StResponse> getJdcxx(String hphm, String minRownum, String maxRownum) {
+        StResponse<List<ShanghaijdcxxBean>> stResponse = this.getJdcxxResponse(hphm,minRownum, maxRownum);
+        List<StResponse> StResponseList = new ArrayList<>();
+        StResponseList.add(stResponse);
+        return StResponseList;
+    }
+
+    @Override
+    public List<StResponse> getJsrxx(String sfzmhm, String minRownum, String maxRownum) {
+        StResponse<List<ShanghaiJsrBean>> stResponse = this.getJsrxxResponse(sfzmhm,minRownum, maxRownum);
+        List<StResponse> StResponseList = new ArrayList<>();
+        StResponseList.add(stResponse);
+        return StResponseList;
+    }
+
+    @Override
     public List<StResponse<List<ShanghaiMinhangBean>>> getMinHanxxByExcel(List<MultipartFile> files) throws Exception {
         List<StResponse<List<ShanghaiMinhangBean>>> stResponseList = new ArrayList<>();
         Map<String,StResponse> map = new HashMap<>();
@@ -103,9 +121,10 @@ public class ShengTingServiceImpl implements ShengTingServiceIntf {
 
         for(String str : idList){
             StResponse<List<ShanghaiMinhangBean>> stResponse =    getMinHangResponse(str,"1","1");
-            map.put(str,stResponse);
+            stResponseList.add(stResponse);
         }
 
+        /*
         for(Map.Entry<String,StResponse> entry : map.entrySet()){
               if("error".equals(entry.getValue().getStatus()) || "1".equals(entry.getValue().getTotal()) || "-999".equals(entry.getValue().getTotal()) || "0".equals(entry.getValue().getTotal())){
                   stResponseList.add(entry.getValue());
@@ -113,7 +132,91 @@ public class ShengTingServiceImpl implements ShengTingServiceIntf {
                   StResponse<List<ShanghaiMinhangBean>> stResponse =    getMinHangResponse(entry.getKey(),"1",entry.getValue().getTotal());
                   stResponseList.add(stResponse);
               }
+        }*/
+        return stResponseList;
+    }
+
+    @Override
+    public List<StResponse<List<ShanghaiJsrBean>>> getJsrxxByExcel(List<MultipartFile> files) throws Exception {
+        List<StResponse<List<ShanghaiJsrBean>>> stResponseList = new ArrayList<>();
+        Map<String,StResponse> map = new HashMap<>();
+
+        List<String> idList = new ArrayList<>();
+        for(MultipartFile file : files){
+            InputStream inputStream = file.getInputStream();
+            List<List<Object>> list = importService.getBankListByExcel(inputStream, file.getOriginalFilename());
+            inputStream.close();
+            if(CollectionUtils.isEmpty(list)){
+                continue;
+            }
+            for(List<Object> cellList : list){
+                if(!CollectionUtils.isEmpty(cellList)){
+                    if(null != cellList.get(0) &&  cellList.get(0).toString().trim().length()>0){
+                        idList.add(cellList.get(0).toString().trim());
+                    }
+                }
+            }
         }
+        if(CollectionUtils.isEmpty(idList)){
+            return stResponseList;
+        }
+
+        for(String str : idList){
+            StResponse<List<ShanghaiJsrBean>> stResponse =    getJsrxxResponse(str,"1","1");
+            stResponseList.add(stResponse);
+            //map.put(str,stResponse);
+        }
+       /**
+        for(Map.Entry<String,StResponse> entry : map.entrySet()){
+            if("error".equals(entry.getValue().getStatus()) || "1".equals(entry.getValue().getTotal()) || "-999".equals(entry.getValue().getTotal()) || "0".equals(entry.getValue().getTotal())){
+                stResponseList.add(entry.getValue());
+            }else{
+                StResponse<List<ShanghaiJsrBean>> stResponse =    getKyzResponse(entry.getKey(),"1",entry.getValue().getTotal());
+                stResponseList.add(stResponse);
+            }
+        }*/
+        return stResponseList;
+    }
+
+    @Override
+    public List<StResponse<List<ShanghaijdcxxBean>>> getJdcxxByExcel(List<MultipartFile> files) throws Exception {
+        List<StResponse<List<ShanghaijdcxxBean>>> stResponseList = new ArrayList<>();
+        Map<String,StResponse> map = new HashMap<>();
+
+        List<String> idList = new ArrayList<>();
+        for(MultipartFile file : files){
+            InputStream inputStream = file.getInputStream();
+            List<List<Object>> list = importService.getBankListByExcel(inputStream, file.getOriginalFilename());
+            inputStream.close();
+            if(CollectionUtils.isEmpty(list)){
+                continue;
+            }
+            for(List<Object> cellList : list){
+                if(!CollectionUtils.isEmpty(cellList)){
+                    if(null != cellList.get(0) &&  cellList.get(0).toString().trim().length()>0){
+                        idList.add(cellList.get(0).toString().trim());
+                    }
+                }
+            }
+        }
+        if(CollectionUtils.isEmpty(idList)){
+            return stResponseList;
+        }
+
+        for(String str : idList){
+            StResponse<List<ShanghaijdcxxBean>> stResponse =    getJdcxxResponse(str,"1","1");
+            stResponseList.add(stResponse);
+        }
+
+        /**
+        for(Map.Entry<String,StResponse> entry : map.entrySet()){
+            if("error".equals(entry.getValue().getStatus()) || "1".equals(entry.getValue().getTotal()) || "-999".equals(entry.getValue().getTotal()) || "0".equals(entry.getValue().getTotal())){
+                stResponseList.add(entry.getValue());
+            }else{
+                StResponse<List<ShanghaijdcxxBean>> stResponse =    getKyzResponse(entry.getKey(),"1",entry.getValue().getTotal());
+                stResponseList.add(stResponse);
+            }
+        }*/
         return stResponseList;
     }
 
@@ -145,9 +248,10 @@ public class ShengTingServiceImpl implements ShengTingServiceIntf {
 
         for(String str : idList){
             StResponse<List<ShanghaikeyunBean>> stResponse =    getKyzResponse(str,"1","1");
-            map.put(str,stResponse);
+            stResponseList.add(stResponse);
         }
 
+        /*
         for(Map.Entry<String,StResponse> entry : map.entrySet()){
             if("error".equals(entry.getValue().getStatus()) || "1".equals(entry.getValue().getTotal()) || "-999".equals(entry.getValue().getTotal()) || "0".equals(entry.getValue().getTotal())){
                 stResponseList.add(entry.getValue());
@@ -155,8 +259,65 @@ public class ShengTingServiceImpl implements ShengTingServiceIntf {
                 StResponse<List<ShanghaikeyunBean>> stResponse =    getKyzResponse(entry.getKey(),"1",entry.getValue().getTotal());
                 stResponseList.add(stResponse);
             }
-        }
+        }*/
         return stResponseList;
+    }
+
+    private StResponse getJsrxxResponse(String sfzmhm ,String minRownum,String maxRownum){
+        String url = "http://50.16.212.226:30281/apis/event/services/onlineQuerySearch";
+        StRequest stRequest= new StRequest();
+
+        RealInfo realInfo = new RealInfo();
+
+        Required required = new Required();
+
+        required.setMinRownum(minRownum);
+
+        required.setMaxRownum("100");
+
+        required.setRequiredItems("sfzmhm,cclzrq,ccfzjg,yxqs,yxqz,xm,xb,csrq,djzsxxdz,lxzsxxdz,lxdh,zzzm,zzfzjg,zzfzrq");
+
+        Validate validate = new Validate();
+
+        validate.setFwmc("上海客运售票记录查询服务");
+
+        validate.setYybh("YY320500232021062300001");
+
+        validate.setFwbh("S-320000260100-10000001-00208");
+
+        validate.setZrrgmsfhm("320502198502091792");
+
+        stRequest.setRealInfo(realInfo);
+
+        stRequest.setRequired(required);
+
+        stRequest.setValidate(validate);
+
+        required.setCondition("1=1 and sfzmhm  = '"+sfzmhm +"'");
+
+        Gson gson = new Gson();
+        String json = gson.toJson(stRequest);
+
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+
+        HttpEntity<String> request = new HttpEntity<>(json, headers);
+        restTemplate.getMessageConverters().set(1,new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        String res = restTemplate.postForObject(url, request ,String.class);
+        log.info(res);
+
+        StResponse<List<ShanghaiJsrBean>> stResponse = gson.fromJson(res, new TypeToken<StResponse<List<ShanghaiJsrBean>>>(){}.getType());
+
+        if(!CollectionUtils.isEmpty(stResponse.getResults())){
+            for(ShanghaiJsrBean shanghaiJsrBean : stResponse.getResults()){
+                if(null != shanghaiJsrBean.getXB() && null != Sex_Enum.getZdmc(shanghaiJsrBean.getXB().trim())) {
+                    shanghaiJsrBean.setXB(Sex_Enum.getZdmc(shanghaiJsrBean.getXB().trim()).getZdmc());
+                }
+            }
+        }
+        return stResponse;
     }
 
     private StResponse getKyzResponse(String cardId,String minRownum,String maxRownum){
@@ -169,7 +330,7 @@ public class ShengTingServiceImpl implements ShengTingServiceIntf {
 
         required.setMinRownum(minRownum);
 
-        required.setMaxRownum(maxRownum);
+        required.setMaxRownum("100");
 
         required.setRequiredItems("zjlid,ysxtjrzj,xxsc_pdbz,jlid,dwd_zjid,zjlxdm,zjlx,zjhm,xm,fcrq,fcsj,bc,scz,sczdz,scz_jd,scz_wd,scz_geohash,scz_geohash4,scz_geohash5,scz_geohash6,scz_geohash7,ddz,spztdm,spzt,sprq,spsj,jpztdm,jpzt,jprq,jpsj,jpk,fcdh,pz,ph,zwh,pj,xlbh,xldj,sfd,zdd,xldk,cygsid,cygsmc,lc,dw_rksj,dw_yxzt,sjly,yshck_rksj,yshck_gxsj");
 
@@ -219,7 +380,7 @@ public class ShengTingServiceImpl implements ShengTingServiceIntf {
 
         required.setMinRownum(minRownum);
 
-        required.setMaxRownum(maxRownum);
+        required.setMaxRownum("100");
 
         required.setRequiredItems("zjlid,ysxtjrzj,xxsc_pdbz,id,border_type,flt_airlcode,flt_number,flt_suffix,flt_date,seg_dept_code,seg_dest_code,sta_depttm,sta_arvetm,pdt_dept,pdt_dest,psr_name,psr_chnname,pdt_lastname,pdt_midname,pdt_firstname,pdt_birthday,pdt_bir_adress,psr_gender,cert_type,cert_no,pdt_exprirydate,pdt_issuedate,pdt_issue_country,pdt_country,psr_ics,psr_ckipid,psr_office,psr_agent,psr_ckitime,psr_seg_seatnbr,rs_czsj,cz,dt,ds,rksj,sjly,yshck_rksj,yshck_gxsj");
 
@@ -255,5 +416,75 @@ public class ShengTingServiceImpl implements ShengTingServiceIntf {
 
        StResponse<List<ShanghaiMinhangBean>> stResponse = gson.fromJson(res, new TypeToken<StResponse<List<ShanghaiMinhangBean>>>(){}.getType());
        return stResponse;
+    }
+
+    private StResponse<List<ShanghaijdcxxBean>> getJdcxxResponse(String hphm, String minRownum, String maxRownum){
+        if(!StringUtils.isEmpty(hphm) && hphm.length()>1){
+            hphm=hphm.substring(1);
+        }
+        String url = "http://50.16.212.226:30281/apis/event/services/onlineQuerySearch";
+        StRequest stRequest= new StRequest();
+
+        RealInfo realInfo = new RealInfo();
+
+        Required required = new Required();
+
+        required.setMinRownum(minRownum);
+
+        required.setMaxRownum("100");
+
+        required.setRequiredItems("xh,hpzl,hphm,clpp1,clxh,fdjh,cllx,csys,syxz,sfzmhm,sfzmmc,syr,ccdjrq,djrq,yxqz,fzjg,glbm,zsxxdz,lxdh,zzxxdz,xszbh,sjhm");
+
+        Validate validate = new Validate();
+
+        validate.setFwmc("上海民航售票及离港信息查询服务");
+
+        validate.setYybh("YY320500232021062300001");
+
+        validate.setFwbh("S-320000260100-10000001-00524");
+
+        validate.setZrrgmsfhm("320502198502091792");
+
+        stRequest.setRealInfo(realInfo);
+
+        stRequest.setRequired(required);
+
+        stRequest.setValidate(validate);
+
+        required.setCondition("1=1 and hphm = '"+hphm+"'");
+
+        Gson gson = new Gson();
+        String json = gson.toJson(stRequest);
+
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        HttpEntity<String> request = new HttpEntity<>(json, headers);
+        restTemplate.getMessageConverters().set(1,new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        String res = restTemplate.postForObject(url, request ,String.class);
+        log.info(res);
+
+        StResponse<List<ShanghaijdcxxBean>> stResponse = gson.fromJson(res, new TypeToken<StResponse<List<ShanghaijdcxxBean>>>(){}.getType());
+        for(ShanghaijdcxxBean shanghaijdcxxBean : stResponse.getResults()) {
+            if(null != shanghaijdcxxBean.getHPZL() && null != PLATE_Type_Enum.getZdmc(shanghaijdcxxBean.getHPZL().trim())) {
+                shanghaijdcxxBean.setHPZL(PLATE_Type_Enum.getZdmc(shanghaijdcxxBean.getHPZL().trim()).getZdmc());
+            }
+
+            if(null != shanghaijdcxxBean.getCLLX() && null != VEHICLE_Type_Enum.getZdmc(shanghaijdcxxBean.getCLLX().trim())) {
+                shanghaijdcxxBean.setCLLX(VEHICLE_Type_Enum.getZdmc(shanghaijdcxxBean.getCLLX().trim()).getZdmc());
+            }
+
+            if(null != shanghaijdcxxBean.getCSYS() && null != VEHICLE_Color_Enum.getZdmc(shanghaijdcxxBean.getCSYS().trim())) {
+                shanghaijdcxxBean.setCSYS(VEHICLE_Color_Enum.getZdmc(shanghaijdcxxBean.getCSYS().trim()).getZdmc());
+            }
+            if(null != shanghaijdcxxBean.getSYXZ() && null != UserType_Enum.getZdmc(shanghaijdcxxBean.getSYXZ().trim())) {
+                shanghaijdcxxBean.setSYXZ(UserType_Enum.getZdmc(shanghaijdcxxBean.getSYXZ().trim()).getZdmc());
+            }
+            if(null != shanghaijdcxxBean.getSFZMMC() && null != CertificateEnum.getZdmc(shanghaijdcxxBean.getSFZMMC().trim())) {
+                shanghaijdcxxBean.setSFZMMC(CertificateEnum.getZdmc(shanghaijdcxxBean.getSFZMMC().trim()).getZdmc());
+            }
+        }
+        return stResponse;
     }
 }

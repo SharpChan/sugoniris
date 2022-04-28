@@ -1572,7 +1572,7 @@ App.controller("dataMergeController", function ($http, $timeout, $scope,
     }
 
     var checkFields = [];
-    $scope.itemsPerPage = 10;
+    $scope.itemsPerPage = 5;
     $scope.offset = 0;
 
     $scope.tableDetail = function (item) {
@@ -1596,7 +1596,7 @@ App.controller("dataMergeController", function ($http, $timeout, $scope,
     //初始化数据
     //分页参数（参数名固定不可变）
     $scope.pageConfig = {
-        // pageSize:10,    //每页条数（不设置时，默认为10）
+        pageSize:5,    //每页条数（不设置时，默认为10）
         pageIndex: 1,    //当前页码
         totalCount: 0,   //总记录数
         totalPage: 0,     //总页码
@@ -1665,7 +1665,7 @@ App.controller("dataMergeController", function ($http, $timeout, $scope,
         $scope.pageIndex = $scope.pageConfig.pageIndex;
         $scope.itemsPerPage = $scope.pageConfig.pageSize;
         $scope.changePage($scope.pageIndex);
-        console.log('pageSize=' + $scope.pageSize + 'pageIndex=' + $scope.pageIndex);
+        console.log('pageSize=' + $scope.pageConfig.pageSize + 'pageIndex=' + $scope.pageIndex);
     })
 
     $scope.getFileRinseDetailsByGroupId = function (rinseGroupId) {
@@ -3429,8 +3429,62 @@ App.controller("infoSearchController", function ($http, $timeout, $scope, $rootS
                                                  myservice) {
     //登录和锁定校验
     myservice.loginLockCheck();
+
+    $scope.itemsPerPage = 5;
+    $scope.offset = 0;
+
+    $scope.pageConfig = {
+        pageSize: 5,    //每页条数（不设置时，默认为10）
+        pageIndex: 1,    //当前页码
+        totalCount: 0,   //总记录数
+        totalPage: 0,     //总页码
+        prevPage: '< 上一页',     //上一页（不设置时，默认为：<）
+        nextPage: '下一页 >',     //下一页（不设置时，默认为：>）
+        firstPage: '<< 首页',     //首页（不设置时，默认为：<<）
+        lastPage: '末页 >>',     //末页（不设置时，默认为：>>）
+        degeCount: 3,             //当前页前后两边可显示的页码个数（不设置时，默认为3）
+        isShowEllipsis: true    //是否显示省略号不可点击按钮（true：显示，false：不显示）
+    }
+
+    $scope.changePage = function (pageNo) {
+        $scope.offset = (pageNo - 1) * $scope.itemsPerPage;
+        //$scope.getTableRecord($scope.tableInfo);
+        $scope.queryDetail($scope.offset,$scope.itemsPerPage);
+        console.log('offset=' + $scope.offset + 'itemsPerPage=' + $scope.itemsPerPage);
+    }
+
+    //监听分页组件中的分页点击事件
+    $scope.$on("clickPage", function (e, m) {
+        $scope.pageIndex = $scope.pageConfig.pageIndex;
+        $scope.itemsPerPage = $scope.pageConfig.pageSize;
+        $scope.changePage($scope.pageIndex);
+        console.log('pageSize=' + $scope.pageConfig.pageSize + 'pageIndex=' + $scope.pageIndex);
+    })
+
     $scope.query = function () {
-        var url = "/search/searchAllTables?condition=" + $rootScope.app.searchKey;
+        if(!$scope.pageConfig.totalCount){//获取总数据量
+           var urlCount = "/search/searchAllTablesTotalCount?condition=" + $rootScope.app.searchKey;
+
+            $http.post(urlCount).success(function (data) {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                myservice.errors(temp);
+
+                $scope.pageConfig.totalCount = temp.obj;
+                $scope.pageConfig.totalPage = Math.ceil($scope.pageConfig.totalCount / $scope.pageConfig.pageSize); //总页数
+                console.log('总记录数：' + $scope.pageConfig.totalCount + '； 总页数：' + $scope.pageConfig.totalPage + '；当前页码：' + $scope.pageConfig.pageIndex);
+                $scope.$broadcast("initPage")   //调用分页组件里的初始化页码函数
+
+                $scope.queryDetail(0,$scope.itemsPerPage);
+            }).error(function (data) {
+                alert("会话已经断开或者检查网络是否正常！");
+            });
+        }
+    }
+
+    //offset:偏移量；perSize:每页条数
+    $scope.queryDetail = function(offset,perSize){
+        var url = "/search/searchAllTables?condition=" + $rootScope.app.searchKey+"&offset="+offset+"&perSize="+perSize;
         $http.post(url).success(function (data) {
             var jsonString = angular.toJson(data);
             var temp = angular.fromJson(jsonString);
@@ -3440,7 +3494,9 @@ App.controller("infoSearchController", function ($http, $timeout, $scope, $rootS
             alert("会话已经断开或者检查网络是否正常！");
         });
     }
+
     $scope.query();
+
 
 });
 
@@ -7245,25 +7301,45 @@ App.controller("dictionaryController", function ($http, $timeout, $scope,
 
     $scope.getAll = function () {
         $("#pleaseWait").show();
-        var url = "/sysDictionary/getAllSysDictionary";
-        $http.post(url).success(function (data) {
-            var jsonString = angular.toJson(data);
-            var temp = angular.fromJson(jsonString);
-            if (temp.flag == "FAILED") {
-                myservice.errors(temp);
-            } else {
-                var i = 1;
-                angular.forEach(temp.obj, function (item) {
-                    item.no = i++;
-                });
-                $scope.obj = temp.obj;
-            }
-            $("#pleaseWait").hide();
-        }).error(function (data) {
-            $("#pleaseWait").hide();
-            alert("会话已经断开或者检查网络是否正常！");
-        });
-
+        if(!$scope.dicGroup){
+            var url = "/sysDictionary/getAllSysDictionary";
+            $http.post(url).success(function (data) {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                if (temp.flag == "FAILED") {
+                    myservice.errors(temp);
+                } else {
+                    var i = 1;
+                    angular.forEach(temp.obj, function (item) {
+                        item.no = i++;
+                    });
+                    $scope.obj = temp.obj;
+                }
+                $("#pleaseWait").hide();
+            }).error(function (data) {
+                $("#pleaseWait").hide();
+                alert("会话已经断开或者检查网络是否正常！");
+            });
+        }else{
+            var url = "/sysDictionary/getSysDictionaryByDicGroupLike?dicGroup="+$scope.dicGroup;
+            $http.post(url).success(function (data) {
+                var jsonString = angular.toJson(data);
+                var temp = angular.fromJson(jsonString);
+                if (temp.flag == "FAILED") {
+                    myservice.errors(temp);
+                } else {
+                    var i = 1;
+                    angular.forEach(temp.obj, function (item) {
+                        item.no = i++;
+                    });
+                    $scope.obj = temp.obj;
+                }
+                $("#pleaseWait").hide();
+            }).error(function (data) {
+                $("#pleaseWait").hide();
+                alert("会话已经断开或者检查网络是否正常！");
+            });
+        }
     }
 
     $scope.getAll();
@@ -12944,7 +13020,7 @@ App.directive('pageDirective', ['$rootScope',
             scope.pageConfig.pageIndex;  //当前页码
             scope.pageConfig.totalPage;  //总页数
             scope.pageConfig.totalCount; //总记录数
-            scope.pageConfig.pageSize = scope.pageConfig.pageSize || 10;  //每页条数
+            scope.pageConfig.pageSize = scope.pageConfig.pageSize || 5;  //每页条数
             var prev = scope.pageConfig.prevPage || '<';  //上一页文字
             var next = scope.pageConfig.nextPage || '>';  //下一页文字
             var first = scope.pageConfig.firstPage || '<<';  //首页文字
@@ -13040,7 +13116,6 @@ App.directive('pageDirective', ['$rootScope',
 
             /*点击页码（首页、上一页、下一页、末页）*/
             document.getElementById('page_ul').addEventListener('click', function (e) {
-                console.log(456);
                 var _this = e.target;   //当前被点击的a标签
                 var idAttr = _this.id;  //id属性
                 var className = _this.className;    //class属性
@@ -13063,6 +13138,9 @@ App.directive('pageDirective', ['$rootScope',
                 var _this = this;
                 scope.pageConfig.pageIndex = 1;
                 scope.pageConfig.pageSize = _this.value - 0;
+
+                scope.pageConfig.totalPage = Math.ceil(scope.pageConfig.totalCount / scope.pageConfig.pageSize);
+                console.log("totalPage:"+scope.pageConfig.totalPage);
                 initPage(scope.pageConfig.totalPage, scope.pageConfig.pageIndex, degeCount);
                 scope.$emit('clickPage');
             })

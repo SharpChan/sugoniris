@@ -1,6 +1,14 @@
 spring:
 
   datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: true
+        login-username: admin
+        login-password: 123
     ds1: #数据源1 jdbcTemplate
       driver-class-name: com.mysql.cj.jdbc.Driver # mysql的驱动你可以配置别的关系型数据库
       url: jdbc:mysql://192.168.217.140:3306/iris?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true #数据源地址
@@ -22,6 +30,9 @@ datasource:
       username: root
       password: root
       jdbc-url: jdbc:mysql://192.168.217.140:3306/jianmo3.3.1?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+      #username: root
+      #password: root123
+      #jdbc-url: jdbc:mysql://192.168.102.141:3309/fangzhousdmmpp?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
       type: com.alibaba.druid.pool.DruidDataSource
       initialSize: 5
       minIdle: 2
@@ -85,3 +96,7 @@ datasource:
       testOnReturn: false
       maxWait: 6000000
       filters: stat,slf4j #wall,
+
+logging:
+   level:
+      com.sugon.iris.sugondata.mybaties.mapper: debug

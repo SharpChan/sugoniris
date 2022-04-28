@@ -28,8 +28,8 @@ public class CasePersonnelInfoServiceImpl implements CasePersonnelInfoService {
     @Override
     public List<CasePersonnelInfoDto> getPersonnelInfoByCaseId(Long userId, Long caseId, String threshold,List<Error> errorList){
 
-        String  tableName_zhxx = "base_bank_zhxx_"+caseId+"_"+userId;
-        String  tableName_jymx = "base_bank_jymx_"+caseId+"_"+userId;
+        String  tableName_zhxx = "base_bank_zhxx_"+caseId+"_"+userId+"_localfile";
+        String  tableName_jymx = "base_bank_jymx_"+caseId+"_"+userId+"_localfile";
         List<CasePersonnelInfoDto> casePersonnelInfoDtoList = new ArrayList<>();
         List<CasePersonnelInfoEntity> casePersonnelInfoEntityList = null;
         try {
@@ -51,7 +51,7 @@ public class CasePersonnelInfoServiceImpl implements CasePersonnelInfoService {
     @Override
     public List<TradingDto> getTradingDetail(Long userId, Long caseId, String threshold, String cardId, List<Error> errorList) throws IllegalAccessException {
 
-        String  tableName_jymx = "base_bank_jymx_"+caseId+"_"+userId;
+        String  tableName_jymx = "base_bank_jymx_"+caseId+"_"+userId+"_localfile";
         List<TradingDto> tradingDtoList = new ArrayList<>();
         List<TradingEntity> tradingEntityList = null;
         try {

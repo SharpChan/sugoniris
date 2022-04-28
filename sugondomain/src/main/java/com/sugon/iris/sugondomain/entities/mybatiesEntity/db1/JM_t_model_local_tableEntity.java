@@ -5,4 +5,10 @@ import lombok.Data;
 
 @Data
 public class JM_t_model_local_tableEntity extends JM_t_model_local_tableBean {
+
+    /**
+     * 导入数据模板id
+     */
+    private Long fileTemplateId;
+
 }

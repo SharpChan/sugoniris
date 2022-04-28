@@ -1,6 +1,7 @@
 package com.sugon.iris.sugondata.config.mybatisConfig;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.spring.boot.autoconfigure.properties.DruidStatProperties;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -58,6 +59,7 @@ public class DataSource1Config {
     @Value("${datasource.druid.db1.maxWait}")
     private long maxWait;
 
+
     @Bean
     @Primary
     public DataSource db1DataSource() {
@@ -74,6 +76,14 @@ public class DataSource1Config {
         dataSource.setTestOnBorrow(testOnBorrow);
         dataSource.setTestOnReturn(testOnReturn);
         dataSource.setMaxWait(maxWait);
+        dataSource.setLogAbandoned(true);
+        dataSource.setDbType("com.alibaba.druid.pool.DruidDataSource");
+        DruidStatProperties.StatViewServlet statViewServletervlet = new DruidStatProperties.StatViewServlet();
+        statViewServletervlet.setUrlPattern("/druid/*");
+        statViewServletervlet.setEnabled(true);
+        statViewServletervlet.setResetEnable("true");
+        statViewServletervlet.setLoginUsername("admin");
+        statViewServletervlet.setLoginPassword("123");
         try {
             dataSource.setFilters(filters);
         } catch (SQLException e) {

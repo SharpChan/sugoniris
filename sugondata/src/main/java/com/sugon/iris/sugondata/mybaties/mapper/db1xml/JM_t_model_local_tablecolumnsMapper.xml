@@ -2,26 +2,69 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sugon.iris.sugondata.mybaties.mapper.db1.JM_t_model_local_tablecolumnsMapper" >
 
-    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondata.mybaties.mapper.db1.JM_t_model_local_tablecolumnsMapper" >
-        <result column="modelId" property="modelId" jdbcType="INTEGER" />
-        <result column="modelName" property="modelName" jdbcType="VARCHAR" />
-        <result column="creator" property="creator" jdbcType="VARCHAR" />
-        <result column="modelType" property="modelType" jdbcType="VARCHAR" />
+    <resultMap id="BaseResultMap" type="com.sugon.iris.sugondomain.entities.mybatiesEntity.db1.JM_t_model_local_tablecolumnsEntity" >
+        <result column="ID" property="id" jdbcType="INTEGER" />
+        <result column="FIELDNAME" property="fieldName" jdbcType="VARCHAR" />
+        <result column="FIELDREAMRK" property="fieldreamrk" jdbcType="VARCHAR" />
+        <result column="FIELDTYPE" property="fieldtype" jdbcType="VARCHAR" />
+        <result column="FIELDLENGTH" property="fieldlength" jdbcType="INTEGER" />
+        <result column="TABLEID" property="tableid" jdbcType="INTEGER" />
+        <result column="ISPRIMARYKEY" property="isprimarykey" jdbcType="INTEGER" />
+        <result column="ISNULL" property="isnull" jdbcType="INTEGER" />
     </resultMap>
 
+    <sql id="Base_Column_List" >
+         ID,
+         FIELDNAME,
+         FIELDREAMRK,
+         FIELDTYPE,
+         FIELDLENGTH,
+         TABLEID,
+         ISPRIMARYKEY,
+         ISNULL
+    </sql>
 
-    <select id="selectModelList" resultMap="BaseResultMap"  >
+
+    <select id="getLocalTableColumnsByTableId" resultMap="BaseResultMap"  >
         SELECT
-        a.ID modelId ,
-        a.MODEL_NAME modelName,
-       (select b.username creator from t_system_user b where a.CREATE_USER = b.ID),
-       (select max(c.SHARE_TYPE) modelType from t_model_manager_share c where c.MODEL_ID= a.id)
-        FROM  t_model_manager a
+        <include refid="Base_Column_List" />
+        FROM
+        t_model_local_tablecolumns
         WHERE
-        1=1
-        <if test="id!=null and id!=''">
-            and a.id = #{id}
-        </if >
+        TABLEID = #{tableId}
     </select>
+
+    <!--批量插入-->
+    <insert id="batchTModelLocalTablecolumnsInsert" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into t_model_local_tablecolumns
+        (<include refid="Base_Column_List" />)
+        values
+        <foreach collection="local_tableColumnList" item="item" index="i" separator=",">
+            (
+            #{item.id,jdbcType=INTEGER},
+            #{item.fieldName,jdbcType=VARCHAR},
+            #{item.fieldreamrk,jdbcType=VARCHAR},
+            #{item.fieldtype,jdbcType=VARCHAR},
+            #{item.fieldlength,jdbcType=INTEGER},
+            #{item.tableid,jdbcType=INTEGER},
+            #{item.isprimarykey,jdbcType=INTEGER},
+            #{item.isnull,jdbcType=INTEGER}
+            )
+        </foreach>
+    </insert>
+
+    <!--批量删除-->
+    <delete id="deleteTModelLocalTablecolumnsByTableIds">
+        DELETE
+        FROM
+        t_model_local_tablecolumns
+        <where>
+            TABLEID in (
+            <foreach collection="tableIds" item="item" index="i" separator=",">
+                #{item}
+            </foreach>
+            )
+        </where>
+    </delete>
 
 </mapper>

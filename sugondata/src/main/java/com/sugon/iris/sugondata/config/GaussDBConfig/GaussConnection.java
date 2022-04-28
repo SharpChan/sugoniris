@@ -2,7 +2,6 @@ package com.sugon.iris.sugondata.config.GaussDBConfig;
 
 import com.sugon.iris.sugoncommon.publicUtils.PublicUtils;
 import lombok.Data;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 

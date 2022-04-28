@@ -1,6 +1,8 @@
 package com.sugon.iris.sugoniris.controller.shengting;
 
+import com.sugon.iris.sugondomain.beans.shengTing.ShanghaiJsrBean;
 import com.sugon.iris.sugondomain.beans.shengTing.ShanghaiMinhangBean;
+import com.sugon.iris.sugondomain.beans.shengTing.ShanghaijdcxxBean;
 import com.sugon.iris.sugondomain.beans.shengTing.ShanghaikeyunBean;
 import com.sugon.iris.sugondomain.beans.shengTing.base.StResponse;
 import com.sugon.iris.sugonksservice.intf.shengTingIntf.ShengTingServiceIntf;
@@ -46,6 +48,69 @@ public class ShengTingController {
         }catch (Exception e){
             e.printStackTrace();
 
+        }
+        return stResponseList;
+    }
+
+    @CrossOrigin
+    @PostMapping("/getJdcxx")
+    @ApiOperation(value = "机动车信息")
+    public List<StResponse> getJdcxx(@RequestParam(value = "hphm" ,required = true) String hphm,@RequestParam(value = "minRownum", required = true) String minRownum,@RequestParam(value = "maxRownum",required = true) String maxRownum) throws IllegalAccessException{
+        List<StResponse> stResponseList = null;
+        try {
+            stResponseList =  shengTingServiceImpl.getJdcxx(hphm,minRownum,maxRownum);
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }
+        return stResponseList;
+    }
+
+    @CrossOrigin
+    @PostMapping("/getJdcxxByExcel")
+    @ApiOperation(value = "民航信息")
+    public List<StResponse<List<ShanghaijdcxxBean>>> getJdcxxByExcel(HttpServletRequest request, HttpServletResponse response) throws IllegalAccessException{
+        List<StResponse<List<ShanghaijdcxxBean>>> stResponseList = null;
+        try {
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+            List<MultipartFile> files = multipartHttpServletRequest.getFiles("file");
+            stResponseList = shengTingServiceImpl.getJdcxxByExcel(files);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return stResponseList;
+    }
+
+
+    @CrossOrigin
+    @PostMapping("/getJsrxx")
+    @ApiOperation(value = "机动车信息")
+    public List<StResponse> getJsrxx(@RequestParam(value = "sfzmhm") String sfzmhm,@RequestParam(value = "minRownum") String minRownum,@RequestParam(value = "maxRownum") String maxRownum) throws IllegalAccessException{
+        List<StResponse> stResponseList = null;
+        try {
+            stResponseList =  shengTingServiceImpl.getJsrxx(sfzmhm,minRownum,maxRownum);
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }
+        return stResponseList;
+    }
+
+    @CrossOrigin
+    @PostMapping("/getJsrxxByExcel")
+    @ApiOperation(value = "民航信息")
+    public List<StResponse<List<ShanghaiJsrBean>>> getJsrxxByExcel(HttpServletRequest request, HttpServletResponse response) throws IllegalAccessException{
+        List<StResponse<List<ShanghaiJsrBean>>> stResponseList = null;
+        try {
+            request.setCharacterEncoding("UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+            List<MultipartFile> files = multipartHttpServletRequest.getFiles("file");
+            stResponseList = shengTingServiceImpl.getJsrxxByExcel(files);
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return stResponseList;
     }

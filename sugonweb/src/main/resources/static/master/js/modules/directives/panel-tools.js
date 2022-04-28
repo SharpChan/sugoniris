@@ -8,7 +8,7 @@
 App.directive('paneltool', ["$compile", "$timeout", function($compile, $timeout){
   var templates = {
     /* jshint multistr: true */
-    collapse:"<a href='#' panel-collapse='' tooltip='Collapse Panel' ng-click='{{panelId}} = !{{panelId}}'> \
+    collapse:"<a href='#' panel-collapse='' tooltip='Collapse Panel'  ng-click='{{panelId}} = !{{panelId}}'> \
                 <em ng-show='{{panelId}}' class='fa fa-plus'></em> \
                 <em ng-show='!{{panelId}}' class='fa fa-minus'></em> \
               </a>",

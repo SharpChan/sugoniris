@@ -41,7 +41,7 @@ public class TableRecordSearchServiceImpl implements TableRecordSearchService {
     private FileCaseMapper fileCaseMapper;
 
     @Override
-    public List<TableRecordSearchDto> getRecordsByUserId(Long userId, String condition,List<Error> errorList) throws IllegalAccessException {
+    public List<TableRecordSearchDto> getRecordsByUserId(Long userId, String condition,String offset,String perSize,List<Error> errorList) throws IllegalAccessException {
         if(StringUtils.isEmpty(condition)){
             errorList.add(new Error(ErrorCode_Enum.SUGON_01_005.getCode(),ErrorCode_Enum.SUGON_01_005.getMessage()));
             return null;
@@ -60,19 +60,19 @@ public class TableRecordSearchServiceImpl implements TableRecordSearchService {
         for(FileTableEntity ｆileTableEntity : fileTableEntityList){
             FileTemplateEntity fileTemplateEntity = new FileTemplateEntity();
             fileTemplateEntity.setId(ｆileTableEntity.getFileTemplateId());
-            FileTemplateDto FileTemplateDto = new FileTemplateDto();
-            fileTemplateDtoList.add( PublicUtils.trans(fileTemplateMapper.selectFileTemplateList(fileTemplateEntity).get(0),FileTemplateDto));
+            FileTemplateDto fileTemplateDto = new FileTemplateDto();
+            fileTemplateDtoList.add( PublicUtils.trans(fileTemplateMapper.selectFileTemplateList(fileTemplateEntity).get(0),fileTemplateDto));
         }
 
         //2.1查询模板内字段
 
-        for(FileTemplateDto FileTemplateDto : fileTemplateDtoList){
+        for(FileTemplateDto fileTemplateDto : fileTemplateDtoList){
             FileTemplateDetailEntity fileTemplateDetailEntity = new FileTemplateDetailEntity();
-            fileTemplateDetailEntity.setTemplateId(FileTemplateDto.getId());
+            fileTemplateDetailEntity.setTemplateId(fileTemplateDto.getId());
             List<FileTemplateDetailEntity> fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntity);
             for(FileTemplateDetailEntity fileTemplateDetailEntityBean : fileTemplateDetailEntityList){
                 FileTemplateDetailDto fileTemplateDetailDto = new FileTemplateDetailDto();
-                FileTemplateDto.getFileTemplateDetailDtoList().add(PublicUtils.trans(fileTemplateDetailEntityBean,fileTemplateDetailDto));
+                fileTemplateDto.getFileTemplateDetailDtoList().add(PublicUtils.trans(fileTemplateDetailEntityBean,fileTemplateDetailDto));
             }
         }
 
@@ -82,6 +82,7 @@ public class TableRecordSearchServiceImpl implements TableRecordSearchService {
 
         //3.2
         String sqlStr = "";
+        int i = 0;
         for(FileTemplateDto fileTemplateDto : fileTemplateDtoList){
             if(!CollectionUtils.isEmpty(fileTemplateDto.getFileTemplateDetailDtoList())){
                 //获取表名
@@ -96,13 +97,21 @@ public class TableRecordSearchServiceImpl implements TableRecordSearchService {
                                  unitStr +=",";
                              }
                          }
-                         unitStr +=") as result from "+fileTableEntity.getTableName()+") a  where 1=1  "+conditionNew;
+                         unitStr +=") as result from "+fileTableEntity.getTableName()+") a  where 1=1  "+conditionNew + " limit 10";
                          //进行查询
                         List<String>  resultList = mppMapper.mppSqlExecForSearch(unitStr);
                          unitStr = "";
                         if(CollectionUtils.isEmpty(resultList)){
                              continue;
                         }
+                         i++;
+                        if(i <= Integer.parseInt(offset)){
+                            continue;
+                        }
+                        if(i > (Integer.parseInt(offset)+Integer.parseInt(perSize))){
+                            break;
+                        }
+
                         //通过caseId获取案件信息
                          FileCaseEntity fileCaseEntity = new FileCaseEntity();
                          fileCaseEntity.setId(fileTableEntity.getCaseId());
@@ -122,6 +131,78 @@ public class TableRecordSearchServiceImpl implements TableRecordSearchService {
             }
         }
         return tableRecordSearchDtoList;
+    }
+
+    @Override
+    public Integer getRecordCountByUserId(Long userId, String condition, List<Error> errorList) throws IllegalAccessException {
+        if(StringUtils.isEmpty(condition)){
+            errorList.add(new Error(ErrorCode_Enum.SUGON_01_005.getCode(),ErrorCode_Enum.SUGON_01_005.getMessage()));
+            return null;
+        }
+        //1.对查询条件进行校验，排除关键字
+        String str = PublicUtils.checkSql(condition);
+        //1.查询出拥有权限的数据表
+        List<FileTableEntity> fileTableEntityList = fileTableMapper.findAllFileTablesByUserId(userId);
+        if(CollectionUtils.isEmpty(fileTableEntityList)){
+            errorList.add(new Error(ErrorCode_Enum.SUGON_01_006.getCode(),ErrorCode_Enum.SUGON_01_006.getMessage()));
+            return null;
+        }
+        List<TableRecordSearchDto> tableRecordSearchDtoList = new ArrayList<>();
+        //2.查询出,模板
+        List<FileTemplateDto>  fileTemplateDtoList = new ArrayList<>();
+        for(FileTableEntity ｆileTableEntity : fileTableEntityList){
+            FileTemplateEntity fileTemplateEntity = new FileTemplateEntity();
+            fileTemplateEntity.setId(ｆileTableEntity.getFileTemplateId());
+            FileTemplateDto fileTemplateDto = new FileTemplateDto();
+            fileTemplateDtoList.add( PublicUtils.trans(fileTemplateMapper.selectFileTemplateList(fileTemplateEntity).get(0),fileTemplateDto));
+        }
+
+        //2.1查询模板内字段
+
+        for(FileTemplateDto fileTemplateDto : fileTemplateDtoList){
+            FileTemplateDetailEntity fileTemplateDetailEntity = new FileTemplateDetailEntity();
+            fileTemplateDetailEntity.setTemplateId(fileTemplateDto.getId());
+            List<FileTemplateDetailEntity> fileTemplateDetailEntityList = fileTemplateDetailMapper.selectFileTemplateDetailList(fileTemplateDetailEntity);
+            for(FileTemplateDetailEntity fileTemplateDetailEntityBean : fileTemplateDetailEntityList){
+                FileTemplateDetailDto fileTemplateDetailDto = new FileTemplateDetailDto();
+                fileTemplateDto.getFileTemplateDetailDtoList().add(PublicUtils.trans(fileTemplateDetailEntityBean,fileTemplateDetailDto));
+            }
+        }
+
+        //3.组装sql
+        //3.1 组装查询条件
+        String conditionNew = this.doCondition(condition);
+
+        String sqlStr = "";
+        int i =0;
+        for(FileTemplateDto fileTemplateDto : fileTemplateDtoList){
+            if(!CollectionUtils.isEmpty(fileTemplateDto.getFileTemplateDetailDtoList())){
+                //获取表名
+                for(FileTableEntity fileTableEntity : fileTableEntityList){
+                    String  unitStr = "select result from (select  concat(";
+                    if (fileTemplateDto.getId().equals(fileTableEntity.getFileTemplateId())){
+                        int k = 0;
+                        for(FileTemplateDetailDto fileTemplateDetailDto : fileTemplateDto.getFileTemplateDetailDtoList()){
+                            k++;
+                            unitStr +="'||" +fileTemplateDetailDto.getFieldKey()+":',"+fileTemplateDetailDto.getFieldName()+",'||'";
+                            if(k != fileTemplateDto.getFileTemplateDetailDtoList().size()){
+                                unitStr +=",";
+                            }
+                        }
+                        unitStr +=") as result from "+fileTableEntity.getTableName()+") a  where 1=1  "+conditionNew + " limit 10";
+                        //进行查询
+                        List<String>  resultList = mppMapper.mppSqlExecForSearch(unitStr);
+                        unitStr = "";
+                        if(CollectionUtils.isEmpty(resultList)){
+                            continue;
+                        }
+                        i++;
+                        break;
+                    }
+                }
+            }
+        }
+        return i;
     }
 
     private String doCondition(String condition){

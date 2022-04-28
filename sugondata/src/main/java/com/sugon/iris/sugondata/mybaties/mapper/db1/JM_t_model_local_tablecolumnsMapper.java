@@ -6,10 +6,10 @@ import java.util.List;
 
 public interface JM_t_model_local_tablecolumnsMapper {
 
-    List<JM_t_model_local_tablecolumnsBean> getLocalTableColumnsBytableId();
+    List<JM_t_model_local_tablecolumnsBean> getLocalTableColumnsByTableId(Integer tableId);
 
-    Integer saveLocalTableColumns(List<JM_t_model_local_tablecolumnsEntity> local_tablecolumnList);
+    Integer batchTModelLocalTablecolumnsInsert(List<JM_t_model_local_tablecolumnsEntity> local_tableColumnList);
 
-    Integer deleteLocalTableColumns(List<Integer> idList);
+    Integer deleteTModelLocalTablecolumnsByTableIds(List<Integer> tableIds);
 
 }

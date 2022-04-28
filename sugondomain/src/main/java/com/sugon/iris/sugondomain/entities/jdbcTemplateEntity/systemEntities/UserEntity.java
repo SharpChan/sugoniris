@@ -6,5 +6,7 @@ import lombok.Data;
 @Data
 public class UserEntity extends User  {
 
+    //建模平台的用户 id
+   private Integer jmUserId;
 
 }

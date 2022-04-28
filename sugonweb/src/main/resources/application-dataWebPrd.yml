@@ -1,6 +1,14 @@
 spring:
   #jpa
   datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+        stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: true
+        login-username: admin
+        login-password: 123
     ds1: #数据源1 jdbcTemplate
       driver-class-name: com.mysql.cj.jdbc.Driver # mysql的驱动你可以配置别的关系型数据库
       #url: jdbc:mysql://172.18.10.1:3306/iris?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true #数据源地址

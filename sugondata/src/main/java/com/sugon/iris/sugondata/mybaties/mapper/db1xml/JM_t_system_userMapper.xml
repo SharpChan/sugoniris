@@ -12,7 +12,6 @@
         <result column="ACCOUNTNO" property="accountNo" jdbcType="VARCHAR" />
         <result column="PASSWORD" property="passWord" jdbcType="VARCHAR" />
         <result column="MODEL_EXECUTE_TYPE" property="modelExecuteType" jdbcType="VARCHAR" />
-        <result column="AUTH_KNOW_TIME" property="validity_time" jdbcType="DATE" />
     </resultMap>
 
     <sql id="Base_Column_List" >
@@ -24,8 +23,7 @@
          `CREAT_TIME`,
          `ACCOUNTNO` ,
          `PASSWORD`,
-         `MODEL_EXECUTE_TYPE`,
-         `AUTH_KNOW_TIME`
+         `MODEL_EXECUTE_TYPE`
     </sql>
 
     <select id="queryAllJMUsers" resultMap="BaseResultMap"  >
@@ -50,10 +48,8 @@
             #{item.createTime,jdbcType=TIMESTAMP},
             #{item.accountNo,jdbcType=VARCHAR},
             #{item.passWord,jdbcType=VARCHAR},
-            #{item.modelExecuteType,jdbcType=VARCHAR},
-            #{item.validity_time,jdbcType=DATE}
+            #{item.modelExecuteType,jdbcType=VARCHAR}
             )
         </foreach>
     </insert>
-
 </mapper>

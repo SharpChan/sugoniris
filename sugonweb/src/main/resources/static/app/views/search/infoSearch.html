@@ -6,8 +6,8 @@
 </style>
 
 <div ng-controller="infoSearchController">
-    <div class="panel" style="width: 85%">
-        <div class="panel-heading  topnavbar">
+    <div class="panel panel-primary Qpanel-content" style="width: 85%">
+        <div class="panel-heading  topnavbar Qdialog-header">
             <strong style="color: #FFF">查询内容</strong>
         </div>
         <div class="panel-body">
@@ -21,11 +21,11 @@
                 <tr ng-repeat="item in obj">
                     <td>
                             <!-- START panel-->
-                        <div id="panelDemo1" class="panel panel-default">
+                        <div id="panelDemo1" class="panel Qpanel-content-noborder">
                                 <div ng-class="{'panel-heading-collapsed':panelDemo1}" class="panel-heading">案件编号：{{item.caseNo}}||案件名称：{{item.caseName}}||模板名称：{{item.templateName}}||表名：{{item.tableName}}
                                     <paneltool tool-collapse="tool-collapse"></paneltool>
                                 </div>
-                                <div collapse="panelDemo1" class="panel-wrapper">
+                                <div  collapse="panelDemo1" class="panel-wrapper">
                                     <div class="panel-body">
                                         <ul ng-repeat="cell in item.result">
                                             <li>{{cell}}</li>
@@ -37,7 +37,9 @@
                 </tr>
                 </tbody>
             </table>
+            <!--分页指令-->
+            <div page-directive page-config="pageConfig"></div>
         </div>
-        <div class="panel-footer">面板脚注</div>
+        <!--<div class="panel-footer">面板脚注</div>-->
     </div>
 </div>

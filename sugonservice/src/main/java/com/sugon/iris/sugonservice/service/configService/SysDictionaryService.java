@@ -9,6 +9,8 @@ public interface SysDictionaryService {
 
     List<SysDictionaryDto> getAllSysDictionaries(List<Error> errorList) throws IllegalAccessException;
 
+    List<SysDictionaryDto> getSysDictionariesByDicGroupLike(String dicGroup,List<Error> errorList) throws IllegalAccessException;
+
     List<SysDictionaryDto> getSysDictionariesByDicGroup(String dicGroup,List<Error> errorList) throws IllegalAccessException;
 
     int updateSysDictionary(SysDictionaryDto sysDictionaryDto,List<Error> errorList) throws IllegalAccessException;
