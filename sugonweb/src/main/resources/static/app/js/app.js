@@ -1523,8 +1523,26 @@ App.controller("dashBoardController", ['$http', '$timeout', '$scope', '$rootScop
     $scope.skip();
 }]);
 
-App.controller("xxljobController", function ($http, $timeout, $scope, $sce,
+App.controller("xxljob_yxbbController", function ($http, $timeout, $scope, $sce,
                                              myservice) {
+    myservice.loginLockCheck();
+
+})
+
+App.controller("xxljob_ddrzController", function ($http, $timeout, $scope, $sce,
+                                                  myservice) {
+    myservice.loginLockCheck();
+
+})
+
+App.controller("xxljob_rwglController", function ($http, $timeout, $scope, $sce,
+                                                  myservice) {
+    myservice.loginLockCheck();
+
+})
+
+App.controller("xxljob_zxqglController", function ($http, $timeout, $scope, $sce,
+                                                  myservice) {
     myservice.loginLockCheck();
 
 })
@@ -7809,7 +7827,7 @@ App.controller('HomeController', ['$scope','$http','$state','myservice','$sce', 
                 window.open(dataSrc)
                 break;
             case 'item3':
-                window.open(sdmSrc)
+                window.open('http://50.73.68.61:8666/sdm/index.jsp?userName=Sysadmin&password=11111111')
                 break;
             case 'item4':
                 $state.go('app.dictionary');

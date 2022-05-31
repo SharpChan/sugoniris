@@ -17,6 +17,7 @@ import com.sugon.iris.sugonservice.service.httpClientService.HttpClientService;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 import com.thoughtworks.xstream.io.xml.XppDriver;
+import io.swagger.annotations.ApiOperation;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -49,23 +50,39 @@ public class BussLogAspect {
     @Resource
     private HttpClientService httpClientServiceImpl;
 
-    @Around(value = "@annotation(com.sugon.iris.sugonannotation.annotation.system.BussLog) && @annotation(bussLog)")
-    public RestResult<Object> begin(ProceedingJoinPoint pdj, BussLog bussLog) throws Throwable {
+    @Around(value = "@annotation(com.sugon.iris.sugonannotation.annotation.system.BussLog) && @annotation(bussLog) && @annotation(apiOperation)")
+    public RestResult<Object> begin(ProceedingJoinPoint pdj, BussLog bussLog, ApiOperation apiOperation) throws Throwable {
         Object[] args = pdj.getArgs();
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request =servletRequestAttributes.getRequest();
 
-        String cztj = JSONUtil.toJsonStr(args);
-        for(Object obj : args){
-            if(obj instanceof ServletRequest || obj instanceof ServletResponse || obj instanceof HttpSession){
-               continue;
-            }
-            cztj += JSON.toJSONString(obj)+"||";
+        RestResult<Object> restResult = (RestResult<Object>) pdj.proceed(args);
+
+
+        String url = request.getRequestURL().toString();
+        String a1 = url.substring(url.lastIndexOf("/"));
+        url = url.replace(a1,"");
+        String a2 = url.substring(url.lastIndexOf("/"));
+        String a3 = a2+a1;
+        BusinessLog_Enum bsEnum = BusinessLog_Enum.getEnumByUrl(a3);
+
+        if(null == bsEnum){
+            return restResult;
         }
 
-        //该字段不能超200个字符
-        if(cztj.length()>200){
-            cztj = cztj.substring(0,199);
+        String cztj = "";
+        if(!"0".equals(bsEnum.getCzlx())) {
+            for (Object obj : args) {
+                if (obj instanceof ServletRequest || obj instanceof ServletResponse || obj instanceof HttpSession || obj instanceof User) {
+                    continue;
+                }
+                cztj += JSON.toJSONString(obj) + "||";
+            }
+
+            //该字段不能超200个字符
+            if (cztj.length() > 200) {
+                cztj = cztj.substring(0, 199);
+            }
         }
 
         HttpSession session = null;
@@ -78,18 +95,14 @@ public class BussLogAspect {
             e.printStackTrace();
         }
 
-        RestResult<Object> restResult = (RestResult<Object>) pdj.proceed(args);
+
 
         try {
         if(null == obj){
            obj = (User)session.getAttribute("user");
         }
 
-        String url = request.getRequestURL().toString();
-        String a1 = url.substring(url.lastIndexOf("/"));
-        url = url.replace(a1,"");
-        String a2 = url.substring(url.lastIndexOf("/"));
-        String a3 = a2+a1;
+
         String ip = request.getRemoteAddr();
         Timestamp timestamp = new Timestamp(new Date().getTime());
         BusinessLogEntity businessLog = new BusinessLogEntity();
@@ -99,7 +112,7 @@ public class BussLogAspect {
         }
         businessLog.setAccessTime(timestamp);
         businessLog.setIp(ip);
-        BusinessLog_Enum bsEnum = BusinessLog_Enum.getEnumByUrl(a3);
+
         if(obj != null && ! (null == obj.getId()) && null != bsEnum) {
             businessLog.setBusiness( bsEnum.getName());
             final User userFinal = obj;

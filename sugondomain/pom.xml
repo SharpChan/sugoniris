@@ -28,7 +28,8 @@
     </dependencies>
 
     <build>
+        <!--
         <plugins>
-        </plugins>
+        </plugins>-->
     </build>
 </project>
