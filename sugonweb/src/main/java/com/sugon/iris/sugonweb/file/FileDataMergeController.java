@@ -123,6 +123,7 @@ public class FileDataMergeController {
     @LogInCheck(doLock = true,doProcess = true)
     @ApiOperation(value = "通过mpp表信息导出excel压缩包")
     @ApiImplicitParam(name = "caseId", value = "案件编号")
+    @ResponseBody
     public void mergeExport(@CurrentUser User user, HttpServletResponse response,@RequestParam(value = "caseId") Long caseId){
         try{
 

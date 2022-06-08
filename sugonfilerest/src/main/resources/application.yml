@@ -1,8 +1,8 @@
 spring:
   profiles:
     #开发环境
-    #active: fileRest,anno,common,data,domain,service
+    active: fileRest,anno,common,data,domain,service
     #生产环境
-    active: fileRestPrd,annoFileRestPrd,commonFileRestPrd,dataFileRestPrd,domainFileRestPrd,serviceFileRestPrd
+    #active: fileRestPrd,annoFileRestPrd,commonFileRestPrd,dataFileRestPrd,domainFileRestPrd,serviceFileRestPrd
     #公司云计算测试环境
     #active: fileRestPrd_sugon,annoFileRestPrd,commonFileRestPrd,dataFileRestPrd_sugon,domainFileRestPrd,serviceFileRestPrd

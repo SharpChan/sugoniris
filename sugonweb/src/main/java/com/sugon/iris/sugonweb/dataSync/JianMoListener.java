@@ -21,7 +21,7 @@ public class JianMoListener implements ServletContextListener {
 
 
 
-    @Scheduled(fixedRate=10000)
+    @Scheduled(fixedRate=180000)
   public void dataSync() throws Exception{
 
         try {
